@@ -40,7 +40,7 @@ class Generator(seed: Long) {
 
     fun generateLanguage(wordAmount: Int): Language {
         val words = ArrayList<Word>()
-        val cores = randomSublist(wordBase.words, random, 10, 11)
+        val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
         for (i in 0 until wordAmount) {
             words.add(randomWord(cores[i]))
         }

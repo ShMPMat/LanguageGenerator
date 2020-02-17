@@ -8,5 +8,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(Generator(9777).generateLanguage( 10))
+    visualize(Generator(9777).generateLanguage( 20))
 }
