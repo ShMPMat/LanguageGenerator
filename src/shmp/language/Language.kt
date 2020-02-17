@@ -1,8 +1,6 @@
 package shmp.language
 
 import shmp.containers.PhonemeContainer
-import shmp.language.nominal_categories.Articles
-import shmp.language.nominal_categories.Gender
 import shmp.language.nominal_categories.NominalCategory
 
 class Language(

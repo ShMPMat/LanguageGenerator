@@ -54,34 +54,65 @@ class Generator(seed: Long) {
         )
     }
 
-    private fun randomArticles() = Articles(
-        randomCategoryApplicatorsForNominalCategory(
-            randomElementWithProbability(ArticlePresence.values(), { it.probability }, random).presentArticles,
-            NominalCategoryRealization::probabilityForArticle
+    private fun randomArticles(): Articles {
+        val presentElements = randomElementWithProbability(
+            ArticlePresence.values(),
+            { it.probability },
+            random
+        ).presentArticles
+        return Articles(
+            presentElements,
+            randomCategoryApplicatorsForNominalCategory(
+                presentElements,
+                NominalCategoryRealization::probabilityForArticle,
+                setOf(SpeechPart.Noun).union(randomSublistWithProbability(
+                    SpeechPart.values(),
+                    SpeechPart::probabilityForArticle,
+                    random
+                )).toList()
+            )
         )
-    )
+    }
 
-    private fun randomGender() = Gender(
-        randomCategoryApplicatorsForNominalCategory(
-            randomElementWithProbability(GenderPresence.values(), { it.probability }, random).possibilities,
-            NominalCategoryRealization::probabilityForGender
+    private fun randomGender(): Gender {
+        val presentElements = randomElementWithProbability(
+            GenderPresence.values(),
+            { it.probability },
+            random
+        ).possibilities
+        return Gender(
+            presentElements,
+            randomCategoryApplicatorsForNominalCategory(
+                presentElements,
+                NominalCategoryRealization::probabilityForGender,
+                setOf(SpeechPart.Noun).union(randomSublistWithProbability(
+                    SpeechPart.values(),
+                    SpeechPart::probabilityForGender,
+                    random
+                )).toList()
+            )
         )
-    )
+    }
 
     private fun randomCategoryApplicatorsForNominalCategory(
         presentElements: Set<NominalCategoryEnum>,
-        mapper: (NominalCategoryRealization) -> Double
-    ): Map<NominalCategoryEnum, CategoryApplicator> {
+        mapper: (NominalCategoryRealization) -> Double,
+        speechParts: List<SpeechPart>
+    ): Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>> {
 
-        val map = HashMap<NominalCategoryEnum, CategoryApplicator>()
-        val realizationType = randomElementWithProbability(
-            NominalCategoryRealization.values(),
-            mapper,
-            random
-        )
-        presentElements.forEach {
-            map[it] =
-                randomCategoryApplicator(realizationType, it.syntaxCore)
+        val map = HashMap<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>()
+        for (speechPart in speechParts) {
+            val mapForSpeechPart = HashMap<NominalCategoryEnum, CategoryApplicator>()
+            val realizationType = randomElementWithProbability(
+                NominalCategoryRealization.values(),
+                mapper,
+                random
+            )
+            presentElements.forEach {
+                mapForSpeechPart[it] =
+                    randomCategoryApplicator(realizationType, it.syntaxCore)
+            }
+            map[speechPart] = mapForSpeechPart
         }
         return map
     }

@@ -4,21 +4,25 @@ import shmp.language.*
 import shmp.language.nominal_categories.change.CategoryApplicator
 
 class Articles(
-    categoryApplicators: Map<NominalCategoryEnum, CategoryApplicator>
-) : AbstractChangeNominalCategory(SpeechPart.Noun, categoryApplicators) {
-    override fun toString(): String {
-        return "Articles:\n" + if (categoryApplicators.isEmpty()) "Has no articles"
-        else categoryApplicators.map {
-            it.key.toString() + ": " + it.value
-        }.joinToString("\n")
-    }
-}
+    categories: Set<NominalCategoryEnum>,
+    categoryApplicators: Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>
+) : AbstractChangeNominalCategory(categories, categoryApplicators, "Articles", "Has no articles")
 
 fun NominalCategoryRealization.probabilityForArticle(): Double = when (this) {//TODO not actual data
     NominalCategoryRealization.PrefixSeparateWord -> 400.0
     NominalCategoryRealization.SuffixSeparateWord -> 20.0
     NominalCategoryRealization.Prefix -> 100.0
     NominalCategoryRealization.Suffix -> 30.0
+}
+
+fun SpeechPart.probabilityForArticle(): Double = when (this) {
+    SpeechPart.Noun -> 0.0
+    SpeechPart.Verb -> 0.0
+    SpeechPart.Adjective -> 100.0
+    SpeechPart.Adverb -> 0.0
+    SpeechPart.Numeral -> 0.0
+    SpeechPart.Article -> 0.0
+    SpeechPart.Pronoun -> 0.0
 }
 
 enum class ArticlePresence(val probability: Double, val presentArticles: Set<ArticleEnum>) {

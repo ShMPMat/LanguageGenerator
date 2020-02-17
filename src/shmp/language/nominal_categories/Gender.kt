@@ -4,15 +4,9 @@ import shmp.language.*
 import shmp.language.nominal_categories.change.CategoryApplicator
 
 class Gender(
-    categoryApplicators: Map<NominalCategoryEnum, CategoryApplicator>
-) : AbstractChangeNominalCategory(SpeechPart.Noun, categoryApplicators) {
-    override fun toString(): String {
-        return "Gender:\n" + if (categoryApplicators.isEmpty()) "Has no genders"
-        else categoryApplicators.map {
-            it.key.toString() + ": " + it.value
-        }.joinToString("\n")
-    }
-}
+    categories: Set<NominalCategoryEnum>,
+    categoryApplicators: Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>
+) : AbstractChangeNominalCategory(categories, categoryApplicators, "Gender", "Has no genders")
 
 fun NominalCategoryRealization.probabilityForGender(): Double = when (this) {//TODO not actual data
     NominalCategoryRealization.PrefixSeparateWord -> 10.0
@@ -21,10 +15,20 @@ fun NominalCategoryRealization.probabilityForGender(): Double = when (this) {//T
     NominalCategoryRealization.Suffix -> 100.0
 }
 
+fun SpeechPart.probabilityForGender(): Double = when (this) {
+    SpeechPart.Noun -> 0.0
+    SpeechPart.Verb -> 100.0
+    SpeechPart.Adjective -> 100.0
+    SpeechPart.Adverb -> 0.0
+    SpeechPart.Numeral -> 0.0
+    SpeechPart.Article -> 100.0
+    SpeechPart.Pronoun -> 100.0
+}
+
 enum class GenderPresence(val probability: Double, val possibilities: Set<GenderEnum>) {
-    None(145.0, setOf()), //TODO this doesn,t work; there is a Bininj Gun-Wok language with F, M, N and VEGETABLE
+    None(145.0, setOf()),
     Gendered(84.0, setOf(GenderEnum.Female, GenderEnum.Male, GenderEnum.Neutral, GenderEnum.Common)),
-    NonGendered(28.0, GenderEnum.values().filter { !Gendered.possibilities.contains(it) }.toSet())
+    NonGendered(28.0, GenderEnum.values().toSet())
 }
 
 enum class GenderEnum(override val syntaxCore: SyntaxCore) : NominalCategoryEnum {
