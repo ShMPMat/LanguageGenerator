@@ -72,7 +72,7 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
     }
 
     private fun addPhonemeWithTest(phonemes: MutableList<Phoneme>, phoneme: Phoneme): Boolean {
-        if (phonemes.isEmpty() || phonemes.last() == phoneme)
+        if (phonemes.isNotEmpty() && phonemes.last() == phoneme)
             return false
         phonemes.add(phoneme)
         return true
