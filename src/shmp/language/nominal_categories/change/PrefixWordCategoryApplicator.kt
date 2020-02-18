@@ -6,7 +6,7 @@ import shmp.language.Word
 
 class PrefixWordCategoryApplicator(prefixWord: Word) :
     WordCategoryApplicator(prefixWord, NominalCategoryRealization.PrefixSeparateWord) {
-    override fun apply(word: Word) = Clause(listOf(applicatorWord, word))
+    override fun apply(clause: Clause, wordPosition: Int): Clause = Clause(listOf(applicatorWord) + clause.words)
 
     override fun toString(): String {
         return "$applicatorWord, placed before the word"

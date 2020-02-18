@@ -6,5 +6,7 @@ import shmp.language.NominalCategoryRealization
 import shmp.language.Word
 
 interface NominalCategory {
-    fun apply(word: Word, nominalCategoryEnum: NominalCategoryEnum): Clause
+    val categories: Set<NominalCategoryEnum>
+
+    fun apply(clause: Clause, wordPosition: Int, nominalCategoryEnum: NominalCategoryEnum): Clause
 }
