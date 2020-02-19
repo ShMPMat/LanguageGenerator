@@ -1,7 +1,6 @@
 package shmp.language
 
 import shmp.containers.PhonemeContainer
-import shmp.language.nominal_categories.NominalCategory
 
 class Language(
     val words: List<Word>,

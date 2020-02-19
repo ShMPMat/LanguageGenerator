@@ -1,4 +1,4 @@
-package shmp.language.nominal_categories.change
+package shmp.language.categories.change
 
 import shmp.language.Clause
 import shmp.language.NominalCategoryRealization

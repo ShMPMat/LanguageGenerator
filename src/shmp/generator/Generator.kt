@@ -5,11 +5,11 @@ import shmp.containers.PhonemeImmutableContainer
 import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.morphem.*
-import shmp.language.nominal_categories.*
-import shmp.language.nominal_categories.change.AffixCategoryApplicator
-import shmp.language.nominal_categories.change.CategoryApplicator
-import shmp.language.nominal_categories.change.PrefixWordCategoryApplicator
-import shmp.language.nominal_categories.change.SuffixWordCategoryApplicator
+import shmp.language.categories.*
+import shmp.language.categories.change.AffixCategoryApplicator
+import shmp.language.categories.change.CategoryApplicator
+import shmp.language.categories.change.PrefixWordCategoryApplicator
+import shmp.language.categories.change.SuffixWordCategoryApplicator
 import java.io.File
 import java.text.ParseException
 import kotlin.random.Random
@@ -54,7 +54,7 @@ class Generator(seed: Long) {
                 categoriesWithCongregatedApplicators.map { it.first },
                 SpeechPart.values().map { speechPart ->
                     val categoriesWithApplicators:
-                            List<Pair<NominalCategory, Map<NominalCategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
+                            List<Pair<Category, Map<NominalCategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
                         .filter { it.second.containsKey(speechPart) } .map { it.first to (it.second[speechPart] ?: throw RandomException("")) }
                     speechPart to SpeechPartChangeParadigm(
                         speechPart,

@@ -1,10 +1,10 @@
 package shmp.language
 
-import shmp.language.nominal_categories.NominalCategory
-import shmp.language.nominal_categories.change.CategoryApplicator
+import shmp.language.categories.Category
+import shmp.language.categories.change.CategoryApplicator
 
 class ChangeParadigm(
-    val nominalCategories: List<NominalCategory>,
+    val categories: List<Category>,
     val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
     fun apply(word: Word, nominalCategoryEnums: Set<NominalCategoryEnum>): Clause {
@@ -13,7 +13,7 @@ class ChangeParadigm(
     }
 
     override fun toString(): String {
-        return nominalCategories.joinToString("\n") + "\n\n" +
+        return categories.joinToString("\n") + "\n\n" +
                 speechPartChangeParadigms
                     .map { it.value }
                     .filter { it.hasChanges() }
@@ -23,8 +23,8 @@ class ChangeParadigm(
 
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
-    val nominalCategories: List<NominalCategory>,
-    val applicators: Map<NominalCategory, Map<NominalCategoryEnum, CategoryApplicator>>
+    val categories: List<Category>,
+    val applicators: Map<Category, Map<NominalCategoryEnum, CategoryApplicator>>
 ) {
     fun apply(word: Word, nominalCategoryEnums: Set<NominalCategoryEnum>): Clause {
         if (word.syntaxCore.speechPart != speechPart)
@@ -34,7 +34,7 @@ class SpeechPartChangeParadigm(
         var currentClause = Clause(listOf(word))
         var currentWord = word
         var wordPosition = 0
-        for (nominalCategory in nominalCategories) {
+        for (nominalCategory in categories) {
             val category = getCategory(nominalCategoryEnums, nominalCategory) ?: continue
             val newClause = useCategoryApplicator(currentClause, wordPosition, nominalCategory, category)
             if (currentClause.size != newClause.size) {
@@ -56,20 +56,20 @@ class SpeechPartChangeParadigm(
     private fun useCategoryApplicator(
         clause: Clause,
         wordPosition: Int,
-        nominalCategory: NominalCategory,
+        category: Category,
         nominalCategoryEnum: NominalCategoryEnum
     ): Clause {
         val word = clause[wordPosition]
-        return if (applicators[nominalCategory]?.containsKey(nominalCategoryEnum) == true)
-            applicators[nominalCategory]?.get(nominalCategoryEnum)?.apply(clause, wordPosition)
+        return if (applicators[category]?.containsKey(nominalCategoryEnum) == true)
+            applicators[category]?.get(nominalCategoryEnum)?.apply(clause, wordPosition)
                 ?: throw LanguageException(
                     "Tried to change word \"$word\" for category $nominalCategoryEnum but it isn't defined in Language"
                 )
         else Clause(listOf(word.copy()))
     }
 
-    private fun getCategory(nominalCategoryEnums: Set<NominalCategoryEnum>, nominalCategory: NominalCategory): NominalCategoryEnum? {
-        val categories = nominalCategoryEnums.filter { nominalCategory.categories.contains(it) }
+    private fun getCategory(nominalCategoryEnums: Set<NominalCategoryEnum>, category: Category): NominalCategoryEnum? {
+        val categories = nominalCategoryEnums.filter { category.categories.contains(it) }
         if (categories.size > 1) {
             throw LanguageException(
                 "ChangeParadigm have been given more than one NominalCategory values: ${categories.joinToString()}"

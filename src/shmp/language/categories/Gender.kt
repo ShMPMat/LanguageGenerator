@@ -1,11 +1,10 @@
-package shmp.language.nominal_categories
+package shmp.language.categories
 
 import shmp.language.*
-import shmp.language.nominal_categories.change.CategoryApplicator
 
 class Gender(
     categories: Set<NominalCategoryEnum>
-) : AbstractChangeNominalCategory(
+) : AbstractChangeCategory(
     categories,
     GenderEnum.values().toSet(),
     "Gender",

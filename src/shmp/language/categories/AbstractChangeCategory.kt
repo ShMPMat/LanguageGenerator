@@ -1,14 +1,13 @@
-package shmp.language.nominal_categories
+package shmp.language.categories
 
 import shmp.language.*
-import shmp.language.nominal_categories.change.CategoryApplicator
 
-abstract class AbstractChangeNominalCategory(
+abstract class AbstractChangeCategory(
     final override val categories: Set<NominalCategoryEnum>,
     final override val possibleCategories: Set<NominalCategoryEnum>,
     private val outType: String,
     private val noCategoriesOut: String
-) : NominalCategory {
+) : Category {
     init {
         if (!possibleCategories.containsAll(categories))
             throw LanguageException(
