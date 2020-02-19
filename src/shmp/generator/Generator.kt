@@ -38,6 +38,8 @@ class Generator(seed: Long) {
     )
     private val syllableTemplate = randomSyllableTemplate()
 
+    private val SYLLABLE_TESTS = 10
+
     fun generateLanguage(wordAmount: Int): Language {
         val words = ArrayList<Word>()
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
@@ -50,7 +52,7 @@ class Generator(seed: Long) {
             phonemeContainer,
             randomElementWithProbability(Stress.values(), { it.probability }, random),
             randomElementWithProbability(SovOrder.values(), { it.probability }, random),
-            listOf(randomArticles(), randomGender())
+            ChangeParadigm(listOf(randomArticles(), randomGender()))
         )
     }
 
@@ -190,14 +192,18 @@ class Generator(seed: Long) {
         val syllables = ArrayList<Syllable>()
         val length = getRandomWordLength(maxSyllableLength, lengthWeight)
         for (j in 0..length)
-            syllables.add(
-                syllableTemplate.generateSyllable(
+            for (i in 1..SYLLABLE_TESTS) {
+                val syllable = syllableTemplate.generateSyllable(
                     phonemeContainer,
                     random,
                     isClosed = j == length,
                     prefix = syllables
                 )
-            )
+                if (syllables.isNotEmpty() && syllables.last().phonemes.last() == syllable[0])
+                    continue
+                syllables.add(syllable)
+                break
+            }
         return Word(syllables, syllableTemplate, core)
     }
 

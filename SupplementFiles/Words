@@ -3,18 +3,19 @@ one                Numeral
 have               Verb
 hot                Adjective
 word               Noun
-can                Verb
 do                 Verb
 time               Noun
 say                Verb
 set                Verb
 three              Numeral
 want               Verb
+want               Noun
 air                Noun
 well               Adverb
 play               Verb
 small              Adjective
 end                Noun
+end                Verb
 put                Verb
 home               Noun
 read               Verb
@@ -22,9 +23,27 @@ hand               Noun
 port               Noun
 large              Adjective
 spell              Verb
+spell              Noun
 add                Verb
 land               Noun
+land               Verb
 high               Adjective
+follow             Verb
+ask                Verb
+change             Verb
+change             Noun
+light              Noun
+kind               Noun
+need               Noun
+need               Verb
+house              Noun
+picture            Noun
+picture            Verb
+animal             Noun
+point              Noun
+point              Verb
+mother             Noun
+world              Noun
 
 /other
 /some
@@ -62,30 +81,14 @@ high               Adjective
 /even
 /here
 /must
-
-/tell
-
 /such
-/follow
 /act
 /why
-/ask
-/men
-/change
-/went
-/light
-/kind
 /off
-/need
-/house
-/picture
 /try
 /us
 /again
-/animal
-/point
-/mother
-/world
+
 /near
 /build
 /self

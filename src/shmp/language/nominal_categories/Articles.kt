@@ -6,7 +6,13 @@ import shmp.language.nominal_categories.change.CategoryApplicator
 class Articles(
     categories: Set<NominalCategoryEnum>,
     categoryApplicators: Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>
-) : AbstractChangeNominalCategory(categories, categoryApplicators, "Articles", "Has no articles")
+) : AbstractChangeNominalCategory(
+    categories,
+    ArticleEnum.values().toSet(),
+    categoryApplicators,
+    "Articles",
+    "Has no articles"
+)
 
 fun NominalCategoryRealization.probabilityForArticle(): Double = when (this) {//TODO not actual data
     NominalCategoryRealization.PrefixSeparateWord -> 400.0

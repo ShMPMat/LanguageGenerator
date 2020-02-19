@@ -6,7 +6,13 @@ import shmp.language.nominal_categories.change.CategoryApplicator
 class Gender(
     categories: Set<NominalCategoryEnum>,
     categoryApplicators: Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>
-) : AbstractChangeNominalCategory(categories, categoryApplicators, "Gender", "Has no genders")
+) : AbstractChangeNominalCategory(
+    categories,
+    GenderEnum.values().toSet(),
+    categoryApplicators,
+    "Gender",
+    "Has no genders"
+)
 
 fun NominalCategoryRealization.probabilityForGender(): Double = when (this) {//TODO not actual data
     NominalCategoryRealization.PrefixSeparateWord -> 10.0

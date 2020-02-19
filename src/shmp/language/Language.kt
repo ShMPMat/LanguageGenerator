@@ -8,7 +8,7 @@ class Language(
     val phonemeContainer: PhonemeContainer,
     val stress: Stress,
     val SovOrder: SovOrder,
-    val nominalCategories: List<NominalCategory>
+    val changeParadigm: ChangeParadigm
 ) {
     override fun toString(): String {
         return """phonemes:
@@ -17,7 +17,7 @@ class Language(
                  |words:
                  |$words
                  |SOV order: $SovOrder
-                 |${nominalCategories.joinToString("\n")}
+                 |${changeParadigm.nominalCategories.joinToString("\n")}
                  |""".trimMargin()
     }
 }
