@@ -17,7 +17,7 @@ class Language(
                  |words:
                  |$words
                  |SOV order: $SovOrder
-                 |${changeParadigm.nominalCategories.joinToString("\n")}
+                 |${changeParadigm}
                  |""".trimMargin()
     }
 }

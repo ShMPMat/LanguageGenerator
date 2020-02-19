@@ -8,6 +8,4 @@ import shmp.language.Word
 interface NominalCategory {
     val categories: Set<NominalCategoryEnum>
     val possibleCategories: Set<NominalCategoryEnum>
-
-    fun apply(clause: Clause, wordPosition: Int, nominalCategoryEnum: NominalCategoryEnum): Clause
 }

@@ -22,22 +22,24 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
     override fun generateSyllable(
         phonemeContainer: PhonemeContainer,
         random: Random,
-        isClosed: Boolean,
+        canHaveFinal: Boolean,
         shouldHaveInitial: Boolean,
+        shouldHaveFinal: Boolean,
         prefix: List<Syllable>
     ): Syllable {
         for (i in 0 until ADD_TESTS) {
-            val syllable = generateOneSyllable(phonemeContainer, random, isClosed)
+            val syllable = generateOneSyllable(phonemeContainer, random, canHaveFinal)
             if (syllable.size != 1 || prefix.isEmpty() || syllable != prefix.last())
                 if (!shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
-                    return syllable
+                    //if (!shouldHaveFinal)
+                        return syllable
         }
-        return generateOneSyllable(phonemeContainer, random, isClosed)
+        return generateOneSyllable(phonemeContainer, random, canHaveFinal)
     }
 
     private fun generateOneSyllable(phonemeContainer: PhonemeContainer,
                                     random: Random,
-                                    isClosed: Boolean): Syllable {
+                                    canBeClosed: Boolean): Syllable {
         val phonemes = ArrayList<Phoneme>()
         for (valency in (nucleusIndex downTo 0).map { valencies[it] }) {
             if (testProbability(valency.realizationProbability, random))
@@ -54,7 +56,7 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
         }
         phonemes.reverse()
 
-        if (isClosed) {
+        if (canBeClosed) {
             var shouldTest = true
             var lastType = valencies[nucleusIndex].phonemeType
             for (valency in (nucleusIndex + 1..valencies.lastIndex).map { valencies[it] }) {

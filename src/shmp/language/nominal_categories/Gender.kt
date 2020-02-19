@@ -4,12 +4,10 @@ import shmp.language.*
 import shmp.language.nominal_categories.change.CategoryApplicator
 
 class Gender(
-    categories: Set<NominalCategoryEnum>,
-    categoryApplicators: Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>
+    categories: Set<NominalCategoryEnum>
 ) : AbstractChangeNominalCategory(
     categories,
     GenderEnum.values().toSet(),
-    categoryApplicators,
     "Gender",
     "Has no genders"
 )

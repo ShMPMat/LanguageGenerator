@@ -41,59 +41,74 @@ class Generator(seed: Long) {
     private val SYLLABLE_TESTS = 10
 
     fun generateLanguage(wordAmount: Int): Language {
+        val words = generateWords(wordAmount)
+        val stressPattern = randomElementWithProbability(Stress.values(), { it.probability }, random)
+        val wordOrder = randomElementWithProbability(SovOrder.values(), { it.probability }, random)
+        val categoriesWithCongregatedApplicators = listOf(randomArticles(), randomGender())
+        return Language(
+            words,
+            phonemeContainer,
+            stressPattern,
+            wordOrder,
+            ChangeParadigm(
+                categoriesWithCongregatedApplicators.map { it.first },
+                SpeechPart.values().map { speechPart ->
+                    val categoriesWithApplicators:
+                            List<Pair<NominalCategory, Map<NominalCategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
+                        .filter { it.second.containsKey(speechPart) } .map { it.first to (it.second[speechPart] ?: throw RandomException("")) }
+                    speechPart to SpeechPartChangeParadigm(
+                        speechPart,
+                        categoriesWithApplicators.map { it.first },
+                        categoriesWithApplicators.toMap()
+                    )
+                }.toMap()
+            )
+        )
+    }
+
+    private fun generateWords(wordAmount: Int): ArrayList<Word> {
         val words = ArrayList<Word>()
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
         for (i in 0 until wordAmount) {
             words.add(randomWord(cores[i]))
         }
-
-        return Language(
-            words,
-            phonemeContainer,
-            randomElementWithProbability(Stress.values(), { it.probability }, random),
-            randomElementWithProbability(SovOrder.values(), { it.probability }, random),
-            ChangeParadigm(listOf(randomArticles(), randomGender()))
-        )
+        return words
     }
 
-    private fun randomArticles(): Articles {
+    private fun randomArticles(): Pair<Articles, Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>> {
         val presentElements = randomElementWithProbability(
             ArticlePresence.values(),
             { it.probability },
             random
         ).presentArticles
-        return Articles(
+        val applicators = randomCategoryApplicatorsForNominalCategory(
             presentElements,
-            randomCategoryApplicatorsForNominalCategory(
-                presentElements,
-                NominalCategoryRealization::probabilityForArticle,
-                setOf(SpeechPart.Noun).union(randomSublistWithProbability(
-                    SpeechPart.values(),
-                    SpeechPart::probabilityForArticle,
-                    random
-                )).toList()
-            )
+            NominalCategoryRealization::probabilityForArticle,
+            setOf(SpeechPart.Noun).union(randomSublistWithProbability(
+                SpeechPart.values(),
+                SpeechPart::probabilityForArticle,
+                random
+            )).toList()
         )
+        return Articles(presentElements) to applicators
     }
 
-    private fun randomGender(): Gender {
+    private fun randomGender(): Pair<Gender, Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>> {
         val presentElements = randomElementWithProbability(
             GenderPresence.values(),
             { it.probability },
             random
         ).possibilities
-        return Gender(
+        val applicators = randomCategoryApplicatorsForNominalCategory(
             presentElements,
-            randomCategoryApplicatorsForNominalCategory(
-                presentElements,
-                NominalCategoryRealization::probabilityForGender,
-                setOf(SpeechPart.Noun).union(randomSublistWithProbability(
-                    SpeechPart.values(),
-                    SpeechPart::probabilityForGender,
-                    random
-                )).toList()
-            )
+            NominalCategoryRealization::probabilityForGender,
+            setOf(SpeechPart.Noun).union(randomSublistWithProbability(
+                SpeechPart.values(),
+                SpeechPart::probabilityForGender,
+                random
+            )).toList()
         )
+        return Gender(presentElements) to applicators
     }
 
     private fun randomCategoryApplicatorsForNominalCategory(
@@ -154,7 +169,7 @@ class Generator(seed: Long) {
         isClosed: Boolean
     ): List<Pair<List<PositionTemplate>, List<PositionSubstitution>>> {
         val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            syllableTemplate.generateSyllable(phonemeContainer, random, isClosed = c, shouldHaveInitial = i).phonemes
+            syllableTemplate.generateSyllable(phonemeContainer, random, canHaveFinal = c, shouldHaveInitial = i).phonemes
                 .map { PhonemePositionSubstitution(it) }
         }
         val result = when (randomElementWithProbability(AffixTypes.values(), { it.probability }, random)) {
@@ -196,7 +211,7 @@ class Generator(seed: Long) {
                 val syllable = syllableTemplate.generateSyllable(
                     phonemeContainer,
                     random,
-                    isClosed = j == length,
+                    canHaveFinal = j == length,
                     prefix = syllables
                 )
                 if (syllables.isNotEmpty() && syllables.last().phonemes.last() == syllable[0])

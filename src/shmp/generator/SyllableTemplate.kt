@@ -9,8 +9,9 @@ interface SyllableTemplate{
     fun generateSyllable(
         phonemeContainer: PhonemeContainer,
         random: Random,
-        isClosed: Boolean = false,
+        canHaveFinal: Boolean = false,
         shouldHaveInitial: Boolean = false,
+        shouldHaveFinal: Boolean = false,
         prefix: List<Syllable> = listOf()
     ): Syllable
 

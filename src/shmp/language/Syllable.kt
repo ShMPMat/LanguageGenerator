@@ -1,8 +1,7 @@
 package shmp.language
 
-data class Syllable(val phonemes: List<Phoneme>) {
-    val size: Int
-    get() = phonemes.size
+data class Syllable(val phonemes: List<Phoneme>) {//TODO nucleus position
+    val size: Int = phonemes.size
 
     override fun toString(): String {
         return phonemes.joinToString("") { it.toString() }
