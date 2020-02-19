@@ -1,11 +1,13 @@
 package shmp.language
 
-data class Syllable(val phonemes: List<Phoneme>) {//TODO nucleus position
-    val size: Int = phonemes.size
+data class Syllable(val phonemeSequence: PhonemeSequence) {
+    constructor(phonemeList: List<Phoneme>) : this(PhonemeSequence(phonemeList))
+
+    val size: Int = phonemeSequence.size
 
     override fun toString(): String {
-        return phonemes.joinToString("") { it.toString() }
+        return phonemeSequence.getRawString()
     }
 
-    operator fun get(i: Int): Phoneme = phonemes[0]
+    operator fun get(i: Int): Phoneme = phonemeSequence[0]
 }

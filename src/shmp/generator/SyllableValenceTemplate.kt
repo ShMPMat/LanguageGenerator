@@ -1,9 +1,7 @@
 package shmp.generator
 
 import shmp.containers.PhonemeContainer
-import shmp.language.Phoneme
-import shmp.language.Syllable
-import shmp.language.PhonemeType
+import shmp.language.*
 import kotlin.random.Random
 
 class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : SyllableTemplate {
@@ -80,12 +78,25 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
         return true
     }
 
-    override fun test(phonemes: List<Phoneme>): Boolean {
-        val string = phonemes.map { it.type.char.toString() } .joinToString("") { it }
+    override fun test(phonemes: PhonemeSequence): Boolean {
+        val string = phonemes.getTypeRepresentation()
         return getRegexp().containsMatchIn(string)
     }
 
-    private fun getRegexp(): Regex {
+    override fun createWord(phonemes: PhonemeSequence, syntaxCore: SyntaxCore): Word? {
+        val syllables = ArrayList<Syllable>()
+        val regex = getRegexp()
+        val currentPhonemes = phonemes.getTypeRepresentation()
+        var lastIndex = 0
+        while (lastIndex < currentPhonemes.length) {
+            val range = regex.find(currentPhonemes, lastIndex)?.range ?: return null
+            syllables.add(Syllable(phonemes.phonemes.subList(range.first, range.last + 1)))
+            lastIndex = range.last + 1
+        }
+        return Word(syllables, this, syntaxCore)
+    }
+
+    fun getRegexp(): Regex {
         var maxSymbols = 1
         var minSymbols = if (valencies[0].realizationProbability == 1.0) 1 else 0
         var resultString = ""

@@ -169,7 +169,7 @@ class Generator(seed: Long) {
         isClosed: Boolean
     ): List<Pair<List<PositionTemplate>, List<PositionSubstitution>>> {
         val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            syllableTemplate.generateSyllable(phonemeContainer, random, canHaveFinal = c, shouldHaveInitial = i).phonemes
+            syllableTemplate.generateSyllable(phonemeContainer, random, canHaveFinal = c, shouldHaveInitial = i).phonemeSequence.phonemes
                 .map { PhonemePositionSubstitution(it) }
         }
         val result = when (randomElementWithProbability(AffixTypes.values(), { it.probability }, random)) {
@@ -214,7 +214,7 @@ class Generator(seed: Long) {
                     canHaveFinal = j == length,
                     prefix = syllables
                 )
-                if (syllables.isNotEmpty() && syllables.last().phonemes.last() == syllable[0])
+                if (syllables.isNotEmpty() && syllables.last().phonemeSequence.last() == syllable[0])
                     continue
                 syllables.add(syllable)
                 break

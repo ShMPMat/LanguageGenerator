@@ -1,8 +1,7 @@
 package shmp.generator
 
 import shmp.containers.PhonemeContainer
-import shmp.language.Phoneme
-import shmp.language.Syllable
+import shmp.language.*
 import kotlin.random.Random
 
 interface SyllableTemplate{
@@ -15,5 +14,7 @@ interface SyllableTemplate{
         prefix: List<Syllable> = listOf()
     ): Syllable
 
-    fun test(phonemes: List<Phoneme>): Boolean
+    fun test(phonemes: PhonemeSequence): Boolean
+
+    fun createWord(phonemes: PhonemeSequence, syntaxCore: SyntaxCore): Word?
 }

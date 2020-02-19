@@ -10,7 +10,7 @@ data class Word(val syllables: List<Syllable>, val syllableTemplate: SyllableTem
     }
 
     fun toPhonemes(): List<Phoneme> {
-        return syllables.flatMap { it.phonemes }
+        return syllables.flatMap { it.phonemeSequence.phonemes }
     }
 
     override fun toString(): String {
