@@ -57,13 +57,13 @@ enum class SpeechPart {
     Pronoun
 }
 
-enum class NominalCategoryRealization {
+enum class CategoryRealization {
     PrefixSeparateWord,
     SuffixSeparateWord,
     Prefix,
     Suffix
 }
 
-interface NominalCategoryEnum {//TODO not Nominal
+interface CategoryEnum {
     val syntaxCore: SyntaxCore
 }

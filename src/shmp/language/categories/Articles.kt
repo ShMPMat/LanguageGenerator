@@ -3,7 +3,7 @@ package shmp.language.categories
 import shmp.language.*
 
 class Articles(
-    categories: List<NominalCategoryEnum>
+    categories: List<CategoryEnum>
 ) : AbstractChangeCategory(
     categories,
     ArticleEnum.values().toSet(),
@@ -11,11 +11,11 @@ class Articles(
     "Has no articles"
 )
 
-fun NominalCategoryRealization.probabilityForArticle(): Double = when (this) {//TODO not actual data
-    NominalCategoryRealization.PrefixSeparateWord -> 400.0
-    NominalCategoryRealization.SuffixSeparateWord -> 20.0
-    NominalCategoryRealization.Prefix -> 100.0
-    NominalCategoryRealization.Suffix -> 30.0
+fun CategoryRealization.probabilityForArticle(): Double = when (this) {//TODO not actual data
+    CategoryRealization.PrefixSeparateWord -> 400.0
+    CategoryRealization.SuffixSeparateWord -> 20.0
+    CategoryRealization.Prefix -> 100.0
+    CategoryRealization.Suffix -> 30.0
 }
 
 fun SpeechPart.probabilityForArticle(): Double = when (this) {
@@ -35,7 +35,7 @@ enum class ArticlePresence(val probability: Double, val presentArticles: List<Ar
     DefeniteAndIndefenite(209.0, listOf(ArticleEnum.Definite, ArticleEnum.Indefinite))
 }
 
-enum class ArticleEnum(override val syntaxCore: SyntaxCore) : NominalCategoryEnum {
+enum class ArticleEnum(override val syntaxCore: SyntaxCore) : CategoryEnum {
     Definite(SyntaxCore("the", SpeechPart.Article)),
     Indefinite(SyntaxCore("a", SpeechPart.Article))
 }

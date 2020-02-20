@@ -1,10 +1,10 @@
 package shmp.language.categories.change
 
 import shmp.language.Clause
-import shmp.language.NominalCategoryRealization
+import shmp.language.CategoryRealization
 import shmp.language.morphem.Affix
 
-class AffixCategoryApplicator(val affix: Affix, type: NominalCategoryRealization) :
+class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) :
     AbstractCategoryApplicator(type) { //TODO no guaranty for correctness
     override fun apply(clause: Clause, wordPosition: Int) = Clause(
         clause.words.subList(0, wordPosition)

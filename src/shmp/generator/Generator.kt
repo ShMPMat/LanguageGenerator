@@ -54,7 +54,7 @@ class Generator(seed: Long) {
                 categoriesWithCongregatedApplicators.map { it.first },
                 SpeechPart.values().map { speechPart ->
                     val categoriesWithApplicators:
-                            List<Pair<Category, Map<NominalCategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
+                            List<Pair<Category, Map<CategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
                         .filter { it.second.containsKey(speechPart) } .map { it.first to (it.second[speechPart] ?: throw RandomException("")) }
                     speechPart to SpeechPartChangeParadigm(
                         speechPart,
@@ -75,7 +75,7 @@ class Generator(seed: Long) {
         return words
     }
 
-    private fun randomArticles(): Pair<Articles, Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>> {
+    private fun randomArticles(): Pair<Articles, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
         val presentElements = randomElementWithProbability(
             ArticlePresence.values(),
             { it.probability },
@@ -83,7 +83,7 @@ class Generator(seed: Long) {
         ).presentArticles
         val applicators = randomCategoryApplicatorsForNominalCategory(
             presentElements.toSet(),
-            NominalCategoryRealization::probabilityForArticle,
+            CategoryRealization::probabilityForArticle,
             setOf(SpeechPart.Noun).union(randomSublistWithProbability(
                 SpeechPart.values(),
                 SpeechPart::probabilityForArticle,
@@ -93,7 +93,7 @@ class Generator(seed: Long) {
         return Articles(presentElements) to applicators
     }
 
-    private fun randomGender(): Pair<Gender, Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>> {
+    private fun randomGender(): Pair<Gender, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
         val presentElements = randomElementWithProbability(
             GenderPresence.values(),
             { it.probability },
@@ -101,7 +101,7 @@ class Generator(seed: Long) {
         ).possibilities
         val applicators = randomCategoryApplicatorsForNominalCategory(
             presentElements.toSet(),
-            NominalCategoryRealization::probabilityForGender,
+            CategoryRealization::probabilityForGender,
             setOf(SpeechPart.Noun).union(randomSublistWithProbability(
                 SpeechPart.values(),
                 SpeechPart::probabilityForGender,
@@ -112,16 +112,16 @@ class Generator(seed: Long) {
     }
 
     private fun randomCategoryApplicatorsForNominalCategory(
-        presentElements: Set<NominalCategoryEnum>,
-        mapper: (NominalCategoryRealization) -> Double,
+        presentElements: Set<CategoryEnum>,
+        mapper: (CategoryRealization) -> Double,
         speechParts: List<SpeechPart>
-    ): Map<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>> {
+    ): Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>> {
 
-        val map = HashMap<SpeechPart, Map<NominalCategoryEnum, CategoryApplicator>>()
+        val map = HashMap<SpeechPart, Map<CategoryEnum, CategoryApplicator>>()
         for (speechPart in speechParts) {
-            val mapForSpeechPart = HashMap<NominalCategoryEnum, CategoryApplicator>()
+            val mapForSpeechPart = HashMap<CategoryEnum, CategoryApplicator>()
             val realizationType = randomElementWithProbability(
-                NominalCategoryRealization.values(),
+                CategoryRealization.values(),
                 mapper,
                 random
             )
@@ -135,31 +135,31 @@ class Generator(seed: Long) {
     }
 
     private fun randomCategoryApplicator(
-        realizationType: NominalCategoryRealization,
+        realizationType: CategoryRealization,
         syntaxCore: SyntaxCore
     ): CategoryApplicator = when (realizationType) {
-        NominalCategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(randomWord(
+        CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(randomWord(
             syntaxCore,
             maxSyllableLength = 3,
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
-        NominalCategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(randomWord(
+        CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(randomWord(
             syntaxCore,
             maxSyllableLength = 3,
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
-        NominalCategoryRealization.Prefix -> {
+        CategoryRealization.Prefix -> {
             val changes = generateChanges(Position.Beginning, false)
             AffixCategoryApplicator(
                 Prefix(TemplateWordChange(changes.map { TemplateChange(Position.Beginning, it.first, it.second) })),
-                NominalCategoryRealization.Prefix
+                CategoryRealization.Prefix
             )
         }
-        NominalCategoryRealization.Suffix -> {
+        CategoryRealization.Suffix -> {
             val changes = generateChanges(Position.End, true)
             AffixCategoryApplicator(
                 Suffix(TemplateWordChange(changes.map { TemplateChange(Position.End, it.first, it.second) })),
-                NominalCategoryRealization.Suffix
+                CategoryRealization.Suffix
             )
         }
     }

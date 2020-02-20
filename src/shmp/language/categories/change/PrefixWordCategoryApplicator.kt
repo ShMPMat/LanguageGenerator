@@ -1,11 +1,11 @@
 package shmp.language.categories.change
 
 import shmp.language.Clause
-import shmp.language.NominalCategoryRealization
+import shmp.language.CategoryRealization
 import shmp.language.Word
 
 class PrefixWordCategoryApplicator(prefixWord: Word) :
-    WordCategoryApplicator(prefixWord, NominalCategoryRealization.PrefixSeparateWord) {
+    WordCategoryApplicator(prefixWord, CategoryRealization.PrefixSeparateWord) {
     override fun apply(clause: Clause, wordPosition: Int): Clause = Clause(listOf(applicatorWord) + clause.words)
 
     override fun toString(): String {

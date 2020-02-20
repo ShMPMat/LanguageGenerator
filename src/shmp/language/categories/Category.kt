@@ -1,8 +1,8 @@
 package shmp.language.categories
 
-import shmp.language.NominalCategoryEnum
+import shmp.language.CategoryEnum
 
 interface Category {
-    val categories: List<NominalCategoryEnum>
-    val possibleCategories: Set<NominalCategoryEnum>
+    val categories: List<CategoryEnum>
+    val possibleCategories: Set<CategoryEnum>
 }

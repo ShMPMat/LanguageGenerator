@@ -7,12 +7,12 @@ class ChangeParadigm(
     val categories: List<Category>,
     val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, nominalCategoryEnums: Set<NominalCategoryEnum>): Clause {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, nominalCategoryEnums)
+    fun apply(word: Word, categoryEnums: Set<CategoryEnum>): Clause {
+        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryEnums)
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
-    fun getDefaultState(speechPart: SpeechPart): List<NominalCategoryEnum> {
+    fun getDefaultState(speechPart: SpeechPart): List<CategoryEnum> {
         return speechPartChangeParadigms[speechPart]?.categories
             ?.filter { it.categories.isNotEmpty() }
             ?.map { it.categories[0] }
@@ -31,9 +31,9 @@ class ChangeParadigm(
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
     val categories: List<Category>,
-    val applicators: Map<Category, Map<NominalCategoryEnum, CategoryApplicator>>
+    val applicators: Map<Category, Map<CategoryEnum, CategoryApplicator>>
 ) {
-    fun apply(word: Word, nominalCategoryEnums: Set<NominalCategoryEnum>): Clause {
+    fun apply(word: Word, categoryEnums: Set<CategoryEnum>): Clause {
         if (word.syntaxCore.speechPart != speechPart)
             throw LanguageException(
                 "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
@@ -42,7 +42,7 @@ class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (nominalCategory in categories) {
-            val category = getCategory(nominalCategoryEnums, nominalCategory) ?: continue
+            val category = getCategory(categoryEnums, nominalCategory) ?: continue
             val newClause = useCategoryApplicator(currentClause, wordPosition, nominalCategory, category)
             if (currentClause.size != newClause.size) {
                 for (i in wordPosition until  newClause.size) {
@@ -56,27 +56,25 @@ class SpeechPartChangeParadigm(
             currentClause = newClause
         }
         return currentClause
-
-
     }
 
     private fun useCategoryApplicator(
         clause: Clause,
         wordPosition: Int,
         category: Category,
-        nominalCategoryEnum: NominalCategoryEnum
+        categoryEnum: CategoryEnum
     ): Clause {
         val word = clause[wordPosition]
-        return if (applicators[category]?.containsKey(nominalCategoryEnum) == true)
-            applicators[category]?.get(nominalCategoryEnum)?.apply(clause, wordPosition)
+        return if (applicators[category]?.containsKey(categoryEnum) == true)
+            applicators[category]?.get(categoryEnum)?.apply(clause, wordPosition)
                 ?: throw LanguageException(
-                    "Tried to change word \"$word\" for category $nominalCategoryEnum but it isn't defined in Language"
+                    "Tried to change word \"$word\" for category $categoryEnum but it isn't defined in Language"
                 )
         else Clause(listOf(word.copy()))
     }
 
-    private fun getCategory(nominalCategoryEnums: Set<NominalCategoryEnum>, category: Category): NominalCategoryEnum? {
-        val categories = nominalCategoryEnums.filter { category.categories.contains(it) }
+    private fun getCategory(categoryEnums: Set<CategoryEnum>, category: Category): CategoryEnum? {
+        val categories = categoryEnums.filter { category.categories.contains(it) }
         if (categories.size > 1) {
             throw LanguageException(
                 "ChangeParadigm have been given more than one NominalCategory values: ${categories.joinToString()}"

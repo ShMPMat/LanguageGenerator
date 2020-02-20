@@ -3,8 +3,8 @@ package shmp.language.categories
 import shmp.language.*
 
 abstract class AbstractChangeCategory(
-    final override val categories: List<NominalCategoryEnum>,
-    final override val possibleCategories: Set<NominalCategoryEnum>,
+    final override val categories: List<CategoryEnum>,
+    final override val possibleCategories: Set<CategoryEnum>,
     private val outType: String,
     private val noCategoriesOut: String
 ) : Category {
