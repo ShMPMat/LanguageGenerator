@@ -6,7 +6,7 @@ class TemplateWordChange(val changes: List<TemplateChange>) : WordChange {
     override fun change(word: Word): Word {
         for (changeTemplate in changes) {
             val changedWord = changeTemplate.change(word)
-            if (changedWord.toString() == word.toString())
+            if (changedWord.toString() != word.toString())
                 return changedWord
         }
         return word.copy()
@@ -43,7 +43,7 @@ class TemplateChange(
         if (testResult != -1) {
             return when(position) {
                 Position.End -> {
-                    val change = result.zip(testResult until result.size).map { it.first.substitute(word, it.second) }
+                    val change = result.zip(testResult until testResult + result.size).map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
                         PhonemeSequence(word.toPhonemes().subList(0, word.size - phonemes.size) + change),
                         word.syntaxCore

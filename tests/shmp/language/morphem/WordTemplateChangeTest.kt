@@ -9,7 +9,7 @@ import shmp.language.*
 
 internal class WordTemplateChangeTest {
     @Test
-    fun changePrefix() {
+    fun prefixIsolatingTest() {
         val prefix = listOf(
             Phoneme("b", PhonemeType.Consonant),
             Phoneme("a", PhonemeType.Vowel)
@@ -38,7 +38,19 @@ internal class WordTemplateChangeTest {
             ),
             changeTemplate
         )
+    }
 
+    @Test
+    fun prefixPhonemeTypeTest() {
+        val prefix = listOf(
+            Phoneme("b", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)//TODO
+        )
+    }
+
+    @Test
+    fun prefixStaticTest() {
+        TODO()
     }
 
     private fun checkForWord(word: Word, result: Word, change: TemplateChange) {

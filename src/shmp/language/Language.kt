@@ -3,18 +3,19 @@ package shmp.language
 import shmp.containers.PhonemeContainer
 
 class Language(
-    val words: List<Word>,
-    val phonemeContainer: PhonemeContainer,
-    val stress: Stress,
-    val SovOrder: SovOrder,
-    val changeParadigm: ChangeParadigm
+    private val words: List<Word>,
+    private val phonemeContainer: PhonemeContainer,
+    private val stress: Stress,
+    private val SovOrder: SovOrder,
+    private val changeParadigm: ChangeParadigm
 ) {
-    override fun toString(): String {
+    override fun toString(): String {//TODO first word output is a debug
         return """phonemes:
                  |${phonemeContainer}
                  |Stress patern: $stress
                  |words:
-                 |$words
+                 |${words.map {it.toString() + " - " + it.syntaxCore.word } .joinToString()}
+                 |${words.map { changeParadigm.apply(it).toString() + " - " + it.syntaxCore.word }.joinToString()}
                  |SOV order: $SovOrder
                  |${changeParadigm}
                  |""".trimMargin()

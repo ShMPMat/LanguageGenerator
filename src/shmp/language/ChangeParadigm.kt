@@ -5,10 +5,10 @@ import shmp.language.categories.change.CategoryApplicator
 
 class ChangeParadigm(
     val categories: List<Category>,
-    val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
+    private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryEnums: Set<CategoryEnum>): Clause {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryEnums)
+    fun apply(word: Word, categoryEnums: List<CategoryEnum> = getDefaultState(word.syntaxCore.speechPart)): Clause {
+        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryEnums.toSet())
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
@@ -41,9 +41,9 @@ class SpeechPartChangeParadigm(
         var currentClause = Clause(listOf(word))
         var currentWord = word
         var wordPosition = 0
-        for (nominalCategory in categories) {
-            val category = getCategory(categoryEnums, nominalCategory) ?: continue
-            val newClause = useCategoryApplicator(currentClause, wordPosition, nominalCategory, category)
+        for (category in categories) {
+            val categoryEnum = getCategory(categoryEnums, category) ?: continue
+            val newClause = useCategoryApplicator(currentClause, wordPosition, category, categoryEnum)
             if (currentClause.size != newClause.size) {
                 for (i in wordPosition until  newClause.size) {
                     if (currentWord == newClause[i]) {
