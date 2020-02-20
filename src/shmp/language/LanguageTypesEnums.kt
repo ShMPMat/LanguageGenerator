@@ -64,6 +64,6 @@ enum class NominalCategoryRealization {
     Suffix
 }
 
-interface NominalCategoryEnum {
+interface NominalCategoryEnum {//TODO not Nominal
     val syntaxCore: SyntaxCore
 }

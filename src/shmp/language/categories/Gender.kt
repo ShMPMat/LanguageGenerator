@@ -3,7 +3,7 @@ package shmp.language.categories
 import shmp.language.*
 
 class Gender(
-    categories: Set<NominalCategoryEnum>
+    categories: List<NominalCategoryEnum>
 ) : AbstractChangeCategory(
     categories,
     GenderEnum.values().toSet(),
@@ -28,10 +28,10 @@ fun SpeechPart.probabilityForGender(): Double = when (this) {
     SpeechPart.Pronoun -> 100.0
 }
 
-enum class GenderPresence(val probability: Double, val possibilities: Set<GenderEnum>) {
-    None(145.0, setOf()),
-    Gendered(84.0, setOf(GenderEnum.Female, GenderEnum.Male, GenderEnum.Neutral, GenderEnum.Common)),
-    NonGendered(28.0, GenderEnum.values().toSet())
+enum class GenderPresence(val probability: Double, val possibilities: List<GenderEnum>) {
+    None(145.0, listOf()),
+    Gendered(84.0, listOf(GenderEnum.Female, GenderEnum.Male, GenderEnum.Neutral, GenderEnum.Common)),
+    NonGendered(28.0, GenderEnum.values().toList())
 }
 
 enum class GenderEnum(override val syntaxCore: SyntaxCore) : NominalCategoryEnum {

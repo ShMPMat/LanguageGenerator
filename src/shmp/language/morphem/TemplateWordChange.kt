@@ -44,22 +44,18 @@ class TemplateChange(
             return when(position) {
                 Position.End -> {
                     val change = result.zip(testResult until result.size).map { it.first.substitute(word, it.second) }
-                    if (change.subList(0, phonemes.size) == word.toPhonemes().subList(testResult, word.size)) {
-                        val newSyllable = Syllable(change.subList(phonemes.size, change.size))
-                        Word(word.syllables + listOf(newSyllable), word.syllableTemplate, word.syntaxCore)
-                    } else {
-                        TODO()
-                    }
+                    return word.syllableTemplate.createWord(
+                        PhonemeSequence(word.toPhonemes().subList(0, word.size - phonemes.size) + change),
+                        word.syntaxCore
+                    ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                 }
                 Position.Beginning -> {
                     val change = result.zip(testResult - result.size until testResult).map { it.first.substitute(word, it.second) }
-                    if (change.subList(change.size - phonemes.size, change.size) == word.toPhonemes().subList(0, testResult)) {
-                        val newSyllable = Syllable(change.subList(0, change.size - phonemes.size))
-                        Word( listOf(newSyllable) + word.syllables, word.syllableTemplate, word.syntaxCore)
-                    } else {
-                        TODO()
-                    }
-                }
+                    return word.syllableTemplate.createWord(
+                        PhonemeSequence(change + word.toPhonemes().subList(phonemes.size, word.size)),
+                        word.syntaxCore
+                    ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
+                }//TODO test
             }
         } else {
             return word.copy()

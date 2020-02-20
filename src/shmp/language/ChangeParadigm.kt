@@ -12,6 +12,13 @@ class ChangeParadigm(
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
+    fun getDefaultState(speechPart: SpeechPart): List<NominalCategoryEnum> {
+        return speechPartChangeParadigms[speechPart]?.categories
+            ?.filter { it.categories.isNotEmpty() }
+            ?.map { it.categories[0] }
+            ?: throw LanguageException("No SpeechPartChangeParadigm for $speechPart")
+    }
+
     override fun toString(): String {
         return categories.joinToString("\n") + "\n\n" +
                 speechPartChangeParadigms
