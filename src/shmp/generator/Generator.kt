@@ -41,17 +41,18 @@ class Generator(seed: Long) {
     private val SYLLABLE_TESTS = 10
 
     fun generateLanguage(wordAmount: Int): Language {
-        val words = generateWords(wordAmount)
         val stressPattern = randomElementWithProbability(Stress.values(), { it.probability }, random)
         val wordOrder = randomElementWithProbability(SovOrder.values(), { it.probability }, random)
         val categoriesWithCongregatedApplicators = listOf(randomArticles(), randomGender())
+        val categories = categoriesWithCongregatedApplicators.map { it.first }
+        val words = generateWords(wordAmount, categories)
         return Language(
             words,
             phonemeContainer,
             stressPattern,
             wordOrder,
             ChangeParadigm(
-                categoriesWithCongregatedApplicators.map { it.first },
+                categories,
                 SpeechPart.values().map { speechPart ->
                     val categoriesWithApplicators:
                             List<Pair<Category, Map<CategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
@@ -66,11 +67,21 @@ class Generator(seed: Long) {
         )
     }
 
-    private fun generateWords(wordAmount: Int): ArrayList<Word> {
+    private fun generateWords(
+        wordAmount: Int,
+        categories: List<Category>
+    ): ArrayList<Word> {
         val words = ArrayList<Word>()
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
+        val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
         for (i in 0 until wordAmount) {
-            words.add(randomWord(cores[i]))
+            val staticCategories = mutableSetOf<CategoryEnum>()
+            if (gender.categories.isNotEmpty()) staticCategories.add(randomElementWithProbability(
+                gender.categories,
+                { 1.0 },
+                random
+            ))
+            words.add(randomWord(SyntaxCore(cores[i].word, cores[i].speechPart, staticCategories)))
         }
         return words
     }

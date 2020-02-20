@@ -7,16 +7,19 @@ class ChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryEnums: List<CategoryEnum> = getDefaultState(word.syntaxCore.speechPart)): Clause {
+    fun apply(word: Word, categoryEnums: List<CategoryEnum> = getDefaultState(word)): Clause {
         return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryEnums.toSet())
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
-    fun getDefaultState(speechPart: SpeechPart): List<CategoryEnum> {
-        return speechPartChangeParadigms[speechPart]?.categories
-            ?.filter { it.categories.isNotEmpty() }
+    fun getDefaultState(word: Word): List<CategoryEnum> {
+        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.categories
+            ?.filter { it.categories.isNotEmpty()
+                    && it.categories.none { enum -> word.syntaxCore.staticCategories.contains(enum) } }
             ?.map { it.categories[0] }
-            ?: throw LanguageException("No SpeechPartChangeParadigm for $speechPart")
+            ?.union(word.syntaxCore.staticCategories)
+            ?.toList()
+            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
     override fun toString(): String {
@@ -89,5 +92,5 @@ class SpeechPartChangeParadigm(
         }.joinToString("\n")}"
     }
 
-    fun hasChanges(): Boolean = applicators.isNotEmpty()
+    fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }

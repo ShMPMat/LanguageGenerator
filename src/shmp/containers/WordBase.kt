@@ -5,7 +5,7 @@ import shmp.language.SyntaxCore
 import java.io.File
 
 class WordBase() {
-    val words: MutableList<SyntaxCore> = ArrayList()
+    val words: MutableList<SyntaxCoreTemplate> = ArrayList()
 
     init {
         File("SupplementFiles/Words").forEachLine {
@@ -13,8 +13,10 @@ class WordBase() {
                 val tokens = it.split(" +".toRegex())
                 val word = tokens[0]
                 val speechPart = SpeechPart.valueOf(tokens[1])
-                words.add(SyntaxCore(word, speechPart))
+                words.add(SyntaxCoreTemplate(word, speechPart))
             }
         }
     }
 }
+
+data class SyntaxCoreTemplate(val word: String, val speechPart: SpeechPart)
