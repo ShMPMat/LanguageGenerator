@@ -113,7 +113,7 @@ class CategoryGenerator(
         isClosed: Boolean
     ): List<Pair<List<PositionTemplate>, List<PositionSubstitution>>> {
         val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            lexisGenerator.syllableTemplate.generateSyllable(
+            lexisGenerator.syllableGenerator.generateSyllable(
                 lexisGenerator.phonemeContainer,
                 random,
                 canHaveFinal = c,

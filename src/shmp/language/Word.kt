@@ -1,6 +1,6 @@
 package shmp.language
 
-import shmp.generator.SyllableTemplate
+import shmp.language.phonology.SyllableTemplate
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.Syllable
 

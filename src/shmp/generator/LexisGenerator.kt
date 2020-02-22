@@ -13,7 +13,7 @@ import shmp.random.randomSublist
 import kotlin.random.Random
 
 class LexisGenerator(
-    val syllableTemplate: SyllableTemplate,
+    val syllableGenerator: SyllableValenceGenerator,
     val phonemeContainer: PhonemeContainer,
     private val random: Random
 ) {
@@ -51,7 +51,7 @@ class LexisGenerator(
         val length = getRandomWordLength(maxSyllableLength, lengthWeight)
         for (j in 0..length)
             for (i in 1..SYLLABLE_TESTS) {
-                val syllable = syllableTemplate.generateSyllable(
+                val syllable = syllableGenerator.generateSyllable(
                     phonemeContainer,
                     random,
                     canHaveFinal = j == length,
@@ -62,7 +62,7 @@ class LexisGenerator(
                 syllables.add(syllable)
                 break
             }
-        return Word(syllables, syllableTemplate, core)
+        return Word(syllables, syllableGenerator.template, core)
     }
 
     private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =

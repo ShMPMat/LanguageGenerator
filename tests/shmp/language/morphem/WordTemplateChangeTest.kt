@@ -3,9 +3,9 @@ package shmp.language.morphem
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.opentest4j.TestAbortedException
-import shmp.generator.SyllableTemplate
-import shmp.generator.SyllableValenceTemplate
-import shmp.generator.ValencyPlace
+import shmp.language.phonology.SyllableTemplate
+import shmp.language.phonology.SyllableValenceTemplate
+import shmp.language.phonology.ValencyPlace
 import shmp.language.*
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence

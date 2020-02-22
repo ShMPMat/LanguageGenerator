@@ -5,6 +5,9 @@ import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.categories.*
 import shmp.language.categories.change.CategoryApplicator
+import shmp.language.phonology.SyllableTemplate
+import shmp.language.phonology.SyllableValenceTemplate
+import shmp.language.phonology.ValencyPlace
 import shmp.random.RandomException
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublist
@@ -72,7 +75,7 @@ class Generator(seed: Long) {
         )
     }
 
-    private fun randomSyllableTemplate(): SyllableTemplate {
+    private fun randomSyllableTemplate(): SyllableValenceGenerator {
         val syllableTemplates = HashMap<SyllableValenceTemplate, Double>()
         File("SupplementFiles/SyllableTypes").forEachLine {
             if (!it.isBlank()) {
@@ -90,15 +93,22 @@ class Generator(seed: Long) {
                         i += 3
                     } else
                         i++
-                    valencies.add(ValencyPlace(char.toPhonemeType(), probability))
+                    valencies.add(
+                        ValencyPlace(
+                            char.toPhonemeType(),
+                            probability
+                        )
+                    )
                 }
                 syllableTemplates[SyllableValenceTemplate(valencies)] = syllableProbability.toDouble()
             }
         }
-        return randomElementWithProbability(
-            syllableTemplates.keys,
-            { syllableTemplates[it] ?: 0.0 },
-            random
+        return SyllableValenceGenerator(
+            randomElementWithProbability(
+                syllableTemplates.keys,
+                { syllableTemplates[it] ?: 0.0 },
+                random
+            )
         )
     }
 }
