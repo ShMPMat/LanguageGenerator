@@ -1,5 +1,6 @@
 package shmp.language
 
+import shmp.random.SampleSpaceObject
 import java.text.ParseException
 
 
@@ -11,7 +12,7 @@ enum class PhonemeType(val char: Char) {
 fun Char.toPhonemeType() = PhonemeType.values().find { it.char == this }
     ?: throw ParseException("No phoneme type exist for Char $this", 0)
 
-enum class VowelQualityAmount(val amount: Int, val probability: Double) {
+enum class VowelQualityAmount(val amount: Int, override val probability: Double) : SampleSpaceObject {
     Two(2, 4.0),
     Three(3, 30.0),//No actual data
     Four(4, 49.0),//No actual data
@@ -23,11 +24,11 @@ enum class VowelQualityAmount(val amount: Int, val probability: Double) {
     Ten(10, 10.0),//No actual data
     Eleven(11, 6.0),//No actual data
     Twenty(12, 4.0),//No actual data
-    Thirteen(13,2.0),
+    Thirteen(13, 2.0),
     Fourteen(14, 1.0)
 }
 
-enum class Stress(val probability: Double) {
+enum class Stress(override val probability: Double) : SampleSpaceObject {
     NotFixed(220.0),
     Initial(92.0),
     Second(16.0),
@@ -37,7 +38,7 @@ enum class Stress(val probability: Double) {
     Ultimate(51.0)
 }
 
-enum class SovOrder(val probability: Double) {
+enum class SovOrder(override val probability: Double) : SampleSpaceObject {
     SOV(565.0),
     SVO(488.0),
     VSO(95.0),

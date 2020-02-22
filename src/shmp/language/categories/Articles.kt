@@ -1,6 +1,7 @@
 package shmp.language.categories
 
 import shmp.language.*
+import shmp.random.SampleSpaceObject
 
 class Articles(
     categories: List<CategoryEnum>
@@ -28,7 +29,7 @@ fun SpeechPart.probabilityForArticle(): Double = when (this) {
     SpeechPart.Pronoun -> 0.0
 }
 
-enum class ArticlePresence(val probability: Double, val presentArticles: List<ArticleEnum>) {
+enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleEnum>) : SampleSpaceObject {
     None(198.0, listOf()),
     Definite(98.0, listOf(ArticleEnum.Definite)),
     Indefinite(45.0, listOf(ArticleEnum.Indefinite)),

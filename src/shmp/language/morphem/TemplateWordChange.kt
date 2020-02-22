@@ -1,6 +1,8 @@
 package shmp.language.morphem
 
 import shmp.language.*
+import shmp.language.phonology.Phoneme
+import shmp.language.phonology.PhonemeSequence
 
 class TemplateWordChange(val changes: List<TemplateChange>) : WordChange {
     override fun change(word: Word): Word {
@@ -45,14 +47,24 @@ class TemplateChange(
                 Position.End -> {
                     val change = result.zip(testResult until testResult + result.size).map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
-                        PhonemeSequence(word.toPhonemes().subList(0, word.size - phonemes.size) + change),
+                        PhonemeSequence(
+                            word.toPhonemes().subList(
+                                0,
+                                word.size - phonemes.size
+                            ) + change
+                        ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                 }
                 Position.Beginning -> {
                     val change = result.zip(testResult - result.size until testResult).map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
-                        PhonemeSequence(change + word.toPhonemes().subList(phonemes.size, word.size)),
+                        PhonemeSequence(
+                            change + word.toPhonemes().subList(
+                                phonemes.size,
+                                word.size
+                            )
+                        ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                 }//TODO test

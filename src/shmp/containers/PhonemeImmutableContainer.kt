@@ -1,6 +1,6 @@
 package shmp.containers
 
-import shmp.language.Phoneme
+import shmp.language.phonology.Phoneme
 import shmp.language.PhonemeType
 
 data class PhonemeImmutableContainer(override val phonemes: List<Phoneme>) : PhonemeContainer {

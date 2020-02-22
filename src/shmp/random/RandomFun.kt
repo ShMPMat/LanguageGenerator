@@ -1,4 +1,4 @@
-package shmp.generator
+package shmp.random
 
 import kotlin.random.Random
 
@@ -18,6 +18,9 @@ fun <E> randomElementWithProbability(collection: Collection<E>, mapper: (E) -> D
     }
     throw IndexOutOfBoundsException("Empty array is passed in.")
 }
+
+fun <E : SampleSpaceObject> randomElementWithProbability(array: Array<E>, random: Random): E =
+    randomElementWithProbability(array, { it.probability }, random)
 
 fun <E> randomElementWithProbability(array: Array<E>, mapper: (E) -> Double, random: Random): E =
     randomElementWithProbability(array.toList(), mapper, random)

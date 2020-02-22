@@ -2,6 +2,11 @@ package shmp.generator
 
 import shmp.containers.PhonemeContainer
 import shmp.language.*
+import shmp.language.phonology.Phoneme
+import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.Syllable
+import shmp.random.randomElement
+import shmp.random.testProbability
 import kotlin.random.Random
 
 class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : SyllableTemplate {
@@ -42,7 +47,10 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
         for (valency in (nucleusIndex downTo 0).map { valencies[it] }) {
             if (testProbability(valency.realizationProbability, random))
                 for (i in 1..ADD_TESTS) {
-                    val phoneme = randomElement(phonemeContainer.getPhonemesByType(valency.phonemeType), random)
+                    val phoneme = randomElement(
+                        phonemeContainer.getPhonemesByType(valency.phonemeType),
+                        random
+                    )
                     if (i == ADD_TESTS)
                         phonemes.add(phoneme)
                     else
@@ -62,7 +70,13 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
                 lastType = valency.phonemeType
                 if (shouldTest) {
                     if (testProbability(valency.realizationProbability, random))
-                        phonemes.add(randomElement(phonemeContainer.getPhonemesByType(valency.phonemeType), random))
+                        phonemes.add(
+                            randomElement(
+                                phonemeContainer.getPhonemesByType(
+                                    valency.phonemeType
+                                ), random
+                            )
+                        )
                     else
                         shouldTest = false
                 }
@@ -91,7 +105,14 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
         while (lastIndex < currentPhonemes.length) {
             val range = regex.find(currentPhonemes, lastIndex)?.range ?: return null
             if (range.first != lastIndex) return null
-            syllables.add(Syllable(phonemes.phonemes.subList(range.first, range.last + 1)))
+            syllables.add(
+                Syllable(
+                    phonemes.phonemes.subList(
+                        range.first,
+                        range.last + 1
+                    )
+                )
+            )
             lastIndex = range.last + 1
         }
         return Word(syllables, this, syntaxCore)

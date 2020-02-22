@@ -94,3 +94,13 @@ class SpeechPartChangeParadigm(
 
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
+
+class ExponenceCluster(val categoryEnumSets: Set<Set<CategoryEnum>>) {
+    fun contains(categoryEnums: Set<CategoryEnum>): Boolean {
+        for (categories in categoryEnumSets)
+            if (categoryEnums.count { categories.contains(it) } != 1)
+                return false
+        return categoryEnums.size == categoryEnumSets.size
+    }
+}
+

@@ -2,6 +2,8 @@ package shmp.generator
 
 import shmp.containers.PhonemeContainer
 import shmp.language.*
+import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.Syllable
 import kotlin.random.Random
 
 interface SyllableTemplate{

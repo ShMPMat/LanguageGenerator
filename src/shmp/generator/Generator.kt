@@ -2,14 +2,12 @@ package shmp.generator
 
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
-import shmp.containers.WordBase
 import shmp.language.*
-import shmp.language.morphem.*
 import shmp.language.categories.*
-import shmp.language.categories.change.AffixCategoryApplicator
 import shmp.language.categories.change.CategoryApplicator
-import shmp.language.categories.change.PrefixWordCategoryApplicator
-import shmp.language.categories.change.SuffixWordCategoryApplicator
+import shmp.random.RandomException
+import shmp.random.randomElementWithProbability
+import shmp.random.randomSublist
 import java.io.File
 import java.text.ParseException
 import kotlin.random.Random
@@ -17,9 +15,7 @@ import kotlin.random.Random
 class Generator(seed: Long) {
     private val random = Random(seed)
     private val phonemeBase = PhonemeBase()
-    private val wordBase = WordBase()
-    private val vowelAmount =
-        randomElementWithProbability(VowelQualityAmount.values(), { it.probability }, random).amount
+    private val vowelAmount = randomElementWithProbability(VowelQualityAmount.values(), random).amount
     private val consonantAmount = random.nextInt(6, 16)
     private val phonemeContainer = PhonemeImmutableContainer(
         randomSublist(
@@ -36,16 +32,19 @@ class Generator(seed: Long) {
             )
         ).toList()
     )
-    private val syllableTemplate = randomSyllableTemplate()
 
-    private val SYLLABLE_TESTS = 10
+    private val lexisGenerator = LexisGenerator(randomSyllableTemplate(), phonemeContainer, random)
+    private val categoryGenerator = CategoryGenerator(lexisGenerator, random)
 
     fun generateLanguage(wordAmount: Int): Language {
-        val stressPattern = randomElementWithProbability(Stress.values(), { it.probability }, random)
-        val wordOrder = randomElementWithProbability(SovOrder.values(), { it.probability }, random)
-        val categoriesWithCongregatedApplicators = listOf(randomArticles(), randomGender())
+        val stressPattern = randomElementWithProbability(Stress.values(), random)
+        val wordOrder = randomElementWithProbability(SovOrder.values(), random)
+        val categoriesWithCongregatedApplicators = listOf(
+            categoryGenerator.randomArticles(),
+            categoryGenerator.randomGender()
+        )
         val categories = categoriesWithCongregatedApplicators.map { it.first }
-        val words = generateWords(wordAmount, categories)
+        val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
             phonemeContainer,
@@ -55,8 +54,14 @@ class Generator(seed: Long) {
                 categories,
                 SpeechPart.values().map { speechPart ->
                     val categoriesWithApplicators:
-                            List<Pair<Category, Map<CategoryEnum, CategoryApplicator>>> = categoriesWithCongregatedApplicators
-                        .filter { it.second.containsKey(speechPart) } .map { it.first to (it.second[speechPart] ?: throw RandomException("")) }
+                            List<Pair<Category, Map<CategoryEnum, CategoryApplicator>>> =
+                        categoriesWithCongregatedApplicators
+                            .filter { it.second.containsKey(speechPart) }.map {
+                                it.first to (it.second[speechPart]
+                                    ?: throw RandomException(
+                                        ""
+                                    ))
+                            }
                     speechPart to SpeechPartChangeParadigm(
                         speechPart,
                         categoriesWithApplicators.map { it.first },
@@ -65,172 +70,6 @@ class Generator(seed: Long) {
                 }.toMap()
             )
         )
-    }
-
-    private fun generateWords(
-        wordAmount: Int,
-        categories: List<Category>
-    ): ArrayList<Word> {
-        val words = ArrayList<Word>()
-        val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
-        val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
-        for (i in 0 until wordAmount) {
-            val staticCategories = mutableSetOf<CategoryEnum>()
-            if (gender.categories.isNotEmpty()) staticCategories.add(randomElementWithProbability(
-                gender.categories,
-                { 1.0 },
-                random
-            ))
-            words.add(randomWord(SyntaxCore(cores[i].word, cores[i].speechPart, staticCategories)))
-        }
-        return words
-    }
-
-    private fun randomArticles(): Pair<Articles, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
-        val presentElements = randomElementWithProbability(
-            ArticlePresence.values(),
-            { it.probability },
-            random
-        ).presentArticles
-        val applicators = randomCategoryApplicators(
-            presentElements.toSet(),
-            CategoryRealization::probabilityForArticle,
-            setOf(SpeechPart.Noun).union(randomSublistWithProbability(
-                SpeechPart.values(),
-                SpeechPart::probabilityForArticle,
-                random
-            )).toList()
-        )
-        return Articles(presentElements) to applicators
-    }
-
-    private fun randomGender(): Pair<Gender, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
-        val presentElements = randomElementWithProbability(
-            GenderPresence.values(),
-            { it.probability },
-            random
-        ).possibilities
-        val applicators = randomCategoryApplicators(
-            presentElements.toSet(),
-            CategoryRealization::probabilityForGender,
-            setOf(SpeechPart.Noun).union(randomSublistWithProbability(
-                SpeechPart.values(),
-                SpeechPart::probabilityForGender,
-                random
-            )).toList()
-        )
-        return Gender(presentElements) to applicators
-    }
-
-    private fun randomCategoryApplicators(
-        presentElements: Set<CategoryEnum>,
-        mapper: (CategoryRealization) -> Double,
-        speechParts: List<SpeechPart>
-    ): Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>> {
-
-        val map = HashMap<SpeechPart, Map<CategoryEnum, CategoryApplicator>>()
-        for (speechPart in speechParts) {
-            val mapForSpeechPart = HashMap<CategoryEnum, CategoryApplicator>()
-            val realizationType = randomElementWithProbability(
-                CategoryRealization.values(),
-                mapper,
-                random
-            )
-            presentElements.forEach {
-                mapForSpeechPart[it] =
-                    randomCategoryApplicator(realizationType, it.syntaxCore)
-            }
-            map[speechPart] = mapForSpeechPart
-        }
-        return map
-    }
-
-    private fun randomCategoryApplicator(
-        realizationType: CategoryRealization,
-        syntaxCore: SyntaxCore
-    ): CategoryApplicator = when (realizationType) {
-        CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(randomWord(
-            syntaxCore,
-            maxSyllableLength = 3,
-            lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
-        ))
-        CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(randomWord(
-            syntaxCore,
-            maxSyllableLength = 3,
-            lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
-        ))
-        CategoryRealization.Prefix -> {
-            val changes = generateChanges(Position.Beginning, false)
-            AffixCategoryApplicator(
-                Prefix(TemplateWordChange(changes.map { TemplateChange(Position.Beginning, it.first, it.second) })),
-                CategoryRealization.Prefix
-            )
-        }
-        CategoryRealization.Suffix -> {
-            val changes = generateChanges(Position.End, true)
-            AffixCategoryApplicator(
-                Suffix(TemplateWordChange(changes.map { TemplateChange(Position.End, it.first, it.second) })),
-                CategoryRealization.Suffix
-            )
-        }
-    }
-
-    private fun generateChanges(
-        position: Position,
-        isClosed: Boolean
-    ): List<Pair<List<PositionTemplate>, List<PositionSubstitution>>> {
-        val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            syllableTemplate.generateSyllable(phonemeContainer, random, canHaveFinal = c, shouldHaveInitial = i).phonemeSequence.phonemes
-                .map { PhonemePositionSubstitution(it) }
-        }
-        val result = when (randomElementWithProbability(AffixTypes.values(), { it.probability }, random)) {
-            AffixTypes.UniversalAffix -> {
-                listOf(
-                    listOf<PositionTemplate>() to getSyllableSubstitution(isClosed, false)
-                )
-            }
-            AffixTypes.PhonemeTypeAffix -> {
-                val addPasser = { list: List<PositionSubstitution>, sub: PositionSubstitution ->
-                    when (position) {
-                        Position.Beginning -> list + listOf(sub)
-                        Position.End -> listOf(sub) + list
-                    }
-                }
-                PhonemeType.values().map {
-                    listOf(TypePositionTemplate(it)) to addPasser(
-                        getSyllableSubstitution(
-                            isClosed || it == PhonemeType.Vowel,
-                            it == PhonemeType.Vowel && position == Position.End
-                        ),
-                        PassingPositionSubstitution()
-                    )
-                }
-            }
-        }
-        return result
-    }
-
-    private fun randomWord(
-        core: SyntaxCore,
-        maxSyllableLength: Int = 4,
-        lengthWeight: (Int) -> Double = { (maxSyllableLength * maxSyllableLength + 1 - it * it).toDouble() }
-    ): Word {
-        val syllables = ArrayList<Syllable>()
-        val length = getRandomWordLength(maxSyllableLength, lengthWeight)
-        for (j in 0..length)
-            for (i in 1..SYLLABLE_TESTS) {
-                val syllable = syllableTemplate.generateSyllable(
-                    phonemeContainer,
-                    random,
-                    canHaveFinal = j == length,
-                    prefix = syllables
-                )
-                if (syllables.isNotEmpty() && syllables.last().phonemeSequence.last() == syllable[0])
-                    continue
-                syllables.add(syllable)
-                break
-            }
-        return Word(syllables, syllableTemplate, core)
     }
 
     private fun randomSyllableTemplate(): SyllableTemplate {
@@ -256,16 +95,12 @@ class Generator(seed: Long) {
                 syllableTemplates[SyllableValenceTemplate(valencies)] = syllableProbability.toDouble()
             }
         }
-        return randomElementWithProbability(syllableTemplates.keys, { syllableTemplates[it] ?: 0.0 }, random)
+        return randomElementWithProbability(
+            syllableTemplates.keys,
+            { syllableTemplates[it] ?: 0.0 },
+            random
+        )
     }
-
-    private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
-        randomElementWithProbability((1..max), lengthWeight, random)
-}
-
-enum class AffixTypes(val probability: Double) {
-    UniversalAffix(100.0),
-    PhonemeTypeAffix(50.0)
 }
 
 

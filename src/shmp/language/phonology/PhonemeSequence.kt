@@ -1,4 +1,4 @@
-package shmp.language
+package shmp.language.phonology
 
 class PhonemeSequence(val phonemes: List<Phoneme>) {
     constructor(vararg phoneme: Phoneme) : this(phoneme.toList())

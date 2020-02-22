@@ -7,6 +7,9 @@ import shmp.generator.SyllableTemplate
 import shmp.generator.SyllableValenceTemplate
 import shmp.generator.ValencyPlace
 import shmp.language.*
+import shmp.language.phonology.Phoneme
+import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.Syllable
 
 internal class WordTemplateChangeTest {
     @Test
@@ -19,8 +22,14 @@ internal class WordTemplateChangeTest {
         val condition = listOf<PhonemeTemplate>()
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
-        val firstWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
-        val secondWord = createNoun(Phoneme("c", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val firstWord = createNoun(
+            Phoneme("b", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
+        val secondWord = createNoun(
+            Phoneme("c", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
 
         checkForWord(
             firstWord,
@@ -59,7 +68,10 @@ internal class WordTemplateChangeTest {
         )
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
-        val correctWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val correctWord = createNoun(
+            Phoneme("b", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
         val badWord = createNoun(
             Phoneme("a", PhonemeType.Vowel),
             Phoneme("c", PhonemeType.Consonant),
@@ -101,8 +113,14 @@ internal class WordTemplateChangeTest {
         )
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
-        val correctWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
-        val badWord = createNoun(Phoneme("c", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val correctWord = createNoun(
+            Phoneme("b", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
+        val badWord = createNoun(
+            Phoneme("c", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
 
         checkForWord(
             correctWord,

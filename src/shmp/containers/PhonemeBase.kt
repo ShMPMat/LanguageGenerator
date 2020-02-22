@@ -1,6 +1,6 @@
 package shmp.containers
 
-import shmp.language.Phoneme
+import shmp.language.phonology.Phoneme
 import shmp.language.PhonemeType
 import shmp.language.toPhonemeType
 import java.io.File
