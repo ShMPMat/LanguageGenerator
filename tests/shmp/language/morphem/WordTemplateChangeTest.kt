@@ -2,6 +2,7 @@ package shmp.language.morphem
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.opentest4j.TestAbortedException
 import shmp.generator.SyllableTemplate
 import shmp.generator.SyllableValenceTemplate
 import shmp.generator.ValencyPlace
@@ -14,25 +15,30 @@ internal class WordTemplateChangeTest {
             Phoneme("b", PhonemeType.Consonant),
             Phoneme("a", PhonemeType.Vowel)
         )
-        val substitution = prefix.map { PhonemePositionSubstitution(it) } +
-                PassingPositionSubstitution()
-        val condition = listOf(
-            PhonemeTemplate(Phoneme("b", PhonemeType.Consonant))
-        )
+        val substitution = prefix.map { PhonemePositionSubstitution(it) }
+        val condition = listOf<PhonemeTemplate>()
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
-        val applicableWord = Word(
-            listOf(Syllable(listOf(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel)))),
-            syllableTemplate,
-            SyntaxCore("phony", SpeechPart.Noun)
-        )
+        val firstWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val secondWord = createNoun(Phoneme("c", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
 
         checkForWord(
-            applicableWord,
+            firstWord,
             Word(
                 listOf(
                     Syllable(prefix)
-                ) + applicableWord.syllables,
+                ) + firstWord.syllables,
+                syllableTemplate,
+                SyntaxCore("phony", SpeechPart.Noun)
+            ),
+            changeTemplate
+        )
+        checkForWord(
+            secondWord,
+            Word(
+                listOf(
+                    Syllable(prefix)
+                ) + secondWord.syllables,
                 syllableTemplate,
                 SyntaxCore("phony", SpeechPart.Noun)
             ),
@@ -41,26 +47,98 @@ internal class WordTemplateChangeTest {
     }
 
     @Test
-    fun prefixPhonemeTypeTest() {
+    fun prefixPhonemeTypeIsolatingTest() {
         val prefix = listOf(
             Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)//TODO
+            Phoneme("a", PhonemeType.Vowel)
+        )
+        val substitution = prefix.map { PhonemePositionSubstitution(it) } +
+                PassingPositionSubstitution()
+        val condition = listOf(
+            TypePositionTemplate(PhonemeType.Consonant)
+        )
+        val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
+        val syllableTemplate = getPhonySyllableTemplate()
+        val correctWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val badWord = createNoun(
+            Phoneme("a", PhonemeType.Vowel),
+            Phoneme("c", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
+
+        checkForWord(
+            correctWord,
+            Word(
+                listOf(
+                    Syllable(prefix)
+                ) + correctWord.syllables,
+                syllableTemplate,
+                SyntaxCore("phony", SpeechPart.Noun)
+            ),
+            changeTemplate
+        )
+        checkForWord(
+            badWord,
+            Word(
+                badWord.syllables,
+                syllableTemplate,
+                SyntaxCore("phony", SpeechPart.Noun)
+            ),
+            changeTemplate
         )
     }
 
     @Test
-    fun prefixStaticTest() {
-        TODO()
+    fun prefixStaticPhonemeIsolatingTest() {
+        val prefix = listOf(
+            Phoneme("b", PhonemeType.Consonant),
+            Phoneme("a", PhonemeType.Vowel)
+        )
+        val substitution = prefix.map { PhonemePositionSubstitution(it) } +
+                PassingPositionSubstitution()
+        val condition = listOf(
+            PhonemeTemplate(Phoneme("b", PhonemeType.Consonant))
+        )
+        val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
+        val syllableTemplate = getPhonySyllableTemplate()
+        val correctWord = createNoun(Phoneme("b", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+        val badWord = createNoun(Phoneme("c", PhonemeType.Consonant), Phoneme("a", PhonemeType.Vowel))
+
+        checkForWord(
+            correctWord,
+            Word(
+                listOf(
+                    Syllable(prefix)
+                ) + correctWord.syllables,
+                syllableTemplate,
+                SyntaxCore("phony", SpeechPart.Noun)
+            ),
+            changeTemplate
+        )
+        checkForWord(
+            badWord,
+            Word(
+                badWord.syllables,
+                syllableTemplate,
+                SyntaxCore("phony", SpeechPart.Noun)
+            ),
+            changeTemplate
+        )
     }
 
     private fun checkForWord(word: Word, result: Word, change: TemplateChange) {
         assertEquals(result.toPhonemes(), change.change(word).toPhonemes())
     }
 
+    private fun createNoun(vararg phonemes: Phoneme) = getPhonySyllableTemplate().createWord(
+        PhonemeSequence(phonemes.toList()),
+        SyntaxCore("phony", SpeechPart.Noun)
+    ) ?: throw TestAbortedException("Wrong word creation")
+
     private fun getPhonySyllableTemplate(): SyllableTemplate =
         SyllableValenceTemplate(
             listOf(
-                ValencyPlace(PhonemeType.Consonant, 1.0),
+                ValencyPlace(PhonemeType.Consonant, 0.5),
                 ValencyPlace(PhonemeType.Vowel, 1.0)
             )
         )

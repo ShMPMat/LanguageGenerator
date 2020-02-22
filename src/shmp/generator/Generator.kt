@@ -92,7 +92,7 @@ class Generator(seed: Long) {
             { it.probability },
             random
         ).presentArticles
-        val applicators = randomCategoryApplicatorsForNominalCategory(
+        val applicators = randomCategoryApplicators(
             presentElements.toSet(),
             CategoryRealization::probabilityForArticle,
             setOf(SpeechPart.Noun).union(randomSublistWithProbability(
@@ -110,7 +110,7 @@ class Generator(seed: Long) {
             { it.probability },
             random
         ).possibilities
-        val applicators = randomCategoryApplicatorsForNominalCategory(
+        val applicators = randomCategoryApplicators(
             presentElements.toSet(),
             CategoryRealization::probabilityForGender,
             setOf(SpeechPart.Noun).union(randomSublistWithProbability(
@@ -122,7 +122,7 @@ class Generator(seed: Long) {
         return Gender(presentElements) to applicators
     }
 
-    private fun randomCategoryApplicatorsForNominalCategory(
+    private fun randomCategoryApplicators(
         presentElements: Set<CategoryEnum>,
         mapper: (CategoryRealization) -> Double,
         speechParts: List<SpeechPart>

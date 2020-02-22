@@ -90,6 +90,7 @@ class SyllableValenceTemplate(private val valencies: List<ValencyPlace>) : Sylla
         var lastIndex = 0
         while (lastIndex < currentPhonemes.length) {
             val range = regex.find(currentPhonemes, lastIndex)?.range ?: return null
+            if (range.first != lastIndex) return null
             syllables.add(Syllable(phonemes.phonemes.subList(range.first, range.last + 1)))
             lastIndex = range.last + 1
         }
