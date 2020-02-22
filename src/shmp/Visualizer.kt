@@ -1,6 +1,6 @@
 package shmp
 
-import shmp.generator.Generator
+import shmp.generator.LanguageGenerator
 import shmp.language.Language
 
 fun visualize(language: Language) {
@@ -8,5 +8,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(Generator(81).generateLanguage( 40))
+    visualize(LanguageGenerator(88).generateLanguage( 40))
 }

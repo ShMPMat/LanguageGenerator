@@ -1,7 +1,9 @@
 package shmp.language
 
+import shmp.language.categories.Articles
 import shmp.language.categories.Category
 import shmp.language.categories.change.CategoryApplicator
+import kotlin.reflect.KClass
 
 class ChangeParadigm(
     val categories: List<Category>,
@@ -13,10 +15,13 @@ class ChangeParadigm(
     }
 
     fun getDefaultState(word: Word): List<CategoryEnum> {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.categories
-            ?.filter { it.categories.isNotEmpty()
-                    && it.categories.none { enum -> word.syntaxCore.staticCategories.contains(enum) } }
+        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
+            ?.flatMap { it.categories }
+            ?.filter { it.categories.isNotEmpty() }
             ?.map { it.categories[0] }
+            ?.filter { enum ->
+                word.syntaxCore.staticCategories.none { it.parentClassName == enum.parentClassName }
+            }
             ?.union(word.syntaxCore.staticCategories)
             ?.toList()
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
@@ -33,8 +38,8 @@ class ChangeParadigm(
 
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
-    val categories: List<Category>,
-    val applicators: Map<Category, Map<CategoryEnum, CategoryApplicator>>
+    val exponenceClusters: List<ExponenceCluster>,
+    val applicators: Map<ExponenceCluster, Map<ExponenceUnion, CategoryApplicator>>
 ) {
     fun apply(word: Word, categoryEnums: Set<CategoryEnum>): Clause {
         if (word.syntaxCore.speechPart != speechPart)
@@ -44,11 +49,11 @@ class SpeechPartChangeParadigm(
         var currentClause = Clause(listOf(word))
         var currentWord = word
         var wordPosition = 0
-        for (category in categories) {
-            val categoryEnum = getCategory(categoryEnums, category) ?: continue
-            val newClause = useCategoryApplicator(currentClause, wordPosition, category, categoryEnum)
+        for (exponenceCluster in exponenceClusters) {
+            val exponenceUnion = getExponenceUnion(categoryEnums, exponenceCluster) ?: continue
+            val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
             if (currentClause.size != newClause.size) {
-                for (i in wordPosition until  newClause.size) {
+                for (i in wordPosition until newClause.size) {
                     if (currentWord == newClause[i]) {
                         wordPosition = i
                         break
@@ -64,43 +69,88 @@ class SpeechPartChangeParadigm(
     private fun useCategoryApplicator(
         clause: Clause,
         wordPosition: Int,
-        category: Category,
-        categoryEnum: CategoryEnum
+        exponenceCluster: ExponenceCluster,
+        exponenceUnion: ExponenceUnion
     ): Clause {
         val word = clause[wordPosition]
-        return if (applicators[category]?.containsKey(categoryEnum) == true)
-            applicators[category]?.get(categoryEnum)?.apply(clause, wordPosition)
+        return if (applicators[exponenceCluster]?.containsKey(exponenceUnion) == true)
+            applicators[exponenceCluster]?.get(exponenceUnion)?.apply(clause, wordPosition)
                 ?: throw LanguageException(
-                    "Tried to change word \"$word\" for category $categoryEnum but it isn't defined in Language"
+                    "Tried to change word \"$word\" for categories ${exponenceUnion.categoryEnums.joinToString()} " +
+                            "but such exponence cluster isn't defined in Language"
                 )
         else Clause(listOf(word.copy()))
     }
 
-    private fun getCategory(categoryEnums: Set<CategoryEnum>, category: Category): CategoryEnum? {
-        val categories = categoryEnums.filter { category.categories.contains(it) }
-        if (categories.size > 1) {
-            throw LanguageException(
-                "ChangeParadigm have been given more than one NominalCategory values: ${categories.joinToString()}"
-            )
-        }
-        return if (categories.isEmpty()) null else categories[0]
+    private fun getExponenceUnion(
+        categoryEnums: Set<CategoryEnum>,
+        exponenceCluster: ExponenceCluster
+    ): ExponenceUnion? {
+        return exponenceCluster.filterExponenceUnion(categoryEnums)
     }
 
     override fun toString(): String {
-        return "$speechPart changes on: \n${applicators.filter { it.key.categories.isNotEmpty() }.map { 
-            it.key.toString() + ":\n" + it.value.map { it.key.toString() + ": " + it.value } .joinToString("\n")
+        return "$speechPart changes on: \n${applicators.map {
+            it.key.toString() + ":\n" + it.value.map { it.key.toString() + ": " + it.value }.joinToString("\n")
         }.joinToString("\n")}"
     }
 
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
 
-class ExponenceCluster(val categoryEnumSets: Set<Set<CategoryEnum>>) {
-    fun contains(categoryEnums: Set<CategoryEnum>): Boolean {
-        for (categories in categoryEnumSets)
-            if (categoryEnums.count { categories.contains(it) } != 1)
+class ExponenceCluster(val categories: List<Category>) {
+    val possibleCategories: Set<ExponenceUnion> = constructExponenceUnionSets(categories)
+        .map { ExponenceUnion(it.toList(), this) }
+        .toSet()
+
+    fun contains(exponenceUnion: ExponenceUnion): Boolean {
+        for (category in categories)
+            if (exponenceUnion.categoryEnums.count { category.possibleCategories.contains(it) } != 1)
                 return false
-        return categoryEnums.size == categoryEnumSets.size
+        return exponenceUnion.categoryEnums.size == categories.size
     }
+
+    fun filterExponenceUnion(categoryEnums: Set<CategoryEnum>): ExponenceUnion? =
+        try {
+            ExponenceUnion(categoryEnums.filter { enum ->
+                categories.any { it.possibleCategories.contains(enum) }
+            }, this)
+        } catch (e: LanguageException) {
+            null
+        }
+
+    override fun toString(): String {
+        return categories.joinToString()
+    }
+
+
 }
 
+private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<CategoryEnum>> = //TODO damn mascarade with sets and lists
+    if (categories.size == 1)
+        categories[0].categories.map { setOf(it) }.toSet()
+    else {
+        val sets = mutableSetOf<Set<CategoryEnum>>()
+        val recSets = constructExponenceUnionSets(categories.subList(0, categories.lastIndex))
+        categories.last().possibleCategories
+            .forEach { new -> sets.addAll(recSets.map { it.union(setOf(new)) }) }
+        sets
+    }
+
+
+data class ExponenceUnion(val categoryEnums: List<CategoryEnum>, val parentCluster: ExponenceCluster) {
+    init {
+        if (categoryEnums.groupBy { it.parentClassName }.any { it.value.size > 1 })
+            throw LanguageException("Tried to create ExponenceUnion with CategoryEnums from the same Category")
+        if (parentCluster.categories.size != categoryEnums.size)
+            throw LanguageException(
+                "Tried to create ExponenceUnion of size ${categoryEnums.size} " +
+                        "for ExponenceCluster of size ${parentCluster.categories.size}"
+            )
+    }
+
+    override fun toString(): String {
+        return categoryEnums.joinToString()
+    }
+
+}

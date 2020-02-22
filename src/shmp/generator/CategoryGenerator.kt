@@ -16,64 +16,94 @@ class CategoryGenerator(
     private val lexisGenerator: LexisGenerator,
     private val random: Random
 ) {
-    internal fun randomArticles(): Pair<Articles, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
+    internal fun randomArticles(): Pair<Articles, (CategoryRealization) -> Double> {
         val presentElements = randomElementWithProbability(
             ArticlePresence.values(),
             random
         ).presentArticles
-        val applicators = randomCategoryApplicators(
-            presentElements.toSet(),
-            CategoryRealization::probabilityForArticle,
+//        val applicators = randomCategoryApplicators(
+//            presentElements.toSet(),
+//            CategoryRealization::probabilityForArticle,
+//            setOf(SpeechPart.Noun).union(
+//                randomSublistWithProbability(
+//                    SpeechPart.values(),
+//                    SpeechPart::probabilityForArticle,
+//                    random
+//                )
+//            ).toList()
+//        )
+        return Articles(
+            presentElements,
             setOf(SpeechPart.Noun).union(
                 randomSublistWithProbability(
                     SpeechPart.values(),
                     SpeechPart::probabilityForArticle,
                     random
                 )
-            ).toList()
-        )
-        return Articles(presentElements) to applicators
+            )
+        ) to CategoryRealization::probabilityForArticle
     }
 
-    internal fun randomGender(): Pair<Gender, Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>>> {
+    internal fun randomGender(): Pair<Gender, (CategoryRealization) -> Double> {
         val presentElements = randomElementWithProbability(
             GenderPresence.values(),
             { it.probability },
             random
         ).possibilities
-        val applicators = randomCategoryApplicators(
-            presentElements.toSet(),
-            CategoryRealization::probabilityForGender,
+//        val applicators = randomCategoryApplicators(
+//            presentElements.toSet(),
+//            CategoryRealization::probabilityForGender,
+//            setOf(SpeechPart.Noun).union(
+//                randomSublistWithProbability(
+//                    SpeechPart.values(),
+//                    SpeechPart::probabilityForGender,
+//                    random
+//                )
+//            ).toList()
+//        )
+        return Gender(
+            presentElements,
             setOf(SpeechPart.Noun).union(
                 randomSublistWithProbability(
                     SpeechPart.values(),
                     SpeechPart::probabilityForGender,
                     random
                 )
-            ).toList()
-        )
-        return Gender(presentElements) to applicators
+            )
+        ) to CategoryRealization::probabilityForGender
     }
 
-    private fun randomCategoryApplicators(
-        presentElements: Set<CategoryEnum>,
-        mapper: (CategoryRealization) -> Double,
-        speechParts: List<SpeechPart>
-    ): Map<SpeechPart, Map<CategoryEnum, CategoryApplicator>> {
-
-        val map = HashMap<SpeechPart, Map<CategoryEnum, CategoryApplicator>>()
-        for (speechPart in speechParts) {
-            val mapForSpeechPart = HashMap<CategoryEnum, CategoryApplicator>()
-            val realizationType = randomElementWithProbability(
-                CategoryRealization.values(),
-                mapper,
-                random
-            )
-            presentElements.forEach {
-                mapForSpeechPart[it] =
-                    randomCategoryApplicator(realizationType, it.syntaxCore)
+    internal fun randomApplicatorsForSpeechPart(
+        speechPart: SpeechPart,
+        categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
+    ): Map<ExponenceCluster, Map<ExponenceUnion, CategoryApplicator>> {
+        val map = HashMap<ExponenceCluster, MutableMap<ExponenceUnion, CategoryApplicator>>()
+        val exponenceClustersWithMappers = categoriesWithMappers
+            .map { ExponenceCluster(listOf(it.first)) to it.second }
+        val realizationTypes = exponenceClustersWithMappers
+            .map {
+                it.first to randomElementWithProbability(
+                    CategoryRealization.values(),
+                    it.second,
+                    random
+                )
             }
-            map[speechPart] = mapForSpeechPart
+        exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
+        realizationTypes.forEach { pair ->
+            pair.first.possibleCategories.forEach {
+                var syntaxCore = it.categoryEnums[0].syntaxCore
+                for (core in it.categoryEnums.subList(1, it.categoryEnums.size).map { it.syntaxCore }) {
+                    syntaxCore = SyntaxCore(
+                        syntaxCore.word + core.word,
+                        syntaxCore.speechPart,
+                        syntaxCore.staticCategories.union(core.staticCategories)
+                    )
+                }
+                (map[pair.first]
+                    ?: throw GeneratorException("Couldn't put CategoryApplicator in map"))[it] =
+                    randomCategoryApplicator(pair.second, syntaxCore)
+
+            }
         }
         return map
     }

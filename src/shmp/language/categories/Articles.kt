@@ -2,13 +2,17 @@ package shmp.language.categories
 
 import shmp.language.*
 import shmp.random.SampleSpaceObject
+import kotlin.reflect.KClass
+
+val articlesOutName = "Articles"
 
 class Articles(
-    categories: List<CategoryEnum>
+    categories: List<CategoryEnum>,
+    override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     ArticleEnum.values().toSet(),
-    "Articles",
+    articlesOutName,
     "Has no articles"
 )
 
@@ -38,5 +42,7 @@ enum class ArticlePresence(override val probability: Double, val presentArticles
 
 enum class ArticleEnum(override val syntaxCore: SyntaxCore) : CategoryEnum {
     Definite(SyntaxCore("the", SpeechPart.Article)),
-    Indefinite(SyntaxCore("a", SpeechPart.Article))
+    Indefinite(SyntaxCore("a", SpeechPart.Article));
+
+    override val parentClassName = articlesOutName
 }

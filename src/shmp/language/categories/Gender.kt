@@ -2,12 +2,15 @@ package shmp.language.categories
 
 import shmp.language.*
 
+val genderOutName = "Gender"
+
 class Gender(
-    categories: List<CategoryEnum>
+    categories: List<CategoryEnum>,
+    override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     GenderEnum.values().toSet(),
-    "Gender",
+    genderOutName,
     "Has no genders"
 )
 
@@ -45,5 +48,7 @@ enum class GenderEnum(override val syntaxCore: SyntaxCore) : CategoryEnum {
     Person(SyntaxCore("(person class indicator)", SpeechPart.Adjective)),
     Plant(SyntaxCore("(plant class indicator)", SpeechPart.Adjective)),
     Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Adjective)),
-    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Adjective))
+    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Adjective));
+
+    override val parentClassName = genderOutName
 }

@@ -3,19 +3,15 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
-import shmp.language.categories.*
-import shmp.language.categories.change.CategoryApplicator
-import shmp.language.phonology.SyllableTemplate
 import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
-import shmp.random.RandomException
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublist
 import java.io.File
 import java.text.ParseException
 import kotlin.random.Random
 
-class Generator(seed: Long) {
+class LanguageGenerator(seed: Long) {
     private val random = Random(seed)
     private val phonemeBase = PhonemeBase()
     private val vowelAmount = randomElementWithProbability(VowelQualityAmount.values(), random).amount
@@ -42,11 +38,11 @@ class Generator(seed: Long) {
     fun generateLanguage(wordAmount: Int): Language {
         val stressPattern = randomElementWithProbability(Stress.values(), random)
         val wordOrder = randomElementWithProbability(SovOrder.values(), random)
-        val categoriesWithCongregatedApplicators = listOf(
+        val categoriesWithMappers = listOf(
             categoryGenerator.randomArticles(),
             categoryGenerator.randomGender()
         )
-        val categories = categoriesWithCongregatedApplicators.map { it.first }
+        val categories = categoriesWithMappers.map { it.first }
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
@@ -56,19 +52,17 @@ class Generator(seed: Long) {
             ChangeParadigm(
                 categories,
                 SpeechPart.values().map { speechPart ->
-                    val categoriesWithApplicators:
-                            List<Pair<Category, Map<CategoryEnum, CategoryApplicator>>> =
-                        categoriesWithCongregatedApplicators
-                            .filter { it.second.containsKey(speechPart) }.map {
-                                it.first to (it.second[speechPart]
-                                    ?: throw RandomException(
-                                        ""
-                                    ))
-                            }
+                    val speechPartCategoriesWithMappers = categoriesWithMappers
+                        .filter { it.first.affectedSpeechParts.contains(speechPart) }
+                        .filter { it.first.categories.isNotEmpty() }
+                    val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
+                        speechPart,
+                        speechPartCategoriesWithMappers
+                    )
                     speechPart to SpeechPartChangeParadigm(
                         speechPart,
-                        categoriesWithApplicators.map { it.first },
-                        categoriesWithApplicators.toMap()
+                        applicators.keys.toList(), //TODO make strict order
+                        applicators
                     )
                 }.toMap()
             )
