@@ -67,7 +67,7 @@ class TemplateChange(
                         ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                }//TODO test
+                }
             }
         } else {
             return word.copy()

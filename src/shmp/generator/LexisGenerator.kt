@@ -2,7 +2,7 @@ package shmp.generator
 
 import shmp.containers.PhonemeContainer
 import shmp.containers.WordBase
-import shmp.language.CategoryEnum
+import shmp.language.CategoryValue
 import shmp.language.SyntaxCore
 import shmp.language.Word
 import shmp.language.categories.Category
@@ -29,10 +29,10 @@ class LexisGenerator(
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
         val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
         for (i in 0 until wordAmount) {
-            val staticCategories = mutableSetOf<CategoryEnum>()
-            if (gender.categories.isNotEmpty()) staticCategories.add(
+            val staticCategories = mutableSetOf<CategoryValue>()
+            if (gender.values.isNotEmpty()) staticCategories.add(
                 randomElementWithProbability(
-                    gender.categories,
+                    gender.values,
                     { 1.0 },
                     random
                 )

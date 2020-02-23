@@ -5,11 +5,11 @@ import shmp.language.*
 val genderOutName = "Gender"
 
 class Gender(
-    categories: List<CategoryEnum>,
+    categories: List<CategoryValue>,
     override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    GenderEnum.values().toSet(),
+    GenderValue.values().toSet(),
     genderOutName,
     "Has no genders"
 )
@@ -31,13 +31,13 @@ fun SpeechPart.probabilityForGender(): Double = when (this) {
     SpeechPart.Pronoun -> 100.0
 }
 
-enum class GenderPresence(val probability: Double, val possibilities: List<GenderEnum>) {
+enum class GenderPresence(val probability: Double, val possibilities: List<GenderValue>) {
     None(145.0, listOf()),
-    Gendered(84.0, listOf(GenderEnum.Female, GenderEnum.Male, GenderEnum.Neutral, GenderEnum.Common)),
-    NonGendered(28.0, GenderEnum.values().toList())
+    Gendered(84.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral, GenderValue.Common)),
+    NonGendered(28.0, GenderValue.values().toList())
 }
 
-enum class GenderEnum(override val syntaxCore: SyntaxCore) : CategoryEnum {
+enum class GenderValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     //TODO adjective, really?
     //TODO more classes
     Female(SyntaxCore("(female gender indicator)", SpeechPart.Adjective)),

@@ -54,7 +54,7 @@ class LanguageGenerator(seed: Long) {
                 SpeechPart.values().map { speechPart ->
                     val speechPartCategoriesWithMappers = categoriesWithMappers
                         .filter { it.first.affectedSpeechParts.contains(speechPart) }
-                        .filter { it.first.categories.isNotEmpty() }
+                        .filter { it.first.values.isNotEmpty() }
                     val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
                         speechPartCategoriesWithMappers
                     )

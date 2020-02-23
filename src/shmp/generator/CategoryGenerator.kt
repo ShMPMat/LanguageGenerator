@@ -75,8 +75,8 @@ class CategoryGenerator(
 
     internal fun randomApplicatorsForSpeechPart(
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
-    ): Map<ExponenceCluster, Map<ExponenceUnion, CategoryApplicator>> {
-        val map = HashMap<ExponenceCluster, MutableMap<ExponenceUnion, CategoryApplicator>>()
+    ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
+        val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
         val exponenceClustersWithMappers = splitCategoriesOnClusters(categoriesWithMappers)
         exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
 
@@ -89,10 +89,10 @@ class CategoryGenerator(
                 )
             }
         realizationTypes.forEach { pair ->
-            pair.first.possibleCategories.forEach {
-                val categoryEnums = it.categoryEnums.toList()//TODO very bad, it should be sorted in union
+            pair.first.possibleValues.forEach {
+                val categoryEnums = it.categoryValues.toList()//TODO very bad, it should be sorted in union
                 var syntaxCore = categoryEnums[0].syntaxCore
-                for (core in categoryEnums.subList(1, it.categoryEnums.size).map { syntaxCore }) {
+                for (core in categoryEnums.subList(1, it.categoryValues.size).map { syntaxCore }) {
                     syntaxCore = SyntaxCore(
                         syntaxCore.word + core.word,
                         syntaxCore.speechPart,

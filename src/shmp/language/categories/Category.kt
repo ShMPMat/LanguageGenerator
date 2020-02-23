@@ -1,11 +1,11 @@
 package shmp.language.categories
 
-import shmp.language.CategoryEnum
+import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 
 interface Category {
-    val categories: List<CategoryEnum>
-    val possibleCategories: Set<CategoryEnum>
+    val values: List<CategoryValue>
+    val possibleValues: Set<CategoryValue>
     val affectedSpeechParts: Set<SpeechPart>
     val outType: String
 }

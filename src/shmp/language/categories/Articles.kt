@@ -2,16 +2,15 @@ package shmp.language.categories
 
 import shmp.language.*
 import shmp.random.SampleSpaceObject
-import kotlin.reflect.KClass
 
 val articlesOutName = "Articles"
 
 class Articles(
-    categories: List<CategoryEnum>,
+    categories: List<CategoryValue>,
     override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    ArticleEnum.values().toSet(),
+    ArticleValue.values().toSet(),
     articlesOutName,
     "Has no articles"
 )
@@ -33,14 +32,14 @@ fun SpeechPart.probabilityForArticle(): Double = when (this) {
     SpeechPart.Pronoun -> 0.0
 }
 
-enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleEnum>) : SampleSpaceObject {
+enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleValue>) : SampleSpaceObject {
     None(198.0, listOf()),
-    Definite(98.0, listOf(ArticleEnum.Definite)),
-    Indefinite(45.0, listOf(ArticleEnum.Indefinite)),
-    DefeniteAndIndefenite(209.0, listOf(ArticleEnum.Definite, ArticleEnum.Indefinite))
+    Definite(98.0, listOf(ArticleValue.Definite)),
+    Indefinite(45.0, listOf(ArticleValue.Indefinite)),
+    DefeniteAndIndefenite(209.0, listOf(ArticleValue.Definite, ArticleValue.Indefinite))
 }
 
-enum class ArticleEnum(override val syntaxCore: SyntaxCore) : CategoryEnum {
+enum class ArticleValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     Definite(SyntaxCore("the", SpeechPart.Article)),
     Indefinite(SyntaxCore("a", SpeechPart.Article));
 

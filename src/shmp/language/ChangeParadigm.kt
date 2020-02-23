@@ -1,24 +1,22 @@
 package shmp.language
 
-import shmp.language.categories.Articles
 import shmp.language.categories.Category
 import shmp.language.categories.change.CategoryApplicator
-import kotlin.reflect.KClass
 
 class ChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryEnums: List<CategoryEnum> = getDefaultState(word)): Clause {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryEnums.toSet())
+    fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause {
+        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryValues.toSet())
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
     }
 
-    fun getDefaultState(word: Word): List<CategoryEnum> {
+    fun getDefaultState(word: Word): List<CategoryValue> {
         return speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
-            ?.filter { it.categories.isNotEmpty() }
-            ?.map { it.categories[0] }
+            ?.filter { it.values.isNotEmpty() }
+            ?.map { it.values[0] }
             ?.filter { enum ->
                 word.syntaxCore.staticCategories.none { it.parentClassName == enum.parentClassName }
             }
@@ -39,9 +37,9 @@ class ChangeParadigm(
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
-    val applicators: Map<ExponenceCluster, Map<ExponenceUnion, CategoryApplicator>>
+    val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>
 ) {
-    fun apply(word: Word, categoryEnums: Set<CategoryEnum>): Clause {
+    fun apply(word: Word, categoryValues: Set<CategoryValue>): Clause {
         if (word.syntaxCore.speechPart != speechPart)
             throw LanguageException(
                 "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
@@ -50,7 +48,7 @@ class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
-            val exponenceUnion = getExponenceUnion(categoryEnums, exponenceCluster) ?: continue
+            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
             val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
             if (currentClause.size != newClause.size) {
                 for (i in wordPosition until newClause.size) {
@@ -70,23 +68,23 @@ class SpeechPartChangeParadigm(
         clause: Clause,
         wordPosition: Int,
         exponenceCluster: ExponenceCluster,
-        exponenceUnion: ExponenceUnion
+        exponenceValue: ExponenceValue
     ): Clause {
         val word = clause[wordPosition]
-        return if (applicators[exponenceCluster]?.containsKey(exponenceUnion) == true)
-            applicators[exponenceCluster]?.get(exponenceUnion)?.apply(clause, wordPosition)
+        return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
+            applicators[exponenceCluster]?.get(exponenceValue)?.apply(clause, wordPosition)
                 ?: throw LanguageException(
-                    "Tried to change word \"$word\" for categories ${exponenceUnion.categoryEnums.joinToString()} " +
-                            "but such exponence cluster isn't defined in Language"
+                    "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
+                            "but such Exponence Cluster isn't defined in Language"
                 )
         else Clause(listOf(word.copy()))
     }
 
     private fun getExponenceUnion(
-        categoryEnums: Set<CategoryEnum>,
+        categoryValues: Set<CategoryValue>,
         exponenceCluster: ExponenceCluster
-    ): ExponenceUnion? {
-        return exponenceCluster.filterExponenceUnion(categoryEnums)
+    ): ExponenceValue? {
+        return exponenceCluster.filterExponenceUnion(categoryValues)
     }
 
     override fun toString(): String {
@@ -98,22 +96,22 @@ class SpeechPartChangeParadigm(
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
 
-class ExponenceCluster(val categories: List<Category>) {//TODO misleading names
-    val possibleCategories: Set<ExponenceUnion> = constructExponenceUnionSets(categories)
-        .map { ExponenceUnion(it, this) }
+class ExponenceCluster(val categories: List<Category>) {
+    val possibleValues: Set<ExponenceValue> = constructExponenceUnionSets(categories)
+        .map { ExponenceValue(it, this) }
         .toSet()
 
-    fun contains(exponenceUnion: ExponenceUnion): Boolean {
+    fun contains(exponenceValue: ExponenceValue): Boolean {
         for (category in categories)
-            if (exponenceUnion.categoryEnums.count { category.possibleCategories.contains(it) } != 1)
+            if (exponenceValue.categoryValues.count { category.possibleValues.contains(it) } != 1)
                 return false
-        return exponenceUnion.categoryEnums.size == categories.size
+        return exponenceValue.categoryValues.size == categories.size
     }
 
-    fun filterExponenceUnion(categoryEnums: Set<CategoryEnum>): ExponenceUnion? =
+    fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
-            ExponenceUnion(categoryEnums.filter { enum ->
-                categories.any { it.possibleCategories.contains(enum) }
+            ExponenceValue(categoryValues.filter { enum ->
+                categories.any { it.possibleValues.contains(enum) }
             }.toSet(), this)
         } catch (e: LanguageException) {
             null
@@ -124,31 +122,31 @@ class ExponenceCluster(val categories: List<Category>) {//TODO misleading names
     }
 }
 
-private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<CategoryEnum>> = //TODO damn mascarade with sets and lists
+private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<CategoryValue>> = //TODO damn mascarade with sets and lists
     if (categories.size == 1)
-        categories[0].categories.map { setOf(it) }.toSet()
+        categories[0].values.map { setOf(it) }.toSet()
     else {
-        val sets = mutableSetOf<Set<CategoryEnum>>()
+        val sets = mutableSetOf<Set<CategoryValue>>()
         val recSets = constructExponenceUnionSets(categories.subList(0, categories.lastIndex))
-        categories.last().possibleCategories
+        categories.last().possibleValues
             .forEach { new -> sets.addAll(recSets.map { it.union(setOf(new)) }) }
         sets
     }
 
 
-data class ExponenceUnion(val categoryEnums: Set<CategoryEnum>, val parentCluster: ExponenceCluster) {
+data class ExponenceValue(val categoryValues: Set<CategoryValue>, val parentCluster: ExponenceCluster) {
     init {
-        if (categoryEnums.groupBy { it.parentClassName }.any { it.value.size > 1 })
-            throw LanguageException("Tried to create ExponenceUnion with CategoryEnums from the same Category")
-        if (parentCluster.categories.size != categoryEnums.size)
+        if (categoryValues.groupBy { it.parentClassName }.any { it.value.size > 1 })
+            throw LanguageException("Tried to create Exponence Value with Category Value from the same Category")
+        if (parentCluster.categories.size != categoryValues.size)
             throw LanguageException(
-                "Tried to create ExponenceUnion of size ${categoryEnums.size} " +
-                        "for ExponenceCluster of size ${parentCluster.categories.size}"
+                "Tried to create Exponence Value of size ${categoryValues.size} " +
+                        "for Exponence Cluster of size ${parentCluster.categories.size}"
             )
     }
 
     override fun toString(): String {
-        return categoryEnums.joinToString()
+        return categoryValues.joinToString()
     }
 
 }

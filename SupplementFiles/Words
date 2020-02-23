@@ -44,6 +44,15 @@ point              Noun
 point              Verb
 mother             Noun
 world              Noun
+near               Adjective
+build              Verb
+father             Noun
+new                Adjective
+work               Verb
+work               Noun
+part               Noun
+part               Verb
+take               Verb
 
 /other
 /some
@@ -88,17 +97,10 @@ world              Noun
 /try
 /us
 /again
-
-/near
-/build
 /self
 /earth
-/father
 /any
-/new
-/work
-/part
-/take
+
 /get
 /place
 /made

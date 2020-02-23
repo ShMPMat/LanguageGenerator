@@ -67,7 +67,7 @@ enum class CategoryRealization {
     Suffix
 }
 
-interface CategoryEnum {
+interface CategoryValue {
     val syntaxCore: SyntaxCore
     val parentClassName: String
 }
