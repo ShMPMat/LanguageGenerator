@@ -7,4 +7,5 @@ interface Category {
     val categories: List<CategoryEnum>
     val possibleCategories: Set<CategoryEnum>
     val affectedSpeechParts: Set<SpeechPart>
+    val outType: String
 }

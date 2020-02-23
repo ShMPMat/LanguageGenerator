@@ -56,7 +56,6 @@ class LanguageGenerator(seed: Long) {
                         .filter { it.first.affectedSpeechParts.contains(speechPart) }
                         .filter { it.first.categories.isNotEmpty() }
                     val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
-                        speechPart,
                         speechPartCategoriesWithMappers
                     )
                     speechPart to SpeechPartChangeParadigm(

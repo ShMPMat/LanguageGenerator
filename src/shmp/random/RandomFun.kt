@@ -4,8 +4,6 @@ import kotlin.random.Random
 
 
 fun <E> randomElementWithProbability(collection: Collection<E>, mapper: (E) -> Double, random: Random): E {
-    if (collection.isEmpty())
-        throw RandomException("Can't choose an element from an empty collection")
     val list = collection.toList()
     val probabilities = list.map(mapper)
     var result = random.nextDouble() * probabilities.fold(0.toDouble(), Double::plus)
@@ -16,7 +14,7 @@ fun <E> randomElementWithProbability(collection: Collection<E>, mapper: (E) -> D
         }
         result -= probability
     }
-    throw IndexOutOfBoundsException("Empty array is passed in.")
+    throw IndexOutOfBoundsException("Can't choose an element from an empty collection")
 }
 
 fun <E : SampleSpaceObject> randomElementWithProbability(array: Array<E>, random: Random): E =

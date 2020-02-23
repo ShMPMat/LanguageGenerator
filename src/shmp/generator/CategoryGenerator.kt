@@ -74,12 +74,12 @@ class CategoryGenerator(
     }
 
     internal fun randomApplicatorsForSpeechPart(
-        speechPart: SpeechPart,
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
     ): Map<ExponenceCluster, Map<ExponenceUnion, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceUnion, CategoryApplicator>>()
-        val exponenceClustersWithMappers = categoriesWithMappers
-            .map { ExponenceCluster(listOf(it.first)) to it.second }
+        val exponenceClustersWithMappers = splitCategoriesOnClusters(categoriesWithMappers)
+        exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
+
         val realizationTypes = exponenceClustersWithMappers
             .map {
                 it.first to randomElementWithProbability(
@@ -88,11 +88,11 @@ class CategoryGenerator(
                     random
                 )
             }
-        exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
         realizationTypes.forEach { pair ->
             pair.first.possibleCategories.forEach {
-                var syntaxCore = it.categoryEnums[0].syntaxCore
-                for (core in it.categoryEnums.subList(1, it.categoryEnums.size).map { it.syntaxCore }) {
+                val categoryEnums = it.categoryEnums.toList()//TODO very bad, it should be sorted in union
+                var syntaxCore = categoryEnums[0].syntaxCore
+                for (core in categoryEnums.subList(1, it.categoryEnums.size).map { syntaxCore }) {
                     syntaxCore = SyntaxCore(
                         syntaxCore.word + core.word,
                         syntaxCore.speechPart,
@@ -106,6 +106,22 @@ class CategoryGenerator(
             }
         }
         return map
+    }
+
+    private fun splitCategoriesOnClusters(
+        categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
+    ): List<Pair<ExponenceCluster, (CategoryRealization) -> Double>> {
+        val shuffledMappers = categoriesWithMappers.shuffled(random)
+        val clusters = ArrayList<Pair<ExponenceCluster, (CategoryRealization) -> Double>>()
+        var l = 0
+        while (l < shuffledMappers.size) {
+            val r = randomElementWithProbability(l + 1..shuffledMappers.size, { 1.0 / it }, random)
+            val cluster = ExponenceCluster(shuffledMappers.subList(l, r).map { it.first })
+            val mapper = shuffledMappers[l].second //TODO how to unite a few lambdas, help
+            clusters.add(cluster to mapper)
+            l = r
+        }
+        return clusters
     }
 
     private fun randomCategoryApplicator(

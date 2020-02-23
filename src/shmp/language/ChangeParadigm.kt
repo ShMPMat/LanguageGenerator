@@ -98,9 +98,9 @@ class SpeechPartChangeParadigm(
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
 
-class ExponenceCluster(val categories: List<Category>) {
+class ExponenceCluster(val categories: List<Category>) {//TODO misleading names
     val possibleCategories: Set<ExponenceUnion> = constructExponenceUnionSets(categories)
-        .map { ExponenceUnion(it.toList(), this) }
+        .map { ExponenceUnion(it, this) }
         .toSet()
 
     fun contains(exponenceUnion: ExponenceUnion): Boolean {
@@ -114,16 +114,14 @@ class ExponenceCluster(val categories: List<Category>) {
         try {
             ExponenceUnion(categoryEnums.filter { enum ->
                 categories.any { it.possibleCategories.contains(enum) }
-            }, this)
+            }.toSet(), this)
         } catch (e: LanguageException) {
             null
         }
 
     override fun toString(): String {
-        return categories.joinToString()
+        return categories.joinToString("\n")
     }
-
-
 }
 
 private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<CategoryEnum>> = //TODO damn mascarade with sets and lists
@@ -138,7 +136,7 @@ private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<Cat
     }
 
 
-data class ExponenceUnion(val categoryEnums: List<CategoryEnum>, val parentCluster: ExponenceCluster) {
+data class ExponenceUnion(val categoryEnums: Set<CategoryEnum>, val parentCluster: ExponenceCluster) {
     init {
         if (categoryEnums.groupBy { it.parentClassName }.any { it.value.size > 1 })
             throw LanguageException("Tried to create ExponenceUnion with CategoryEnums from the same Category")

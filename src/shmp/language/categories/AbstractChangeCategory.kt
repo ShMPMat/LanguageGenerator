@@ -5,7 +5,7 @@ import shmp.language.*
 abstract class AbstractChangeCategory(
     final override val categories: List<CategoryEnum>,
     final override val possibleCategories: Set<CategoryEnum>,
-    val outType: String,
+    override val outType: String,
     private val noCategoriesOut: String
 ) : Category {
     init {
