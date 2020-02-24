@@ -14,6 +14,17 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) :
             }
             throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
         }
+    override val nucleusPhonemeTypes: Set<PhonemeType> = setOf(valencies[nucleusIndex].phonemeType)
+
+    override val initialPhonemeTypes: Set<PhonemeType> =
+        valencies
+            .takeWhile { it.realizationProbability != 1.0 }
+            .map { it.phonemeType }
+            .toSet()
+
+    override val finalPhonemeTypes: Set<PhonemeType> = valencies.subList(nucleusIndex, valencies.size)
+        .map { it.phonemeType }
+        .toSet()
 
     override fun test(phonemes: PhonemeSequence): Boolean {
         val string = phonemes.getTypeRepresentation()

@@ -3,14 +3,17 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
+import shmp.language.categories.Category
 import shmp.language.categories.ChangeParadigm
 import shmp.language.categories.SpeechPartChangeParadigm
-import shmp.language.phonology.SyllableValenceTemplate
-import shmp.language.phonology.ValencyPlace
+import shmp.language.phonology.*
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublist
 import java.io.File
 import java.text.ParseException
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.random.Random
 
 class LanguageGenerator(seed: Long) {
@@ -34,7 +37,8 @@ class LanguageGenerator(seed: Long) {
         ).toList()
     )
 
-    private val lexisGenerator = LexisGenerator(randomSyllableTemplate(), phonemeContainer, random)
+    private val syllableValenceGenerator = randomSyllableTemplate()
+    private val lexisGenerator = LexisGenerator(syllableValenceGenerator, phonemeContainer, random)
     private val categoryGenerator = CategoryGenerator(lexisGenerator, random)
 
     fun generateLanguage(wordAmount: Int): Language {
@@ -48,22 +52,50 @@ class LanguageGenerator(seed: Long) {
             phonemeContainer,
             stressPattern,
             wordOrder,
-            ChangeParadigm(
-                categories,
-                SpeechPart.values().map { speechPart ->
-                    val speechPartCategoriesWithMappers = categoriesWithMappers
-                        .filter { it.first.affectedSpeechParts.contains(speechPart) }
-                        .filter { it.first.values.isNotEmpty() }
-                    val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
-                        speechPartCategoriesWithMappers
-                    )
-                    speechPart to SpeechPartChangeParadigm(
-                        speechPart,
-                        applicators.keys.toList(), //TODO make strict order
-                        applicators
-                    )
-                }.toMap()
-            )
+            generateRestrictionParadigm(),
+            generateChangeParadigm(categoriesWithMappers)
+        )
+    }
+
+    private fun generateRestrictionParadigm(): RestrictionsParadigm {//TODO make smth meaningful
+        val map = EnumMap<SpeechPart, Restrictions>(SpeechPart::class.java)
+        val allInitial = syllableValenceGenerator.template.initialPhonemeTypes
+            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .map { PhonemeSequence(it) }
+            .toSet()
+        val allNucleus = syllableValenceGenerator.template.nucleusPhonemeTypes
+            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .map { PhonemeSequence(it) }
+            .toSet()
+        val allFinals = syllableValenceGenerator.template.finalPhonemeTypes
+            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .map { PhonemeSequence(it) }
+            .toSet()
+        for (speechPart in SpeechPart.values()) {
+            map[speechPart] = Restrictions(allInitial, allNucleus, allFinals)
+        }
+        return RestrictionsParadigm(map)
+    }
+
+    private fun generateChangeParadigm(
+        categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
+    ): ChangeParadigm {
+        val categories = categoriesWithMappers.map { it.first }
+        return ChangeParadigm(
+            categories,
+            SpeechPart.values().map { speechPart ->
+                val speechPartCategoriesWithMappers = categoriesWithMappers
+                    .filter { it.first.affectedSpeechParts.contains(speechPart) }
+                    .filter { it.first.values.isNotEmpty() }
+                val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
+                    speechPartCategoriesWithMappers
+                )
+                speechPart to SpeechPartChangeParadigm(
+                    speechPart,
+                    applicators.keys.toList(), //TODO make strict order
+                    applicators
+                )
+            }.toMap()
         )
     }
 
