@@ -40,10 +40,7 @@ class LanguageGenerator(seed: Long) {
     fun generateLanguage(wordAmount: Int): Language {
         val stressPattern = randomElementWithProbability(Stress.values(), random)
         val wordOrder = randomElementWithProbability(SovOrder.values(), random)
-        val categoriesWithMappers = listOf(
-            categoryGenerator.randomArticles(),
-            categoryGenerator.randomGender()
-        )
+        val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(

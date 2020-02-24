@@ -30,7 +30,7 @@ class ChangeParadigm(
                 speechPartChangeParadigms
                     .map { it.value }
                     .filter { it.hasChanges() }
-                    .joinToString("\n")
+                    .joinToString("\n\n\n")
     }
 }
 
@@ -90,7 +90,7 @@ class SpeechPartChangeParadigm(
     override fun toString(): String {
         return "$speechPart changes on: \n${applicators.map {
             it.key.toString() + ":\n" + it.value.map { it.key.toString() + ": " + it.value }.joinToString("\n")
-        }.joinToString("\n")}"
+        }.joinToString("\n\n")}"
     }
 
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }

@@ -16,62 +16,47 @@ class CategoryGenerator(
     private val lexisGenerator: LexisGenerator,
     private val random: Random
 ) {
-    internal fun randomArticles(): Pair<Articles, (CategoryRealization) -> Double> {
+    internal fun randomCategories() = listOf(
+        randomArticles(),
+        randomGender(),
+        randomNumber()
+    )
+
+    private fun randomArticles(): Pair<Articles, (CategoryRealization) -> Double> {
         val presentElements = randomElementWithProbability(
             ArticlePresence.values(),
             random
         ).presentArticles
-//        val applicators = randomCategoryApplicators(
-//            presentElements.toSet(),
-//            CategoryRealization::probabilityForArticle,
-//            setOf(SpeechPart.Noun).union(
-//                randomSublistWithProbability(
-//                    SpeechPart.values(),
-//                    SpeechPart::probabilityForArticle,
-//                    random
-//                )
-//            ).toList()
-//        )
-        return Articles(
-            presentElements,
-            setOf(SpeechPart.Noun).union(
-                randomSublistWithProbability(
-                    SpeechPart.values(),
-                    SpeechPart::probabilityForArticle,
-                    random
-                )
-            )
-        ) to CategoryRealization::probabilityForArticle
+        val affectedSpeechParts = generateAffectedSpeechParts(GenderRandomSupplements)
+        return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements::realizationTypeProbability
     }
 
-    internal fun randomGender(): Pair<Gender, (CategoryRealization) -> Double> {
+    private fun randomGender(): Pair<Gender, (CategoryRealization) -> Double> {
         val presentElements = randomElementWithProbability(
             GenderPresence.values(),
-            { it.probability },
             random
         ).possibilities
-//        val applicators = randomCategoryApplicators(
-//            presentElements.toSet(),
-//            CategoryRealization::probabilityForGender,
-//            setOf(SpeechPart.Noun).union(
-//                randomSublistWithProbability(
-//                    SpeechPart.values(),
-//                    SpeechPart::probabilityForGender,
-//                    random
-//                )
-//            ).toList()
-//        )
-        return Gender(
-            presentElements,
-            setOf(SpeechPart.Noun).union(
-                randomSublistWithProbability(
-                    SpeechPart.values(),
-                    SpeechPart::probabilityForGender,
-                    random
-                )
-            )
-        ) to CategoryRealization::probabilityForGender
+        val affectedSpeechParts = generateAffectedSpeechParts(GenderRandomSupplements)
+        return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements::realizationTypeProbability
     }
+
+    private fun randomNumber(): Pair<Numbers, (CategoryRealization) -> Double> {
+        val presentElements = randomElementWithProbability(
+            NumbersPresence.values(),
+            random
+        ).presentNumbers
+        val affectedSpeechParts = generateAffectedSpeechParts(NumbersRandomSupplements)
+        return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements::realizationTypeProbability
+    }
+
+    private fun generateAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
+        setOf(categoryRandomSupplements.mainSpeechPart).union(
+            randomSublistWithProbability(
+                SpeechPart.values(),
+                categoryRandomSupplements::speechPartProbabilities,
+                random
+            )
+        )
 
     internal fun randomApplicatorsForSpeechPart(
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
