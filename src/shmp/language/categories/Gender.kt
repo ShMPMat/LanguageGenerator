@@ -32,6 +32,7 @@ fun SpeechPart.probabilityForGender(): Double = when (this) {
 }
 
 enum class GenderPresence(val probability: Double, val possibilities: List<GenderValue>) {
+    //TODO choose subset, not entire list
     None(145.0, listOf()),
     Gendered(84.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral, GenderValue.Common)),
     NonGendered(28.0, GenderValue.values().toList())

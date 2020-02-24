@@ -1,7 +1,7 @@
-package shmp.language
+package shmp.language.categories
 
-import shmp.language.categories.Category
-import shmp.language.categories.change.CategoryApplicator
+import shmp.language.*
+import shmp.language.categories.realization_type.CategoryApplicator
 
 class ChangeParadigm(
     val categories: List<Category>,
@@ -97,7 +97,9 @@ class SpeechPartChangeParadigm(
 }
 
 class ExponenceCluster(val categories: List<Category>) {
-    val possibleValues: Set<ExponenceValue> = constructExponenceUnionSets(categories)
+    val possibleValues: Set<ExponenceValue> = constructExponenceUnionSets(
+        categories
+    )
         .map { ExponenceValue(it, this) }
         .toSet()
 
@@ -110,9 +112,13 @@ class ExponenceCluster(val categories: List<Category>) {
 
     fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
-            ExponenceValue(categoryValues.filter { enum ->
-                categories.any { it.possibleValues.contains(enum) }
-            }.toSet(), this)
+            val sortedValues = ArrayList<CategoryValue>()
+            categories.forEach { category ->
+                sortedValues.addAll(
+                    categoryValues.filter { category.possibleValues.contains(it) }
+                )
+            }
+            ExponenceValue(sortedValues, this)
         } catch (e: LanguageException) {
             null
         }
@@ -122,19 +128,30 @@ class ExponenceCluster(val categories: List<Category>) {
     }
 }
 
-private fun constructExponenceUnionSets(categories: List<Category>): Set<Set<CategoryValue>> = //TODO damn mascarade with sets and lists
+private fun constructExponenceUnionSets(categories: List<Category>): Set<List<CategoryValue>> =
     if (categories.size == 1)
-        categories[0].values.map { setOf(it) }.toSet()
+        categories[0].values.map { listOf(it) }.toSet()
     else {
-        val sets = mutableSetOf<Set<CategoryValue>>()
-        val recSets = constructExponenceUnionSets(categories.subList(0, categories.lastIndex))
+        val lists = mutableSetOf<List<CategoryValue>>()
+        val recSets = constructExponenceUnionSets(
+            categories.subList(
+                0,
+                categories.lastIndex
+            )
+        )
         categories.last().possibleValues
-            .forEach { new -> sets.addAll(recSets.map { it.union(setOf(new)) }) }
-        sets
+            .forEach { new ->
+                lists.addAll(recSets.map {
+                    val list = ArrayList(it)
+                    list.add(new)
+                    list
+                })
+            }
+        lists
     }
 
 
-data class ExponenceValue(val categoryValues: Set<CategoryValue>, val parentCluster: ExponenceCluster) {
+class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster: ExponenceCluster) {
     init {
         if (categoryValues.groupBy { it.parentClassName }.any { it.value.size > 1 })
             throw LanguageException("Tried to create Exponence Value with Category Value from the same Category")
@@ -143,10 +160,32 @@ data class ExponenceValue(val categoryValues: Set<CategoryValue>, val parentClus
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
             )
+        if (categoryValues.zip(parentCluster.categories).any { it.first.parentClassName != it.second.outType })
+            throw LanguageException(
+                "Category Values in Exponence Value are ordered not in the same as Categories in Exponence Cluster"
+            )
     }
 
     override fun toString(): String {
         return categoryValues.joinToString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ExponenceValue
+
+        if (categoryValues != other.categoryValues) return false
+        if (parentCluster != other.parentCluster) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = categoryValues.hashCode()
+        result = 31 * result + parentCluster.hashCode()
+        return result
     }
 
 }

@@ -1,7 +1,6 @@
 package shmp.containers
 
 import shmp.language.SpeechPart
-import shmp.language.SyntaxCore
 import java.io.File
 
 class WordBase() {

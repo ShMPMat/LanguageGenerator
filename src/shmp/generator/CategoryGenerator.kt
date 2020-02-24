@@ -2,10 +2,10 @@ package shmp.generator
 
 import shmp.language.*
 import shmp.language.categories.*
-import shmp.language.categories.change.AffixCategoryApplicator
-import shmp.language.categories.change.CategoryApplicator
-import shmp.language.categories.change.PrefixWordCategoryApplicator
-import shmp.language.categories.change.SuffixWordCategoryApplicator
+import shmp.language.categories.realization_type.AffixCategoryApplicator
+import shmp.language.categories.realization_type.CategoryApplicator
+import shmp.language.categories.realization_type.PrefixWordCategoryApplicator
+import shmp.language.categories.realization_type.SuffixWordCategoryApplicator
 import shmp.language.morphem.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElementWithProbability
@@ -90,7 +90,7 @@ class CategoryGenerator(
             }
         realizationTypes.forEach { pair ->
             pair.first.possibleValues.forEach {
-                val categoryEnums = it.categoryValues.toList()//TODO very bad, it should be sorted in union
+                val categoryEnums = it.categoryValues
                 var syntaxCore = categoryEnums[0].syntaxCore
                 for (core in categoryEnums.subList(1, it.categoryValues.size).map { syntaxCore }) {
                     syntaxCore = SyntaxCore(
@@ -116,7 +116,11 @@ class CategoryGenerator(
         var l = 0
         while (l < shuffledMappers.size) {
             val r = randomElementWithProbability(l + 1..shuffledMappers.size, { 1.0 / it }, random)
-            val cluster = ExponenceCluster(shuffledMappers.subList(l, r).map { it.first })
+            val cluster = ExponenceCluster(
+                shuffledMappers.subList(
+                    l,
+                    r
+                ).map { it.first })
             val mapper = shuffledMappers[l].second //TODO how to unite a few lambdas, help
             clusters.add(cluster to mapper)
             l = r

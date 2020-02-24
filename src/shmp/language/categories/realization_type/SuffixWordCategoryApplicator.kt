@@ -1,4 +1,4 @@
-package shmp.language.categories.change
+package shmp.language.categories.realization_type
 
 import shmp.language.Clause
 import shmp.language.CategoryRealization

@@ -3,6 +3,8 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
+import shmp.language.categories.ChangeParadigm
+import shmp.language.categories.SpeechPartChangeParadigm
 import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
 import shmp.random.randomElementWithProbability

@@ -1,6 +1,7 @@
 package shmp.language
 
 import shmp.containers.PhonemeContainer
+import shmp.language.categories.ChangeParadigm
 
 class Language(
     private val words: List<Word>,
