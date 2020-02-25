@@ -90,9 +90,10 @@ class LanguageGenerator(seed: Long) {
                 val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
                     speechPartCategoriesWithMappers
                 )
+                val orderedApplicators = categoryGenerator.randomApplicatorsOrder(applicators)
                 speechPart to SpeechPartChangeParadigm(
                     speechPart,
-                    applicators.keys.toList(), //TODO make strict order
+                    orderedApplicators,
                     applicators
                 )
             }.toMap()

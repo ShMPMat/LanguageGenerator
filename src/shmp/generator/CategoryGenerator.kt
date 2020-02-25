@@ -185,6 +185,11 @@ class CategoryGenerator(
         }
         return result
     }
+
+    fun randomApplicatorsOrder(
+        applicators: Map<ExponenceCluster,
+                Map<ExponenceValue, CategoryApplicator>>
+    ): List<ExponenceCluster> = applicators.keys.shuffled(random)
 }
 
 enum class AffixTypes(override val probability: Double) : SampleSpaceObject {
