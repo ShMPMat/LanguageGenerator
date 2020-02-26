@@ -7,6 +7,7 @@ import shmp.language.SyntaxCore
 import shmp.language.Word
 import shmp.language.categories.Category
 import shmp.language.categories.Gender
+import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublist
@@ -14,6 +15,7 @@ import kotlin.random.Random
 
 class LexisGenerator(
     val syllableGenerator: SyllableValenceGenerator,
+    val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
     private val random: Random
 ) {
@@ -52,10 +54,13 @@ class LexisGenerator(
         for (j in 0..length)
             for (i in 1..SYLLABLE_TESTS) {
                 val syllable = syllableGenerator.generateSyllable(
-                    phonemeContainer,
-                    random,
-                    canHaveFinal = j == length,
-                    prefix = syllables
+                    SyllableRestrictions(
+                        phonemeContainer,
+                        restrictionsParadigm.restrictionsMapper.getValue(core.speechPart),
+                        canHaveFinal = j == length,
+                        prefix = syllables
+                    ),
+                    random
                 )
                 if (syllables.isNotEmpty() && syllables.last().phonemeSequence.last() == syllable[0])
                     continue

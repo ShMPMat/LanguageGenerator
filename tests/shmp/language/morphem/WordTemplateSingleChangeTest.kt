@@ -7,11 +7,12 @@ import shmp.language.phonology.SyllableTemplate
 import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
 import shmp.language.*
+import shmp.language.morphem.change.*
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
 import shmp.language.phonology.Syllable
 
-internal class WordTemplateChangeTest {
+internal class WordTemplateSingleChangeTest {
     @Test
     fun prefixIsolatingTest() {
         val prefix = listOf(
@@ -20,7 +21,11 @@ internal class WordTemplateChangeTest {
         )
         val substitution = prefix.map { PhonemePositionSubstitution(it) }
         val condition = listOf<PhonemeMatcher>()
-        val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
+        val changeTemplate = TemplateSingleChange(
+            Position.Beginning,
+            condition,
+            substitution
+        )
         val syllableTemplate = getPhonySyllableTemplate()
         val firstWord = createNoun(
             Phoneme("b", PhonemeType.Consonant),
@@ -66,7 +71,11 @@ internal class WordTemplateChangeTest {
         val condition = listOf(
             TypePositionMatcher(PhonemeType.Consonant)
         )
-        val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
+        val changeTemplate = TemplateSingleChange(
+            Position.Beginning,
+            condition,
+            substitution
+        )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(
             Phoneme("b", PhonemeType.Consonant),
@@ -111,7 +120,11 @@ internal class WordTemplateChangeTest {
         val condition = listOf(
             PhonemeMatcher(Phoneme("b", PhonemeType.Consonant))
         )
-        val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
+        val changeTemplate = TemplateSingleChange(
+            Position.Beginning,
+            condition,
+            substitution
+        )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(
             Phoneme("b", PhonemeType.Consonant),
@@ -144,7 +157,7 @@ internal class WordTemplateChangeTest {
         )
     }
 
-    private fun checkForWord(word: Word, result: Word, change: TemplateChange) {
+    private fun checkForWord(word: Word, result: Word, change: TemplateSingleChange) {
         assertEquals(result.toPhonemes(), change.change(word).toPhonemes())
     }
 

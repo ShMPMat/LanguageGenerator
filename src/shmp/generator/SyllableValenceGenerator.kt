@@ -13,34 +13,29 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private val ADD_TESTS = 10
 
     fun generateSyllable(
-        phonemeContainer: PhonemeContainer,
-        random: Random,
-        canHaveFinal: Boolean = false,
-        shouldHaveInitial: Boolean = false,
-        shouldHaveFinal: Boolean = false,
-        prefix: List<Syllable> = listOf()
+        restrictions: SyllableRestrictions,
+        random: Random
     ): Syllable {
         for (i in 0 until ADD_TESTS) {
-            val syllable = generateOneSyllable(phonemeContainer, random, canHaveFinal)
-            if (syllable.size != 1 || prefix.isEmpty() || syllable != prefix.last())
-                if (!shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
+            val syllable = generateOneSyllable(restrictions, random)
+            if (syllable.size != 1 || restrictions.prefix.isEmpty() || syllable != restrictions.prefix.last())
+                if (!restrictions.shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
                 //if (!shouldHaveFinal)
                     return syllable
         }
-        return generateOneSyllable(phonemeContainer, random, canHaveFinal)
+        return generateOneSyllable(restrictions, random)
     }
 
     private fun generateOneSyllable(
-        phonemeContainer: PhonemeContainer,
-        random: Random,
-        canBeClosed: Boolean
+        restrictions: SyllableRestrictions,
+        random: Random
     ): Syllable {
         val phonemes = ArrayList<Phoneme>()
         for (valency in (template.nucleusIndex downTo 0).map { template.valencies[it] }) {
             if (testProbability(valency.realizationProbability, random))
                 for (i in 1..ADD_TESTS) {
                     val phoneme = randomElement(
-                        phonemeContainer.getPhonemesByType(valency.phonemeType),
+                        restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType),
                         random
                     )
                     if (i == ADD_TESTS)
@@ -54,7 +49,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         }
         phonemes.reverse()
 
-        if (canBeClosed) {
+        if (restrictions.canHaveFinal) {
             var shouldTest = true
             var lastType = template.valencies[template.nucleusIndex].phonemeType
             for (valency in (template.nucleusIndex + 1..template.valencies.lastIndex).map { template.valencies[it] }) {
@@ -64,7 +59,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                     if (testProbability(valency.realizationProbability, random))
                         phonemes.add(
                             randomElement(
-                                phonemeContainer.getPhonemesByType(
+                                restrictions.phonemeContainer.getPhonemesByType(
                                     valency.phonemeType
                                 ), random
                             )

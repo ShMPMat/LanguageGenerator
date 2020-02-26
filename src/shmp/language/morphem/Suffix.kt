@@ -1,6 +1,9 @@
 package shmp.language.morphem
 
-class Suffix(override val templateChange: TemplateWordChange) : Affix {
+import shmp.language.morphem.change.Position
+import shmp.language.morphem.change.TemplateSequenceChange
+
+class Suffix(override val templateChange: TemplateSequenceChange) : Affix {
     override val position = Position.End
 
     init {

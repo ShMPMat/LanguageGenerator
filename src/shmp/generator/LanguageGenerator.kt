@@ -37,8 +37,9 @@ class LanguageGenerator(seed: Long) {
         ).toList()
     )
 
-    private val syllableValenceGenerator = randomSyllableTemplate()
-    private val lexisGenerator = LexisGenerator(syllableValenceGenerator, phonemeContainer, random)
+    private val syllableGenerator = randomSyllableTemplate()
+    private val restrictionsParadigm = generateRestrictionParadigm()
+    private val lexisGenerator = LexisGenerator(syllableGenerator, restrictionsParadigm, phonemeContainer, random)
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
     private val categoryGenerator = CategoryGenerator(lexisGenerator, changeGenerator, random)
 
@@ -47,7 +48,6 @@ class LanguageGenerator(seed: Long) {
         val wordOrder = randomElementWithProbability(SovOrder.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
-        val restrictionsParadigm = generateRestrictionParadigm()
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
@@ -60,21 +60,21 @@ class LanguageGenerator(seed: Long) {
     }
 
     private fun generateRestrictionParadigm(): RestrictionsParadigm {//TODO make smth meaningful
-        val map = EnumMap<SpeechPart, Restrictions>(SpeechPart::class.java)
-        val allInitial = syllableValenceGenerator.template.initialPhonemeTypes
+        val map = EnumMap<SpeechPart, PhoneticRestrictions>(SpeechPart::class.java)
+        val allInitial = syllableGenerator.template.initialPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .map { PhonemeSequence(it) }
             .toSet()
-        val allNucleus = syllableValenceGenerator.template.nucleusPhonemeTypes
+        val allNucleus = syllableGenerator.template.nucleusPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .map { PhonemeSequence(it) }
             .toSet()
-        val allFinals = syllableValenceGenerator.template.finalPhonemeTypes
+        val allFinals = syllableGenerator.template.finalPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .map { PhonemeSequence(it) }
             .toSet()
         for (speechPart in SpeechPart.values()) {
-            map[speechPart] = Restrictions(allInitial, allNucleus, allFinals)
+            map[speechPart] = PhoneticRestrictions(allInitial, allNucleus, allFinals)
         }
         return RestrictionsParadigm(map)
     }

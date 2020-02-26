@@ -1,56 +1,33 @@
-package shmp.language.morphem
+package shmp.language.morphem.change
 
 import shmp.language.*
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
 
-class TemplateWordChange(val changes: List<TemplateChange>) : WordChange {
-    override val position: Position?
-        get() {
-            val allChanges = changes
-                .map { it.position }
-                .distinct()
-            return if (allChanges.size == 1)
-                allChanges[0]
-            else null
-        }
-
-    override fun change(word: Word): Word {
-        for (changeTemplate in changes) {
-            val changedWord = changeTemplate.change(word)
-            if (changedWord.toString() != word.toString())
-                return changedWord
-        }
-        return word.copy()
-    }
-
-    override fun toString(): String {
-        return changes.joinToString()
-    }
-}
-
-class TemplateChange(
-    val position: Position,
+class TemplateSingleChange(
+    override val position: Position,
     val phonemes: List<PositionMatcher>,
     val result: List<PositionSubstitution>
-) {
+): WordChange {
     //TODO make an interface
-    fun test(word: Word): Int {
+    fun findGoodIndex(word: Word): Int? {
         return when (position) {
             Position.Beginning -> if (testFromPosition(word, 0)) phonemes.size else -1
             Position.End -> {
                 val sublistStart = word.size - phonemes.size
-                if (testFromPosition(word, sublistStart)) sublistStart else -1
+                if (testFromPosition(word, sublistStart)) sublistStart else null
             }
         }
     }
 
+    override fun test(word: Word): Boolean = findGoodIndex(word) != null
+
     private fun testFromPosition(word: Word, position: Int) =
         word.toPhonemes().subList(position, position + phonemes.size).zip(phonemes).all { it.second.test(it.first) }
 
-    fun change(word: Word): Word {
-        val testResult = test(word)
-        if (testResult != -1) {
+    override fun change(word: Word): Word {
+        val testResult = findGoodIndex(word)
+        if (testResult != null) {
             return when (position) {
                 Position.End -> {
                     val change = result.zip(testResult until testResult + result.size)
@@ -114,7 +91,8 @@ interface PositionSubstitution {
     fun substitute(word: Word, position: Int): Phoneme
 }
 
-class PhonemePositionSubstitution(val phoneme: Phoneme) : PositionSubstitution {
+class PhonemePositionSubstitution(val phoneme: Phoneme) :
+    PositionSubstitution {
     override fun substitute(word: Word, position: Int) = phoneme
 
     override fun toString(): String {
@@ -130,13 +108,4 @@ class PassingPositionSubstitution : PositionSubstitution {
     override fun toString(): String {
         return "_"
     }
-
-
-}
-
-enum class Position {
-    Beginning,
-    End
-//    Middle,
-//    Anywhere
 }

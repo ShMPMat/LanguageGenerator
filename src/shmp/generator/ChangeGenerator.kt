@@ -1,8 +1,8 @@
 package shmp.generator
 
 import shmp.language.PhonemeType
-import shmp.language.morphem.*
-import shmp.language.phonology.Restrictions
+import shmp.language.morphem.change.*
+import shmp.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElementWithProbability
 import kotlin.random.Random
@@ -13,8 +13,8 @@ class ChangeGenerator(
 ) {
     internal fun generateChanges(
         position: Position,
-        restrictions: Restrictions
-    ): TemplateWordChange {
+        phoneticRestrictions: PhoneticRestrictions
+    ): TemplateSequenceChange {
         val isClosed = when (position) {
             Position.Beginning -> false
             Position.End -> true
@@ -25,7 +25,11 @@ class ChangeGenerator(
                 random
             )) {
             AffixTypes.UniversalAffix -> listOf(
-                TemplateChange(position, listOf(), generateSyllableAffix(isClosed, false))
+                TemplateSingleChange(
+                    position,
+                    listOf(),
+                    generateSyllableAffix(phoneticRestrictions, isClosed, false)
+                )
             )
             AffixTypes.PhonemeTypeAffix -> {
                 val addPasser = { list: List<PositionSubstitution>, sub: PositionSubstitution ->
@@ -35,11 +39,12 @@ class ChangeGenerator(
                     }
                 }
                 PhonemeType.values().map {
-                    TemplateChange(
+                    TemplateSingleChange(
                         position,
                         listOf(TypePositionMatcher(it)),
                         addPasser(
                             generateSyllableAffix(
+                                phoneticRestrictions,
                                 isClosed || it == PhonemeType.Vowel,
                                 it == PhonemeType.Vowel && position == Position.End
                             ),
@@ -49,15 +54,22 @@ class ChangeGenerator(
                 }
             }
         }
-        return TemplateWordChange(rawSubstitutions)
+        return TemplateSequenceChange(rawSubstitutions)
     }
 
-    private fun generateSyllableAffix(canHaveFinal: Boolean, shouldHaveFinal: Boolean) =
+    private fun generateSyllableAffix(
+        phoneticRestrictions: PhoneticRestrictions,
+        canHaveFinal: Boolean,
+        shouldHaveFinal: Boolean
+    ) =
         lexisGenerator.syllableGenerator.generateSyllable(
-            lexisGenerator.phonemeContainer,
-            random,
-            canHaveFinal = canHaveFinal,
-            shouldHaveInitial = shouldHaveFinal
+            SyllableRestrictions(
+                lexisGenerator.phonemeContainer,
+                phoneticRestrictions,
+                canHaveFinal = canHaveFinal,
+                shouldHaveInitial = shouldHaveFinal
+            ),
+            random
         ).phonemeSequence.phonemes
             .map { PhonemePositionSubstitution(it) }
 }
