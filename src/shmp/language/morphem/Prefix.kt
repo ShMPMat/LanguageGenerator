@@ -1,8 +1,10 @@
 package shmp.language.morphem
 
 class Prefix(override val templateChange: TemplateWordChange) : Affix {
+    override val position = Position.Beginning
+
     init {
-        if (templateChange.changes.any { it.position != Position.Beginning })
+        if (templateChange.position != position)
             throw ExceptionInInitializerError("Prefix can change other parts of words")
     }
 

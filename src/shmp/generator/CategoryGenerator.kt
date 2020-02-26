@@ -2,18 +2,18 @@ package shmp.generator
 
 import shmp.language.*
 import shmp.language.categories.*
-import shmp.language.categories.realization_type.AffixCategoryApplicator
-import shmp.language.categories.realization_type.CategoryApplicator
-import shmp.language.categories.realization_type.PrefixWordCategoryApplicator
-import shmp.language.categories.realization_type.SuffixWordCategoryApplicator
+import shmp.language.categories.realization.AffixCategoryApplicator
+import shmp.language.categories.realization.CategoryApplicator
+import shmp.language.categories.realization.PrefixWordCategoryApplicator
+import shmp.language.categories.realization.SuffixWordCategoryApplicator
 import shmp.language.morphem.*
-import shmp.random.SampleSpaceObject
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublistWithProbability
 import kotlin.random.Random
 
 class CategoryGenerator(
     private val lexisGenerator: LexisGenerator,
+    private val changeGenerator: ChangeGenerator,
     private val random: Random
 ) {
     internal fun randomCategories() = listOf(
@@ -27,7 +27,7 @@ class CategoryGenerator(
             ArticlePresence.values(),
             random
         ).presentArticles
-        val affectedSpeechParts = generateAffectedSpeechParts(GenderRandomSupplements)
+        val affectedSpeechParts = generateAffectedSpeechParts(ArticlesRandomSupplements)
         return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements::realizationTypeProbability
     }
 
@@ -128,71 +128,23 @@ class CategoryGenerator(
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
         CategoryRealization.Prefix -> {
-            val changes = generateChanges(Position.Beginning, false)
+            val changes = changeGenerator.generateChanges(Position.Beginning, false)
             AffixCategoryApplicator(
-                Prefix(TemplateWordChange(changes.map { TemplateChange(Position.Beginning, it.first, it.second) })),
+                Prefix(changes),
                 CategoryRealization.Prefix
             )
         }
         CategoryRealization.Suffix -> {
-            val changes = generateChanges(Position.End, true)
+            val change = changeGenerator.generateChanges(Position.End, true)
             AffixCategoryApplicator(
-                Suffix(TemplateWordChange(changes.map { TemplateChange(Position.End, it.first, it.second) })),
+                Suffix(change),
                 CategoryRealization.Suffix
             )
         }
-    }
-
-    private fun generateChanges(
-        position: Position,
-        isClosed: Boolean
-    ): List<Pair<List<PositionTemplate>, List<PositionSubstitution>>> {
-        val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            lexisGenerator.syllableGenerator.generateSyllable(
-                lexisGenerator.phonemeContainer,
-                random,
-                canHaveFinal = c,
-                shouldHaveInitial = i
-            ).phonemeSequence.phonemes
-                .map { PhonemePositionSubstitution(it) }
-        }
-        val result = when (randomElementWithProbability(
-            AffixTypes.values(),
-            random
-        )) {
-            AffixTypes.UniversalAffix -> {
-                listOf(
-                    listOf<PositionTemplate>() to getSyllableSubstitution(isClosed, false)
-                )
-            }
-            AffixTypes.PhonemeTypeAffix -> {
-                val addPasser = { list: List<PositionSubstitution>, sub: PositionSubstitution ->
-                    when (position) {
-                        Position.Beginning -> list + listOf(sub)
-                        Position.End -> listOf(sub) + list
-                    }
-                }
-                PhonemeType.values().map {
-                    listOf(TypePositionTemplate(it)) to addPasser(
-                        getSyllableSubstitution(
-                            isClosed || it == PhonemeType.Vowel,
-                            it == PhonemeType.Vowel && position == Position.End
-                        ),
-                        PassingPositionSubstitution()
-                    )
-                }
-            }
-        }
-        return result
     }
 
     fun randomApplicatorsOrder(
         applicators: Map<ExponenceCluster,
                 Map<ExponenceValue, CategoryApplicator>>
     ): List<ExponenceCluster> = applicators.keys.shuffled(random)
-}
-
-enum class AffixTypes(override val probability: Double) : SampleSpaceObject {
-    UniversalAffix(100.0),
-    PhonemeTypeAffix(50.0)
 }

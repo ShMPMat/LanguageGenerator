@@ -1,7 +1,7 @@
 package shmp.language.categories
 
 import shmp.language.*
-import shmp.language.categories.realization_type.CategoryApplicator
+import shmp.language.categories.realization.CategoryApplicator
 
 class ChangeParadigm(
     val categories: List<Category>,

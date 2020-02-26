@@ -39,7 +39,8 @@ class LanguageGenerator(seed: Long) {
 
     private val syllableValenceGenerator = randomSyllableTemplate()
     private val lexisGenerator = LexisGenerator(syllableValenceGenerator, phonemeContainer, random)
-    private val categoryGenerator = CategoryGenerator(lexisGenerator, random)
+    private val changeGenerator = ChangeGenerator(lexisGenerator, random)
+    private val categoryGenerator = CategoryGenerator(lexisGenerator, changeGenerator, random)
 
     fun generateLanguage(wordAmount: Int): Language {
         val stressPattern = randomElementWithProbability(Stress.values(), random)

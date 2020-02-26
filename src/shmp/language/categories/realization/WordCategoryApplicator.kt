@@ -1,4 +1,4 @@
-package shmp.language.categories.realization_type
+package shmp.language.categories.realization
 
 import shmp.language.CategoryRealization
 import shmp.language.Word

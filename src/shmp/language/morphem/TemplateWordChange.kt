@@ -5,6 +5,16 @@ import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
 
 class TemplateWordChange(val changes: List<TemplateChange>) : WordChange {
+    override val position: Position?
+        get() {
+            val allChanges = changes
+                .map { it.position }
+                .distinct()
+            return if (allChanges.size == 1)
+                allChanges[0]
+            else null
+        }
+
     override fun change(word: Word): Word {
         for (changeTemplate in changes) {
             val changedWord = changeTemplate.change(word)
@@ -17,13 +27,11 @@ class TemplateWordChange(val changes: List<TemplateChange>) : WordChange {
     override fun toString(): String {
         return changes.joinToString()
     }
-
-
 }
 
 class TemplateChange(
     val position: Position,
-    val phonemes: List<PositionTemplate>,
+    val phonemes: List<PositionMatcher>,
     val result: List<PositionSubstitution>
 ) {
     //TODO make an interface
@@ -43,9 +51,10 @@ class TemplateChange(
     fun change(word: Word): Word {
         val testResult = test(word)
         if (testResult != -1) {
-            return when(position) {
+            return when (position) {
                 Position.End -> {
-                    val change = result.zip(testResult until testResult + result.size).map { it.first.substitute(word, it.second) }
+                    val change = result.zip(testResult until testResult + result.size)
+                        .map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
                         PhonemeSequence(
                             word.toPhonemes().subList(
@@ -57,7 +66,8 @@ class TemplateChange(
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                 }
                 Position.Beginning -> {
-                    val change = result.zip(testResult - result.size until testResult).map { it.first.substitute(word, it.second) }
+                    val change = result.zip(testResult - result.size until testResult)
+                        .map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
                         PhonemeSequence(
                             change + word.toPhonemes().subList(
@@ -80,11 +90,11 @@ class TemplateChange(
     }
 }
 
-interface PositionTemplate {
+interface PositionMatcher {
     fun test(phoneme: Phoneme): Boolean
 }
 
-class PhonemeTemplate(val phoneme: Phoneme): PositionTemplate {
+class PhonemeMatcher(val phoneme: Phoneme) : PositionMatcher {
     override fun test(phoneme: Phoneme) = this.phoneme == phoneme
 
     override fun toString(): String {
@@ -92,7 +102,7 @@ class PhonemeTemplate(val phoneme: Phoneme): PositionTemplate {
     }
 }
 
-class TypePositionTemplate(val type: PhonemeType): PositionTemplate {
+class TypePositionMatcher(val type: PhonemeType) : PositionMatcher {
     override fun test(phoneme: Phoneme) = type == phoneme.type
 
     override fun toString(): String {
@@ -104,7 +114,7 @@ interface PositionSubstitution {
     fun substitute(word: Word, position: Int): Phoneme
 }
 
-class PhonemePositionSubstitution(val phoneme: Phoneme): PositionSubstitution {
+class PhonemePositionSubstitution(val phoneme: Phoneme) : PositionSubstitution {
     override fun substitute(word: Word, position: Int) = phoneme
 
     override fun toString(): String {
@@ -112,7 +122,7 @@ class PhonemePositionSubstitution(val phoneme: Phoneme): PositionSubstitution {
     }
 }
 
-class PassingPositionSubstitution: PositionSubstitution {
+class PassingPositionSubstitution : PositionSubstitution {
     override fun substitute(word: Word, position: Int) =
         if (position < word.size && position >= 0) word[position]
         else throw LanguageException("Tried to change nonexistent phoneme on position $position in the word $word")

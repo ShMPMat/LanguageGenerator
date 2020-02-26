@@ -19,7 +19,7 @@ internal class WordTemplateChangeTest {
             Phoneme("a", PhonemeType.Vowel)
         )
         val substitution = prefix.map { PhonemePositionSubstitution(it) }
-        val condition = listOf<PhonemeTemplate>()
+        val condition = listOf<PhonemeMatcher>()
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
         val firstWord = createNoun(
@@ -64,7 +64,7 @@ internal class WordTemplateChangeTest {
         val substitution = prefix.map { PhonemePositionSubstitution(it) } +
                 PassingPositionSubstitution()
         val condition = listOf(
-            TypePositionTemplate(PhonemeType.Consonant)
+            TypePositionMatcher(PhonemeType.Consonant)
         )
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
@@ -109,7 +109,7 @@ internal class WordTemplateChangeTest {
         val substitution = prefix.map { PhonemePositionSubstitution(it) } +
                 PassingPositionSubstitution()
         val condition = listOf(
-            PhonemeTemplate(Phoneme("b", PhonemeType.Consonant))
+            PhonemeMatcher(Phoneme("b", PhonemeType.Consonant))
         )
         val changeTemplate = TemplateChange(Position.Beginning, condition, substitution)
         val syllableTemplate = getPhonySyllableTemplate()
