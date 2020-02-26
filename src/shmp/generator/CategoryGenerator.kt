@@ -7,6 +7,7 @@ import shmp.language.categories.realization.CategoryApplicator
 import shmp.language.categories.realization.PrefixWordCategoryApplicator
 import shmp.language.categories.realization.SuffixWordCategoryApplicator
 import shmp.language.morphem.*
+import shmp.language.phonology.Restrictions
 import shmp.random.randomElementWithProbability
 import shmp.random.randomSublistWithProbability
 import kotlin.random.Random
@@ -59,6 +60,8 @@ class CategoryGenerator(
         )
 
     internal fun randomApplicatorsForSpeechPart(
+        speechPart: SpeechPart,
+        restrictions: Restrictions,
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
@@ -86,7 +89,7 @@ class CategoryGenerator(
                 }
                 (map[pair.first]
                     ?: throw GeneratorException("Couldn't put CategoryApplicator in map"))[it] =
-                    randomCategoryApplicator(pair.second, syntaxCore)
+                    randomCategoryApplicator(pair.second, restrictions, syntaxCore)
 
             }
         }
@@ -115,6 +118,7 @@ class CategoryGenerator(
 
     private fun randomCategoryApplicator(
         realizationType: CategoryRealization,
+        restrictions: Restrictions,
         syntaxCore: SyntaxCore
     ): CategoryApplicator = when (realizationType) {
         CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.randomWord(
@@ -128,14 +132,14 @@ class CategoryGenerator(
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
         CategoryRealization.Prefix -> {
-            val changes = changeGenerator.generateChanges(Position.Beginning)
+            val changes = changeGenerator.generateChanges(Position.Beginning, restrictions)
             AffixCategoryApplicator(
                 Prefix(changes),
                 CategoryRealization.Prefix
             )
         }
         CategoryRealization.Suffix -> {
-            val change = changeGenerator.generateChanges(Position.End)
+            val change = changeGenerator.generateChanges(Position.End, restrictions)
             AffixCategoryApplicator(
                 Suffix(change),
                 CategoryRealization.Suffix

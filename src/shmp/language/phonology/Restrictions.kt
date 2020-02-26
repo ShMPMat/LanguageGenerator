@@ -2,7 +2,7 @@ package shmp.language.phonology
 
 import shmp.language.SpeechPart
 
-class RestrictionsParadigm(restrictionsMapper: Map<SpeechPart, Restrictions>)
+class RestrictionsParadigm(val restrictionsMapper: Map<SpeechPart, Restrictions>)
 
 class Restrictions(
     val initialPhonemes: Set<PhonemeSequence>,

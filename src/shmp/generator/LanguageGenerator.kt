@@ -47,14 +47,15 @@ class LanguageGenerator(seed: Long) {
         val wordOrder = randomElementWithProbability(SovOrder.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
+        val restrictionsParadigm = generateRestrictionParadigm()
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
             phonemeContainer,
             stressPattern,
             wordOrder,
-            generateRestrictionParadigm(),
-            generateChangeParadigm(categoriesWithMappers)
+            restrictionsParadigm,
+            generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
         )
     }
 
@@ -79,6 +80,7 @@ class LanguageGenerator(seed: Long) {
     }
 
     private fun generateChangeParadigm(
+        restrictionsParadigm: RestrictionsParadigm,
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
     ): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
@@ -89,6 +91,8 @@ class LanguageGenerator(seed: Long) {
                     .filter { it.first.affectedSpeechParts.contains(speechPart) }
                     .filter { it.first.values.isNotEmpty() }
                 val applicators = categoryGenerator.randomApplicatorsForSpeechPart(
+                    speechPart,
+                    restrictionsParadigm.restrictionsMapper.getValue(speechPart),
                     speechPartCategoriesWithMappers
                 )
                 val orderedApplicators = categoryGenerator.randomApplicatorsOrder(applicators)
