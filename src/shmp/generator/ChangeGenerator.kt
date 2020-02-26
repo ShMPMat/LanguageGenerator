@@ -1,9 +1,8 @@
 package shmp.generator
 
-import shmp.language.CategoryRealization
 import shmp.language.PhonemeType
-import shmp.language.categories.realization.AffixCategoryApplicator
 import shmp.language.morphem.*
+import shmp.language.phonology.Restrictions
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElementWithProbability
 import kotlin.random.Random
@@ -14,26 +13,20 @@ class ChangeGenerator(
 ) {
     internal fun generateChanges(
         position: Position,
-        isClosed: Boolean
+        restrictions: Restrictions
     ): TemplateWordChange {
-        val getSyllableSubstitution = { c: Boolean, i: Boolean ->
-            lexisGenerator.syllableGenerator.generateSyllable(
-                lexisGenerator.phonemeContainer,
-                random,
-                canHaveFinal = c,
-                shouldHaveInitial = i
-            ).phonemeSequence.phonemes
-                .map { PhonemePositionSubstitution(it) }
+        val isClosed = when (position) {
+            Position.Beginning -> false
+            Position.End -> true
         }
-        val substitutionList = when (randomElementWithProbability(
-            AffixTypes.values(),
-            random
-        )) {
-            AffixTypes.UniversalAffix -> {
-                listOf(
-                    listOf<PositionMatcher>() to getSyllableSubstitution(isClosed, false)
-                )
-            }
+        val rawSubstitutions = when (
+            randomElementWithProbability(
+                AffixTypes.values(),
+                random
+            )) {
+            AffixTypes.UniversalAffix -> listOf(
+                TemplateChange(position, listOf(), generateSyllableAffix(isClosed, false))
+            )
             AffixTypes.PhonemeTypeAffix -> {
                 val addPasser = { list: List<PositionSubstitution>, sub: PositionSubstitution ->
                     when (position) {
@@ -42,37 +35,31 @@ class ChangeGenerator(
                     }
                 }
                 PhonemeType.values().map {
-                    listOf(TypePositionMatcher(it)) to addPasser(
-                        getSyllableSubstitution(
-                            isClosed || it == PhonemeType.Vowel,
-                            it == PhonemeType.Vowel && position == Position.End
-                        ),
-                        PassingPositionSubstitution()
+                    TemplateChange(
+                        position,
+                        listOf(TypePositionMatcher(it)),
+                        addPasser(
+                            generateSyllableAffix(
+                                isClosed || it == PhonemeType.Vowel,
+                                it == PhonemeType.Vowel && position == Position.End
+                            ),
+                            PassingPositionSubstitution()
+                        )
                     )
                 }
             }
         }
-        val result = when (position) {
-            Position.Beginning ->
-                TemplateWordChange(substitutionList
-                    .map {
-                        TemplateChange(
-                            Position.Beginning,
-                            it.first,
-                            it.second
-                        )
-                    })
-            Position.End -> TemplateWordChange(substitutionList
-                .map {
-                    TemplateChange(
-                        Position.End,
-                        it.first,
-                        it.second
-                    )
-                })
-        }
-        return result
+        return TemplateWordChange(rawSubstitutions)
     }
+
+    private fun generateSyllableAffix(canHaveFinal: Boolean, shouldHaveFinal: Boolean) =
+        lexisGenerator.syllableGenerator.generateSyllable(
+            lexisGenerator.phonemeContainer,
+            random,
+            canHaveFinal = canHaveFinal,
+            shouldHaveInitial = shouldHaveFinal
+        ).phonemeSequence.phonemes
+            .map { PhonemePositionSubstitution(it) }
 }
 
 enum class AffixTypes(override val probability: Double) : SampleSpaceObject {

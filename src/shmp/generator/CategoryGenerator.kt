@@ -128,14 +128,14 @@ class CategoryGenerator(
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
         CategoryRealization.Prefix -> {
-            val changes = changeGenerator.generateChanges(Position.Beginning, false)
+            val changes = changeGenerator.generateChanges(Position.Beginning)
             AffixCategoryApplicator(
                 Prefix(changes),
                 CategoryRealization.Prefix
             )
         }
         CategoryRealization.Suffix -> {
-            val change = changeGenerator.generateChanges(Position.End, true)
+            val change = changeGenerator.generateChanges(Position.End)
             AffixCategoryApplicator(
                 Suffix(change),
                 CategoryRealization.Suffix

@@ -5,7 +5,7 @@ import shmp.language.SpeechPart
 class RestrictionsParadigm(restrictionsMapper: Map<SpeechPart, Restrictions>)
 
 class Restrictions(
-    initialPhonemes: Set<PhonemeSequence>,
-    nucleusPhonemes: Set<PhonemeSequence>,
-    finalPhonemes: Set<PhonemeSequence>
+    val initialPhonemes: Set<PhonemeSequence>,
+    val nucleusPhonemes: Set<PhonemeSequence>,
+    val finalPhonemes: Set<PhonemeSequence>
 )
