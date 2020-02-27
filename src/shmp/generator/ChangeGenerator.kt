@@ -33,6 +33,7 @@ class ChangeGenerator(
                     TemplateSingleChange(
                         position,
                         listOf(),
+                        listOf(),
                         generateSyllableAffix(restrictions, isClosed, false)
                     )
                 )
@@ -43,14 +44,11 @@ class ChangeGenerator(
                     TemplateSingleChange(
                         position,
                         listOf(TypePositionMatcher(it)),
-                        addPasser(
-                            position,
-                            generateSyllableAffix(
-                                restrictions,
-                                isClosed || it == PhonemeType.Vowel,
-                                it == PhonemeType.Vowel && position == Position.End
-                            ),
-                            listOf(PassingPositionSubstitution())
+                        listOf(PassingPositionSubstitution()),
+                        generateSyllableAffix(
+                            restrictions,
+                            isClosed || it == PhonemeType.Vowel,
+                            it == PhonemeType.Vowel && position == Position.End
                         )
                     )
                 }
@@ -74,7 +72,7 @@ class ChangeGenerator(
         templateChanges.forEach {
             var result: WordChange = it
             val borderPhoneme = getBorderPhoneme(it) ?: return@forEach
-            val hasCollision = when (it.position) {
+            val hasCollision = when (it.position) {//TODO metod for phonemes
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
             }.contains(PhonemeSequence(borderPhoneme))
@@ -86,12 +84,8 @@ class ChangeGenerator(
                         Position.End -> newChange[0]
                     }.phoneme
                     if (newBorderPhoneme != borderPhoneme) {
-                        val sub = when (it.position) {
-                            Position.Beginning -> it.result.subList(it.phonemes.size, it.result.size)
-                            Position.End -> it.result.subList(0, it.phonemes.size)
-                        }
                         result = TemplateSequenceChange(
-                            TemplateSingleChange(it.position, it.phonemes, addPasser(it.position, newChange, sub)), //TODO wont work, it will always be first
+                            TemplateSingleChange(it.position, it.phonemeMatchers, it.matchedPhonemesSubstitution, newChange), //TODO wont work, it will always be first
                             it
                         )
                         break
@@ -104,9 +98,9 @@ class ChangeGenerator(
     }
 
     private fun getBorderPhoneme(singleChange: TemplateSingleChange): Phoneme? = when (singleChange.position) {
-        Position.Beginning -> singleChange.result[singleChange.result.lastIndex - singleChange.phonemes.size]
+        Position.Beginning -> singleChange.affix.last()
             .getSubstitutePhoneme()
-        Position.End -> singleChange.result[singleChange.phonemes.size]
+        Position.End -> singleChange.affix[0]
             .getSubstitutePhoneme()
     }
 

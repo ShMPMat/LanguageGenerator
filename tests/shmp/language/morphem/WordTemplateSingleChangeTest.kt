@@ -19,12 +19,14 @@ internal class WordTemplateSingleChangeTest {
             Phoneme("b", PhonemeType.Consonant),
             Phoneme("a", PhonemeType.Vowel)
         )
-        val substitution = prefix.map { PhonemePositionSubstitution(it) }
+        val affix = prefix.map { PhonemePositionSubstitution(it) }
         val condition = listOf<PhonemeMatcher>()
+        val substitution = listOf<PositionSubstitution>()
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
             condition,
-            substitution
+            substitution,
+            affix
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val firstWord = createNoun(
@@ -66,15 +68,16 @@ internal class WordTemplateSingleChangeTest {
             Phoneme("b", PhonemeType.Consonant),
             Phoneme("a", PhonemeType.Vowel)
         )
-        val substitution = prefix.map { PhonemePositionSubstitution(it) } +
-                PassingPositionSubstitution()
+        val affix = prefix.map { PhonemePositionSubstitution(it) }
+        val substitution = listOf(PassingPositionSubstitution())
         val condition = listOf(
             TypePositionMatcher(PhonemeType.Consonant)
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
             condition,
-            substitution
+            substitution,
+            affix
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(
@@ -115,15 +118,16 @@ internal class WordTemplateSingleChangeTest {
             Phoneme("b", PhonemeType.Consonant),
             Phoneme("a", PhonemeType.Vowel)
         )
-        val substitution = prefix.map { PhonemePositionSubstitution(it) } +
-                PassingPositionSubstitution()
+        val affix = prefix.map { PhonemePositionSubstitution(it) }
+        val substitution = listOf(PassingPositionSubstitution())
         val condition = listOf(
             PhonemeMatcher(Phoneme("b", PhonemeType.Consonant))
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
             condition,
-            substitution
+            substitution,
+            affix
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(

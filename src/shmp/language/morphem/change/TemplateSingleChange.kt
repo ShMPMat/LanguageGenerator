@@ -6,15 +6,16 @@ import shmp.language.phonology.PhonemeSequence
 
 class TemplateSingleChange(
     override val position: Position,
-    val phonemes: List<PositionMatcher>,
-    val result: List<PositionSubstitution> //TODO split on two parts
+    val phonemeMatchers: List<PositionMatcher>,
+    val matchedPhonemesSubstitution: List<PositionSubstitution>,
+    val affix: List<PositionSubstitution>//TODO split on two parts
 ): WordChange {
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
-            Position.Beginning -> if (testFromPosition(word, 0)) phonemes.size else null
+            Position.Beginning -> if (testFromPosition(word, 0)) phonemeMatchers.size else null
             Position.End -> {
-                val sublistStart = word.size - phonemes.size
+                val sublistStart = word.size - phonemeMatchers.size
                 if (testFromPosition(word, sublistStart)) sublistStart else null
             }
         }
@@ -23,32 +24,37 @@ class TemplateSingleChange(
     override fun test(word: Word): Boolean = findGoodIndex(word) != null
 
     private fun testFromPosition(word: Word, position: Int) =
-        word.toPhonemes().subList(position, position + phonemes.size).zip(phonemes).all { it.second.test(it.first) }
+        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers).all { it.second.test(it.first) }
+
+    fun getFullChange() = when(position) {
+        Position.Beginning -> affix + matchedPhonemesSubstitution
+        Position.End -> matchedPhonemesSubstitution + affix
+    }
 
     override fun change(word: Word): Word {
         val testResult = findGoodIndex(word)
         if (testResult != null) {
             return when (position) {
                 Position.End -> {
-                    val change = result.zip(testResult until testResult + result.size)
+                    val change = getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
                         .map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
                         PhonemeSequence(
                             word.toPhonemes().subList(
                                 0,
-                                word.size - phonemes.size
+                                word.size - phonemeMatchers.size
                             ) + change
                         ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                 }
                 Position.Beginning -> {
-                    val change = result.zip(testResult - result.size until testResult)
+                    val change = getFullChange().zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
                         .map { it.first.substitute(word, it.second) }
                     return word.syllableTemplate.createWord(
                         PhonemeSequence(
                             change + word.toPhonemes().subList(
-                                phonemes.size,
+                                phonemeMatchers.size,
                                 word.size
                             )
                         ),
@@ -62,8 +68,8 @@ class TemplateSingleChange(
     }
 
     override fun toString(): String {
-        return "$position ${if (phonemes.isEmpty()) "with any phonemes" else phonemes.joinToString("")} " +
-                "changes to ${result.joinToString("")}"
+        return "$position ${if (phonemeMatchers.isEmpty()) "with any phonemes" else phonemeMatchers.joinToString("")} " +
+                "changes to ${getFullChange().joinToString("")}"
     }
 }
 
