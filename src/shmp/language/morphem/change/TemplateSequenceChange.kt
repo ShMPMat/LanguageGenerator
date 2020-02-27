@@ -2,8 +2,9 @@ package shmp.language.morphem.change
 
 import shmp.language.*
 
-class TemplateSequenceChange(val changes: List<WordChange>) :
-    WordChange {
+class TemplateSequenceChange(val changes: List<WordChange>) : WordChange {
+    constructor(vararg changes: WordChange) : this(changes.toList())
+
     override val position: Position?
         get() {
             val allChanges = changes

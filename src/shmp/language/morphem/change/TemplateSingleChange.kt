@@ -7,12 +7,12 @@ import shmp.language.phonology.PhonemeSequence
 class TemplateSingleChange(
     override val position: Position,
     val phonemes: List<PositionMatcher>,
-    val result: List<PositionSubstitution>
+    val result: List<PositionSubstitution> //TODO split on two parts
 ): WordChange {
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
-            Position.Beginning -> if (testFromPosition(word, 0)) phonemes.size else -1
+            Position.Beginning -> if (testFromPosition(word, 0)) phonemes.size else null
             Position.End -> {
                 val sublistStart = word.size - phonemes.size
                 if (testFromPosition(word, sublistStart)) sublistStart else null
@@ -89,11 +89,13 @@ class TypePositionMatcher(val type: PhonemeType) : PositionMatcher {
 
 interface PositionSubstitution {
     fun substitute(word: Word, position: Int): Phoneme
+    fun getSubstitutePhoneme(): Phoneme?
 }
 
 class PhonemePositionSubstitution(val phoneme: Phoneme) :
     PositionSubstitution {
     override fun substitute(word: Word, position: Int) = phoneme
+    override fun getSubstitutePhoneme(): Phoneme? = phoneme
 
     override fun toString(): String {
         return phoneme.toString()
@@ -104,6 +106,8 @@ class PassingPositionSubstitution : PositionSubstitution {
     override fun substitute(word: Word, position: Int) =
         if (position < word.size && position >= 0) word[position]
         else throw LanguageException("Tried to change nonexistent phoneme on position $position in the word $word")
+
+    override fun getSubstitutePhoneme(): Phoneme? = null
 
     override fun toString(): String {
         return "_"

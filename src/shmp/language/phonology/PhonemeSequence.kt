@@ -1,6 +1,6 @@
 package shmp.language.phonology
 
-class PhonemeSequence(val phonemes: List<Phoneme>) {
+data class PhonemeSequence(val phonemes: List<Phoneme>) {
     constructor(vararg phoneme: Phoneme) : this(phoneme.toList())
     val size: Int = phonemes.size
 
