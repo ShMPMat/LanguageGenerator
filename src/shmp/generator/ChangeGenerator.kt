@@ -3,8 +3,8 @@ package shmp.generator
 import shmp.language.PhonemeType
 import shmp.language.morphem.change.*
 import shmp.language.phonology.Phoneme
-import shmp.language.phonology.PhonemeSequence
 import shmp.language.phonology.PhoneticRestrictions
+import shmp.language.phonology.doesPhonemesCollide
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElementWithProbability
 import kotlin.random.Random
@@ -72,10 +72,10 @@ class ChangeGenerator(
         templateChanges.forEach {
             var result: WordChange = it
             val borderPhoneme = getBorderPhoneme(it) ?: return@forEach
-            val hasCollision = when (it.position) {//TODO metod for phonemes
+            val hasCollision = when (it.position) {
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
-            }.contains(PhonemeSequence(borderPhoneme))
+            }.any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
             if (hasCollision) {
                 for (i in 1..GENERATION_ATTEMPTS) {
                     val newChange = generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
@@ -83,7 +83,7 @@ class ChangeGenerator(
                         Position.Beginning -> newChange.last()
                         Position.End -> newChange[0]
                     }.phoneme
-                    if (newBorderPhoneme != borderPhoneme) {
+                    if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                         result = TemplateSequenceChange(
                             TemplateSingleChange(it.position, it.phonemeMatchers, it.matchedPhonemesSubstitution, newChange), //TODO wont work, it will always be first
                             it

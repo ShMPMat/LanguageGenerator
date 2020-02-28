@@ -63,15 +63,12 @@ class LanguageGenerator(seed: Long) {
         val map = EnumMap<SpeechPart, PhoneticRestrictions>(SpeechPart::class.java)
         val allInitial = syllableGenerator.template.initialPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
-            .map { PhonemeSequence(it) }
             .toSet()
         val allNucleus = syllableGenerator.template.nucleusPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
-            .map { PhonemeSequence(it) }
             .toSet()
         val allFinals = syllableGenerator.template.finalPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
-            .map { PhonemeSequence(it) }
             .toSet()
         for (speechPart in SpeechPart.values()) {
             map[speechPart] = PhoneticRestrictions(allInitial, allNucleus, allFinals)

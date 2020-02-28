@@ -8,3 +8,6 @@ data class Phoneme(val sound : String, val type: PhonemeType) {
     }
 }
 
+fun doesPhonemesCollide(firstPhoneme: Phoneme, secondPhoneme: Phoneme): Boolean {
+    return firstPhoneme == secondPhoneme
+}
