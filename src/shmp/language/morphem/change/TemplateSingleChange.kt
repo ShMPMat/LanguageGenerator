@@ -93,6 +93,12 @@ class TypePositionMatcher(val type: PhonemeType) : PositionMatcher {
     }
 }
 
+class PassingMatcher() : PositionMatcher {
+    override fun test(phoneme: Phoneme): Boolean = true
+
+    override fun toString() = "*"
+}
+
 interface PositionSubstitution {
     fun substitute(word: Word, position: Int): Phoneme
     fun getSubstitutePhoneme(): Phoneme?

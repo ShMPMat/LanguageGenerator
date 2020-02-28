@@ -37,7 +37,7 @@ class LanguageGenerator(seed: Long) {
         ).toList()
     )
 
-    private val syllableGenerator = randomSyllableTemplate()
+    private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm()
     private val lexisGenerator = LexisGenerator(syllableGenerator, restrictionsParadigm, phonemeContainer, random)
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
@@ -102,7 +102,7 @@ class LanguageGenerator(seed: Long) {
         )
     }
 
-    private fun randomSyllableTemplate(): SyllableValenceGenerator {
+    private fun randomSyllableGenerator(): SyllableValenceGenerator {
         val syllableTemplates = HashMap<SyllableValenceTemplate, Double>()
         File("SupplementFiles/SyllableTypes").forEachLine {
             if (!it.isBlank()) {

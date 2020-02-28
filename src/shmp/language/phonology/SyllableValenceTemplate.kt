@@ -2,9 +2,7 @@ package shmp.language.phonology
 
 import shmp.language.*
 
-class SyllableValenceTemplate(val valencies: List<ValencyPlace>) :
-    SyllableTemplate {
-
+class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
     val nucleusIndex: Int
         get() {
             for (i in valencies.indices) {
@@ -20,7 +18,13 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) :
         valencies
             .takeWhile { it.realizationProbability != 1.0 }
             .map { it.phonemeType }
-            .toSet()
+            .union(
+                setOf(
+                    valencies
+                        .dropWhile { it.realizationProbability != 1.0 }
+                        .getOrNull(0)?.phonemeType
+                ).filterNotNull()
+            )
 
     override val finalPhonemeTypes: Set<PhonemeType> = valencies.subList(nucleusIndex, valencies.size)
         .map { it.phonemeType }

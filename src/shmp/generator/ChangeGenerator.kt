@@ -68,33 +68,43 @@ class ChangeGenerator(
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
     ): List<WordChange> {
-        val processedChanges = mutableListOf<WordChange>()
-        templateChanges.forEach {
-            var result: WordChange = it
-            val borderPhoneme = getBorderPhoneme(it) ?: return@forEach
-            val hasCollision = when (it.position) {
-                Position.Beginning -> restrictions.initialWordPhonemes
-                Position.End -> restrictions.finalWordPhonemes
-            }.any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
-            if (hasCollision) {
-                for (i in 1..GENERATION_ATTEMPTS) {
-                    val newChange = generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
-                    val newBorderPhoneme = when (it.position) {
-                        Position.Beginning -> newChange.last()
-                        Position.End -> newChange[0]
-                    }.phoneme
-                    if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
-                        result = TemplateSequenceChange(
-                            TemplateSingleChange(it.position, it.phonemeMatchers, it.matchedPhonemesSubstitution, newChange), //TODO wont work, it will always be first
-                            it
-                        )
-                        break
+        return templateChanges
+            .map {
+                var result: WordChange = it
+                val borderPhoneme = getBorderPhoneme(it) ?: return@map result
+                val borderAffixMatcher = when (it.position) {
+                    Position.Beginning -> it.phonemeMatchers.getOrNull(0)
+                    Position.End -> it.phonemeMatchers.lastOrNull()
+                } ?: PassingMatcher()
+                val hasCollision = when (it.position) {
+                    Position.Beginning -> restrictions.initialWordPhonemes
+                    Position.End -> restrictions.finalWordPhonemes
+                }.filter { phoneme -> borderAffixMatcher.test(phoneme) }
+                    .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
+                if (hasCollision) {
+                    for (i in 1..GENERATION_ATTEMPTS) {
+                        val newChange =
+                            generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
+                        val newBorderPhoneme = when (it.position) {
+                            Position.Beginning -> newChange.last()
+                            Position.End -> newChange[0]
+                        }.phoneme
+                        if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
+                            result = TemplateSequenceChange(
+                                TemplateSingleChange(
+                                    it.position,
+                                    it.phonemeMatchers,
+                                    it.matchedPhonemesSubstitution,
+                                    newChange
+                                ), //TODO wont work, it will always be first
+                                it
+                            )
+                            break
+                        }
                     }
                 }
+                result
             }
-            processedChanges.add(result)
-        }
-        return processedChanges
     }
 
     private fun getBorderPhoneme(singleChange: TemplateSingleChange): Phoneme? = when (singleChange.position) {
