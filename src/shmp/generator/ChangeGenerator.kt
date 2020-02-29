@@ -58,12 +58,6 @@ class ChangeGenerator(
         return TemplateSequenceChange(rawSubstitutions)
     }
 
-    private fun addPasser(position: Position, affix: List<PositionSubstitution>, change: List<PositionSubstitution>) =
-        when (position) {
-            Position.Beginning -> affix + change
-            Position.End -> change + affix
-        }
-
     private fun randomDoubleEdgeLettersElimination(
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
@@ -91,12 +85,11 @@ class ChangeGenerator(
                         }.phoneme
                         if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                             result = TemplateSequenceChange(
-                                TemplateSingleChange(
-                                    it.position,
-                                    it.phonemeMatchers,
-                                    it.matchedPhonemesSubstitution,
-                                    newChange
-                                ), //TODO wont work, it will always be first
+                                makeTemplateChangeWithBorderPhoneme(
+                                    it,
+                                    newChange,
+                                    borderPhoneme
+                                ),
                                 it
                             )
                             break
@@ -105,6 +98,35 @@ class ChangeGenerator(
                 }
                 result
             }
+    }
+
+    private fun makeTemplateChangeWithBorderPhoneme(
+        oldChange: TemplateSingleChange,
+        newAffix: List<PositionSubstitution>,
+        neededPhoneme: Phoneme
+    ): TemplateSingleChange {
+        val singleMatcher = listOf(PhonemeMatcher(neededPhoneme))
+        val singleSubstitution = listOf(PassingPositionSubstitution())
+        var phonemeMatcher = oldChange.phonemeMatchers
+        var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
+        phonemeMatcher = if (phonemeMatcher.size <= 1) {
+            singleMatcher
+        } else when (oldChange.position) {
+            Position.Beginning -> singleMatcher + phonemeMatcher.drop(1)
+            Position.End -> phonemeMatcher.dropLast(1) + singleMatcher
+        }
+        matchedPhonemeSubstitution = if (matchedPhonemeSubstitution.size <= 1) {
+            singleSubstitution
+        } else when (oldChange.position) {
+            Position.Beginning -> singleSubstitution + matchedPhonemeSubstitution.drop(1)
+            Position.End -> matchedPhonemeSubstitution.dropLast(1) + singleSubstitution
+        }
+        return TemplateSingleChange(
+            oldChange.position,
+            phonemeMatcher,
+            matchedPhonemeSubstitution,
+            newAffix
+        )
     }
 
     private fun getBorderPhoneme(singleChange: TemplateSingleChange): Phoneme? = when (singleChange.position) {

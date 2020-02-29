@@ -4,14 +4,12 @@ import shmp.language.*
 
 class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
     val nucleusIndex: Int
-        get() {
-            for (i in valencies.indices) {
-                if (valencies[i].realizationProbability == 1.0) {
-                    return i
-                }
-            }
-            throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
-        }
+        get() = valencies
+                .zip(valencies.indices)
+                .filter { it.first.realizationProbability == 1.0 }
+                .lastOrNull()
+                ?.second
+                ?: throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
     override val nucleusPhonemeTypes: Set<PhonemeType> = setOf(valencies[nucleusIndex].phonemeType)
 
     override val initialPhonemeTypes: Set<PhonemeType> =
@@ -74,6 +72,14 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         resultString += valencies.last().phonemeType.char + "{$minSymbols,$maxSymbols}"
         return resultString.toRegex()
     }
+
+    override fun toString() = valencies
+        .joinToString("")
 }
 
-data class ValencyPlace(val phonemeType: PhonemeType, val realizationProbability: Double)
+data class ValencyPlace(val phonemeType: PhonemeType, val realizationProbability: Double) {
+    override fun toString() = if (realizationProbability == 1.0)
+        phonemeType.char.toString()
+    else
+        "(${phonemeType.char})"
+}
