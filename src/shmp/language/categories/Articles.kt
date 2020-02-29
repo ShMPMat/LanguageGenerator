@@ -24,6 +24,7 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.SuffixSeparateWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 30.0
+            CategoryRealization.Reduplication -> 0.0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =

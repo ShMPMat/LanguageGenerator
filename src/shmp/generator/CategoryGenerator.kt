@@ -2,10 +2,7 @@ package shmp.generator
 
 import shmp.language.*
 import shmp.language.categories.*
-import shmp.language.categories.realization.AffixCategoryApplicator
-import shmp.language.categories.realization.CategoryApplicator
-import shmp.language.categories.realization.PrefixWordCategoryApplicator
-import shmp.language.categories.realization.SuffixWordCategoryApplicator
+import shmp.language.categories.realization.*
 import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
@@ -146,6 +143,7 @@ class CategoryGenerator(
                 CategoryRealization.Suffix
             )
         }
+        CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
     }
 
     fun randomApplicatorsOrder(

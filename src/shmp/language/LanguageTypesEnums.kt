@@ -64,7 +64,8 @@ enum class CategoryRealization {//TODO reduplication
     PrefixSeparateWord,
     SuffixSeparateWord,
     Prefix,
-    Suffix
+    Suffix,
+    Reduplication
 }
 
 interface CategoryValue {
