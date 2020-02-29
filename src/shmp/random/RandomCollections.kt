@@ -3,6 +3,8 @@ package shmp.random
 import kotlin.random.Random
 
 
+fun <E> randomElement(collection: Collection<E>, random: Random) = collection.toList()[random.nextInt(collection.size)]
+
 fun <E> randomElementWithProbability(collection: Collection<E>, mapper: (E) -> Double, random: Random): E {
     val list = collection.toList()
     val probabilities = list.map(mapper)
@@ -14,7 +16,7 @@ fun <E> randomElementWithProbability(collection: Collection<E>, mapper: (E) -> D
         }
         result -= probability
     }
-    throw IndexOutOfBoundsException("Can't choose an element from an empty collection")
+    throw RandomException("Can't choose an element from an empty collection")
 }
 
 fun <E : SampleSpaceObject> randomElementWithProbability(array: Array<E>, random: Random): E =
@@ -37,7 +39,6 @@ fun <E> randomSublistWithProbability(
     max: Int = array.map(mapper).count { it > 0.0 }
 ): List<E> =
     randomSublistWithProbability(array.toList(), mapper, random, min, max)
-
 
 fun <E> randomSublistWithProbability(
     collection: Collection<E>,
@@ -69,7 +70,3 @@ fun <E> randomSublistWithProbability(
     }
     return resultList
 }
-
-fun <E> randomElement(list: List<E>, random: Random) = list[random.nextInt(list.size)]
-
-fun testProbability(probability: Double, random: Random) = random.nextDouble() <= probability
