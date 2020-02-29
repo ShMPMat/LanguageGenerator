@@ -26,7 +26,7 @@ class CategoryGenerator(
             ArticlePresence.values(),
             random
         ).presentArticles
-        val affectedSpeechParts = generateAffectedSpeechParts(ArticlesRandomSupplements)
+        val affectedSpeechParts = randomAffectedSpeechParts(ArticlesRandomSupplements)
         return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements::realizationTypeProbability
     }
 
@@ -35,7 +35,7 @@ class CategoryGenerator(
             GenderPresence.values(),
             random
         ).possibilities
-        val affectedSpeechParts = generateAffectedSpeechParts(GenderRandomSupplements)
+        val affectedSpeechParts = randomAffectedSpeechParts(GenderRandomSupplements)
         return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements::realizationTypeProbability
     }
 
@@ -44,11 +44,11 @@ class CategoryGenerator(
             NumbersPresence.values(),
             random
         ).presentNumbers
-        val affectedSpeechParts = generateAffectedSpeechParts(NumbersRandomSupplements)
+        val affectedSpeechParts = randomAffectedSpeechParts(NumbersRandomSupplements)
         return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements::realizationTypeProbability
     }
 
-    private fun generateAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
+    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
         setOf(categoryRandomSupplements.mainSpeechPart).union(
             randomSublistWithProbability(
                 SpeechPart.values(),

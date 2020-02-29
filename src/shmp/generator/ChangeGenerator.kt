@@ -67,7 +67,7 @@ class ChangeGenerator(
                 var result: WordChange = it
                 val borderPhoneme = getBorderPhoneme(it) ?: return@map result
                 val borderAffixMatcher = when (it.position) {
-                    Position.Beginning -> it.phonemeMatchers.getOrNull(0)
+                    Position.Beginning -> it.phonemeMatchers.firstOrNull()
                     Position.End -> it.phonemeMatchers.lastOrNull()
                 } ?: PassingMatcher()
                 val hasCollision = when (it.position) {
@@ -76,28 +76,36 @@ class ChangeGenerator(
                 }.filter { phoneme -> borderAffixMatcher.test(phoneme) }
                     .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
                 if (hasCollision) {
-                    for (i in 1..GENERATION_ATTEMPTS) {
-                        val newChange =
-                            generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
-                        val newBorderPhoneme = when (it.position) {
-                            Position.Beginning -> newChange.last()
-                            Position.End -> newChange[0]
-                        }.phoneme
-                        if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
-                            result = TemplateSequenceChange(
-                                makeTemplateChangeWithBorderPhoneme(
-                                    it,
-                                    newChange,
-                                    borderPhoneme
-                                ),
-                                it
-                            )
-                            break
-                        }
-                    }
+                    result = removeCollision(it, restrictions, borderPhoneme) ?: result
                 }
                 result
             }
+    }
+
+    private fun removeCollision(
+        wordChange: TemplateSingleChange,
+        restrictions: PhoneticRestrictions,
+        borderPhoneme: Phoneme
+    ): WordChange? {
+        for (i in 1..GENERATION_ATTEMPTS) {
+            val newChange =
+                generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
+            val newBorderPhoneme = when (wordChange.position) {
+                Position.Beginning -> newChange.last()
+                Position.End -> newChange[0]
+            }.phoneme
+            if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
+                return TemplateSequenceChange(
+                    makeTemplateChangeWithBorderPhoneme(
+                        wordChange,
+                        newChange,
+                        borderPhoneme
+                    ),
+                    wordChange
+                )
+            }
+        }
+        return null
     }
 
     private fun makeTemplateChangeWithBorderPhoneme(
@@ -140,17 +148,16 @@ class ChangeGenerator(
         phoneticRestrictions: PhoneticRestrictions,
         canHaveFinal: Boolean,
         shouldHaveFinal: Boolean
-    ) =
-        lexisGenerator.syllableGenerator.generateSyllable(
-            SyllableRestrictions(
-                lexisGenerator.phonemeContainer,
-                phoneticRestrictions,
-                canHaveFinal = canHaveFinal,
-                shouldHaveInitial = shouldHaveFinal
-            ),
-            random
-        ).phonemeSequence.phonemes
-            .map { PhonemePositionSubstitution(it) }
+    ) = lexisGenerator.syllableGenerator.generateSyllable(
+        SyllableRestrictions(
+            lexisGenerator.phonemeContainer,
+            phoneticRestrictions,
+            canHaveFinal = canHaveFinal,
+            shouldHaveInitial = shouldHaveFinal
+        ),
+        random
+    ).phonemeSequence.phonemes
+        .map { PhonemePositionSubstitution(it) }
 }
 
 enum class AffixTypes(override val probability: Double) : SampleSpaceObject {

@@ -48,6 +48,7 @@ class LanguageGenerator(seed: Long) {
         val wordOrder = randomElementWithProbability(SovOrder.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
+        val changeParadigm = generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
@@ -55,7 +56,7 @@ class LanguageGenerator(seed: Long) {
             stressPattern,
             wordOrder,
             restrictionsParadigm,
-            generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
+            changeParadigm
         )
     }
 
