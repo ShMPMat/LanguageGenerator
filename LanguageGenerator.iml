@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" exported="" name="org.junit.jupiter:junit-jupiter:5.6.0" level="project" />
+    <orderEntry type="library" exported="" name="Random" level="project" />
   </component>
 </module>
