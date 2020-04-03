@@ -152,6 +152,7 @@ class ChangeGenerator(
         SyllableRestrictions(
             lexisGenerator.phonemeContainer,
             phoneticRestrictions,
+            SyllablePosition.Middle,
             canHaveFinal = canHaveFinal,
             shouldHaveInitial = shouldHaveFinal
         ),

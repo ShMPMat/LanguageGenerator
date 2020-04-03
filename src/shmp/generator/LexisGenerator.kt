@@ -15,7 +15,7 @@ import kotlin.random.Random
 
 class LexisGenerator(
     val syllableGenerator: SyllableValenceGenerator,
-    val restrictionsParadigm: RestrictionsParadigm,
+    private val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
     private val random: Random
 ) {
@@ -57,6 +57,11 @@ class LexisGenerator(
                     SyllableRestrictions(
                         phonemeContainer,
                         restrictionsParadigm.restrictionsMapper.getValue(core.speechPart),
+                        when (j) {
+                            0 -> SyllablePosition.Start
+                            length -> SyllablePosition.End
+                            else -> SyllablePosition.Middle
+                        },
                         canHaveFinal = j == length,
                         prefix = syllables
                     ),
