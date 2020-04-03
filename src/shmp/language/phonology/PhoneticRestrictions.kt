@@ -10,5 +10,4 @@ class PhoneticRestrictions(
     val finalSyllablePhonemes: Set<Phoneme>,
     val initialWordPhonemes: Set<Phoneme> = initialSyllablePhonemes,
     val finalWordPhonemes: Set<Phoneme> = finalSyllablePhonemes
-
 )
