@@ -15,10 +15,11 @@ class Language(
     override fun toString(): String {//TODO first word output is a debug
         return """phonemes:
                  |${phonemeContainer}
+                 |Syllable structure: ${words[0].syllableTemplate}
                  |Stress patern: $stress
                  |words:
-                 |${words.map {it.toString() + " - " + it.syntaxCore.word } .joinToString()}
-                 |${words.map { changeParadigm.apply(it).toString() + " - " + it.syntaxCore.word }.joinToString()}
+                 |${words.joinToString { it.toString() + " - " + it.syntaxCore.word }}
+                 |${words.joinToString { changeParadigm.apply(it).toString() + " - " + it.syntaxCore.word }}
                  |SOV order: $sovOrder
                  |${changeParadigm}
                  |""".trimMargin()
