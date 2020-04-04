@@ -152,8 +152,7 @@ class ChangeGenerator(
         SyllableRestrictions(
             lexisGenerator.phonemeContainer,
             phoneticRestrictions,
-            SyllablePosition.Middle,
-            canHaveFinal = canHaveFinal,
+            if (canHaveFinal) SyllablePosition.End else SyllablePosition.Middle,
             shouldHaveInitial = shouldHaveFinal
         ),
         random

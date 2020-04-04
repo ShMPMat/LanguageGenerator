@@ -62,7 +62,6 @@ class LexisGenerator(
                             length -> SyllablePosition.End
                             else -> SyllablePosition.Middle
                         },
-                        canHaveFinal = j == length,
                         prefix = syllables
                     ),
                     random
