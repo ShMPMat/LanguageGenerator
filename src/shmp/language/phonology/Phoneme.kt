@@ -35,7 +35,7 @@ enum class ArticulationPlace {
     Back
 }
 
-enum class ArticulationManner(sonorityLevel: Int) {
+enum class ArticulationManner(val sonorityLevel: Int) {
     Nasal(2),
     Stop(5),
     SibilantAffricate(4),

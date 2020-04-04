@@ -32,8 +32,41 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     ): Syllable {
         val actualSyllable = chooseSyllableStructure(restrictions, random)
 
+        val onset = makeSyllablePart(
+            restrictions,
+            { lst, p ->
+                testPhoneme(lst, p) && (lst.isEmpty()
+                        || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
+            },
+            actualSyllable.takeWhile { it.realizationProbability != 1.0 },
+            random
+        )
+        val nucleus = makeSyllablePart(
+            restrictions,
+            this::testPhoneme,
+            listOf(actualSyllable.first { it.realizationProbability == 1.0 }),
+            random
+        )
+        val coda = makeSyllablePart(
+            restrictions,
+            { lst, p ->
+                testPhoneme(lst, p) && (lst.isEmpty()
+                        || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
+            },
+            actualSyllable.takeLastWhile { it.realizationProbability != 1.0 },
+            random
+        )
+        return Syllable(onset + nucleus + coda)
+    }
+
+    private fun makeSyllablePart(
+        restrictions: SyllableRestrictions,
+        checker: (List<Phoneme>, Phoneme) -> Boolean,
+        sequence: List<ValencyPlace>,
+        random: Random
+    ): List<Phoneme> {
         val phonemes = ArrayList<Phoneme>()
-        for (valency in actualSyllable) {
+        for (valency in sequence) {
             for (i in 1..ADD_TESTS) {
                 val phoneme = randomElement(
                     restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType),
@@ -41,11 +74,13 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 )
                 if (i == ADD_TESTS)
                     phonemes.add(phoneme)
-                else if (addPhonemeWithTest(phonemes, phoneme))
+                else if (checker(phonemes, phoneme)) {
+                    phonemes.add(phoneme)
                     break
+                }
             }
         }
-        return Syllable(phonemes)
+        return phonemes
     }
 
     private fun chooseSyllableStructure(
@@ -76,10 +111,9 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         return syllable
     }
 
-    private fun addPhonemeWithTest(phonemes: MutableList<Phoneme>, phoneme: Phoneme): Boolean {
+    private fun testPhoneme(phonemes: List<Phoneme>, phoneme: Phoneme): Boolean {
         if (phonemes.isNotEmpty() && phonemes.last() == phoneme)
             return false
-        phonemes.add(phoneme)
         return true
     }
 

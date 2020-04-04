@@ -117,7 +117,7 @@ class LanguageGenerator(seed: Long) {
                         if (template[i + 2] != ')')
                             throw ParseException("Wrong syntax for syllable templates: no ) found", i + 2)
                         char = template[i + 1]
-                        probability = 0.5
+                        probability = 0.4
                         i += 3
                     } else
                         i++

@@ -3,6 +3,7 @@ package shmp.generator
 import shmp.containers.PhonemeContainer
 import shmp.containers.WordBase
 import shmp.language.CategoryValue
+import shmp.language.PhonemeType
 import shmp.language.SyntaxCore
 import shmp.language.Word
 import shmp.language.categories.Category
@@ -66,13 +67,22 @@ class LexisGenerator(
                     ),
                     random
                 )
-                if (syllables.isNotEmpty() && syllables.last().phonemeSequence.last() == syllable[0])
+                if (!checkSyllable(syllable, syllables))
                     continue
                 syllables.add(syllable)
                 break
             }
         return Word(syllables, syllableGenerator.template, core)
     }
+
+    fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) =
+        (prefix.isEmpty() || prefix.last().phonemeSequence.last() != syllable[0])
+                && (
+                prefix.size < 2
+                        || prefix.last().size > 1
+                        || syllable.phonemeSequence[0].type != PhonemeType.Vowel
+                        || prefix[prefix.size - 2].phonemeSequence.last().type != PhonemeType.Vowel
+                )
 
     private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
         randomElementWithProbability((1..max), lengthWeight, random)
