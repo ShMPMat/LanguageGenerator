@@ -7,6 +7,7 @@ import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.random.randomElementWithProbability
+import shmp.random.randomSublist
 import shmp.random.randomSublistWithProbability
 import kotlin.random.Random
 
@@ -31,10 +32,14 @@ class CategoryGenerator(
     }
 
     private fun randomGender(): Pair<Gender, (CategoryRealization) -> Double> {
-        val presentElements = randomElementWithProbability(
+        val type = randomElementWithProbability(
             GenderPresence.values(),
             random
-        ).possibilities
+        )
+        val presentElements = if (type == GenderPresence.NonGendered)
+            randomSublist(type.possibilities, random, min = 2)
+        else
+            type.possibilities
         val affectedSpeechParts = randomAffectedSpeechParts(GenderRandomSupplements)
         return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements::realizationTypeProbability
     }

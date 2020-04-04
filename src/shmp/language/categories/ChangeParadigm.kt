@@ -139,7 +139,7 @@ private fun constructExponenceUnionSets(categories: List<Category>): Set<List<Ca
                 categories.lastIndex
             )
         )
-        categories.last().possibleValues
+        categories.last().values
             .forEach { new ->
                 lists.addAll(recSets.map {
                     val list = ArrayList(it)

@@ -41,9 +41,10 @@ object GenderRandomSupplements : CategoryRandomSupplements {
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
-    //TODO choose subset, not entire list
     None(145.0, listOf()),
-    FmnGendered(84.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral, GenderValue.Common)),
+    FmnGendered(28.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral)),
+    CnGendered(28.0, listOf(GenderValue.Common, GenderValue.Neutral)),
+    FmGendered(28.0, listOf(GenderValue.Female, GenderValue.Male)),
     NonGendered(28.0, GenderValue.values().toList())
 }
 
