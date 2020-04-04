@@ -1,34 +1,37 @@
-Cp
-Cb
-Cr
-Ct
-Cs
-Cd
-Cf
-Cg
-Ch
-Ck
-Cl
-Cz
-Cv
-Cn
-Cm
+Cm  Bilabial    Nasal
+Cp  Bilabial    Stop
+Cb  Bilabial    Stop
+
+Cf  LabioDental NonSibilantFricative
+Cv  LabioDental NonSibilantFricative
+
+Cn  Alveolar    Nasal
+Ct  Alveolar    Stop
+Cs  Alveolar    SibilantFricative
+Cz  Alveolar    SibilantFricative
+Cd  Alveolar    Stop
+Cr  Alveolar    Trill
+Cl  Alveolar    LateralApproximant
+
+Cg  Velar       Stop
+Ck  Velar       Stop
+Ch  Velar       NonSibilantFricative
 
 
-Vi
-Vy
-Vɨ
-Vʉ
-Vɯ
-Vu
+Vi  Front       Close
+Vy  Front       Close
+Vɨ  Central     Close
+Vʉ  Central     Close
+Vɯ  Back        Close
+Vu  Back        Close
 
-Vɪ
-Vʏ
-Vʊ
+Vɪ  Front       NearClose
+Vʏ  Front       NearClose
+Vʊ  Back        NearClose
 
-Ve
-Vø
+Ve  Front       CloseMid
+Vø  Front       CloseMid
 
-Ve
-Vo
-Va
+Vo  Back        CloseMid
+
+Va  Front       Open

@@ -3,21 +3,16 @@ package shmp.language.morphem
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.opentest4j.TestAbortedException
-import shmp.language.phonology.SyllableTemplate
-import shmp.language.phonology.SyllableValenceTemplate
-import shmp.language.phonology.ValencyPlace
 import shmp.language.*
 import shmp.language.morphem.change.*
-import shmp.language.phonology.Phoneme
-import shmp.language.phonology.PhonemeSequence
-import shmp.language.phonology.Syllable
+import shmp.language.phonology.*
 
 internal class WordTemplateSingleChangeTest {
     @Test
     fun prefixIsolatingTest() {
         val prefix = listOf(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val affix = prefix.map { PhonemePositionSubstitution(it) }
         val condition = listOf<PhonemeMatcher>()
@@ -30,12 +25,12 @@ internal class WordTemplateSingleChangeTest {
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val firstWord = createNoun(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val secondWord = createNoun(
-            Phoneme("c", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("c", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
 
         checkForWord(
@@ -65,8 +60,8 @@ internal class WordTemplateSingleChangeTest {
     @Test
     fun prefixPhonemeTypeIsolatingTest() {
         val prefix = listOf(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val affix = prefix.map { PhonemePositionSubstitution(it) }
         val substitution = listOf(PassingPositionSubstitution())
@@ -81,13 +76,13 @@ internal class WordTemplateSingleChangeTest {
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val badWord = createNoun(
-            Phoneme("a", PhonemeType.Vowel),
-            Phoneme("c", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("a", PhonemeType.Vowel),
+            makePhoneme("c", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
 
         checkForWord(
@@ -115,13 +110,13 @@ internal class WordTemplateSingleChangeTest {
     @Test
     fun prefixStaticPhonemeIsolatingTest() {
         val prefix = listOf(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val affix = prefix.map { PhonemePositionSubstitution(it) }
         val substitution = listOf(PassingPositionSubstitution())
         val condition = listOf(
-            PhonemeMatcher(Phoneme("b", PhonemeType.Consonant))
+            PhonemeMatcher(makePhoneme("b", PhonemeType.Consonant))
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
@@ -131,12 +126,12 @@ internal class WordTemplateSingleChangeTest {
         )
         val syllableTemplate = getPhonySyllableTemplate()
         val correctWord = createNoun(
-            Phoneme("b", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("b", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
         val badWord = createNoun(
-            Phoneme("c", PhonemeType.Consonant),
-            Phoneme("a", PhonemeType.Vowel)
+            makePhoneme("c", PhonemeType.Consonant),
+            makePhoneme("a", PhonemeType.Vowel)
         )
 
         checkForWord(
@@ -177,4 +172,7 @@ internal class WordTemplateSingleChangeTest {
                 ValencyPlace(PhonemeType.Vowel, 1.0)
             )
         )
+
+    private fun makePhoneme(name: String, type: PhonemeType) =
+        Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close)
 }
