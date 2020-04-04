@@ -57,6 +57,7 @@ enum class SpeechPart {
     Adverb,
     Numeral,
     Article,
+    Particle,
     Pronoun
 }
 

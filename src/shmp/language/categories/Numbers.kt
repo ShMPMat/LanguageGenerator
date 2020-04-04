@@ -29,26 +29,27 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =
         when (speechPart) {
-            SpeechPart.Noun -> 0.0
+            SpeechPart.Noun -> 100.0
             SpeechPart.Verb -> 100.0
             SpeechPart.Adjective -> 100.0
             SpeechPart.Adverb -> 0.0
             SpeechPart.Numeral -> 0.0
             SpeechPart.Article -> 10.0
             SpeechPart.Pronoun -> 50.0
+            SpeechPart.Particle -> 0.0
         }
 }
 
 enum class NumbersPresence(override val probability: Double, val presentNumbers: List<NumbersValue>) :
     SampleSpaceObject {
     None(100.0, listOf()),
-    Plural(200.0, listOf(NumbersValue.Singular, NumbersValue.Plural))
+    Plural(180.0, listOf(NumbersValue.Singular, NumbersValue.Plural)),
+    Dual(20.0, listOf(NumbersValue.Singular, NumbersValue.Dual, NumbersValue.Plural))
 }
 
 enum class NumbersValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    //TODO adjective
-    Singular(SyntaxCore("(singular number indicator)", SpeechPart.Adjective)),//TODO more diversity
-    Plural(SyntaxCore("(plural number indicator)", SpeechPart.Article));
-
+    Singular(SyntaxCore("(singular number indicator)", SpeechPart.Particle)),//TODO more diversity
+    Dual(SyntaxCore("(dual number indicator)", SpeechPart.Particle)),
+    Plural(SyntaxCore("(plural number indicator)", SpeechPart.Particle));
     override val parentClassName = outName
 }

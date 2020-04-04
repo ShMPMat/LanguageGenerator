@@ -36,28 +36,28 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Numeral -> 0.0
             SpeechPart.Article -> 100.0
             SpeechPart.Pronoun -> 100.0
+            SpeechPart.Particle -> 0.0
         }
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
     //TODO choose subset, not entire list
     None(145.0, listOf()),
-    Gendered(84.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral, GenderValue.Common)),
+    FmnGendered(84.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral, GenderValue.Common)),
     NonGendered(28.0, GenderValue.values().toList())
 }
 
 enum class GenderValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    //TODO adjective, really?
     //TODO more classes
-    Female(SyntaxCore("(female gender indicator)", SpeechPart.Adjective)),
-    Male(SyntaxCore("(male gender indicator)", SpeechPart.Adjective)),
-    Neutral(SyntaxCore("(neutral gender indicator)", SpeechPart.Adjective)),
-    Common(SyntaxCore("(common gender indicator)", SpeechPart.Adjective)),
+    Female(SyntaxCore("(female gender indicator)", SpeechPart.Particle)),
+    Male(SyntaxCore("(male gender indicator)", SpeechPart.Particle)),
+    Neutral(SyntaxCore("(neutral gender indicator)", SpeechPart.Particle)),
+    Common(SyntaxCore("(common gender indicator)", SpeechPart.Particle)),
 
-    Person(SyntaxCore("(person class indicator)", SpeechPart.Adjective)),
-    Plant(SyntaxCore("(plant class indicator)", SpeechPart.Adjective)),
-    Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Adjective)),
-    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Adjective));
+    Person(SyntaxCore("(person class indicator)", SpeechPart.Particle)),
+    Plant(SyntaxCore("(plant class indicator)", SpeechPart.Particle)),
+    Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Particle)),
+    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Particle));
 
     override val parentClassName = outName
 }

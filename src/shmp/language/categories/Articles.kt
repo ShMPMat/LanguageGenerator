@@ -36,6 +36,7 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Numeral -> 0.0
             SpeechPart.Article -> 0.0
             SpeechPart.Pronoun -> 0.0
+            SpeechPart.Particle -> 0.0
         }
 }
 
