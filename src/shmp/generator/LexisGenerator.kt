@@ -5,6 +5,7 @@ import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.categories.Category
 import shmp.language.categories.Gender
+import shmp.language.categories.GenderRandomSupplements
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.random.randomElementWithProbability
@@ -31,13 +32,10 @@ class LexisGenerator(
         for (i in 0 until wordAmount) {
             val core = cores[i]
             val staticCategories = mutableSetOf<CategoryValue>()
-            if (gender.values.isNotEmpty()) staticCategories.add(
-                randomElementWithProbability(
-                    gender.values,
-                    { 1.0 },
-                    random
+            if (gender.values.isNotEmpty() && GenderRandomSupplements.mainSpeechPart == core.speechPart)
+                staticCategories.add(
+                    randomElementWithProbability(gender.values, { 1.0 }, random)
                 )
-            )
             words.add(randomWord(SyntaxCore(
                 core.word,
                 core.speechPart,
