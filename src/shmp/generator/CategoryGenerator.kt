@@ -87,6 +87,7 @@ class CategoryGenerator(
                     syntaxCore = SyntaxCore(
                         syntaxCore.word + core.word,
                         syntaxCore.speechPart,
+                        syntaxCore.tags.union(core.tags),
                         syntaxCore.staticCategories.union(core.staticCategories)
                     )
                 }

@@ -50,15 +50,15 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
 
 enum class GenderValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     //TODO more classes
-    Female(SyntaxCore("(female gender indicator)", SpeechPart.Particle)),
-    Male(SyntaxCore("(male gender indicator)", SpeechPart.Particle)),
-    Neutral(SyntaxCore("(neutral gender indicator)", SpeechPart.Particle)),
-    Common(SyntaxCore("(common gender indicator)", SpeechPart.Particle)),
+    Female(SyntaxCore("(female gender indicator)", SpeechPart.Particle, setOf())),
+    Male(SyntaxCore("(male gender indicator)", SpeechPart.Particle, setOf())),
+    Neutral(SyntaxCore("(neutral gender indicator)", SpeechPart.Particle, setOf())),
+    Common(SyntaxCore("(common gender indicator)", SpeechPart.Particle, setOf())),
 
-    Person(SyntaxCore("(person class indicator)", SpeechPart.Particle)),
-    Plant(SyntaxCore("(plant class indicator)", SpeechPart.Particle)),
-    Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Particle)),
-    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Particle));
+    Person(SyntaxCore("(person class indicator)", SpeechPart.Particle, setOf())),
+    Plant(SyntaxCore("(plant class indicator)", SpeechPart.Particle, setOf())),
+    Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Particle, setOf())),
+    LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Particle, setOf()));
 
     override val parentClassName = outName
 }

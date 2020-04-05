@@ -12,7 +12,7 @@ class Language(
     private val restrictionsParadigm: RestrictionsParadigm,
     private val changeParadigm: ChangeParadigm
 ) {
-    override fun toString(): String {//TODO first word output is a debug
+    override fun toString(): String {
         return """phonemes:
                  |${phonemeContainer}
                  |Syllable structure: ${words[0].syllableTemplate}

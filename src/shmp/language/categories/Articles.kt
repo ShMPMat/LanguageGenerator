@@ -48,8 +48,8 @@ enum class ArticlePresence(override val probability: Double, val presentArticles
 }
 
 enum class ArticleValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    Definite(SyntaxCore("the", SpeechPart.Article)),
-    Indefinite(SyntaxCore("a", SpeechPart.Article));
+    Definite(SyntaxCore("the", SpeechPart.Article, setOf())),
+    Indefinite(SyntaxCore("a", SpeechPart.Article, setOf()));
 
     override val parentClassName = outName
 }

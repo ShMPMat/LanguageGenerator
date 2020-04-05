@@ -48,8 +48,8 @@ enum class NumbersPresence(override val probability: Double, val presentNumbers:
 }
 
 enum class NumbersValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    Singular(SyntaxCore("(singular number indicator)", SpeechPart.Particle)),//TODO more diversity
-    Dual(SyntaxCore("(dual number indicator)", SpeechPart.Particle)),
-    Plural(SyntaxCore("(plural number indicator)", SpeechPart.Particle));
+    Singular(SyntaxCore("(singular number indicator)", SpeechPart.Particle, setOf())),//TODO more diversity
+    Dual(SyntaxCore("(dual number indicator)", SpeechPart.Particle, setOf())),
+    Plural(SyntaxCore("(plural number indicator)", SpeechPart.Particle, setOf()));
     override val parentClassName = outName
 }
