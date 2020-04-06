@@ -6,9 +6,8 @@ import shmp.language.categories.realization.*
 import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
-import shmp.random.randomElementWithProbability
+import shmp.random.randomElement
 import shmp.random.randomSublist
-import shmp.random.randomSublistWithProbability
 import kotlin.random.Random
 
 class CategoryGenerator(
@@ -23,7 +22,7 @@ class CategoryGenerator(
     )
 
     private fun randomArticles(): Pair<Articles, (CategoryRealization) -> Double> {
-        val presentElements = randomElementWithProbability(
+        val presentElements = randomElement(
             ArticlePresence.values(),
             random
         ).presentArticles
@@ -32,7 +31,7 @@ class CategoryGenerator(
     }
 
     private fun randomGender(): Pair<Gender, (CategoryRealization) -> Double> {
-        val type = randomElementWithProbability(
+        val type = randomElement(
             GenderPresence.values(),
             random
         )
@@ -45,7 +44,7 @@ class CategoryGenerator(
     }
 
     private fun randomNumber(): Pair<Numbers, (CategoryRealization) -> Double> {
-        val presentElements = randomElementWithProbability(
+        val presentElements = randomElement(
             NumbersPresence.values(),
             random
         ).presentNumbers
@@ -55,7 +54,7 @@ class CategoryGenerator(
 
     private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
         setOf(categoryRandomSupplements.mainSpeechPart).union(
-            randomSublistWithProbability(
+            randomSublist(
                 SpeechPart.values(),
                 categoryRandomSupplements::speechPartProbabilities,
                 random
@@ -73,7 +72,7 @@ class CategoryGenerator(
 
         val realizationTypes = exponenceClustersWithMappers
             .map {
-                it.first to randomElementWithProbability(
+                it.first to randomElement(
                     CategoryRealization.values(),
                     it.second,
                     random
@@ -107,7 +106,7 @@ class CategoryGenerator(
         val clusters = ArrayList<Pair<ExponenceCluster, (CategoryRealization) -> Double>>()
         var l = 0
         while (l < shuffledMappers.size) {
-            val r = randomElementWithProbability(l + 1..shuffledMappers.size, { 1.0 / it }, random)
+            val r = randomElement(l + 1..shuffledMappers.size, { 1.0 / it }, random)
             val cluster = ExponenceCluster(
                 shuffledMappers.subList(
                     l,

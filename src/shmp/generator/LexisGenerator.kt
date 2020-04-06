@@ -8,7 +8,7 @@ import shmp.language.categories.Gender
 import shmp.language.categories.GenderRandomSupplements
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
-import shmp.random.randomElementWithProbability
+import shmp.random.randomElement
 import shmp.random.randomSublist
 import kotlin.random.Random
 
@@ -34,13 +34,13 @@ class LexisGenerator(
             val staticCategories = mutableSetOf<CategoryValue>()
             if (gender.values.isNotEmpty() && GenderRandomSupplements.mainSpeechPart == core.speechPart)
                 staticCategories.add(
-                    randomElementWithProbability(gender.values, { 1.0 }, random)
+                    randomElement(gender.values, { 1.0 }, random)
                 )
             words.add(randomWord(SyntaxCore(
                 core.word,
                 core.speechPart,
                 core.tagClusters
-                    .map { SyntaxTag(randomElementWithProbability(it.syntaxTags.toTypedArray(), random).name) }
+                    .map { SyntaxTag(randomElement(it.syntaxTags, random).name) }
                     .toSet(),
                 staticCategories
             )))
@@ -88,5 +88,5 @@ class LexisGenerator(
                 )
 
     private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
-        randomElementWithProbability((1..max), lengthWeight, random)
+        randomElement((1..max), lengthWeight, random)
 }

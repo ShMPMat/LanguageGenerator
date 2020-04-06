@@ -7,7 +7,7 @@ import shmp.language.categories.Category
 import shmp.language.categories.ChangeParadigm
 import shmp.language.categories.SpeechPartChangeParadigm
 import shmp.language.phonology.*
-import shmp.random.randomElementWithProbability
+import shmp.random.randomElement
 import shmp.random.randomSublist
 import java.io.File
 import java.text.ParseException
@@ -19,7 +19,7 @@ import kotlin.random.Random
 class LanguageGenerator(seed: Long) {
     private val random = Random(seed)
     private val phonemeBase = PhonemeBase()
-    private val vowelAmount = randomElementWithProbability(VowelQualityAmount.values(), random).amount
+    private val vowelAmount = randomElement(VowelQualityAmount.values(), random).amount
     private val consonantAmount = random.nextInt(6, 16)
     private val phonemeContainer = PhonemeImmutableContainer(
         randomSublist(
@@ -44,8 +44,8 @@ class LanguageGenerator(seed: Long) {
     private val categoryGenerator = CategoryGenerator(lexisGenerator, changeGenerator, random)
 
     fun generateLanguage(wordAmount: Int): Language {
-        val stressPattern = randomElementWithProbability(Stress.values(), random)
-        val wordOrder = randomElementWithProbability(SovOrder.values(), random)
+        val stressPattern = randomElement(Stress.values(), random)
+        val wordOrder = randomElement(SovOrder.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
         val changeParadigm = generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
@@ -132,7 +132,7 @@ class LanguageGenerator(seed: Long) {
             }
         }
         return SyllableValenceGenerator(
-            randomElementWithProbability(
+            randomElement(
                 syllableTemplates.keys,
                 { syllableTemplates[it] ?: 0.0 },
                 random

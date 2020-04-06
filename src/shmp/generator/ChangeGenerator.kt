@@ -6,7 +6,7 @@ import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.language.phonology.doesPhonemesCollide
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElementWithProbability
+import shmp.random.randomElement
 import kotlin.random.Random
 
 class ChangeGenerator(
@@ -24,7 +24,7 @@ class ChangeGenerator(
             Position.End -> true
         }
         val rawSubstitutions = when (
-            randomElementWithProbability(
+            randomElement(
                 AffixTypes.values(),
                 random
             )) {

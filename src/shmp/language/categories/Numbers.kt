@@ -51,5 +51,6 @@ enum class NumbersValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     Singular(SyntaxCore("(singular number indicator)", SpeechPart.Particle, setOf())),//TODO more diversity
     Dual(SyntaxCore("(dual number indicator)", SpeechPart.Particle, setOf())),
     Plural(SyntaxCore("(plural number indicator)", SpeechPart.Particle, setOf()));
+
     override val parentClassName = outName
 }
