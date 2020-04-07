@@ -107,11 +107,13 @@ class CategoryGenerator(
         var l = 0
         while (l < shuffledMappers.size) {
             val r = randomElement(l + 1..shuffledMappers.size, { 1.0 / it }, random)
+            val categories = shuffledMappers.subList(l, r).map { it.first }
             val cluster = ExponenceCluster(
-                shuffledMappers.subList(
-                    l,
-                    r
-                ).map { it.first })
+                categories,
+                constructExponenceUnionSets(
+                    categories
+                )
+            )
             val mapper = shuffledMappers[l].second //TODO how to unite a few lambdas, help
             clusters.add(cluster to mapper)
             l = r
@@ -156,3 +158,25 @@ class CategoryGenerator(
                 Map<ExponenceValue, CategoryApplicator>>
     ): List<ExponenceCluster> = applicators.keys.shuffled(random)
 }
+
+private fun constructExponenceUnionSets(categories: List<Category>): Set<List<CategoryValue>> =
+    if (categories.size == 1)
+        categories[0].values.map { listOf(it) }.toSet()
+    else {
+        val lists = mutableSetOf<List<CategoryValue>>()
+        val recSets = constructExponenceUnionSets(
+            categories.subList(
+                0,
+                categories.lastIndex
+            )
+        )
+        categories.last().values
+            .forEach { new ->
+                lists.addAll(recSets.map {
+                    val list = ArrayList(it)
+                    list.add(new)
+                    list
+                })
+            }
+        lists
+    }

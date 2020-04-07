@@ -96,10 +96,8 @@ class SpeechPartChangeParadigm(
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
 
-class ExponenceCluster(val categories: List<Category>) {
-    val possibleValues: Set<ExponenceValue> = constructExponenceUnionSets(
-        categories
-    )
+class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {
+    val possibleValues: Set<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
         .toSet()
 
@@ -128,34 +126,11 @@ class ExponenceCluster(val categories: List<Category>) {
     }
 }
 
-private fun constructExponenceUnionSets(categories: List<Category>): Set<List<CategoryValue>> =
-    if (categories.size == 1)
-        categories[0].values.map { listOf(it) }.toSet()
-    else {
-        val lists = mutableSetOf<List<CategoryValue>>()
-        val recSets = constructExponenceUnionSets(
-            categories.subList(
-                0,
-                categories.lastIndex
-            )
-        )
-        categories.last().values
-            .forEach { new ->
-                lists.addAll(recSets.map {
-                    val list = ArrayList(it)
-                    list.add(new)
-                    list
-                })
-            }
-        lists
-    }
-
-
 class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster: ExponenceCluster) {
     init {
         if (categoryValues.groupBy { it.parentClassName }.any { it.value.size > 1 })
             throw LanguageException("Tried to create Exponence Value with Category Value from the same Category")
-        if (parentCluster.categories.size != categoryValues.size)
+        if (parentCluster.categories.size != categoryValues.groupBy { it.parentClassName }.size)
             throw LanguageException(
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
