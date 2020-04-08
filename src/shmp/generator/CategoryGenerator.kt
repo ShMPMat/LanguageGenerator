@@ -8,6 +8,7 @@ import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.testProbability
 import kotlin.random.Random
 
 class CategoryGenerator(
@@ -15,6 +16,8 @@ class CategoryGenerator(
     private val changeGenerator: ChangeGenerator,
     private val random: Random
 ) {
+    private val categoryCollapseProbability = 0.5
+
     internal fun randomCategories() = listOf(
         randomArticles(),
         randomGender(),
@@ -157,26 +160,48 @@ class CategoryGenerator(
         applicators: Map<ExponenceCluster,
                 Map<ExponenceValue, CategoryApplicator>>
     ): List<ExponenceCluster> = applicators.keys.shuffled(random)
-}
 
-private fun constructExponenceUnionSets(categories: List<Category>): Set<List<CategoryValue>> =
-    if (categories.size == 1)
-        categories[0].values.map { listOf(it) }.toSet()
-    else {
-        val lists = mutableSetOf<List<CategoryValue>>()
-        val recSets = constructExponenceUnionSets(
-            categories.subList(
-                0,
-                categories.lastIndex
-            )
-        )
-        categories.last().values
-            .forEach { new ->
+    private fun constructExponenceUnionSets(
+        categories: List<Category>,
+        neighbourCategories: BoxedInt = BoxedInt(1)
+    ): Set<List<CategoryValue>> =
+        if (categories.size == 1)
+            if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
+                neighbourCategories.value--
+                setOf(categories.first().values.toList())
+            }
+            else
+                categories.first().values.map { listOf(it) }.toSet()
+        else {
+            val currentCategory = categories.last()
+            val lists = mutableSetOf<List<CategoryValue>>()
+            if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
+                neighbourCategories.value--
+                val recSets = constructExponenceUnionSets(
+                    categories.dropLast(1),
+                    BoxedInt(neighbourCategories.value * currentCategory.values.size)
+                )
                 lists.addAll(recSets.map {
                     val list = ArrayList(it)
-                    list.add(new)
+                    list.addAll(currentCategory.values)
                     list
                 })
+            } else {
+                val box = BoxedInt(neighbourCategories.value * currentCategory.values.size)
+                currentCategory.values.forEach { new ->
+                    val recSets = constructExponenceUnionSets(
+                        categories.dropLast(1),
+                        box
+                    )
+                    lists.addAll(recSets.map {
+                        val list = ArrayList(it)
+                        list.add(new)
+                        list
+                    })
+                }
             }
-        lists
-    }
+            lists
+        }
+}
+
+private data class BoxedInt(var value: Int)

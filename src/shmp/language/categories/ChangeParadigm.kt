@@ -110,13 +110,7 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
 
     fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
-            val sortedValues = ArrayList<CategoryValue>()
-            categories.forEach { category ->
-                sortedValues.addAll(
-                    categoryValues.filter { category.possibleValues.contains(it) }
-                )
-            }
-            ExponenceValue(sortedValues, this)
+            possibleValues.first { it.categoryValues.containsAll(categoryValues) }
         } catch (e: LanguageException) {
             null
         }
@@ -128,17 +122,20 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
 
 class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster: ExponenceCluster) {
     init {
-        if (categoryValues.groupBy { it.parentClassName }.any { it.value.size > 1 })
-            throw LanguageException("Tried to create Exponence Value with Category Value from the same Category")
         if (parentCluster.categories.size != categoryValues.groupBy { it.parentClassName }.size)
             throw LanguageException(
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
             )
-        if (categoryValues.zip(parentCluster.categories).any { it.first.parentClassName != it.second.outType })
-            throw LanguageException(
-                "Category Values in Exponence Value are ordered not in the same as Categories in Exponence Cluster"
-            )
+        var currentCategoryIndex = 0
+        for (category in categoryValues) {
+            if (category.parentClassName != parentCluster.categories[currentCategoryIndex].outType)
+                if (category.parentClassName == parentCluster.categories[currentCategoryIndex + 1].outType)
+                    currentCategoryIndex++
+                else throw LanguageException(
+                    "Category Values in Exponence Value are ordered not in the same as Categories in Exponence Cluster"
+                )
+        }
     }
 
     override fun toString(): String {

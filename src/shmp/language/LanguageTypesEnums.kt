@@ -26,8 +26,7 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
     Ten(10, 10.0),//No actual data
     Eleven(11, 6.0),//No actual data
     Twenty(12, 4.0),//No actual data
-    Thirteen(13, 2.0),
-    Fourteen(14, 1.0)
+    Thirteen(13, 2.0)
 }
 
 enum class Stress(override val probability: Double) : SampleSpaceObject {
