@@ -110,7 +110,10 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
 
     fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
-            possibleValues.first { it.categoryValues.containsAll(categoryValues) }
+            val neededValues = categoryValues.filter { categories.any { c ->
+                c.possibleValues.contains(it)
+            } }
+            possibleValues.first { it.categoryValues.containsAll(neededValues) }
         } catch (e: LanguageException) {
             null
         }

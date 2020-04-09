@@ -38,13 +38,13 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 testPhoneme(lst, p) && (lst.isEmpty()
                         || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
             },
-            actualSyllable.takeWhile { it.realizationProbability != 1.0 },
+            actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel },
             random
         )
         val nucleus = makeSyllablePart(
             restrictions,
             this::testPhoneme,
-            listOf(actualSyllable.first { it.realizationProbability == 1.0 }),
+            listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel }),
             random
         )
         val coda = makeSyllablePart(
@@ -53,7 +53,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 testPhoneme(lst, p) && (lst.isEmpty()
                         || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
             },
-            actualSyllable.takeLastWhile { it.realizationProbability != 1.0 },
+            actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel },
             random
         )
         return Syllable(onset + nucleus + coda)
