@@ -1,3 +1,4 @@
+
 package shmp.generator
 
 import shmp.language.*
@@ -83,11 +84,11 @@ class CategoryGenerator(
         val exponenceClustersWithMappers = splitCategoriesOnClusters(categoriesWithMappers)
         exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
 
-        val realizationTypes = exponenceClustersWithMappers
+        val realizationTypes = exponenceClustersWithMappers.zip(exponenceClustersWithMappers.indices)
             .map {
-                it.first to randomElement(
+                it.first.first to randomElement(
                     CategoryRealization.values(),
-                    it.second,
+                    { c -> it.first.second(it.second, c) },
                     random
                 )
             }
@@ -114,10 +115,11 @@ class CategoryGenerator(
 
     private fun splitCategoriesOnClusters(
         categoriesWithMappers: List<Pair<Category, (CategoryRealization) -> Double>>
-    ): List<Pair<ExponenceCluster, (CategoryRealization) -> Double>> {
+    ): List<Pair<ExponenceCluster, (Int, CategoryRealization) -> Double>> {
         val shuffledMappers = categoriesWithMappers.shuffled(random)
-        val clusters = ArrayList<Pair<ExponenceCluster, (CategoryRealization) -> Double>>()
+        val clusters = ArrayList<Pair<ExponenceCluster, (Int, CategoryRealization) -> Double>>()
         var l = 0
+        val data = mutableListOf<List<(CategoryRealization) -> Double>>()
         while (l < shuffledMappers.size) {
             val r = randomElement(l + 1..shuffledMappers.size, { 1.0 / it }, random)
             val categories = shuffledMappers.subList(l, r).map { it.first }
@@ -127,7 +129,10 @@ class CategoryGenerator(
                     categories
                 )
             )
-            val mapper = shuffledMappers[l].second //TODO how to unite a few lambdas, help
+            data.add(shuffledMappers.subList(l, r).map { it.second })
+            val mapper = { i: Int, c: CategoryRealization ->
+                data[i].map { it(c) }.foldRight(0.0, Double::plus)
+            }
             clusters.add(cluster to mapper)
             l = r
         }
