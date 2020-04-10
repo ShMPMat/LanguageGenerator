@@ -21,7 +21,8 @@ class CategoryGenerator(
     internal fun randomCategories() = listOf(
         randomArticles(),
         randomGender(),
-        randomNumber()
+        randomNumber(),
+        randomTense()
     )
 
     private fun randomArticles(): Pair<Articles, (CategoryRealization) -> Double> {
@@ -50,9 +51,18 @@ class CategoryGenerator(
         val presentElements = randomElement(
             NumbersPresence.values(),
             random
-        ).presentNumbers
+        ).possibilities
         val affectedSpeechParts = randomAffectedSpeechParts(NumbersRandomSupplements)
         return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements::realizationTypeProbability
+    }
+
+    private fun randomTense(): Pair<Tense, (CategoryRealization) -> Double> {
+        val presentElements = randomElement(
+            TensePresence.values(),
+            random
+        ).possibilities
+        val affectedSpeechParts = randomAffectedSpeechParts(TenseRandomSupplements)
+        return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements::realizationTypeProbability
     }
 
     private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =

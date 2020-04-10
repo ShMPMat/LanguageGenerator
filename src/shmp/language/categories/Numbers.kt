@@ -40,7 +40,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         }
 }
 
-enum class NumbersPresence(override val probability: Double, val presentNumbers: List<NumbersValue>) :
+enum class NumbersPresence(override val probability: Double, val possibilities: List<NumbersValue>) :
     SampleSpaceObject {
     None(100.0, listOf()),
     Plural(180.0, listOf(NumbersValue.Singular, NumbersValue.Plural)),
