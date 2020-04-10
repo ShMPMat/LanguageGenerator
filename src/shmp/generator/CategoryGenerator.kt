@@ -164,6 +164,7 @@ class CategoryGenerator(
             )
         }
         CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
+        CategoryRealization.Passing -> PassingCategoryApplicator()
     }
 
     fun randomApplicatorsOrder(

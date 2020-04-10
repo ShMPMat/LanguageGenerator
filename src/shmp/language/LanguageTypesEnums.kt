@@ -60,12 +60,13 @@ enum class SpeechPart {
     Pronoun
 }
 
-enum class CategoryRealization {//TODO reduplication
+enum class CategoryRealization {
     PrefixSeparateWord,
     SuffixSeparateWord,
     Prefix,
     Suffix,
-    Reduplication
+    Reduplication,
+    Passing
 }
 
 interface CategoryValue {
