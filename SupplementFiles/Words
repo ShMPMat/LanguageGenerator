@@ -1,57 +1,59 @@
+/   Default Gender probability - 10
+/
 /
 be                 Verb
 one                Numeral
 have               Verb
 hot                Adjective
-word               Noun
+word               Noun      G|Plant:1,Fruit:0,Person:1
 do                 Verb
-time               Noun
+time               Noun      G|LongObject:100
 say                Verb
 set                Verb
 three              Numeral
 want               Verb
-want               Noun
-air                Noun
+want               Noun      G|Plant:1,Fruit:0,Person:1
+air                Noun      G|Plant:1,Fruit:0,Person:1
 well               Adverb
 play               Verb
 small              Adjective
-end                Noun
+end                Noun      G|Plant:1,Fruit:0,Person:1
 end                Verb
 put                Verb
-home               Noun
+home               Noun      G|Plant:1,Fruit:0,Person:1
 read               Verb
-hand               Noun
+hand               Noun      G|LongObject:100
 port               Noun
 large              Adjective
 spell              Verb
-spell              Noun
+spell              Noun      G|Plant:1,Fruit:0,Person:1
 add                Verb
-land               Noun
+land               Noun      G|Plant:1,Fruit:0,Person:1
 land               Verb
 high               Adjective
 follow             Verb
 ask                Verb
 change             Verb
-change             Noun
-light              Noun
-kind               Noun
-need               Noun
+change             Noun      G|LongObject:100
+light              Noun      G|Plant:1,Fruit:0,Person:1
+kind               Noun      G|Plant:20
+need               Noun      G|Plant:1,Fruit:0,Person:1
 need               Verb
-house              Noun
-picture            Noun
+house              Noun      G|Plant:1,Fruit:0,Person:1
+picture            Noun      G|Plant:1,Fruit:0,Person:1
 picture            Verb
-animal             Noun
-point              Noun
+animal             Noun      G|Plant:1,Fruit:0,Person:1
+point              Noun      G|Plant:1,Fruit:0,Person:1
 point              Verb
-mother             Noun
-world              Noun
+mother             Noun      G|Person:1000,Female:5000,Common:1000
+world              Noun      G|Plant:1,Fruit:0,Person:1
 near               Adjective
 build              Verb
-father             Noun
+father             Noun      G|Person:1000,Male:5000,Common:1000
 new                Adjective
 work               Verb
-work               Noun
-part               Noun
+work               Noun      G|Plant:1,Fruit:0,Person:1
+part               Noun      G|Plant:1,Fruit:0,Person:1
 part               Verb
 take               Verb
 

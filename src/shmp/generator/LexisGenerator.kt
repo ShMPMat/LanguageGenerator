@@ -6,8 +6,10 @@ import shmp.language.*
 import shmp.language.categories.Category
 import shmp.language.categories.Gender
 import shmp.language.categories.GenderRandomSupplements
+import shmp.language.categories.GenderValue
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
+import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import kotlin.random.Random
@@ -32,10 +34,21 @@ class LexisGenerator(
         for (i in 0 until wordAmount) {
             val core = cores[i]
             val staticCategories = mutableSetOf<CategoryValue>()
-            if (gender.values.isNotEmpty() && GenderRandomSupplements.mainSpeechPart == core.speechPart)
+            if (gender.values.isNotEmpty() && GenderRandomSupplements.mainSpeechPart == core.speechPart) {
+                val genderAndMappers = core.tagClusters.firstOrNull { it.type == gender.outType }?.syntaxTags
+                    ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
+                    ?.filter { gender.values.contains(it.categoryValue) }
+                    ?.toMutableList()
+                    ?: mutableListOf()
+                gender.values.forEach { v ->
+                    if (genderAndMappers.none { it.categoryValue == v }) {
+                        genderAndMappers.add(Box(v, 10.0))
+                    }
+                }
                 staticCategories.add(
-                    randomElement(gender.values, { 1.0 }, random)
+                    randomElement(genderAndMappers, random).categoryValue
                 )
+            }
             words.add(randomWord(SyntaxCore(
                 core.word,
                 core.speechPart,
@@ -90,3 +103,5 @@ class LexisGenerator(
     private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
         randomElement((1..max), lengthWeight, random)
 }
+
+private data class Box(val categoryValue: CategoryValue, override val probability: Double) : SampleSpaceObject
