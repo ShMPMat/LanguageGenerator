@@ -58,7 +58,7 @@ class CategoryGenerator(
         return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements::realizationTypeProbability
     }
 
-    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
+    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements<*>): Set<SpeechPart> =
         setOf(categoryRandomSupplements.mainSpeechPart).union(
             randomSublist(
                 SpeechPart.values(),

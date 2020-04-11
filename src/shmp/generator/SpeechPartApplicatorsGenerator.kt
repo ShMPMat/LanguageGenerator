@@ -8,7 +8,6 @@ import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.random.randomElement
-import shmp.random.randomSublist
 import shmp.random.testProbability
 import kotlin.random.Random
 
@@ -25,10 +24,10 @@ class SpeechPartApplicatorsGenerator(
         categoriesWithMappers: List<Pair<Category, RealizationMapper>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-        val exponenceClustersWithMappers = splitCategoriesOnClusters(categoriesWithMappers)
-        exponenceClustersWithMappers.forEach { map[it.first] = HashMap() }
+        val exponenceClustersAndMappers = splitCategoriesOnClusters(categoriesWithMappers)
+        exponenceClustersAndMappers.forEach { map[it.first] = HashMap() }
 
-        val realizationTypes = exponenceClustersWithMappers.zip(exponenceClustersWithMappers.indices)
+        val realizationTypes = exponenceClustersAndMappers.zip(exponenceClustersAndMappers.indices)
             .map {
                 it.first.first to randomElement(
                     CategoryRealization.values(),

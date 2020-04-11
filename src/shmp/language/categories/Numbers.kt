@@ -15,7 +15,7 @@ class Numbers(
     "Has no numbers"
 )
 
-object NumbersRandomSupplements : CategoryRandomSupplements {
+object NumbersRandomSupplements : CategoryRandomSupplements<NumbersValue> {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -39,6 +39,10 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Pronoun -> 50.0
             SpeechPart.Particle -> 0.0
         }
+
+    override fun specialRealization(value: CategoryValue) = when(value) {
+        else -> setOf<CategoryValueBox<NumbersValue>>(CategoryValueBox(null, 1.0))
+    }
 }
 
 enum class NumbersPresence(override val probability: Double, val possibilities: List<NumbersValue>) :

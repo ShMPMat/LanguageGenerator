@@ -15,7 +15,7 @@ class Articles(
     "Has no articles"
 )
 
-object ArticlesRandomSupplements : CategoryRandomSupplements {
+object ArticlesRandomSupplements : CategoryRandomSupplements<ArticleValue> {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -39,6 +39,10 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Pronoun -> 0.0
             SpeechPart.Particle -> 0.0
         }
+
+    override fun specialRealization(value: CategoryValue) = when(value) {
+        else -> setOf<CategoryValueBox<ArticleValue>>(CategoryValueBox(null, 1.0))
+    }
 }
 
 enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleValue>) : SampleSpaceObject {

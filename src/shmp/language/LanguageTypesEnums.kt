@@ -1,9 +1,7 @@
 package shmp.language
 
-import shmp.language.categories.Category
 import shmp.random.SampleSpaceObject
 import java.text.ParseException
-import kotlin.reflect.KClass
 
 
 enum class PhonemeType(val char: Char) {

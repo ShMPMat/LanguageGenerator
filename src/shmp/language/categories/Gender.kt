@@ -15,7 +15,7 @@ class Gender(
     "Has no genders"
 )
 
-object GenderRandomSupplements : CategoryRandomSupplements {
+object GenderRandomSupplements : CategoryRandomSupplements<GenderValue> {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -39,6 +39,10 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Pronoun -> 100.0
             SpeechPart.Particle -> 0.0
         }
+
+    override fun specialRealization(value: CategoryValue) = when(value) {
+        else -> setOf<CategoryValueBox<GenderValue>>(CategoryValueBox(null, 1.0))
+    }
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
