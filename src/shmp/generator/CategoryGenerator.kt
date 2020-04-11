@@ -18,7 +18,7 @@ class CategoryGenerator(
         randomTense()
     )
 
-    private fun randomArticles(): Pair<Articles, CategoryRandomSupplements<*>> {
+    private fun randomArticles(): Pair<Articles, CategoryRandomSupplements> {
         val presentElements = randomElement(
             ArticlePresence.values(),
             random
@@ -27,7 +27,7 @@ class CategoryGenerator(
         return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements
     }
 
-    private fun randomGender(): Pair<Gender, CategoryRandomSupplements<*>> {
+    private fun randomGender(): Pair<Gender, CategoryRandomSupplements> {
         val type = randomElement(
             GenderPresence.values(),
             random
@@ -40,7 +40,7 @@ class CategoryGenerator(
         return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements
     }
 
-    private fun randomNumber(): Pair<Numbers, CategoryRandomSupplements<*>> {
+    private fun randomNumber(): Pair<Numbers, CategoryRandomSupplements> {
         val presentElements = randomElement(
             NumbersPresence.values(),
             random
@@ -49,7 +49,7 @@ class CategoryGenerator(
         return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements
     }
 
-    private fun randomTense(): Pair<Tense, CategoryRandomSupplements<*>> {
+    private fun randomTense(): Pair<Tense, CategoryRandomSupplements> {
         val presentElements = randomElement(
             TensePresence.values(),
             random
@@ -58,7 +58,7 @@ class CategoryGenerator(
         return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements
     }
 
-    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements<*>): Set<SpeechPart> =
+    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
         setOf(categoryRandomSupplements.mainSpeechPart).union(
             randomSublist(
                 SpeechPart.values(),

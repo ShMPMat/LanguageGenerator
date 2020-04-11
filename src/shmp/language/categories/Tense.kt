@@ -15,7 +15,7 @@ class Tense(
     "Has no tense"
 )
 
-object TenseRandomSupplements : CategoryRandomSupplements<TenseValue> {
+object TenseRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = SpeechPart.Verb
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -40,8 +40,17 @@ object TenseRandomSupplements : CategoryRandomSupplements<TenseValue> {
             SpeechPart.Particle -> 0.0
         }
 
-    override fun specialRealization(value: CategoryValue) = when(value) {
-        else -> setOf<CategoryValueBox<TenseValue>>(CategoryValueBox(null, 1.0))
+    override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == outName }
+        if (acceptableValues.size != 1) return emptyRealization
+        val value = values.first()
+        return when(value) {
+            TenseValue.Present -> setOf(
+                noValue(1.0),
+                RealizationBox(CategoryRealization.Passing, 1.0)
+            )
+            else -> emptyRealization
+        }
     }
 }
 

@@ -12,12 +12,31 @@ interface Category {
     val outType: String
 }
 
-interface CategoryRandomSupplements<E: CategoryValue> {
+interface CategoryRandomSupplements {
     val mainSpeechPart: SpeechPart
 
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): Double
-    fun specialRealization(value: CategoryValue): Set<CategoryValueBox<E>>
+    fun specialRealization(values: List<CategoryValue>): Set<RealizationBox>
 }
 
-data class CategoryValueBox<E: CategoryValue>(val value: E?, override val probability: Double): SampleSpaceObject
+data class RealizationBox(val realization: CategoryRealization?, override val probability: Double) : SampleSpaceObject {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RealizationBox
+
+        if (realization != other.realization) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return realization?.hashCode() ?: 0
+    }
+}
+
+internal fun noValue(probability: Double) = RealizationBox(null, probability)
+
+internal val emptyRealization = setOf(noValue(1.0))

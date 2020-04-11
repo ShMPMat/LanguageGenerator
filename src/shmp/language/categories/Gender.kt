@@ -15,7 +15,7 @@ class Gender(
     "Has no genders"
 )
 
-object GenderRandomSupplements : CategoryRandomSupplements<GenderValue> {
+object GenderRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -40,8 +40,13 @@ object GenderRandomSupplements : CategoryRandomSupplements<GenderValue> {
             SpeechPart.Particle -> 0.0
         }
 
-    override fun specialRealization(value: CategoryValue) = when(value) {
-        else -> setOf<CategoryValueBox<GenderValue>>(CategoryValueBox(null, 1.0))
+    override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == outName }
+        if (acceptableValues.size != 1) return emptyRealization
+        val value = values.first()
+        return when(value) {
+            else -> emptyRealization
+        }
     }
 }
 

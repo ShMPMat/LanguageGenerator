@@ -15,7 +15,7 @@ class Numbers(
     "Has no numbers"
 )
 
-object NumbersRandomSupplements : CategoryRandomSupplements<NumbersValue> {
+object NumbersRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -40,8 +40,21 @@ object NumbersRandomSupplements : CategoryRandomSupplements<NumbersValue> {
             SpeechPart.Particle -> 0.0
         }
 
-    override fun specialRealization(value: CategoryValue) = when(value) {
-        else -> setOf<CategoryValueBox<NumbersValue>>(CategoryValueBox(null, 1.0))
+    override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == outName }
+        if (acceptableValues.size != 1) return emptyRealization
+        val value = values.first()
+        return when(value) {
+            NumbersValue.Singular -> setOf(
+                noValue(1.0),
+                RealizationBox(CategoryRealization.Passing, 1.0)
+            )
+            NumbersValue.Plural -> setOf(//TODO check whether there exist more then two numbers
+                noValue(1.0),
+                RealizationBox(CategoryRealization.Reduplication, 1.0)
+            )
+            else -> emptyRealization
+        }
     }
 }
 

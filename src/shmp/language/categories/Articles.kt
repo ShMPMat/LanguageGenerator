@@ -15,7 +15,7 @@ class Articles(
     "Has no articles"
 )
 
-object ArticlesRandomSupplements : CategoryRandomSupplements<ArticleValue> {
+object ArticlesRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
@@ -40,8 +40,13 @@ object ArticlesRandomSupplements : CategoryRandomSupplements<ArticleValue> {
             SpeechPart.Particle -> 0.0
         }
 
-    override fun specialRealization(value: CategoryValue) = when(value) {
-        else -> setOf<CategoryValueBox<ArticleValue>>(CategoryValueBox(null, 1.0))
+    override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == outName }
+        if (acceptableValues.size != 1) return emptyRealization
+        val value = values.first()
+        return when(value) {
+            else -> emptyRealization
+        }
     }
 }
 

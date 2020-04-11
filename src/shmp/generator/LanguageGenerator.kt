@@ -81,7 +81,7 @@ class LanguageGenerator(seed: Long) {
 
     private fun generateChangeParadigm(
         restrictionsParadigm: RestrictionsParadigm,
-        categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements<*>>>
+        categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
     ): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
         return ChangeParadigm(
