@@ -21,17 +21,17 @@ class SpeechPartApplicatorsGenerator(
     internal fun randomApplicatorsForSpeechPart(
         speechPart: SpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
-        categoriesWithMappers: List<Pair<Category, RealizationMapper>>
+        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements<*>>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-        val exponenceClustersAndMappers = splitCategoriesOnClusters(categoriesWithMappers)
-        exponenceClustersAndMappers.forEach { map[it.first] = HashMap() }
+        val exponenceClustersAndMappers = splitCategoriesOnClusters(categoriesAndSupply)
+        exponenceClustersAndMappers.forEach { map[it.exponenceCluster] = HashMap() }
 
         val realizationTypes = exponenceClustersAndMappers.zip(exponenceClustersAndMappers.indices)
             .map {
-                it.first.first to randomElement(
+                it.first.exponenceCluster to randomElement(
                     CategoryRealization.values(),
-                    { c -> it.first.second(it.second, c) },
+                    { c -> it.first.mapper(it.second, c) },
                     random
                 )
             }
@@ -56,10 +56,10 @@ class SpeechPartApplicatorsGenerator(
     }
 
     private fun splitCategoriesOnClusters(
-        categoriesWithMappers: List<Pair<Category, RealizationMapper>>
-    ): List<Pair<ExponenceCluster, (Int, CategoryRealization) -> Double>> {
-        val shuffledMappers = categoriesWithMappers.shuffled(random)
-        val clusters = ArrayList<Pair<ExponenceCluster, (Int, CategoryRealization) -> Double>>()
+        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements<*>>>
+    ): List<ExponenceTemlate> {
+        val shuffledMappers = categoriesAndSupply.shuffled(random)
+        val clusters = ArrayList<ExponenceTemlate>()
         var l = 0
         val data = mutableListOf<List<RealizationMapper>>()
         while (l < shuffledMappers.size) {
@@ -67,15 +67,13 @@ class SpeechPartApplicatorsGenerator(
             val categories = shuffledMappers.subList(l, r).map { it.first }
             val cluster = ExponenceCluster(
                 categories,
-                constructExponenceUnionSets(
-                    categories
-                )
+                constructExponenceUnionSets(categories)
             )
-            data.add(shuffledMappers.subList(l, r).map { it.second })
+            data.add(shuffledMappers.subList(l, r).map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
                 data[i].map { it(c) }.foldRight(0.0, Double::plus)
             }
-            clusters.add(cluster to mapper)
+            clusters.add(ExponenceTemlate(cluster, mapper))
             l = r
         }
         return clusters
@@ -163,3 +161,7 @@ class SpeechPartApplicatorsGenerator(
 }
 
 private data class BoxedInt(var value: Int)
+
+typealias RealizationMapper = (CategoryRealization) -> Double
+
+data class ExponenceTemlate(val exponenceCluster: ExponenceCluster, val mapper: (Int, CategoryRealization) -> Double)

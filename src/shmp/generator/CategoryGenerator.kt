@@ -18,16 +18,16 @@ class CategoryGenerator(
         randomTense()
     )
 
-    private fun randomArticles(): Pair<Articles, RealizationMapper> {
+    private fun randomArticles(): Pair<Articles, CategoryRandomSupplements<*>> {
         val presentElements = randomElement(
             ArticlePresence.values(),
             random
         ).presentArticles
         val affectedSpeechParts = randomAffectedSpeechParts(ArticlesRandomSupplements)
-        return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements::realizationTypeProbability
+        return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements
     }
 
-    private fun randomGender(): Pair<Gender, RealizationMapper> {
+    private fun randomGender(): Pair<Gender, CategoryRandomSupplements<*>> {
         val type = randomElement(
             GenderPresence.values(),
             random
@@ -37,25 +37,25 @@ class CategoryGenerator(
         else
             type.possibilities
         val affectedSpeechParts = randomAffectedSpeechParts(GenderRandomSupplements)
-        return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements::realizationTypeProbability
+        return Gender(presentElements, affectedSpeechParts) to GenderRandomSupplements
     }
 
-    private fun randomNumber(): Pair<Numbers, RealizationMapper> {
+    private fun randomNumber(): Pair<Numbers, CategoryRandomSupplements<*>> {
         val presentElements = randomElement(
             NumbersPresence.values(),
             random
         ).possibilities
         val affectedSpeechParts = randomAffectedSpeechParts(NumbersRandomSupplements)
-        return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements::realizationTypeProbability
+        return Numbers(presentElements, affectedSpeechParts) to NumbersRandomSupplements
     }
 
-    private fun randomTense(): Pair<Tense, RealizationMapper> {
+    private fun randomTense(): Pair<Tense, CategoryRandomSupplements<*>> {
         val presentElements = randomElement(
             TensePresence.values(),
             random
         ).possibilities
         val affectedSpeechParts = randomAffectedSpeechParts(TenseRandomSupplements)
-        return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements::realizationTypeProbability
+        return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements
     }
 
     private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements<*>): Set<SpeechPart> =
@@ -67,5 +67,3 @@ class CategoryGenerator(
             )
         )
 }
-
-typealias RealizationMapper = (CategoryRealization) -> Double
