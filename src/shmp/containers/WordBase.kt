@@ -4,6 +4,7 @@ import shmp.generator.GeneratorException
 import shmp.language.SpeechPart
 import shmp.language.SyntaxTag
 import shmp.language.categories.Gender
+import shmp.language.categories.genderName
 import shmp.random.SampleSpaceObject
 import java.io.File
 
@@ -36,7 +37,7 @@ fun parseSyntaxTagTemplates(string: String) = string
     .map { SyntaxTagTemplate(it.split(":")[0], it.split(":")[1].toDouble()) }
 
 fun getType(string: String) = when(string) {
-    "G" -> "Gender"//TODO link to the outName
+    "G" -> genderName
     else -> throw GeneratorException("Unknown syntax tag type alias $string")
 }
 

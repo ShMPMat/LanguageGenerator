@@ -3,7 +3,7 @@ package shmp.language.categories
 import shmp.language.*
 import shmp.random.SampleSpaceObject
 
-private const val outName = "Gender"
+const val genderName = "Gender"
 
 class Gender(
     categories: List<GenderValue>,
@@ -11,7 +11,7 @@ class Gender(
 ) : AbstractChangeCategory(
     categories,
     GenderValue.values().toSet(),
-    outName,
+    genderName,
     "Has no genders"
 )
 
@@ -41,7 +41,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+        val acceptableValues = values.filter { it.parentClassName == genderName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(value) {
@@ -60,7 +60,7 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
 }
 
 enum class GenderValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    //TODO more classes
+    //TODO more classes (don't forget to add tags for words after it!)
     Female(SyntaxCore("(female gender indicator)", SpeechPart.Particle, setOf())),
     Male(SyntaxCore("(male gender indicator)", SpeechPart.Particle, setOf())),
     Neutral(SyntaxCore("(neutral gender indicator)", SpeechPart.Particle, setOf())),
@@ -71,5 +71,5 @@ enum class GenderValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     Fruit(SyntaxCore("(fruit class indicator)", SpeechPart.Particle, setOf())),
     LongObject(SyntaxCore("(long object class indicator)", SpeechPart.Particle, setOf()));
 
-    override val parentClassName = outName
+    override val parentClassName = genderName
 }
