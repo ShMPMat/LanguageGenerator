@@ -9,6 +9,7 @@ class Language(
     private val phonemeContainer: PhonemeContainer,
     private val stress: Stress,
     private val sovOrder: SovOrder,
+    private val numeralSystemBase: NumeralSystemBase,
     private val restrictionsParadigm: RestrictionsParadigm,
     private val changeParadigm: ChangeParadigm
 ) {
@@ -17,6 +18,7 @@ class Language(
                  |${phonemeContainer}
                  |Syllable structure: ${words[0].syllableTemplate}
                  |Stress patern: $stress
+                 |Numeral system base: $numeralSystemBase
                  |words:
                  |${words.joinToString { it.toString() + " - " + it.syntaxCore.word }}
                  |${words.joinToString { changeParadigm.apply(it).toString() + " - " + it.syntaxCore.word }}

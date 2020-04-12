@@ -48,6 +48,7 @@ class LanguageGenerator(seed: Long) {
     fun generateLanguage(wordAmount: Int): Language {
         val stressPattern = randomElement(Stress.values(), random)
         val wordOrder = randomElement(SovOrder.values(), random)
+        val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
         val changeParadigm = generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
@@ -57,6 +58,7 @@ class LanguageGenerator(seed: Long) {
             phonemeContainer,
             stressPattern,
             wordOrder,
+            numeralSystemBase,
             restrictionsParadigm,
             changeParadigm
         )
