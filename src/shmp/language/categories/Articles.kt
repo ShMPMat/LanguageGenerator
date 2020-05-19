@@ -45,6 +45,9 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(value) {
+            ArticleValue.None -> setOf(
+                RealizationBox(CategoryRealization.Passing, 1.0)
+            )
             else -> emptyRealization
         }
     }
@@ -52,12 +55,13 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
 
 enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleValue>) : SampleSpaceObject {
     None(198.0, listOf()),
-    Definite(98.0, listOf(ArticleValue.Definite)),
-    Indefinite(45.0, listOf(ArticleValue.Indefinite)),
-    DefiniteAndIndefinite(209.0, listOf(ArticleValue.Definite, ArticleValue.Indefinite))
+    Definite(98.0, listOf(ArticleValue.None, ArticleValue.Definite)),
+    Indefinite(45.0, listOf(ArticleValue.None, ArticleValue.Indefinite)),
+    DefiniteAndIndefinite(209.0, listOf(ArticleValue.None, ArticleValue.Definite, ArticleValue.Indefinite))
 }
 
 enum class ArticleValue(override val syntaxCore: SyntaxCore) : CategoryValue {
+    None(SyntaxCore("", SpeechPart.Article, setOf())),
     Definite(SyntaxCore("the", SpeechPart.Article, setOf())),
     Indefinite(SyntaxCore("a", SpeechPart.Article, setOf()));
 

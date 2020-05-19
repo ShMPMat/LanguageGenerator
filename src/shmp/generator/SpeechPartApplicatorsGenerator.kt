@@ -189,19 +189,22 @@ data class ExponenceTemlate(
     val supplements: List<CategoryRandomSupplements>
 )
 
-fun <E: SampleSpaceObject> uniteMutualProbabilities(
+fun <E : SampleSpaceObject> uniteMutualProbabilities(
     objectLists: List<Collection<E>>,
     copy: E.(Double) -> E
 ): List<E> {
     var previousVariants = objectLists.first().toMutableSet()
-    var finalVariants = mutableSetOf<E>()
+    var newVariants = mutableSetOf<E>()
     for (variantList in objectLists.drop(1)) {
         for (variant in variantList) {
-            var same = previousVariants.firstOrNull { it == variant} ?: continue
-            finalVariants.add(same.copy(same.probability * variant.probability))
+            val same = previousVariants.firstOrNull { it == variant }
+            if (same == null)
+                newVariants.add(variant)
+            else
+                newVariants.add(same.copy(same.probability * variant.probability))
         }
-        previousVariants = finalVariants
-        finalVariants = mutableSetOf()
+        previousVariants = newVariants
+        newVariants = mutableSetOf()
     }
     return previousVariants.toList()
 }
