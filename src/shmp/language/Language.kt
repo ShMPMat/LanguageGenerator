@@ -21,7 +21,7 @@ class Language(
                  |Numeral system base: $numeralSystemBase
                  |words:
                  |${words.joinToString { it.toString() + " - " + it.syntaxCore.word }}
-                 |${words.joinToString { changeParadigm.apply(it).toString() + " - " + it.syntaxCore.word }}
+                 |${words.joinToString { "${changeParadigm.apply(it)} - ${it.syntaxCore.word}" }}
                  |SOV order: $sovOrder
                  |${changeParadigm}
                  |""".trimMargin()

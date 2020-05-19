@@ -1,19 +1,14 @@
 package shmp.language
 
-import shmp.language.phonology.SyllableTemplate
-import shmp.language.phonology.Phoneme
 import shmp.language.phonology.Syllable
+import shmp.language.phonology.SyllableTemplate
 
 data class Word(val syllables: List<Syllable>, val syllableTemplate: SyllableTemplate, val syntaxCore: SyntaxCore) {
     val size: Int = toPhonemes().size
 
-    fun toPhonemes(): List<Phoneme> {
-        return syllables.flatMap { it.phonemeSequence.phonemes }
-    }
+    fun toPhonemes() = syllables.flatMap { it.phonemeSequence.phonemes }
 
-    override fun toString(): String {
-        return syllables.joinToString("")
-    }
+    override fun toString() = syllables.joinToString("")
 
     operator fun get(position: Int) = toPhonemes()[position]
 }

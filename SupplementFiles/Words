@@ -56,6 +56,8 @@ work               Noun      G|Plant:1,Fruit:0,Person:1
 part               Noun      G|Plant:1,Fruit:0,Person:1
 part               Verb
 take               Verb
+place              Noun
+live               Verb      G|Plant:1,Fruit:0,Person:1
 
 /other
 /some
@@ -105,9 +107,6 @@ take               Verb
 /any
 
 /get
-/place
-/made
-/live
 /where
 /after
 /back
