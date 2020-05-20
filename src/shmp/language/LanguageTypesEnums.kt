@@ -27,16 +27,6 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
     Thirteen(13, 2.0)
 }
 
-enum class Stress(override val probability: Double) : SampleSpaceObject {
-    NotFixed(220.0),
-    Initial(92.0),
-    Second(16.0),
-    Third(1.0),
-    Antepenultimate(12.0),
-    Penultimate(110.0),
-    Ultimate(51.0)
-}
-
 enum class SovOrder(override val probability: Double) : SampleSpaceObject {
     SOV(565.0),
     SVO(488.0),

@@ -9,6 +9,8 @@ import shmp.language.categories.GenderRandomSupplements
 import shmp.language.categories.GenderValue
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
+import shmp.language.phonology.prosody.StressType
+import shmp.language.phonology.prosody.generateStress
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist
@@ -18,6 +20,7 @@ class LexisGenerator(
     val syllableGenerator: SyllableValenceGenerator,
     private val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
+    val stressType: StressType,
     private val random: Random
 ) {
     private val wordBase = WordBase()
@@ -27,7 +30,7 @@ class LexisGenerator(
     internal fun generateWords(
         wordAmount: Int,
         categories: List<Category>
-    ): ArrayList<Word> {
+    ): List<Word> {
         val words = ArrayList<Word>()
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
         val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
@@ -58,7 +61,8 @@ class LexisGenerator(
                 staticCategories
             )))
         }
-        return words
+        val stressedWords = words.map { generateStress(stressType, it, random) }
+        return stressedWords
     }
 
     internal fun randomWord(

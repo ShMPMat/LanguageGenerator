@@ -1,20 +1,16 @@
 package shmp.language.phonology
 
-import shmp.language.phonology.Phoneme
-import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.prosody.Prosody
 
-data class Syllable(val phonemeSequence: PhonemeSequence) {
+data class Syllable(val phonemeSequence: PhonemeSequence, var prosodicEnums: List<Prosody>) {
     constructor(phonemeList: List<Phoneme>) : this(
-        PhonemeSequence(
-            phonemeList
-        )
+        PhonemeSequence(phonemeList),
+        listOf()
     )
 
     val size: Int = phonemeSequence.size
 
-    override fun toString(): String {
-        return phonemeSequence.getRawString()
-    }
+    override fun toString() = phonemeSequence.getRawString() + prosodicEnums.joinToString("") { it.mark }
 
     operator fun get(i: Int): Phoneme = phonemeSequence[0]
 }

@@ -3,11 +3,12 @@ package shmp.language
 import shmp.containers.PhonemeContainer
 import shmp.language.categories.ChangeParadigm
 import shmp.language.phonology.RestrictionsParadigm
+import shmp.language.phonology.prosody.StressType
 
 class Language(
     private val words: List<Word>,
     private val phonemeContainer: PhonemeContainer,
-    private val stress: Stress,
+    private val stressType: StressType,
     private val sovOrder: SovOrder,
     private val numeralSystemBase: NumeralSystemBase,
     private val restrictionsParadigm: RestrictionsParadigm,
@@ -17,7 +18,7 @@ class Language(
         return """phonemes:
                  |${phonemeContainer}
                  |Syllable structure: ${words[0].syllableTemplate}
-                 |Stress patern: $stress
+                 |Stress patern: $stressType
                  |Numeral system base: $numeralSystemBase
                  |words:
                  |${words.joinToString { it.toString() + " - " + it.syntaxCore.word }}

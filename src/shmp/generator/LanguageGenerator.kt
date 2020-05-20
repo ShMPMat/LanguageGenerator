@@ -8,6 +8,7 @@ import shmp.language.categories.CategoryRandomSupplements
 import shmp.language.categories.ChangeParadigm
 import shmp.language.categories.SpeechPartChangeParadigm
 import shmp.language.phonology.*
+import shmp.language.phonology.prosody.StressType
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import java.io.File
@@ -40,13 +41,19 @@ class LanguageGenerator(seed: Long) {
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm()
-    private val lexisGenerator = LexisGenerator(syllableGenerator, restrictionsParadigm, phonemeContainer, random)
+    private val stressPattern = randomElement(StressType.values(), random)
+    private val lexisGenerator = LexisGenerator(
+        syllableGenerator,
+        restrictionsParadigm,
+        phonemeContainer,
+        stressPattern,
+        random
+    )
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
     private val categoryGenerator = CategoryGenerator(random)
     private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
 
     fun generateLanguage(wordAmount: Int): Language {
-        val stressPattern = randomElement(Stress.values(), random)
         val wordOrder = randomElement(SovOrder.values(), random)
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
