@@ -7,13 +7,12 @@ class ChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryValues.toSet())
+    fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause =
+        speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryValues.toSet())
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
-    }
 
-    fun getDefaultState(word: Word): List<CategoryValue> {
-        return speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
+    fun getDefaultState(word: Word): List<CategoryValue> =
+        speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
             ?.filter { it.values.isNotEmpty() }
             ?.map { it.values[0] }
@@ -23,15 +22,12 @@ class ChangeParadigm(
             ?.union(word.syntaxCore.staticCategories)
             ?.toList()
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
-    }
 
-    override fun toString(): String {
-        return categories.joinToString("\n") + "\n\n" +
-                speechPartChangeParadigms
-                    .map { it.value }
-                    .filter { it.hasChanges() }
-                    .joinToString("\n\n\n")
-    }
+    override fun toString() = categories.joinToString("\n") + "\n\n" +
+            speechPartChangeParadigms
+                .map { it.value }
+                .filter { it.hasChanges() }
+                .joinToString("\n\n\n")
 }
 
 class SpeechPartChangeParadigm(
@@ -40,10 +36,10 @@ class SpeechPartChangeParadigm(
     val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>
 ) {
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Clause {
-        if (word.syntaxCore.speechPart != speechPart)
-            throw LanguageException(
-                "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
-            )
+        if (word.syntaxCore.speechPart != speechPart) throw LanguageException(
+            "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
+        )
+
         var currentClause = Clause(listOf(word))
         var currentWord = word
         var wordPosition = 0
@@ -110,9 +106,11 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
 
     fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
-            val neededValues = categoryValues.filter { categories.any { c ->
-                c.possibleValues.contains(it)
-            } }
+            val neededValues = categoryValues.filter {
+                categories.any { c ->
+                    c.possibleValues.contains(it)
+                }
+            }
             possibleValues.first { it.categoryValues.containsAll(neededValues) }
         } catch (e: LanguageException) {
             null

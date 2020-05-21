@@ -3,6 +3,8 @@ package shmp.language.morphem.change
 import shmp.language.*
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.Syllable
+import shmp.language.phonology.prosody.Prosody
 
 class TemplateSingleChange(
     override val position: Position,
@@ -32,13 +34,15 @@ class TemplateSingleChange(
     }
 
     override fun change(word: Word): Word {
+        fun Word.takeProsody(i: Int) = this.syllables.getOrNull(i)?.prosodicEnums?.toList() ?: listOf()
+
         val testResult = findGoodIndex(word)
         if (testResult != null) {
             return when (position) {
                 Position.End -> {
                     val change = getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
                         .map { it.first.substitute(word, it.second) }
-                    return word.syllableTemplate.createWord(
+                    val noProsodyWord = word.syllableTemplate.createWord(
                         PhonemeSequence(
                             word.toPhonemes().subList(
                                 0,
@@ -47,11 +51,17 @@ class TemplateSingleChange(
                         ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
+                    val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
+                        s.copy(
+                            prosodicEnums = word.takeProsody(i)
+                        )
+                    }
+                    return noProsodyWord.copy(syllables = prosodicSyllables)
                 }
                 Position.Beginning -> {
                     val change = getFullChange().zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
                         .map { it.first.substitute(word, it.second) }
-                    return word.syllableTemplate.createWord(
+                    val noProsodyWord =  word.syllableTemplate.createWord(
                         PhonemeSequence(
                             change + word.toPhonemes().subList(
                                 phonemeMatchers.size,
@@ -60,6 +70,11 @@ class TemplateSingleChange(
                         ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
+                    val shift = noProsodyWord.size - word.size
+                    val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
+                        s.copy(prosodicEnums = word.takeProsody(i - shift))
+                    }
+                    return noProsodyWord.copy(syllables = prosodicSyllables)
                 }
             }
         } else {
