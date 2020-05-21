@@ -50,7 +50,12 @@ class SpeechPartApplicatorsGenerator(
                     )
                 }
                 map.getValue(clusterAndRealization.first.exponenceCluster)[it] = randomCategoryApplicator(
-                    decideRealizationType(clusterAndRealization.second, it, clusterAndRealization.first.supplements),
+                    decideRealizationType(
+                        clusterAndRealization.second,
+                        it,
+                        clusterAndRealization.first.supplements,
+                        speechPart
+                    ),
                     phoneticRestrictions,
                     syntaxCore
                 )
@@ -63,10 +68,11 @@ class SpeechPartApplicatorsGenerator(
     private fun decideRealizationType(
         categoryRealization: CategoryRealization,
         value: ExponenceValue,
-        supplements: List<CategoryRandomSupplements>
+        supplements: List<CategoryRandomSupplements>,
+        speechPart: SpeechPart
     ): CategoryRealization {
         val variants = supplements
-            .map { it.specialRealization(value.categoryValues) }
+            .map { it.specialRealization(value.categoryValues, speechPart) }
         val finalVariants = uniteMutualProbabilities(variants) { this.copy(probability = it) }
         return randomElement(finalVariants, random).realization ?: categoryRealization
     }

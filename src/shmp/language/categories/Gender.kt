@@ -40,7 +40,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Particle -> 0.0
         }
 
-    override fun specialRealization(values: List<CategoryValue>): Set<RealizationBox> {
+    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == genderName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()

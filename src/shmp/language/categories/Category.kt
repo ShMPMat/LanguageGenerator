@@ -17,7 +17,7 @@ interface CategoryRandomSupplements {
 
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): Double
-    fun specialRealization(values: List<CategoryValue>): Set<RealizationBox>
+    fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
 }
 
 data class RealizationBox(val realization: CategoryRealization?, override val probability: Double) : SampleSpaceObject {
