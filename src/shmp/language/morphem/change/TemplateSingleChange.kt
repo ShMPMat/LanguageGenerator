@@ -11,11 +11,14 @@ class TemplateSingleChange(
     val phonemeMatchers: List<PositionMatcher>,
     val matchedPhonemesSubstitution: List<PositionSubstitution>,
     val affix: List<PositionSubstitution>//TODO split on two parts
-): WordChange {
+) : WordChange {
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
-            Position.Beginning -> if (testFromPosition(word, 0)) phonemeMatchers.size else null
+            Position.Beginning ->
+                if (testFromPosition(word, 0))
+                    phonemeMatchers.size
+                else null
             Position.End -> {
                 val sublistStart = word.size - phonemeMatchers.size
                 if (testFromPosition(word, sublistStart)) sublistStart else null
@@ -26,9 +29,10 @@ class TemplateSingleChange(
     override fun test(word: Word): Boolean = findGoodIndex(word) != null
 
     private fun testFromPosition(word: Word, position: Int) =
-        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers).all { it.second.test(it.first) }
+        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers)
+            .all { it.second.test(it.first) }
 
-    fun getFullChange() = when(position) {
+    fun getFullChange() = when (position) {
         Position.Beginning -> affix + matchedPhonemesSubstitution
         Position.End -> matchedPhonemesSubstitution + affix
     }
@@ -40,8 +44,9 @@ class TemplateSingleChange(
         if (testResult != null) {
             return when (position) {
                 Position.End -> {
-                    val change = getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                        .map { it.first.substitute(word, it.second) }
+                    val change =
+                        getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
+                            .map { it.first.substitute(word, it.second) }
                     val noProsodyWord = word.syllableTemplate.createWord(
                         PhonemeSequence(
                             word.toPhonemes().subList(
@@ -59,9 +64,10 @@ class TemplateSingleChange(
                     return noProsodyWord.copy(syllables = prosodicSyllables)
                 }
                 Position.Beginning -> {
-                    val change = getFullChange().zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                        .map { it.first.substitute(word, it.second) }
-                    val noProsodyWord =  word.syllableTemplate.createWord(
+                    val change =
+                        getFullChange().zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
+                            .map { it.first.substitute(word, it.second) }
+                    val noProsodyWord = word.syllableTemplate.createWord(
                         PhonemeSequence(
                             change + word.toPhonemes().subList(
                                 phonemeMatchers.size,
@@ -136,7 +142,5 @@ class PassingPositionSubstitution : PositionSubstitution {
 
     override fun getSubstitutePhoneme(): Phoneme? = null
 
-    override fun toString(): String {
-        return "_"
-    }
+    override fun toString() = "_"
 }

@@ -83,11 +83,9 @@ class SpeechPartChangeParadigm(
         return exponenceCluster.filterExponenceUnion(categoryValues)
     }
 
-    override fun toString(): String {
-        return "$speechPart changes on: \n${applicators.map {
-            it.key.toString() + ":\n" + it.value.map { it.key.toString() + ": " + it.value }.joinToString("\n")
-        }.joinToString("\n\n")}"
-    }
+    override fun toString() = "$speechPart changes on: \n" + applicators.map { (cluster, map) ->
+        cluster.toString() + ":\n" + map.entries.joinToString("\n") { it.key.toString() + ": " + it.value }
+    }.joinToString("\n\n")
 
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
@@ -116,9 +114,7 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
             null
         }
 
-    override fun toString(): String {
-        return categories.joinToString("\n")
-    }
+    override fun toString() = categories.joinToString("\n")
 }
 
 class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster: ExponenceCluster) {
@@ -139,9 +135,7 @@ class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster:
         }
     }
 
-    override fun toString(): String {
-        return categoryValues.joinToString()
-    }
+    override fun toString() = categoryValues.joinToString()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
