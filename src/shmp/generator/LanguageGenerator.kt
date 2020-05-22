@@ -8,6 +8,7 @@ import shmp.language.categories.CategoryRandomSupplements
 import shmp.language.categories.ChangeParadigm
 import shmp.language.categories.SpeechPartChangeParadigm
 import shmp.language.phonology.*
+import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
 import shmp.random.randomElement
 import shmp.random.randomSublist
@@ -108,7 +109,8 @@ class LanguageGenerator(seed: Long) {
                 speechPart to SpeechPartChangeParadigm(
                     speechPart,
                     orderedApplicators,
-                    applicators
+                    applicators,
+                    ProsodyChangeParadigm(stressPattern)
                 )
             }.toMap()
         )

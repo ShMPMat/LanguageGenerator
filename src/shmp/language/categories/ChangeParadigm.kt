@@ -2,6 +2,7 @@ package shmp.language.categories
 
 import shmp.language.*
 import shmp.language.categories.realization.CategoryApplicator
+import shmp.language.phonology.prosody.ProsodyChangeParadigm
 
 class ChangeParadigm(
     val categories: List<Category>,
@@ -33,7 +34,8 @@ class ChangeParadigm(
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
-    val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>
+    private val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
+    private val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Clause {
         if (word.syntaxCore.speechPart != speechPart) throw LanguageException(
@@ -57,7 +59,10 @@ class SpeechPartChangeParadigm(
                 currentWord = newClause[wordPosition]
             currentClause = newClause
         }
-        return currentClause
+        if (currentClause.size > 1) {
+            val j = 0
+        }
+        return applyProsodyParadigm(currentClause, wordPosition, word)
     }
 
     private fun useCategoryApplicator(
@@ -83,11 +88,19 @@ class SpeechPartChangeParadigm(
         return exponenceCluster.filterExponenceUnion(categoryValues)
     }
 
+    private fun applyProsodyParadigm(clause: Clause, wordPosition: Int, oldWord: Word): Clause {
+        return Clause(
+            clause.words.subList(0, wordPosition)
+                    + listOf(prosodyChangeParadigm.apply(oldWord, clause[wordPosition]))
+                    + clause.words.subList(wordPosition + 1, clause.size)
+        )
+    }
+
+    fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
+
     override fun toString() = "$speechPart changes on: \n" + applicators.map { (cluster, map) ->
         cluster.toString() + ":\n" + map.entries.joinToString("\n") { it.key.toString() + ": " + it.value }
     }.joinToString("\n\n")
-
-    fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 }
 
 class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {

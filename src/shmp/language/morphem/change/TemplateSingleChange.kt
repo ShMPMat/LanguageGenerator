@@ -76,7 +76,7 @@ class TemplateSingleChange(
                         ),
                         word.syntaxCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val shift = noProsodyWord.size - word.size
+                    val shift = noProsodyWord.syllables.size - word.syllables.size
                     val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i - shift))
                     }
