@@ -21,32 +21,31 @@ class Numbers(
 object NumbersRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = Noun
 
-    override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not actual data
-            PrefixSeparateWord -> 10.0
-            SuffixSeparateWord -> 10.0
-            Prefix -> 100.0
-            Suffix -> 100.0
-            Reduplication -> 0.0
-            Passing -> 0.0
-        }
+    override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
+        //TODO not actual data
+        PrefixSeparateWord -> 10.0
+        SuffixSeparateWord -> 10.0
+        Prefix -> 100.0
+        Suffix -> 100.0
+        Reduplication -> 0.0
+        Passing -> 0.0
+    }
 
-    override fun speechPartProbabilities(speechPart: SpeechPart): Double =
-        when (speechPart) {
-            Noun -> 100.0
-            Verb -> 100.0
-            Adjective -> 100.0
-            Adverb -> 0.0
-            Numeral -> 0.0
-            Article -> 10.0
-            Pronoun -> 50.0
-            Particle -> 0.0
-        }
+    override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> 100.0
+        Verb -> 100.0
+        Adjective -> 100.0
+        Adverb -> 0.0
+        Numeral -> 0.0
+        Article -> 10.0
+        Pronoun -> 50.0
+        Particle -> 0.0
+    }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }
         if (acceptableValues.size != 1) return emptyRealization
-        return when(values.first()) {
+        return when (values.first()) {
             Singular -> setOf(
                 noValue(1.0),
                 RealizationBox(Passing, 1.0)

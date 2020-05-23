@@ -1,6 +1,7 @@
 package shmp.language.categories
 
 import shmp.language.*
+import shmp.language.categories.GenderValue.*
 import shmp.random.SampleSpaceObject
 
 const val genderName = "Gender"
@@ -10,7 +11,7 @@ class Gender(
     override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    GenderValue.values().toSet(),
+    values().toSet(),
     genderName,
     "Has no genders"
 )
@@ -52,10 +53,10 @@ object GenderRandomSupplements : CategoryRandomSupplements {
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
     None(145.0, listOf()),
-    FmcnGendered(6.0, listOf(GenderValue.Common, GenderValue.Female, GenderValue.Male, GenderValue.Neutral)),
-    FmnGendered(26.0, listOf(GenderValue.Female, GenderValue.Male, GenderValue.Neutral)),
-    CnGendered(26.0, listOf(GenderValue.Common, GenderValue.Neutral)),
-    FmGendered(26.0, listOf(GenderValue.Female, GenderValue.Male)),
+    FmcnGendered(6.0, listOf(Common, Female, Male, Neutral)),
+    FmnGendered(26.0, listOf(Female, Male, Neutral)),
+    CnGendered(26.0, listOf(Common, Neutral)),
+    FmGendered(26.0, listOf(Female, Male)),
     NonGendered(28.0, GenderValue.values().toList())
 }
 
