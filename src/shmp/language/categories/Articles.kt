@@ -20,7 +20,7 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
     override val mainSpeechPart: SpeechPart = SpeechPart.Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not actual data
+        when (categoryRealization) {//TODO not an actual data
             CategoryRealization.PrefixSeparateWord -> 400.0
             CategoryRealization.SuffixSeparateWord -> 20.0
             CategoryRealization.Prefix -> 100.0
@@ -29,6 +29,9 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.Passing -> 0.0
         }
 
+    override val maxSpeechPartProbability = 0.2
+
+
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =
         when (speechPart) {
             SpeechPart.Noun -> 0.0
@@ -36,7 +39,7 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Adjective -> 100.0
             SpeechPart.Adverb -> 0.0
             SpeechPart.Numeral -> 0.0
-            SpeechPart.Article -> 0.0
+            SpeechPart.Article -> 10.0//TODO WAT????
             SpeechPart.Pronoun -> 0.0
             SpeechPart.Particle -> 0.0
         }
@@ -53,13 +56,14 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
 }
 
 enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleValue>) : SampleSpaceObject {
-    None(198.0, listOf()),
-    OnlyDefinite(98.0, listOf(ArticleValue.None, Definite)),
-    OnlyIndefinite(45.0, listOf(ArticleValue.None, Indefinite)),
-    DefiniteAndIndefinite(209.0, listOf(ArticleValue.None, Definite, Indefinite))
+    NoArticle(198.0, listOf()),
+    OnlyDefinite(98.0, listOf(None, Definite)),
+    OnlyIndefinite(45.0, listOf(None, Indefinite)),
+    DefiniteAndIndefinite(209.0, listOf(None, Definite, Indefinite))
 }
 
 enum class ArticleValue(override val syntaxCore: SyntaxCore) : CategoryValue {
+    //TODO there are proper and partitive articles, naniiiiii???
     None(SyntaxCore("", SpeechPart.Article, setOf())),
     Definite(SyntaxCore("the", SpeechPart.Article, setOf())),
     Indefinite(SyntaxCore("a", SpeechPart.Article, setOf()));

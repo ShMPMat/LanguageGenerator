@@ -29,10 +29,13 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         CategoryRealization.Passing -> 0.0
     }
 
+    override val maxSpeechPartProbability = 1.0
+
+
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         SpeechPart.Noun -> 0.0
-        SpeechPart.Verb -> 1.0
-        SpeechPart.Adjective -> 0.0
+        SpeechPart.Verb -> 100.0
+        SpeechPart.Adjective -> 2.0//TODO not an actual data
         SpeechPart.Adverb -> 0.0
         SpeechPart.Numeral -> 0.0
         SpeechPart.Article -> 0.0

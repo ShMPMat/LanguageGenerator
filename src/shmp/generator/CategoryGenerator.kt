@@ -1,11 +1,11 @@
 
 package shmp.generator
 
-import shmp.language.CategoryRealization
 import shmp.language.SpeechPart
 import shmp.language.categories.*
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.testProbability
 import kotlin.random.Random
 
 class CategoryGenerator(
@@ -58,12 +58,14 @@ class CategoryGenerator(
         return Tense(presentElements, affectedSpeechParts) to TenseRandomSupplements
     }
 
-    private fun randomAffectedSpeechParts(categoryRandomSupplements: CategoryRandomSupplements): Set<SpeechPart> =
-        setOf(categoryRandomSupplements.mainSpeechPart).union(
-            randomSublist(
-                SpeechPart.values(),
-                categoryRandomSupplements::speechPartProbabilities,
-                random
-            )
+    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<SpeechPart> {
+        val max = SpeechPart.values().map { supplements.speechPartProbabilities(it) }.max()
+            ?: throw GeneratorException("No SpeechPart exists")
+        return setOf(supplements.mainSpeechPart).union(
+            SpeechPart.values().mapNotNull {
+                val probability = supplements.maxSpeechPartProbability * supplements.speechPartProbabilities(it) / max
+                if (testProbability(probability, random)) it else null
+            }
         )
+    }
 }

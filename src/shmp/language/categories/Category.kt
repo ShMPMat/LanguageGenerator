@@ -15,6 +15,8 @@ interface Category {
 interface CategoryRandomSupplements {
     val mainSpeechPart: SpeechPart
 
+    val maxSpeechPartProbability: Double
+
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): Double
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>

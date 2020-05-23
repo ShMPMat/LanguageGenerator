@@ -31,6 +31,8 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Passing -> 0.0
     }
 
+    override val maxSpeechPartProbability = 0.99
+
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> 100.0
         Verb -> 100.0

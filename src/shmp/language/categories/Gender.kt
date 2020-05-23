@@ -29,6 +29,8 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.Passing -> 0.0
         }
 
+    override val maxSpeechPartProbability = 0.99
+
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =
         when (speechPart) {
             SpeechPart.Noun -> 0.0
