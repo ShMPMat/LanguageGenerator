@@ -98,9 +98,12 @@ class SpeechPartChangeParadigm(
 
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 
-    override fun toString() = "$speechPart changes on: \n" + applicators.map { (cluster, map) ->
-        cluster.toString() + ":\n" + map.entries.joinToString("\n") { it.key.toString() + ": " + it.value }
-    }.joinToString("\n\n")
+    override fun toString() = "$speechPart changes on: \n" +
+            applicators.map { (c, m) -> "$c:\n" + m.entries
+                    .map { it.key.toString() + ": " + it.value }
+                    .sortedWith(naturalOrder())
+                    .joinToString("\n")
+            }.joinToString("\n\n")
 }
 
 class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {
