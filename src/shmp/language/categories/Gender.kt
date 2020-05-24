@@ -17,8 +17,6 @@ class Gender(
 )
 
 object GenderRandomSupplements : CategoryRandomSupplements {
-    override val mainSpeechPart: SpeechPart = SpeechPart.Noun
-
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not actual data
             CategoryRealization.PrefixSeparateWord -> 10.0
@@ -29,17 +27,15 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.Passing -> 0.0
         }
 
-    override val maxSpeechPartProbability = 0.99
-
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =
         when (speechPart) {
-            SpeechPart.Noun -> 0.0
-            SpeechPart.Verb -> 100.0
-            SpeechPart.Adjective -> 100.0
+            SpeechPart.Noun -> 100.0
+            SpeechPart.Verb -> 95.0
+            SpeechPart.Adjective -> 95.0
             SpeechPart.Adverb -> 0.0
             SpeechPart.Numeral -> 0.0
-            SpeechPart.Article -> 100.0
-            SpeechPart.Pronoun -> 100.0
+            SpeechPart.Article -> 90.0
+            SpeechPart.Pronoun -> 99.0
             SpeechPart.Particle -> 0.0
         }
 

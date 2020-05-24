@@ -19,7 +19,6 @@ class Numbers(
 )
 
 object NumbersRandomSupplements : CategoryRandomSupplements {
-    override val mainSpeechPart: SpeechPart = Noun
 
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
@@ -31,16 +30,14 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Passing -> 0.0
     }
 
-    override val maxSpeechPartProbability = 0.99
-
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> 100.0
-        Verb -> 100.0
-        Adjective -> 100.0
+        Verb -> 99.0
+        Adjective -> 99.0
         Adverb -> 0.0
         Numeral -> 0.0
         Article -> 10.0
-        Pronoun -> 50.0
+        Pronoun -> 99.0
         Particle -> 0.0
     }
 

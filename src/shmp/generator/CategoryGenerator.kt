@@ -61,11 +61,9 @@ class CategoryGenerator(
     private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<SpeechPart> {
         val max = SpeechPart.values().map { supplements.speechPartProbabilities(it) }.max()
             ?: throw GeneratorException("No SpeechPart exists")
-        return setOf(supplements.mainSpeechPart).union(
-            SpeechPart.values().mapNotNull {
-                val probability = supplements.maxSpeechPartProbability * supplements.speechPartProbabilities(it) / max
+        return SpeechPart.values().mapNotNull {
+                val probability = supplements.speechPartProbabilities(it) / max
                 if (testProbability(probability, random)) it else null
-            }
-        )
+            }.toSet()
     }
 }

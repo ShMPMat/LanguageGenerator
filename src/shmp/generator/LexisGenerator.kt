@@ -37,7 +37,7 @@ class LexisGenerator(
         for (i in 0 until wordAmount) {
             val core = cores[i]
             val staticCategories = mutableSetOf<CategoryValue>()
-            if (gender.values.isNotEmpty() && GenderRandomSupplements.mainSpeechPart == core.speechPart) {
+            if (gender.values.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
                 val genderAndMappers = core.tagClusters.firstOrNull { it.type == gender.outType }?.syntaxTags
                     ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
                     ?.filter { gender.values.contains(it.categoryValue) }

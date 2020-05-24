@@ -17,8 +17,6 @@ class Articles(
 )
 
 object ArticlesRandomSupplements : CategoryRandomSupplements {
-    override val mainSpeechPart: SpeechPart = SpeechPart.Noun
-
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not an actual data
             CategoryRealization.PrefixSeparateWord -> 400.0
@@ -29,12 +27,9 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.Passing -> 0.0
         }
 
-    override val maxSpeechPartProbability = 0.2
-
-
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =
         when (speechPart) {
-            SpeechPart.Noun -> 0.0
+            SpeechPart.Noun -> 500.0
             SpeechPart.Verb -> 0.0
             SpeechPart.Adjective -> 100.0
             SpeechPart.Adverb -> 0.0

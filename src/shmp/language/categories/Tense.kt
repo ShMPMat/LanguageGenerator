@@ -17,8 +17,6 @@ class Tense(
 )
 
 object TenseRandomSupplements : CategoryRandomSupplements {
-    override val mainSpeechPart: SpeechPart = SpeechPart.Verb
-
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
         CategoryRealization.PrefixSeparateWord -> 10.0
@@ -28,9 +26,6 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         CategoryRealization.Reduplication -> 0.0
         CategoryRealization.Passing -> 0.0
     }
-
-    override val maxSpeechPartProbability = 1.0
-
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         SpeechPart.Noun -> 0.0
