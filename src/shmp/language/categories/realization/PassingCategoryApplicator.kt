@@ -7,7 +7,5 @@ class PassingCategoryApplicator : CategoryApplicator {
         clause.words.map { it }
     )
 
-    override fun toString(): String {
-        return "Nothing"
-    }
+    override fun toString() = "Nothing"
 }

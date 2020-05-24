@@ -25,6 +25,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.Suffix -> 100.0
             CategoryRealization.Reduplication -> 0.0
             CategoryRealization.Passing -> 0.0
+            CategoryRealization.NewWord -> 0.0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart): Double =

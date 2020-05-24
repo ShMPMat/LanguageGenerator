@@ -60,6 +60,7 @@ enum class SpeechPart {
 }
 
 enum class CategoryRealization {
+    NewWord,
     PrefixSeparateWord,
     SuffixSeparateWord,
     Prefix,

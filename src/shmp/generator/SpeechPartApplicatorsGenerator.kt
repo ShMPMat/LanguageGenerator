@@ -136,6 +136,7 @@ class SpeechPartApplicatorsGenerator(
         }
         CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
         CategoryRealization.Passing -> PassingCategoryApplicator()
+        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.randomWord(syntaxCore))
     }
 
     fun randomApplicatorsOrder(
