@@ -12,11 +12,21 @@ class CategoryGenerator(
     private val random: Random
 ) {
     internal fun randomCategories() = listOf(
+        randomPerson(),
         randomArticles(),
         randomGender(),
         randomNumber(),
         randomTense()
     )
+
+    private fun randomPerson(): Pair<Person, CategoryRandomSupplements> {
+        val presentElements = randomElement(
+            PersonPresence.values(),
+            random
+        ).possibilities
+        val affectedSpeechParts = randomAffectedSpeechParts(PersonRandomSupplements)
+        return Person(presentElements, affectedSpeechParts) to PersonRandomSupplements
+    }
 
     private fun randomArticles(): Pair<Articles, CategoryRandomSupplements> {
         val presentElements = randomElement(

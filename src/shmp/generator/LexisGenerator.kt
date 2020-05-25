@@ -32,9 +32,10 @@ class LexisGenerator(
         categories: List<Category>
     ): List<Word> {
         val words = ArrayList<Word>()
-        val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1)
+        val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1).toMutableList()
+        cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
         val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
-        for (i in 0 until wordAmount) {
+        for (i in 0 until cores.size) {
             val core = cores[i]
             val staticCategories = mutableSetOf<CategoryValue>()
             if (gender.values.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
