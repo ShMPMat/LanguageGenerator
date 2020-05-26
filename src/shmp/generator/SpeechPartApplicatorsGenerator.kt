@@ -151,9 +151,9 @@ class SpeechPartApplicatorsGenerator(
         if (categories.size == 1)
             if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
                 neighbourCategories.value--
-                setOf(categories.first().values.toList())
+                setOf(categories.first().actualValues.toList())
             } else
-                categories.first().values.map { listOf(it) }.toSet()
+                categories.first().actualValues.map { listOf(it) }.toSet()
         else {
             val currentCategory = categories.last()
             val lists = mutableSetOf<List<CategoryValue>>()
@@ -161,16 +161,16 @@ class SpeechPartApplicatorsGenerator(
                 neighbourCategories.value--
                 val recSets = constructExponenceUnionSets(
                     categories.dropLast(1),
-                    BoxedInt(neighbourCategories.value * currentCategory.values.size)
+                    BoxedInt(neighbourCategories.value * currentCategory.actualValues.size)
                 )
                 lists.addAll(recSets.map {
                     val list = ArrayList(it)
-                    list.addAll(currentCategory.values)
+                    list.addAll(currentCategory.actualValues)
                     list
                 })
             } else {
-                val box = BoxedInt(neighbourCategories.value * currentCategory.values.size)
-                currentCategory.values.forEach { new ->
+                val box = BoxedInt(neighbourCategories.value * currentCategory.actualValues.size)
+                currentCategory.actualValues.forEach { new ->
                     val recSets = constructExponenceUnionSets(
                         categories.dropLast(1),
                         box

@@ -5,7 +5,6 @@ import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.categories.Category
 import shmp.language.categories.Gender
-import shmp.language.categories.GenderRandomSupplements
 import shmp.language.categories.GenderValue
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
@@ -38,13 +37,13 @@ class LexisGenerator(
         for (i in 0 until cores.size) {
             val core = cores[i]
             val staticCategories = mutableSetOf<CategoryValue>()
-            if (gender.values.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
+            if (gender.actualValues.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
                 val genderAndMappers = core.tagClusters.firstOrNull { it.type == gender.outType }?.syntaxTags
                     ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
-                    ?.filter { gender.values.contains(it.categoryValue) }
+                    ?.filter { gender.actualValues.contains(it.categoryValue) }
                     ?.toMutableList()
                     ?: mutableListOf()
-                gender.values.forEach { v ->
+                gender.actualValues.forEach { v ->
                     if (genderAndMappers.none { it.categoryValue == v }) {
                         genderAndMappers.add(Box(v, 10.0))
                     }

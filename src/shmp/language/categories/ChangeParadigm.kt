@@ -15,14 +15,16 @@ class ChangeParadigm(
     fun getDefaultState(word: Word): List<CategoryValue> =
         speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
-            ?.filter { it.values.isNotEmpty() }
-            ?.map { it.values[0] }
+            ?.filter { it.actualValues.isNotEmpty() }
+            ?.map { it.actualValues[0] }
             ?.filter { enum ->
                 word.syntaxCore.staticCategories.none { it.parentClassName == enum.parentClassName }
             }
             ?.union(word.syntaxCore.staticCategories)
             ?.toList()
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
+
+    fun getSpeechPartParadigm(speechPart: SpeechPart) = speechPartChangeParadigms.getValue(speechPart)
 
     override fun toString() = categories.joinToString("\n") + "\n\n" +
             speechPartChangeParadigms
@@ -46,21 +48,18 @@ class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
-            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
-            val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
-            if (currentClause.size != newClause.size) {
-                for (i in wordPosition until newClause.size) {
-                    if (currentWord == newClause[i]) {
-                        wordPosition = i
-                        break
+                val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
+                val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
+                if (currentClause.size != newClause.size) {
+                    for (i in wordPosition until newClause.size) {
+                        if (currentWord == newClause[i]) {
+                            wordPosition = i
+                            break
+                        }
                     }
-                }
-            } else
-                currentWord = newClause[wordPosition]
-            currentClause = newClause
-        }
-        if (currentClause.size > 1) {
-            val j = 0
+                } else
+                    currentWord = newClause[wordPosition]
+                currentClause = newClause
         }
         return applyProsodyParadigm(currentClause, wordPosition, word)
     }
@@ -113,7 +112,7 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
 
     fun contains(exponenceValue: ExponenceValue): Boolean {
         for (category in categories)
-            if (exponenceValue.categoryValues.count { category.possibleValues.contains(it) } != 1)
+            if (exponenceValue.categoryValues.count { category.allPossibleValues.contains(it) } != 1)
                 return false
         return exponenceValue.categoryValues.size == categories.size
     }
@@ -122,7 +121,7 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
         try {
             val neededValues = categoryValues.filter {
                 categories.any { c ->
-                    c.possibleValues.contains(it)
+                    c.allPossibleValues.contains(it)
                 }
             }
             possibleValues.first { it.categoryValues.containsAll(neededValues) }

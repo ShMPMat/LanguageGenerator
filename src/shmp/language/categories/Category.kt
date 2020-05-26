@@ -6,8 +6,8 @@ import shmp.language.SpeechPart
 import shmp.random.SampleSpaceObject
 
 interface Category {
-    val values: List<CategoryValue>
-    val possibleValues: Set<CategoryValue>
+    val actualValues: List<CategoryValue>
+    val allPossibleValues: Set<CategoryValue>
     val affectedSpeechParts: Set<SpeechPart>
     val outType: String
 }

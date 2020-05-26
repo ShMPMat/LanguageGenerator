@@ -99,7 +99,7 @@ class LanguageGenerator(seed: Long) {
             SpeechPart.values().map { speechPart ->
                 val speechPartCategoriesAndSupply = categoriesWithMappers
                     .filter { it.first.affectedSpeechParts.contains(speechPart) }
-                    .filter { it.first.values.isNotEmpty() }
+                    .filter { it.first.actualValues.isNotEmpty() }
                 val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
                     speechPart,
                     restrictionsParadigm.restrictionsMapper.getValue(speechPart),
