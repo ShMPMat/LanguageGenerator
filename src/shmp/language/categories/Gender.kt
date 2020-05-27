@@ -44,7 +44,11 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         val acceptableValues = values.filter { it.parentClassName == genderName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
-        return when(value) {
+        return when(speechPart) {
+            SpeechPart.Pronoun -> setOf(//TODO no actual data
+                noValue(1.0),
+                RealizationBox(CategoryRealization.NewWord, 2.0)
+            )
             else -> emptyRealization
         }
     }

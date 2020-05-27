@@ -35,7 +35,7 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Adjective -> 100.0
             SpeechPart.Adverb -> 0.0
             SpeechPart.Numeral -> 0.0
-            SpeechPart.Article -> 10.0//TODO WAT????
+            SpeechPart.Article -> 0.0
             SpeechPart.Pronoun -> 0.0
             SpeechPart.Particle -> 0.0
         }

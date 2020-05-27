@@ -57,7 +57,13 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
                 )
                 else -> emptyRealization
             }
-            else -> emptyRealization
+            else -> when (speechPart) {
+                Pronoun -> setOf(//TODO no actual data
+                    noValue(1.0),
+                    RealizationBox(CategoryRealization.NewWord, 1.3)
+                )
+                else -> emptyRealization
+            }
         }
     }
 }
