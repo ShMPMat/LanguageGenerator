@@ -10,7 +10,5 @@ class ReduplicationCategoryApplicator : CategoryApplicator {
                 + clause.words.drop(wordPosition + 1)
     )
 
-    override fun toString(): String {
-        return "Reduplication"
-    }
+    override fun toString() = "Reduplication"
 }

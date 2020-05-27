@@ -2,12 +2,13 @@ package shmp.language
 
 
 fun getParadigmPrinted(language: Language, word: Word): String {
-    return listCartesianProduct(//TODO no hardcoded genders for nouns!
-        language.changeParadigm.getSpeechPartParadigm(word.syntaxCore.speechPart).exponenceClusters
-            .flatMap { it.categories }
-            .map { it.actualValues }
-    ).map { language.changeParadigm.apply(word, it) to it }
-        .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
+    return "Base - $word\n" +
+            listCartesianProduct(//TODO no hardcoded genders for nouns!
+                language.changeParadigm.getSpeechPartParadigm(word.syntaxCore.speechPart).exponenceClusters
+                    .flatMap { it.categories }
+                    .map { it.actualValues }
+            ).map { language.changeParadigm.apply(word, it) to it }
+                .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 
 private fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {

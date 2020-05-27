@@ -61,8 +61,7 @@ class LexisGenerator(
                 staticCategories
             )))
         }
-        val stressedWords = words.map { generateStress(stressType, it, random) }
-        return stressedWords
+        return words
     }
 
     internal fun randomWord(
@@ -92,7 +91,7 @@ class LexisGenerator(
                 syllables.add(syllable)
                 break
             }
-        return Word(syllables, syllableGenerator.template, core)
+        return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }
 
     fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) =
