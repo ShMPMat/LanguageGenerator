@@ -27,7 +27,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         Suffix -> 1.0
         Reduplication -> 0.0
         Passing -> 0.0
-        NewWord -> 100.0
+        NewWord -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -46,9 +46,9 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
-            SpeechPart.Pronoun -> setOf(//TODO no actual data
+            Pronoun -> setOf(//TODO no actual data
                 noValue(1.0),
-                RealizationBox(CategoryRealization.NewWord, 2.0)
+                RealizationBox(NewWord, 2.0)
             )
             else -> emptyRealization
         }
