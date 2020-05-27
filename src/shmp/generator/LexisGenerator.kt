@@ -94,14 +94,15 @@ class LexisGenerator(
         return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }
 
-    fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) =
-        (prefix.isEmpty() || prefix.last().phonemeSequence.last() != syllable[0])
-                && (
-                prefix.size < 2
-                        || prefix.last().size > 1
-                        || syllable.phonemeSequence[0].type != PhonemeType.Vowel
-                        || prefix[prefix.size - 2].phonemeSequence.last().type != PhonemeType.Vowel
-                )
+    fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) = checkBorderCoherency(syllable, prefix)
+
+    private fun checkBorderCoherency(syllable: Syllable, prefix: List<Syllable>): Boolean {
+        if (prefix.isEmpty()) return true
+        val leftBorder = prefix.last().phonemeSequence.last()
+        val rightBorder = syllable[0]
+        return leftBorder != rightBorder
+                && (leftBorder.type != PhonemeType.Vowel || rightBorder.type != PhonemeType.Vowel)
+    }
 
     private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
         randomElement((1..max), lengthWeight, random)
