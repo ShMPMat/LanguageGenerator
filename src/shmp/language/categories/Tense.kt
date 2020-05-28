@@ -3,6 +3,8 @@ package shmp.language.categories
 import shmp.language.*
 import shmp.language.categories.TenseValue.*
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
+import kotlin.random.Random
 
 private const val outName = "Tense"
 
@@ -51,6 +53,11 @@ object TenseRandomSupplements : CategoryRandomSupplements {
             else -> emptyRealization
         }
     }
+
+    override fun randomRealization(random: Random) = randomElement(
+        TensePresence.values(),
+        random
+    ).possibilities
 }
 
 enum class TensePresence(override val probability: Double, val possibilities: List<TenseValue>) : SampleSpaceObject {

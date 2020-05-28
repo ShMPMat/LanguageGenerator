@@ -4,6 +4,7 @@ import shmp.language.CategoryRealization
 import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 import shmp.random.SampleSpaceObject
+import kotlin.random.Random
 
 interface Category {
     val actualValues: List<CategoryValue>
@@ -16,6 +17,7 @@ interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): Double
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
+    fun randomRealization(random: Random): List<CategoryValue>
 }
 
 data class RealizationBox(val realization: CategoryRealization?, override val probability: Double) : SampleSpaceObject {

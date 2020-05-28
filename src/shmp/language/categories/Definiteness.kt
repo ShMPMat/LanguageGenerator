@@ -3,6 +3,8 @@ package shmp.language.categories
 import shmp.language.*
 import shmp.language.categories.DefinitenessValue.*
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
+import kotlin.random.Random
 
 private const val outName = "Definiteness"
 
@@ -49,6 +51,11 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
             else -> emptyRealization
         }
     }
+
+    override fun randomRealization(random: Random) = randomElement(
+        DefinitenessPresence.values(),
+        random
+    ).presentDefiniteness
 }
 
 enum class DefinitenessPresence(

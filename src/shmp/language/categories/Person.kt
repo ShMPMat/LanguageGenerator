@@ -5,6 +5,8 @@ import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
 import shmp.language.categories.PersonValue.*
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
+import kotlin.random.Random
 
 private const val outName = "Person"
 
@@ -53,6 +55,11 @@ object PersonRandomSupplements : CategoryRandomSupplements {
             else -> emptyRealization
         }
     }
+
+    override fun randomRealization(random: Random) = randomElement(
+        PersonPresence.values(),
+        random
+    ).possibilities
 }
 
 enum class PersonPresence(override val probability: Double, val possibilities: List<PersonValue>) : SampleSpaceObject {

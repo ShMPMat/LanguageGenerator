@@ -3,6 +3,9 @@ package shmp.language.categories
 import shmp.language.*
 import shmp.language.categories.GenderValue.*
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
+import shmp.random.randomSublist
+import kotlin.random.Random
 
 const val genderName = "Gender"
 
@@ -51,6 +54,17 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             )
             else -> emptyRealization
         }
+    }
+
+    override fun randomRealization(random: Random): List<GenderValue> {
+        val type = randomElement(
+            GenderPresence.values(),
+            random
+        )
+        return if (type == GenderPresence.NonGendered)
+            randomSublist(type.possibilities, random, min = 2)
+        else
+            type.possibilities
     }
 }
 

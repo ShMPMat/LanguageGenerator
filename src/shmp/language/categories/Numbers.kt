@@ -5,6 +5,8 @@ import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
 import shmp.language.categories.NumbersValue.*
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
+import kotlin.random.Random
 
 private const val outName = "Numbers"
 
@@ -19,7 +21,6 @@ class Numbers(
 )
 
 object NumbersRandomSupplements : CategoryRandomSupplements {
-
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
         PrefixSeparateWord -> 10.0
@@ -66,6 +67,11 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
             }
         }
     }
+
+    override fun randomRealization(random: Random) = randomElement(
+        NumbersPresence.values(),
+        random
+    ).possibilities
 }
 
 enum class NumbersPresence(override val probability: Double, val possibilities: List<NumbersValue>) :
