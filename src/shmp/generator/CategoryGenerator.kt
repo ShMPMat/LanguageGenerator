@@ -13,7 +13,7 @@ class CategoryGenerator(
 ) {
     internal fun randomCategories() = listOf(
         randomPerson(),
-        randomArticles(),
+        randomDefiniteness(),
         randomGender(),
         randomNumber(),
         randomTense()
@@ -28,13 +28,13 @@ class CategoryGenerator(
         return Person(presentElements, affectedSpeechParts) to PersonRandomSupplements
     }
 
-    private fun randomArticles(): Pair<Articles, CategoryRandomSupplements> {
+    private fun randomDefiniteness(): Pair<Definiteness, CategoryRandomSupplements> {
         val presentElements = randomElement(
-            ArticlePresence.values(),
+            DefinitenessPresence.values(),
             random
-        ).presentArticles
-        val affectedSpeechParts = randomAffectedSpeechParts(ArticlesRandomSupplements)
-        return Articles(presentElements, affectedSpeechParts) to ArticlesRandomSupplements
+        ).presentDefiniteness
+        val affectedSpeechParts = randomAffectedSpeechParts(DefinitenessRandomSupplements)
+        return Definiteness(presentElements, affectedSpeechParts) to DefinitenessRandomSupplements
     }
 
     private fun randomGender(): Pair<Gender, CategoryRandomSupplements> {

@@ -1,22 +1,22 @@
 package shmp.language.categories
 
 import shmp.language.*
-import shmp.language.categories.ArticleValue.*
+import shmp.language.categories.DefinitenessValue.*
 import shmp.random.SampleSpaceObject
 
-private const val outName = "Articles"
+private const val outName = "Definiteness"
 
-class Articles(
-    categories: List<ArticleValue>,
+class Definiteness(
+    categories: List<DefinitenessValue>,
     override val affectedSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
     outName,
-    "Has no articles"
+    "Has no definiteness"
 )
 
-object ArticlesRandomSupplements : CategoryRandomSupplements {
+object DefinitenessRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not an actual data
             CategoryRealization.PrefixSeparateWord -> 400.0
@@ -51,14 +51,17 @@ object ArticlesRandomSupplements : CategoryRandomSupplements {
     }
 }
 
-enum class ArticlePresence(override val probability: Double, val presentArticles: List<ArticleValue>) : SampleSpaceObject {
-    NoArticle(198.0, listOf()),
+enum class DefinitenessPresence(
+    override val probability: Double,
+    val presentDefiniteness: List<DefinitenessValue>
+) : SampleSpaceObject {
+    NoDefiniteness(198.0, listOf()),
     OnlyDefinite(98.0, listOf(None, Definite)),
     OnlyIndefinite(45.0, listOf(None, Indefinite)),
     DefiniteAndIndefinite(209.0, listOf(None, Definite, Indefinite))
 }
 
-enum class ArticleValue(override val syntaxCore: SyntaxCore) : CategoryValue {
+enum class DefinitenessValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
     None(SyntaxCore("", SpeechPart.Article, setOf())),
     Definite(SyntaxCore("the", SpeechPart.Article, setOf())),
