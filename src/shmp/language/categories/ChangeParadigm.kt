@@ -48,18 +48,18 @@ class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
-                val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
-                val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
-                if (currentClause.size != newClause.size) {
-                    for (i in wordPosition until newClause.size) {
-                        if (currentWord == newClause[i]) {
-                            wordPosition = i
-                            break
-                        }
+            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
+            val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
+            if (currentClause.size != newClause.size) {
+                for (i in wordPosition until newClause.size) {
+                    if (currentWord == newClause[i]) {
+                        wordPosition = i
+                        break
                     }
-                } else
-                    currentWord = newClause[wordPosition]
-                currentClause = newClause
+                }
+            } else
+                currentWord = newClause[wordPosition]
+            currentClause = newClause
         }
         return applyProsodyParadigm(currentClause, wordPosition, word)
     }
@@ -98,11 +98,14 @@ class SpeechPartChangeParadigm(
     fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
 
     override fun toString() = "$speechPart changes on: \n" +
-            applicators.map { (c, m) -> "$c:\n" + m.entries
-                    .map { it.key.toString() + ": " + it.value }
-                    .sortedWith(naturalOrder())
-                    .joinToString("\n")
-            }.joinToString("\n\n")
+            exponenceClusters
+                .map { it to applicators.getValue(it) }
+                .joinToString("\n\n") { (c, m) ->
+                    "$c:\n" + m.entries
+                        .map { it.key.toString() + ": " + it.value }
+                        .sortedWith(naturalOrder())
+                        .joinToString("\n")
+                }
 }
 
 class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {
