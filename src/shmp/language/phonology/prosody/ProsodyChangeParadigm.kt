@@ -8,7 +8,9 @@ class ProsodyChangeParadigm(val stress: StressType) {
             StressType.None -> newWord
             StressType.NotFixed -> newWord
             else -> {
-                val cleanWord = newWord.copy(syllables = newWord.syllables.map { it.copy(prosodicEnums = listOf()) })
+                val cleanWord = newWord.copy(syllables = newWord.syllables.map { s ->
+                    s.copy(prosodicEnums = s.prosodicEnums.filter { it !is Stress })
+                })
                 putStressOn(cleanWord, getFixedStressPosition(stress, cleanWord))
             }
         }
