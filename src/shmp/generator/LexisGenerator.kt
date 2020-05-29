@@ -1,6 +1,7 @@
 package shmp.generator
 
 import shmp.containers.PhonemeContainer
+import shmp.containers.SyntaxCoreTemplate
 import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.category.Category
@@ -33,24 +34,8 @@ class LexisGenerator(
         val words = ArrayList<Word>()
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1).toMutableList()
         cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
-        val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
         for (core in cores) {
-            val staticCategories = mutableSetOf<CategoryValue>()
-            if (gender.actualValues.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
-                val genderAndMappers = core.tagClusters.firstOrNull { it.type == gender.outType }?.syntaxTags
-                    ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
-                    ?.filter { gender.actualValues.contains(it.categoryValue) }
-                    ?.toMutableList()
-                    ?: mutableListOf()
-                gender.actualValues.forEach { v ->
-                    if (genderAndMappers.none { it.categoryValue == v }) {
-                        genderAndMappers.add(Box(v, 10.0))
-                    }
-                }
-                staticCategories.add(
-                    randomElement(genderAndMappers, random).categoryValue
-                )
-            }
+            val staticCategories = computeStaticCategories(core, categories)
             words.add(randomWord(SyntaxCore(
                 core.word,
                 core.speechPart,
@@ -61,6 +46,32 @@ class LexisGenerator(
             )))
         }
         return words
+    }
+
+    private fun computeStaticCategories(
+        core: SyntaxCoreTemplate,
+        categories: List<Category>
+    ): Set<CategoryValue> {
+        val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
+        val staticCategories = mutableSetOf<CategoryValue>()
+        val neededCategories = mutableListOf<Category>()
+
+        if (gender.actualValues.isNotEmpty() && SpeechPart.Noun == core.speechPart) neededCategories.add(gender)
+
+        for (category in neededCategories) {
+            val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.syntaxTags
+                ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
+                ?.filter { category.actualValues.contains(it.categoryValue) }
+                ?.toMutableList()
+                ?: mutableListOf()
+            category.actualValues.forEach { v ->
+                if (genderAndMappers.none { it.categoryValue == v }) {
+                    genderAndMappers.add(Box(v, 10.0))
+                }
+            }
+            staticCategories.add(randomElement(genderAndMappers, random).categoryValue)
+        }
+        return staticCategories
     }
 
     internal fun randomWord(
