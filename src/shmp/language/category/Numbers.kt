@@ -1,9 +1,9 @@
-package shmp.language.categories
+package shmp.language.category
 
 import shmp.language.*
 import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
-import shmp.language.categories.NumbersValue.*
+import shmp.language.category.NumbersValue.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random

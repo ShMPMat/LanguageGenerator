@@ -1,8 +1,8 @@
 package shmp.generator
 
 import shmp.language.*
-import shmp.language.categories.*
-import shmp.language.categories.realization.*
+import shmp.language.category.*
+import shmp.language.category.realization.*
 import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions

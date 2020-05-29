@@ -2,9 +2,7 @@ package shmp.containers
 
 import shmp.generator.GeneratorException
 import shmp.language.SpeechPart
-import shmp.language.SyntaxTag
-import shmp.language.categories.Gender
-import shmp.language.categories.genderName
+import shmp.language.category.genderName
 import shmp.random.SampleSpaceObject
 import java.io.File
 

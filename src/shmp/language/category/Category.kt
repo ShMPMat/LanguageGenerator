@@ -1,4 +1,4 @@
-package shmp.language.categories
+package shmp.language.category
 
 import shmp.language.CategoryRealization
 import shmp.language.CategoryValue

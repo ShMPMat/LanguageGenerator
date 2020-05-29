@@ -3,10 +3,10 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
-import shmp.language.categories.Category
-import shmp.language.categories.CategoryRandomSupplements
-import shmp.language.categories.ChangeParadigm
-import shmp.language.categories.SpeechPartChangeParadigm
+import shmp.language.category.Category
+import shmp.language.category.CategoryRandomSupplements
+import shmp.language.category.ChangeParadigm
+import shmp.language.category.SpeechPartChangeParadigm
 import shmp.language.phonology.*
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType

@@ -2,7 +2,7 @@ package shmp.language
 
 import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
-import shmp.language.categories.ChangeParadigm
+import shmp.language.category.ChangeParadigm
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.StressType
 

@@ -1,7 +1,7 @@
-package shmp.language.categories
+package shmp.language.category
 
 import shmp.language.*
-import shmp.language.categories.TenseValue.*
+import shmp.language.category.TenseValue.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random

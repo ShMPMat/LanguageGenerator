@@ -1,7 +1,7 @@
-package shmp.language.categories
+package shmp.language.category
 
 import shmp.language.*
-import shmp.language.categories.GenderValue.*
+import shmp.language.category.GenderValue.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist

@@ -12,6 +12,7 @@ fun getParadigmPrinted(language: Language, word: Word): String {
 }
 
 private fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {
+    if (l.isEmpty()) return emptyList()
     var result = l[0].map { mutableListOf(it) }
     for (cl in l.drop(1)) {
         result = cartesianProduct(result, cl)

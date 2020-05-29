@@ -3,9 +3,9 @@ package shmp.generator
 import shmp.containers.PhonemeContainer
 import shmp.containers.WordBase
 import shmp.language.*
-import shmp.language.categories.Category
-import shmp.language.categories.Gender
-import shmp.language.categories.GenderValue
+import shmp.language.category.Category
+import shmp.language.category.Gender
+import shmp.language.category.GenderValue
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -34,8 +34,7 @@ class LexisGenerator(
         val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1).toMutableList()
         cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
         val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
-        for (i in 0 until cores.size) {
-            val core = cores[i]
+        for (core in cores) {
             val staticCategories = mutableSetOf<CategoryValue>()
             if (gender.actualValues.isNotEmpty() && SpeechPart.Noun == core.speechPart) {
                 val genderAndMappers = core.tagClusters.firstOrNull { it.type == gender.outType }?.syntaxTags

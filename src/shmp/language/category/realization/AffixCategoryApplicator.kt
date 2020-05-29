@@ -1,4 +1,4 @@
-package shmp.language.categories.realization
+package shmp.language.category.realization
 
 import shmp.language.Clause
 import shmp.language.CategoryRealization

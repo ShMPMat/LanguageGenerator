@@ -1,7 +1,7 @@
-package shmp.language.categories
+package shmp.language.category
 
 import shmp.language.*
-import shmp.language.categories.realization.CategoryApplicator
+import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 
 class ChangeParadigm(
