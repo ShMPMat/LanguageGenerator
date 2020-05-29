@@ -5,7 +5,7 @@ import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
-private const val outName = "Animosity"
+const val animosityName = "Animosity"
 
 class Animosity(
     categories: List<AnimosityValue>,
@@ -14,7 +14,7 @@ class Animosity(
 ) : AbstractChangeCategory(
     categories,
     AnimosityValue.values().toSet(),
-    outName,
+    animosityName,
     "Has no animosity"
 )
 
@@ -43,7 +43,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+        val acceptableValues = values.filter { it.parentClassName == animosityName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when (value) {
@@ -68,12 +68,12 @@ enum class AnimosityPresence(
     val presentAnimosity: List<AnimosityValue>
 ) : SampleSpaceObject {
     NoAnimosity(100.0, listOf()),
-    SimpleAnimisity(100.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))
+    SimpleAnimosity(10.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))
 }
 
 enum class AnimosityValue(override val syntaxCore: SyntaxCore) : CategoryValue {
     Animate(SyntaxCore("animate indicator", SpeechPart.Particle, setOf())),
     Inanimate(SyntaxCore("inanimate indicator", SpeechPart.Particle, setOf()));
 
-    override val parentClassName = outName
+    override val parentClassName = animosityName
 }

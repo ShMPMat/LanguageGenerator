@@ -2,6 +2,8 @@ package shmp.containers
 
 import shmp.generator.GeneratorException
 import shmp.language.SpeechPart
+import shmp.language.category.Animosity
+import shmp.language.category.animosityName
 import shmp.language.category.genderName
 import shmp.random.SampleSpaceObject
 import java.io.File
@@ -36,6 +38,7 @@ fun parseSyntaxTagTemplates(string: String) = string
 
 fun getType(string: String) = when(string) {
     "G" -> genderName
+    "A" -> animosityName
     else -> throw GeneratorException("Unknown syntax tag type alias $string")
 }
 

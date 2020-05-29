@@ -58,7 +58,7 @@ class LexisGenerator(
 
         for (category in neededCategories) {
             val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.syntaxTags
-                ?.map { Box(GenderValue.valueOf(it.name), it.probability) }
+                ?.map { n -> Box(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
                 ?.filter { category.actualValues.contains(it.categoryValue) }
                 ?.toMutableList()
                 ?: mutableListOf()

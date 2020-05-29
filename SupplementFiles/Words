@@ -6,59 +6,59 @@ be                 Verb
 one                Numeral
 have               Verb
 hot                Adjective
-word               Noun      G|Plant:1,Fruit:0,Person:1
+word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 do                 Verb
-time               Noun      G|LongObject:100
+time               Noun      G|LongObject:100                       A|Inanimate:100
 say                Verb
 set                Verb
 three              Numeral
 want               Verb
-want               Noun      G|Plant:1,Fruit:0,Person:1
-air                Noun      G|Plant:1,Fruit:0,Person:1
+want               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+air                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 well               Adverb
 play               Verb
 small              Adjective
-end                Noun      G|Plant:1,Fruit:0,Person:1
+end                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 end                Verb
 put                Verb
-home               Noun      G|Plant:1,Fruit:0,Person:1
+home               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 read               Verb
-hand               Noun      G|LongObject:100
+hand               Noun      G|LongObject:100                       A|Inanimate:20
 port               Noun
 large              Adjective
 spell              Verb
-spell              Noun      G|Plant:1,Fruit:0,Person:1
+spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 add                Verb
-land               Noun      G|Plant:1,Fruit:0,Person:1
+land               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 land               Verb
 high               Adjective
 follow             Verb
 ask                Verb
 change             Verb
-change             Noun      G|LongObject:100
-light              Noun      G|Plant:1,Fruit:0,Person:1
-kind               Noun      G|Plant:20
-need               Noun      G|Plant:1,Fruit:0,Person:1
+change             Noun      G|LongObject:100                       A|Inanimate:100
+light              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+kind               Noun      G|Plant:20                             A|Inanimate:100
+need               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 need               Verb
-house              Noun      G|Plant:1,Fruit:0,Person:1
-picture            Noun      G|Plant:1,Fruit:0,Person:1
+house              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+picture            Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 picture            Verb
-animal             Noun      G|Plant:1,Fruit:0,Person:1
-point              Noun      G|Plant:1,Fruit:0,Person:1
+animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100
+point              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 point              Verb
-mother             Noun      G|Person:1000,Female:5000,Common:1000
-world              Noun      G|Plant:1,Fruit:0,Person:1
+mother             Noun      G|Person:1000,Female:5000,Common:1000  A|Animate:1000
+world              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 near               Adjective
 build              Verb
-father             Noun      G|Person:1000,Male:5000,Common:1000
+father             Noun      G|Person:1000,Male:5000,Common:1000    A|Animate:1000
 new                Adjective
 work               Verb
-work               Noun      G|Plant:1,Fruit:0,Person:1
-part               Noun      G|Plant:1,Fruit:0,Person:1
+work               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+part               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 part               Verb
 take               Verb
 place              Noun
-live               Verb      G|Plant:1,Fruit:0,Person:1
+live               Verb
 
 /other
 /some
