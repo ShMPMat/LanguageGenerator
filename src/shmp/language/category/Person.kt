@@ -12,7 +12,8 @@ private const val outName = "Person"
 
 class Person(
     categories: List<PersonValue>,
-    override val affectedSpeechParts: Set<SpeechPart>
+    override val affectedSpeechParts: Set<SpeechPart>,
+    override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     PersonValue.values().toSet(),

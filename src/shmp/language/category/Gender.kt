@@ -11,7 +11,8 @@ const val genderName = "Gender"
 
 class Gender(
     categories: List<GenderValue>,
-    override val affectedSpeechParts: Set<SpeechPart>
+    override val affectedSpeechParts: Set<SpeechPart>,
+    override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
@@ -66,6 +67,8 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         else
             type.possibilities
     }
+
+    override fun randomStaticSpeechParts(random: Random) = setOf(SpeechPart.Noun)
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {

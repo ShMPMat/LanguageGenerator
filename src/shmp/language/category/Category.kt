@@ -10,6 +10,7 @@ interface Category {
     val actualValues: List<CategoryValue>
     val allPossibleValues: Set<CategoryValue>
     val affectedSpeechParts: Set<SpeechPart>
+    val staticSpeechParts: Set<SpeechPart>
     val outType: String
 }
 
@@ -18,6 +19,7 @@ interface CategoryRandomSupplements {
     fun speechPartProbabilities(speechPart: SpeechPart): Double
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
     fun randomRealization(random: Random): List<CategoryValue>
+    fun randomStaticSpeechParts(random: Random): Set<SpeechPart> = emptySet()
 }
 
 data class RealizationBox(val realization: CategoryRealization?, override val probability: Double) : SampleSpaceObject {

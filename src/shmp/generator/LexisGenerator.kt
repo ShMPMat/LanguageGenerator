@@ -52,11 +52,9 @@ class LexisGenerator(
         core: SyntaxCoreTemplate,
         categories: List<Category>
     ): Set<CategoryValue> {
-        val gender = categories.find { it is Gender } ?: throw GeneratorException("Gender category wasn't generated")
         val staticCategories = mutableSetOf<CategoryValue>()
-        val neededCategories = mutableListOf<Category>()
-
-        if (gender.actualValues.isNotEmpty() && SpeechPart.Noun == core.speechPart) neededCategories.add(gender)
+        val neededCategories = categories
+            .filter { it.actualValues.isNotEmpty() && core.speechPart in it.staticSpeechParts }
 
         for (category in neededCategories) {
             val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.syntaxTags

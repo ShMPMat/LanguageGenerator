@@ -10,21 +10,24 @@ class CategoryGenerator(
     private val random: Random
 ) {
     internal fun randomCategories() = listOf(
-        randomCategory({ l: List<PersonValue>, s -> Person(l, s) }, PersonRandomSupplements),
-        randomCategory({ l: List<DefinitenessValue>, s -> Definiteness(l, s) }, DefinitenessRandomSupplements),
-        randomCategory({ l: List<GenderValue>, s -> Gender(l, s) }, GenderRandomSupplements),
-        randomCategory({ l: List<NumbersValue>, s -> Numbers(l, s) }, NumbersRandomSupplements),
-        randomCategory({ l: List<TenseValue>, s -> Tense(l, s) }, TenseRandomSupplements)
+        randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
+        randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
+        randomCategory({ l: List<GenderValue>, s, ss -> Gender(l, s, ss) }, GenderRandomSupplements),
+        randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
+        randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements)
     )
 
     private fun <E: CategoryValue> randomCategory(
-        constructor: (List<E>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
+        constructor: (List<E>, Set<SpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
         supplements: CategoryRandomSupplements
     ): Pair<AbstractChangeCategory, CategoryRandomSupplements> {
         val presentElements = supplements.randomRealization(random)
         val affectedSpeechParts = randomAffectedSpeechParts(supplements)
+        val staticSpeechParts = supplements.randomStaticSpeechParts(random)
+            .filter { it in affectedSpeechParts }
+            .toSet()
         return try {
-            constructor(presentElements as List<E>, affectedSpeechParts) to supplements
+            constructor(presentElements as List<E>, affectedSpeechParts, staticSpeechParts) to supplements
         } catch (e: Exception) {
             throw GeneratorException("Wrong supplements with name ${supplements.javaClass.name}")
         }
