@@ -15,8 +15,7 @@ class Definiteness(
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
-    outName,
-    "Has no definiteness"
+    outName
 )
 
 object DefinitenessRandomSupplements : CategoryRandomSupplements {

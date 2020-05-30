@@ -17,8 +17,7 @@ class Numbers(
 ) : AbstractChangeCategory(
     categories,
     NumbersValue.values().toSet(),
-    outName,
-    "Has no numbers"
+    outName
 )
 
 object NumbersRandomSupplements : CategoryRandomSupplements {

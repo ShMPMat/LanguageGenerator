@@ -16,8 +16,7 @@ class Gender(
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
-    genderName,
-    "Has no genders"
+    genderName
 )
 
 object GenderRandomSupplements : CategoryRandomSupplements {

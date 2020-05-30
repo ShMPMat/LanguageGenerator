@@ -17,8 +17,7 @@ class Person(
 ) : AbstractChangeCategory(
     categories,
     PersonValue.values().toSet(),
-    outName,
-    "Has no person"
+    outName
 )
 
 object PersonRandomSupplements : CategoryRandomSupplements {

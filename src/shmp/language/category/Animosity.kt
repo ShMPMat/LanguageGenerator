@@ -14,8 +14,7 @@ class Animosity(
 ) : AbstractChangeCategory(
     categories,
     AnimosityValue.values().toSet(),
-    animosityName,
-    "Has no animosity"
+    animosityName
 )
 
 object AnimosityRandomSupplements : CategoryRandomSupplements {

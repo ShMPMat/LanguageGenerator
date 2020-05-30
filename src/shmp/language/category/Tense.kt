@@ -15,8 +15,7 @@ class Tense(
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
-    outName,
-    "Has no tense"
+    outName
 )
 
 object TenseRandomSupplements : CategoryRandomSupplements {
