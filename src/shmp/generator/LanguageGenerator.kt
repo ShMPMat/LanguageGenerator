@@ -3,11 +3,12 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
-import shmp.language.category.Category
-import shmp.language.category.CategoryRandomSupplements
-import shmp.language.category.ChangeParadigm
-import shmp.language.category.SpeechPartChangeParadigm
-import shmp.language.phonology.*
+import shmp.language.category.*
+import shmp.language.category.realization.WordCategoryApplicator
+import shmp.language.phonology.PhoneticRestrictions
+import shmp.language.phonology.RestrictionsParadigm
+import shmp.language.phonology.SyllableValenceTemplate
+import shmp.language.phonology.ValencyPlace
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
 import shmp.random.randomElement
@@ -110,14 +111,33 @@ class LanguageGenerator(seed: Long) {
                 applicators,
                 ProsodyChangeParadigm(stressPattern)
             )
-        }.toMap()
+        }.toMap().toMutableMap()
 
-
+        if (!articlePresent(categories, speechPartChangesMap)) {
+            speechPartChangesMap[SpeechPart.Article] = SpeechPartChangeParadigm(
+                SpeechPart.Article,
+                listOf(),
+                mapOf(),
+                speechPartChangesMap.getValue(SpeechPart.Article).prosodyChangeParadigm
+            )
+        }
 
         return ChangeParadigm(
             categories,
             speechPartChangesMap
         )
+    }
+
+    private fun articlePresent(
+        categories: List<Category>,
+        speechPartChangesMap: MutableMap<SpeechPart, SpeechPartChangeParadigm>
+    ): Boolean {
+        if (categories.first { it.outType == definitenessName}.actualValues.isEmpty()) return false
+        return speechPartChangesMap.any { (_, u) ->
+            u.applicators.values
+                .flatMap { it.values }
+                .any { it is WordCategoryApplicator && it.applicatorWord.syntaxCore.speechPart == SpeechPart.Article }
+        }
     }
 
     private fun randomSyllableGenerator(): SyllableValenceGenerator {

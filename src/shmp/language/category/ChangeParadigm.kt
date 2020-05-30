@@ -36,8 +36,8 @@ class ChangeParadigm(
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
-    private val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
-    private val prosodyChangeParadigm: ProsodyChangeParadigm
+    val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
+    val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Clause {
         if (word.syntaxCore.speechPart != speechPart) throw LanguageException(
