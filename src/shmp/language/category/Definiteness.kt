@@ -6,7 +6,7 @@ import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
-private const val outName = "Definiteness"
+const val definitenessName = "Definiteness"
 
 class Definiteness(
     categories: List<DefinitenessValue>,
@@ -15,7 +15,7 @@ class Definiteness(
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
-    outName
+    definitenessName
 )
 
 object DefinitenessRandomSupplements : CategoryRandomSupplements {
@@ -43,7 +43,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+        val acceptableValues = values.filter { it.parentClassName == definitenessName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(value) {
@@ -74,5 +74,5 @@ enum class DefinitenessValue(override val syntaxCore: SyntaxCore) : CategoryValu
     Definite(SyntaxCore("the", SpeechPart.Article, setOf())),
     Indefinite(SyntaxCore("a", SpeechPart.Article, setOf()));
 
-    override val parentClassName = outName
+    override val parentClassName = definitenessName
 }

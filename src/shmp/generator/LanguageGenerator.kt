@@ -94,25 +94,29 @@ class LanguageGenerator(seed: Long) {
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
     ): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
+        val speechPartChangesMap = SpeechPart.values().map { speechPart ->
+            val speechPartCategoriesAndSupply = categoriesWithMappers
+                .filter { it.first.affectedSpeechParts.contains(speechPart) }
+                .filter { it.first.actualValues.isNotEmpty() }
+            val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
+                speechPart,
+                restrictionsParadigm.restrictionsMapper.getValue(speechPart),
+                speechPartCategoriesAndSupply
+            )
+            val orderedApplicators = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
+            speechPart to SpeechPartChangeParadigm(
+                speechPart,
+                orderedApplicators,
+                applicators,
+                ProsodyChangeParadigm(stressPattern)
+            )
+        }.toMap()
+
+
+
         return ChangeParadigm(
             categories,
-            SpeechPart.values().map { speechPart ->
-                val speechPartCategoriesAndSupply = categoriesWithMappers
-                    .filter { it.first.affectedSpeechParts.contains(speechPart) }
-                    .filter { it.first.actualValues.isNotEmpty() }
-                val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
-                    speechPart,
-                    restrictionsParadigm.restrictionsMapper.getValue(speechPart),
-                    speechPartCategoriesAndSupply
-                )
-                val orderedApplicators = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
-                speechPart to SpeechPartChangeParadigm(
-                    speechPart,
-                    orderedApplicators,
-                    applicators,
-                    ProsodyChangeParadigm(stressPattern)
-                )
-            }.toMap()
+            speechPartChangesMap
         )
     }
 
