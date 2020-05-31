@@ -8,8 +8,18 @@ class ChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause =
-        speechPartChangeParadigms[word.syntaxCore.speechPart]?.apply(word, categoryValues.toSet())
+    fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause {
+        val (startClause, wordPosition) = innerApply(word, categoryValues)
+        val allWords = startClause.words.mapIndexed { i, w ->
+            if (i == wordPosition) listOf(w)
+            else apply(w, categoryValues).words
+        }.flatten()
+        return Clause(allWords)
+    }
+
+    private fun innerApply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Pair<Clause, Int> =
+        speechPartChangeParadigms[word.syntaxCore.speechPart]
+            ?.apply(word, categoryValues.toSet())
             ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
 
     fun getDefaultState(word: Word): List<CategoryValue> =
@@ -39,7 +49,7 @@ class SpeechPartChangeParadigm(
     val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
-    fun apply(word: Word, categoryValues: Set<CategoryValue>): Clause {
+    fun apply(word: Word, categoryValues: Set<CategoryValue>): Pair<Clause, Int> {
         if (word.syntaxCore.speechPart != speechPart) throw LanguageException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
         )
@@ -61,7 +71,7 @@ class SpeechPartChangeParadigm(
                 currentWord = newClause[wordPosition]
             currentClause = newClause
         }
-        return applyProsodyParadigm(currentClause, wordPosition, word)
+        return applyProsodyParadigm(currentClause, wordPosition, word) to wordPosition
     }
 
     private fun useCategoryApplicator(
