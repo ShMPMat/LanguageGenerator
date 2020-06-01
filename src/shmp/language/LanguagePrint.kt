@@ -4,7 +4,7 @@ package shmp.language
 fun getParadigmPrinted(language: Language, word: Word): String {
     return "Base - $word\n" +
             listCartesianProduct(//TODO no hardcoded genders for nouns!
-                language.changeParadigm.getSpeechPartParadigm(word.syntaxCore.speechPart).exponenceClusters
+                language.changeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
                     .map { it.actualValues }
             ).map { language.changeParadigm.apply(word, it) to it }

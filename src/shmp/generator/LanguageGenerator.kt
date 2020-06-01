@@ -136,7 +136,7 @@ class LanguageGenerator(seed: Long) {
         return speechPartChangesMap.any { (_, u) ->
             u.applicators.values
                 .flatMap { it.values }
-                .any { it is WordCategoryApplicator && it.applicatorWord.syntaxCore.speechPart == SpeechPart.Article }
+                .any { it is WordCategoryApplicator && it.applicatorWord.semanticsCore.speechPart == SpeechPart.Article }
         }
     }
 

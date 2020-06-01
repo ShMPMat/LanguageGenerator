@@ -1,12 +1,10 @@
 package shmp.generator
 
 import shmp.containers.PhonemeContainer
-import shmp.containers.SyntaxCoreTemplate
+import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.category.Category
-import shmp.language.category.Gender
-import shmp.language.category.GenderValue
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -36,11 +34,11 @@ class LexisGenerator(
         cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
         for (core in cores) {
             val staticCategories = computeStaticCategories(core, categories)
-            words.add(randomWord(SyntaxCore(
+            words.add(randomWord(SemanticsCore(
                 core.word,
                 core.speechPart,
                 core.tagClusters
-                    .map { SyntaxTag(randomElement(it.syntaxTags, random).name) }
+                    .map { SemanticsTag(randomElement(it.semanticsTags, random).name) }
                     .toSet(),
                 staticCategories
             )))
@@ -49,7 +47,7 @@ class LexisGenerator(
     }
 
     private fun computeStaticCategories(
-        core: SyntaxCoreTemplate,
+        core: SemanticsCoreTemplate,
         categories: List<Category>
     ): Set<CategoryValue> {
         val staticCategories = mutableSetOf<CategoryValue>()
@@ -57,7 +55,7 @@ class LexisGenerator(
             .filter { it.actualValues.isNotEmpty() && core.speechPart in it.staticSpeechParts }
 
         for (category in neededCategories) {
-            val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.syntaxTags
+            val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.semanticsTags
                 ?.map { n -> Box(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
                 ?.filter { category.actualValues.contains(it.categoryValue) }
                 ?.toMutableList()
@@ -73,7 +71,7 @@ class LexisGenerator(
     }
 
     internal fun randomWord(
-        core: SyntaxCore,
+        core: SemanticsCore,
         maxSyllableLength: Int = 4,
         lengthWeight: (Int) -> Double = { (maxSyllableLength * maxSyllableLength + 1 - it * it).toDouble() }
     ): Word {

@@ -3,8 +3,6 @@ package shmp.language.morphem.change
 import shmp.language.*
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
-import shmp.language.phonology.Syllable
-import shmp.language.phonology.prosody.Prosody
 
 class TemplateSingleChange(
     override val position: Position,
@@ -54,7 +52,7 @@ class TemplateSingleChange(
                                 word.size - phonemeMatchers.size
                             ) + change
                         ),
-                        word.syntaxCore
+                        word.semanticsCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                     val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
                         s.copy(
@@ -74,7 +72,7 @@ class TemplateSingleChange(
                                 word.size
                             )
                         ),
-                        word.syntaxCore
+                        word.semanticsCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                     val shift = noProsodyWord.syllables.size - word.syllables.size
                     val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->

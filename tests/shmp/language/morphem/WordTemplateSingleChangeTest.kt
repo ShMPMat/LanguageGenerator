@@ -40,7 +40,7 @@ internal class WordTemplateSingleChangeTest {
                     Syllable(prefix)
                 ) + firstWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -51,7 +51,7 @@ internal class WordTemplateSingleChangeTest {
                     Syllable(prefix)
                 ) + secondWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -92,7 +92,7 @@ internal class WordTemplateSingleChangeTest {
                     Syllable(prefix)
                 ) + correctWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -101,7 +101,7 @@ internal class WordTemplateSingleChangeTest {
             Word(
                 badWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -141,7 +141,7 @@ internal class WordTemplateSingleChangeTest {
                     Syllable(prefix)
                 ) + correctWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -150,7 +150,7 @@ internal class WordTemplateSingleChangeTest {
             Word(
                 badWord.syllables,
                 syllableTemplate,
-                makeSyntaxCore()
+                makeSemanticsCore()
             ),
             changeTemplate
         )
@@ -162,7 +162,7 @@ internal class WordTemplateSingleChangeTest {
 
     private fun createNoun(vararg phonemes: Phoneme) = getPhonySyllableTemplate().createWord(
         PhonemeSequence(phonemes.toList()),
-        makeSyntaxCore()
+        makeSemanticsCore()
     ) ?: throw TestAbortedException("Wrong word creation")
 
     private fun getPhonySyllableTemplate(): SyllableTemplate =
@@ -176,5 +176,5 @@ internal class WordTemplateSingleChangeTest {
     private fun makePhoneme(name: String, type: PhonemeType) =
         Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close)
 
-    private fun makeSyntaxCore() = SyntaxCore("phony", SpeechPart.Noun, setOf())
+    private fun makeSemanticsCore() = SemanticsCore("phony", SpeechPart.Noun, setOf())
 }

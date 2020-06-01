@@ -40,13 +40,13 @@ class SpeechPartApplicatorsGenerator(
         realizationTypes.forEach { clusterAndRealization ->
             clusterAndRealization.first.exponenceCluster.possibleValues.forEach {
                 val categoryEnums = it.categoryValues
-                var syntaxCore = categoryEnums[0].syntaxCore
-                for (core in categoryEnums.subList(1, it.categoryValues.size).map { syntaxCore }) {
-                    syntaxCore = SyntaxCore(
-                        syntaxCore.word + core.word,
-                        syntaxCore.speechPart,
-                        syntaxCore.tags.union(core.tags),
-                        syntaxCore.staticCategories.union(core.staticCategories)
+                var semanticsCore = categoryEnums[0].semanticsCore
+                for (core in categoryEnums.subList(1, it.categoryValues.size).map { semanticsCore }) {
+                    semanticsCore = SemanticsCore(
+                        semanticsCore.word + core.word,
+                        semanticsCore.speechPart,
+                        semanticsCore.tags.union(core.tags),
+                        semanticsCore.staticCategories.union(core.staticCategories)
                     )
                 }
                 map.getValue(clusterAndRealization.first.exponenceCluster)[it] = randomCategoryApplicator(
@@ -57,7 +57,7 @@ class SpeechPartApplicatorsGenerator(
                         speechPart
                     ),
                     phoneticRestrictions,
-                    syntaxCore
+                    semanticsCore
                 )
 
             }
@@ -108,15 +108,15 @@ class SpeechPartApplicatorsGenerator(
     private fun randomCategoryApplicator(
         realizationType: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
-        syntaxCore: SyntaxCore
+        semanticsCore: SemanticsCore
     ): CategoryApplicator = when (realizationType) {
         CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.randomWord(
-            syntaxCore,
+            semanticsCore,
             maxSyllableLength = 3,
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
         CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(lexisGenerator.randomWord(
-            syntaxCore,
+            semanticsCore,
             maxSyllableLength = 3,
             lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
         ))
@@ -136,7 +136,7 @@ class SpeechPartApplicatorsGenerator(
         }
         CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
         CategoryRealization.Passing -> PassingCategoryApplicator()
-        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.randomWord(syntaxCore))
+        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.randomWord(semanticsCore))
     }
 
     fun randomApplicatorsOrder(

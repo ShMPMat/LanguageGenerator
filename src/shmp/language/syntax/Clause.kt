@@ -1,4 +1,6 @@
-package shmp.language
+package shmp.language.syntax
+
+import shmp.language.Word
 
 class Clause(val words: List<Word>) {
     val size: Int = words.size

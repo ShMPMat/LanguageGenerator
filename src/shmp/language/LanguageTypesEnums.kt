@@ -70,6 +70,6 @@ enum class CategoryRealization {
 }
 
 interface CategoryValue {
-    val syntaxCore: SyntaxCore
+    val semanticsCore: SemanticsCore
     val parentClassName: String
 }

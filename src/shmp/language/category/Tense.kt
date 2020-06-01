@@ -83,14 +83,14 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
         )),
 }
 
-enum class TenseValue(override val syntaxCore: SyntaxCore) : CategoryValue {
-    Present(SyntaxCore("(present tense indicator)", SpeechPart.Particle, setOf())),
-    Future(SyntaxCore("(future tense indicator)", SpeechPart.Particle, setOf())),
-    Past(SyntaxCore("(past tense indicator)", SpeechPart.Particle, setOf())),
-    DayPast(SyntaxCore("(day past tense indicator)", SpeechPart.Particle, setOf())),
-    SomeDaysPast(SyntaxCore("(some days past tense indicator)", SpeechPart.Particle, setOf())),
-    MonthPast(SyntaxCore("(month past tense indicator)", SpeechPart.Particle, setOf())),
-    YearPast(SyntaxCore("(year past tense indicator)", SpeechPart.Particle, setOf()));
+enum class TenseValue(override val semanticsCore: SemanticsCore) : CategoryValue {
+    Present(SemanticsCore("(present tense indicator)", SpeechPart.Particle, setOf())),
+    Future(SemanticsCore("(future tense indicator)", SpeechPart.Particle, setOf())),
+    Past(SemanticsCore("(past tense indicator)", SpeechPart.Particle, setOf())),
+    DayPast(SemanticsCore("(day past tense indicator)", SpeechPart.Particle, setOf())),
+    SomeDaysPast(SemanticsCore("(some days past tense indicator)", SpeechPart.Particle, setOf())),
+    MonthPast(SemanticsCore("(month past tense indicator)", SpeechPart.Particle, setOf())),
+    YearPast(SemanticsCore("(year past tense indicator)", SpeechPart.Particle, setOf()));
 
     override val parentClassName = outName
 }

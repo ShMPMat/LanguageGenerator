@@ -3,7 +3,7 @@ package shmp.language
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.SyllableTemplate
 
-data class Word(val syllables: List<Syllable>, val syllableTemplate: SyllableTemplate, val syntaxCore: SyntaxCore) {
+data class Word(val syllables: List<Syllable>, val syllableTemplate: SyllableTemplate, val semanticsCore: SemanticsCore) {
     val size: Int = toPhonemes().size
 
     fun toPhonemes() = syllables.flatMap { it.phonemeSequence.phonemes }

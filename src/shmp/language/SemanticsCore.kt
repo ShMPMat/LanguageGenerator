@@ -1,10 +1,10 @@
 package shmp.language
 
-data class SyntaxCore(
+data class SemanticsCore(
     val word: String,
     val speechPart: SpeechPart,
-    val tags: Set<SyntaxTag>,
+    val tags: Set<SemanticsTag>,
     val staticCategories: Set<CategoryValue> = setOf()
 )
 
-data class SyntaxTag(val name: String)
+data class SemanticsTag(val name: String)

@@ -22,8 +22,8 @@ class Language(
                  |Stress patern: $stressType
                  |Numeral system base: $numeralSystemBase
                  |words:
-                 |${words.joinToString { it.toString() + " - " + it.syntaxCore.word }}
-                 |${words.joinToString { "${changeParadigm.apply(it)} - ${it.syntaxCore.word}" }}
+                 |${words.joinToString { it.toString() + " - " + it.semanticsCore.word }}
+                 |${words.joinToString { "${changeParadigm.apply(it)} - ${it.semanticsCore.word}" }}
                  |SOV order: $sovOrder
                  |${changeParadigm}
                  |
@@ -31,13 +31,13 @@ class Language(
                  |Paradigms elaborated:
                  |
                  |Personal pronoun:
-                 |${getParadigmPrinted(this, words.first { it.syntaxCore.word == "_personal_pronoun" })}
+                 |${getParadigmPrinted(this, words.first { it.semanticsCore.word == "_personal_pronoun" })}
                  |
                  |Noun:
-                 |${getParadigmPrinted(this, words.first { it.syntaxCore.speechPart == Noun })}
+                 |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Noun })}
                  |
                  |Verb:
-                 |${getParadigmPrinted(this, words.first { it.syntaxCore.speechPart == Verb })}
+                 |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Verb })}
                  |""".trimMargin()
     }
 }

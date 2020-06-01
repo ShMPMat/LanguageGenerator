@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
+import shmp.language.syntax.Clause
 
 class ChangeParadigm(
     val categories: List<Category>,
@@ -18,21 +19,21 @@ class ChangeParadigm(
     }
 
     private fun innerApply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Pair<Clause, Int> =
-        speechPartChangeParadigms[word.syntaxCore.speechPart]
+        speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, categoryValues.toSet())
-            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
+            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
     fun getDefaultState(word: Word): List<CategoryValue> =
-        speechPartChangeParadigms[word.syntaxCore.speechPart]?.exponenceClusters
+        speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
             ?.filter { it.actualValues.isNotEmpty() }
             ?.map { it.actualValues[0] }
             ?.filter { enum ->
-                word.syntaxCore.staticCategories.none { it.parentClassName == enum.parentClassName }
+                word.semanticsCore.staticCategories.none { it.parentClassName == enum.parentClassName }
             }
-            ?.union(word.syntaxCore.staticCategories)
+            ?.union(word.semanticsCore.staticCategories)
             ?.toList()
-            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.syntaxCore.speechPart}")
+            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
     fun getSpeechPartParadigm(speechPart: SpeechPart) = speechPartChangeParadigms.getValue(speechPart)
 
@@ -50,8 +51,8 @@ class SpeechPartChangeParadigm(
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Pair<Clause, Int> {
-        if (word.syntaxCore.speechPart != speechPart) throw LanguageException(
-            "SpeechPartChangeParadigm for $speechPart has been given ${word.syntaxCore.speechPart}"
+        if (word.semanticsCore.speechPart != speechPart) throw LanguageException(
+            "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
         var currentClause = Clause(listOf(word))
