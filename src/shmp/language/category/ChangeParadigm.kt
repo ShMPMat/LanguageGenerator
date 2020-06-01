@@ -11,7 +11,7 @@ class ChangeParadigm(
     fun apply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Clause {
         val (startClause, wordPosition) = innerApply(word, categoryValues)
         val allWords = startClause.words.mapIndexed { i, w ->
-            if (i == wordPosition) listOf(w)
+            if (i == wordPosition || w == startClause[i]) listOf(w)
             else apply(w, categoryValues).words
         }.flatten()
         return Clause(allWords)

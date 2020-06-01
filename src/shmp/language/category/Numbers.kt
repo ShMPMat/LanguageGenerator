@@ -29,7 +29,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Suffix -> 100.0
         Reduplication -> 0.0
         Passing -> 0.0
-        CategoryRealization.NewWord -> 0.0
+        NewWord -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
