@@ -4,6 +4,7 @@ import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.category.*
+import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.language.category.paradigm.WordChangeParadigm
 import shmp.language.category.realization.WordCategoryApplicator
@@ -68,10 +69,9 @@ class LanguageGenerator(seed: Long) {
             words,
             phonemeContainer,
             stressPattern,
-            wordOrder,
             numeralSystemBase,
             restrictionsParadigm,
-            changeParadigm
+            SentenceChangeParadigm(wordOrder, changeParadigm)
         )
     }
 

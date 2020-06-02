@@ -4,10 +4,11 @@ package shmp.language
 fun getParadigmPrinted(language: Language, word: Word): String {
     return "Base - $word\n" +
             listCartesianProduct(//TODO no hardcoded genders for nouns!
-                language.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
+                language.sentenceChangeParadigm.wordChangeParadigm
+                    .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
                     .map { it.actualValues }
-            ).map { language.wordChangeParadigm.apply(word, it) to it }
+            ).map { language.sentenceChangeParadigm.wordChangeParadigm.apply(word, it) to it }
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 
