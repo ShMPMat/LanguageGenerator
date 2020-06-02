@@ -2,6 +2,7 @@ package shmp.language.category
 
 import shmp.language.*
 import shmp.language.category.GenderValue.*
+import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist
@@ -41,6 +42,18 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Article -> 90.0
             SpeechPart.Pronoun -> 99.0
             SpeechPart.Particle -> 0.0
+        }
+
+    override fun speechPartCategorySource(speechPart: SpeechPart) =
+        when (speechPart) {
+            SpeechPart.Noun -> CategorySource.SelfStated()
+            SpeechPart.Verb -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            SpeechPart.Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            SpeechPart.Adverb -> null
+            SpeechPart.Numeral -> null
+            SpeechPart.Article -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            SpeechPart.Pronoun -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            SpeechPart.Particle -> null
         }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

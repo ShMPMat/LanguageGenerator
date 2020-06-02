@@ -4,6 +4,7 @@ import shmp.language.*
 import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
 import shmp.language.category.NumbersValue.*
+import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -42,6 +43,18 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Pronoun -> 99.0
         Particle -> 0.0
     }
+
+    override fun speechPartCategorySource(speechPart: SpeechPart) =
+        when (speechPart) {
+            Noun -> CategorySource.SelfStated()
+            Verb -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            Adverb -> null
+            Numeral -> null
+            Article -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            Pronoun -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            Particle -> null
+        }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }

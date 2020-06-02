@@ -1,7 +1,9 @@
 package shmp.language.category
 
 import shmp.language.*
+import shmp.language.SpeechPart.*
 import shmp.language.category.TenseValue.*
+import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -14,7 +16,7 @@ class Tense(
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    values().toSet(),
+    TenseValue.values().toSet(),
     outName
 )
 
@@ -31,15 +33,27 @@ object TenseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        SpeechPart.Noun -> 0.0
-        SpeechPart.Verb -> 100.0
-        SpeechPart.Adjective -> 2.0//TODO not an actual data
-        SpeechPart.Adverb -> 0.0
-        SpeechPart.Numeral -> 0.0
-        SpeechPart.Article -> 0.0
-        SpeechPart.Pronoun -> 0.0
-        SpeechPart.Particle -> 0.0
+        Noun -> 0.0
+        Verb -> 100.0
+        Adjective -> 2.0//TODO not an actual data
+        Adverb -> 0.0
+        Numeral -> 0.0
+        Article -> 0.0
+        Pronoun -> 0.0
+        Particle -> 0.0
     }
+
+    override fun speechPartCategorySource(speechPart: SpeechPart) =
+        when (speechPart) {
+            Noun -> null
+            Verb -> CategorySource.SelfStated()
+            Adjective -> CategorySource.SelfStated()
+            Adverb -> null
+            Numeral -> null
+            Article -> null
+            Pronoun -> null
+            Particle -> null
+        }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }
@@ -84,13 +98,13 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Present(SemanticsCore("(present tense indicator)", SpeechPart.Particle, setOf())),
-    Future(SemanticsCore("(future tense indicator)", SpeechPart.Particle, setOf())),
-    Past(SemanticsCore("(past tense indicator)", SpeechPart.Particle, setOf())),
-    DayPast(SemanticsCore("(day past tense indicator)", SpeechPart.Particle, setOf())),
-    SomeDaysPast(SemanticsCore("(some days past tense indicator)", SpeechPart.Particle, setOf())),
-    MonthPast(SemanticsCore("(month past tense indicator)", SpeechPart.Particle, setOf())),
-    YearPast(SemanticsCore("(year past tense indicator)", SpeechPart.Particle, setOf()));
+    Present(SemanticsCore("(present tense indicator)", Particle, setOf())),
+    Future(SemanticsCore("(future tense indicator)", Particle, setOf())),
+    Past(SemanticsCore("(past tense indicator)", Particle, setOf())),
+    DayPast(SemanticsCore("(day past tense indicator)", Particle, setOf())),
+    SomeDaysPast(SemanticsCore("(some days past tense indicator)", Particle, setOf())),
+    MonthPast(SemanticsCore("(month past tense indicator)", Particle, setOf())),
+    YearPast(SemanticsCore("(year past tense indicator)", Particle, setOf()));
 
     override val parentClassName = outName
 }

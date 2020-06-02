@@ -7,5 +7,5 @@ data class Sentence(val node: SentenceNode)
 data class SentenceNode(
     val clause: Clause,
     val categories: List<CategoryValue>,
-    val relations: Map<SyntaxRelations, SentenceNode>
+    val relation: Map<SyntaxRelation, SentenceNode>
 )

@@ -1,6 +1,6 @@
 package shmp.language.syntax
 
-enum class SyntaxRelations {
+enum class SyntaxRelation {
     Subject,
     Object,
     Verb

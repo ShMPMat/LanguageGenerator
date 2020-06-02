@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.CategoryRealization
 import shmp.language.CategoryValue
 import shmp.language.SpeechPart
+import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
@@ -17,6 +18,7 @@ interface Category {
 interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): Double
+    fun speechPartCategorySource(speechPart: SpeechPart): CategorySource?
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
     fun randomRealization(random: Random): List<CategoryValue>
     fun randomStaticSpeechParts(random: Random): Set<SpeechPart> = emptySet()
@@ -42,3 +44,8 @@ data class RealizationBox(val realization: CategoryRealization?, override val pr
 internal fun noValue(probability: Double) = RealizationBox(null, probability)
 
 internal val emptyRealization = setOf(noValue(1.0))
+
+open class CategorySource private constructor() { // private constructor to prevent creating more subclasses outside
+    class SelfStated : CategorySource()
+    class RelationGranted(val relation: SyntaxRelation) : CategorySource()
+}

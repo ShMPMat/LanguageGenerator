@@ -2,6 +2,7 @@ package shmp.language.category
 
 import shmp.language.*
 import shmp.language.category.DefinitenessValue.*
+import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -30,7 +31,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.NewWord -> 0.0
         }
 
-    override fun speechPartProbabilities(speechPart: SpeechPart): Double =
+    override fun speechPartProbabilities(speechPart: SpeechPart) =
         when (speechPart) {
             SpeechPart.Noun -> 500.0
             SpeechPart.Verb -> 0.0
@@ -40,6 +41,18 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
             SpeechPart.Article -> 0.0
             SpeechPart.Pronoun -> 0.0
             SpeechPart.Particle -> 0.0
+        }
+
+    override fun speechPartCategorySource(speechPart: SpeechPart) =
+        when (speechPart) {
+            SpeechPart.Noun -> CategorySource.SelfStated()
+            SpeechPart.Verb -> null
+            SpeechPart.Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            SpeechPart.Adverb -> null
+            SpeechPart.Numeral -> null
+            SpeechPart.Article -> null
+            SpeechPart.Pronoun -> null
+            SpeechPart.Particle -> null
         }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
