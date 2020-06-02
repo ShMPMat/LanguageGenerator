@@ -1,4 +1,4 @@
 package shmp.language
 
-class LanguageException(message: String) : Exception(message) {
+open class LanguageException(message: String) : Exception(message) {
 }

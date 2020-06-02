@@ -23,7 +23,7 @@ class WordChangeParadigm(
     private fun innerApply(word: Word, categoryValues: List<CategoryValue> = getDefaultState(word)): Pair<Clause, Int> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, categoryValues.toSet())
-            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
     fun getDefaultState(word: Word): List<CategoryValue> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
@@ -35,7 +35,7 @@ class WordChangeParadigm(
             }
             ?.union(word.semanticsCore.staticCategories)
             ?.toList()
-            ?: throw LanguageException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
     fun getSpeechPartParadigm(speechPart: SpeechPart) = speechPartChangeParadigms.getValue(speechPart)
 

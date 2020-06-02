@@ -15,7 +15,7 @@ class SpeechPartChangeParadigm(
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Pair<Clause, Int> {
-        if (word.semanticsCore.speechPart != speechPart) throw LanguageException(
+        if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
@@ -48,7 +48,7 @@ class SpeechPartChangeParadigm(
         val word = clause[wordPosition]
         return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
             applicators[exponenceCluster]?.get(exponenceValue)?.apply(clause, wordPosition)
-                ?: throw LanguageException(
+                ?: throw ChangeException(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"
                 )
