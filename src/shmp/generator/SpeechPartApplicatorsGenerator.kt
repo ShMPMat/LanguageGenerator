@@ -2,6 +2,8 @@ package shmp.generator
 
 import shmp.language.*
 import shmp.language.category.*
+import shmp.language.category.paradigm.ExponenceCluster
+import shmp.language.category.paradigm.ExponenceValue
 import shmp.language.category.realization.*
 import shmp.language.morphem.*
 import shmp.language.morphem.change.Position

@@ -4,6 +4,8 @@ import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.category.*
+import shmp.language.category.paradigm.SpeechPartChangeParadigm
+import shmp.language.category.paradigm.WordChangeParadigm
 import shmp.language.category.realization.WordCategoryApplicator
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.language.phonology.RestrictionsParadigm
@@ -93,7 +95,7 @@ class LanguageGenerator(seed: Long) {
     private fun generateChangeParadigm(
         restrictionsParadigm: RestrictionsParadigm,
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
-    ): ChangeParadigm {
+    ): WordChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
         val speechPartChangesMap = SpeechPart.values().map { speechPart ->
             val speechPartCategoriesAndSupply = categoriesWithMappers
@@ -114,15 +116,16 @@ class LanguageGenerator(seed: Long) {
         }.toMap().toMutableMap()
 
         if (!articlePresent(categories, speechPartChangesMap)) {
-            speechPartChangesMap[SpeechPart.Article] = SpeechPartChangeParadigm(
-                SpeechPart.Article,
-                listOf(),
-                mapOf(),
-                speechPartChangesMap.getValue(SpeechPart.Article).prosodyChangeParadigm
-            )
+            speechPartChangesMap[SpeechPart.Article] =
+                SpeechPartChangeParadigm(
+                    SpeechPart.Article,
+                    listOf(),
+                    mapOf(),
+                    speechPartChangesMap.getValue(SpeechPart.Article).prosodyChangeParadigm
+                )
         }
 
-        return ChangeParadigm(
+        return WordChangeParadigm(
             categories,
             speechPartChangesMap
         )

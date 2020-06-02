@@ -2,7 +2,7 @@ package shmp.language
 
 import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
-import shmp.language.category.ChangeParadigm
+import shmp.language.category.paradigm.WordChangeParadigm
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.StressType
 
@@ -13,7 +13,7 @@ class Language(
     internal val sovOrder: SovOrder,
     internal val numeralSystemBase: NumeralSystemBase,
     internal val restrictionsParadigm: RestrictionsParadigm,
-    internal val changeParadigm: ChangeParadigm
+    internal val wordChangeParadigm: WordChangeParadigm
 ) {
     override fun toString(): String {
         return """phonemes:
@@ -23,9 +23,9 @@ class Language(
                  |Numeral system base: $numeralSystemBase
                  |words:
                  |${words.joinToString { it.toString() + " - " + it.semanticsCore.word }}
-                 |${words.joinToString { "${changeParadigm.apply(it)} - ${it.semanticsCore.word}" }}
+                 |${words.joinToString { "${wordChangeParadigm.apply(it)} - ${it.semanticsCore.word}" }}
                  |SOV order: $sovOrder
-                 |${changeParadigm}
+                 |${wordChangeParadigm}
                  |
                  |
                  |Paradigms elaborated:
