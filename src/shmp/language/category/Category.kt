@@ -45,7 +45,7 @@ internal fun noValue(probability: Double) = RealizationBox(null, probability)
 
 internal val emptyRealization = setOf(noValue(1.0))
 
-open class CategorySource private constructor() { // private constructor to prevent creating more subclasses outside
-    class SelfStated : CategorySource()
+sealed class CategorySource private constructor() { // private constructor to prevent creating more subclasses outside
+    object SelfStated : CategorySource()
     class RelationGranted(val relation: SyntaxRelation) : CategorySource()
 }

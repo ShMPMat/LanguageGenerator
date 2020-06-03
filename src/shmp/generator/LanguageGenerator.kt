@@ -57,9 +57,9 @@ class LanguageGenerator(seed: Long) {
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
     private val categoryGenerator = CategoryGenerator(random)
     private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
+    private val wordOrder = randomElement(SovOrder.values(), random)
 
     fun generateLanguage(wordAmount: Int): Language {
-        val wordOrder = randomElement(SovOrder.values(), random)
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
@@ -71,7 +71,7 @@ class LanguageGenerator(seed: Long) {
             stressPattern,
             numeralSystemBase,
             restrictionsParadigm,
-            SentenceChangeParadigm(wordOrder, changeParadigm)
+            changeParadigm
         )
     }
 
@@ -95,7 +95,7 @@ class LanguageGenerator(seed: Long) {
     private fun generateChangeParadigm(
         restrictionsParadigm: RestrictionsParadigm,
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
-    ): WordChangeParadigm {
+    ): SentenceChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
         val speechPartChangesMap = SpeechPart.values().map { speechPart ->
             val speechPartCategoriesAndSupply = categoriesWithMappers
@@ -125,10 +125,13 @@ class LanguageGenerator(seed: Long) {
                 )
         }
 
-        return WordChangeParadigm(
-            categories,
-            speechPartChangesMap
-        )
+        val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
+        val functions = categoriesWithMappers
+            .map { it.second::speechPartCategorySource to it.first }
+        val handler = { s: SpeechPart, c: Category ->
+            functions.firstOrNull { it.second.outType == c.outType }?.first?.invoke(s)
+        }
+        return SentenceChangeParadigm(wordOrder, wordChangeParadigm, handler)
     }
 
     private fun articlePresent(

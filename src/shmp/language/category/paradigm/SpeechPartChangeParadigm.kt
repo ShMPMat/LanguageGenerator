@@ -4,6 +4,7 @@ import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.Word
+import shmp.language.category.Category
 import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.syntax.Clause
@@ -14,6 +15,8 @@ class SpeechPartChangeParadigm(
     val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
+    val categories = exponenceClusters.flatMap { it.categories }
+
     fun apply(word: Word, categoryValues: Set<CategoryValue>): Pair<Clause, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
@@ -62,15 +65,13 @@ class SpeechPartChangeParadigm(
         return exponenceCluster.filterExponenceUnion(categoryValues)
     }
 
-    private fun applyProsodyParadigm(clause: Clause, wordPosition: Int, oldWord: Word): Clause {
-        return Clause(
-            clause.words.subList(0, wordPosition)
-                    + listOf(prosodyChangeParadigm.apply(oldWord, clause[wordPosition]))
-                    + clause.words.subList(wordPosition + 1, clause.size)
-        )
-    }
+    private fun applyProsodyParadigm(clause: Clause, wordPosition: Int, oldWord: Word) = Clause(
+        clause.words.subList(0, wordPosition)
+                + listOf(prosodyChangeParadigm.apply(oldWord, clause[wordPosition]))
+                + clause.words.subList(wordPosition + 1, clause.size)
+    )
 
-    fun hasChanges(): Boolean = applicators.any { it.value.isNotEmpty() }
+    fun hasChanges() = applicators.any { it.value.isNotEmpty() }
 
     override fun toString() = "$speechPart changes on: \n" +
             exponenceClusters

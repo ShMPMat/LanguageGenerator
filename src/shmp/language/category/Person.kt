@@ -52,7 +52,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
             Adverb -> null
             Numeral -> null
             Article -> null
-            Pronoun -> CategorySource.SelfStated()
+            Pronoun -> CategorySource.SelfStated
             Particle -> null
         }
 

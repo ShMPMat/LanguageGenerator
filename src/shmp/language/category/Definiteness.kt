@@ -45,7 +45,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartCategorySource(speechPart: SpeechPart) =
         when (speechPart) {
-            SpeechPart.Noun -> CategorySource.SelfStated()
+            SpeechPart.Noun -> CategorySource.SelfStated
             SpeechPart.Verb -> null
             SpeechPart.Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
             SpeechPart.Adverb -> null

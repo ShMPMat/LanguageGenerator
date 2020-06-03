@@ -46,8 +46,8 @@ object TenseRandomSupplements : CategoryRandomSupplements {
     override fun speechPartCategorySource(speechPart: SpeechPart) =
         when (speechPart) {
             Noun -> null
-            Verb -> CategorySource.SelfStated()
-            Adjective -> CategorySource.SelfStated()
+            Verb -> CategorySource.SelfStated
+            Adjective -> CategorySource.SelfStated
             Adverb -> null
             Numeral -> null
             Article -> null
