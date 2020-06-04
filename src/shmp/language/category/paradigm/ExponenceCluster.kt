@@ -5,9 +5,8 @@ import shmp.language.LanguageException
 import shmp.language.category.Category
 
 class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {
-    val possibleValues: Set<ExponenceValue> = possibleValuesSets
+    val possibleValues: List<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
-        .toSet()
 
     fun contains(exponenceValue: ExponenceValue): Boolean {
         for (category in categories)

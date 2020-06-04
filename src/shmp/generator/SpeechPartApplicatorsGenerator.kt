@@ -39,8 +39,8 @@ class SpeechPartApplicatorsGenerator(
                     random
                 )
             }
-        realizationTypes.forEach { clusterAndRealization ->
-            clusterAndRealization.first.exponenceCluster.possibleValues.forEach {
+        realizationTypes.forEach { (cluster, realization) ->
+            cluster.exponenceCluster.possibleValues.forEach {
                 val categoryEnums = it.categoryValues
                 var semanticsCore = categoryEnums[0].semanticsCore
                 for (core in categoryEnums.subList(1, it.categoryValues.size).map { semanticsCore }) {
@@ -51,11 +51,11 @@ class SpeechPartApplicatorsGenerator(
                         semanticsCore.staticCategories.union(core.staticCategories)
                     )
                 }
-                map.getValue(clusterAndRealization.first.exponenceCluster)[it] = randomCategoryApplicator(
+                map.getValue(cluster.exponenceCluster)[it] = randomCategoryApplicator(
                     decideRealizationType(
-                        clusterAndRealization.second,
+                        realization,
                         it,
-                        clusterAndRealization.first.supplements,
+                        cluster.supplements,
                         speechPart
                     ),
                     phoneticRestrictions,

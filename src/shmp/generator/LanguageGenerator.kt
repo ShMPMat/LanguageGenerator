@@ -176,7 +176,7 @@ class LanguageGenerator(seed: Long) {
         }
         return SyllableValenceGenerator(
             randomElement(
-                syllableTemplates.keys,
+                syllableTemplates.keys.sortedBy { it.toString() },
                 { syllableTemplates[it] ?: 0.0 },
                 random
             )

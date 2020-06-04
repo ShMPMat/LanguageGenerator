@@ -6,6 +6,7 @@ import shmp.language.Language
 import shmp.language.syntax.Clause
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
+import kotlin.random.Random
 
 fun visualize(language: Language) {
 //    val verb =
