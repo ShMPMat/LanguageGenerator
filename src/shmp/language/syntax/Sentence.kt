@@ -11,7 +11,7 @@ data class Sentence(val node: SentenceNode)
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
-    val relation: Map<SyntaxRelation, SentenceNode>
+    val relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
 ) {
     fun extractValues(references: List<Pair<Category, CategorySource>>) = references.map { (category, source) ->
         when(source) {

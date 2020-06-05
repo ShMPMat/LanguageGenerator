@@ -5,6 +5,7 @@ import shmp.language.SpeechPart
 import shmp.language.category.Category
 import shmp.language.category.CategorySource
 import shmp.language.syntax.Clause
+import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxRelation
 
@@ -15,9 +16,10 @@ class SentenceChangeParadigm(
 ) {
     private val processedNodes = mutableListOf<SentenceNode>()//TODO to a new class
 
-    fun apply(sentenceNode: SentenceNode): Clause {
-        val clausesInParadigm = applyNode(sentenceNode)
+    fun apply(sentence: Sentence): Clause {
+        val clausesInParadigm = applyNode(sentence.node)
         val resultWords = clausesInParadigm.flatMap { it.second.words }
+        processedNodes.clear()
         return Clause(resultWords)
     }
 
@@ -37,6 +39,7 @@ class SentenceChangeParadigm(
         val currentClause = relation to wordChangeParadigm.apply(sentenceNode.word, categoryValues)
         processedNodes.add(sentenceNode)
         val childrenClauses = sentenceNode.relation
+            .filter { it.value !in processedNodes }
             .flatMap { (r, n) -> applyNodeInternal(n, r) }
             .toMutableList()
         childrenClauses.add(currentClause)
