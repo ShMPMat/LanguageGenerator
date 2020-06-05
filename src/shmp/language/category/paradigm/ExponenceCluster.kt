@@ -8,12 +8,7 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
     val possibleValues: List<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
 
-    fun contains(exponenceValue: ExponenceValue): Boolean {
-        for (category in categories)
-            if (exponenceValue.categoryValues.count { category.allPossibleValues.contains(it) } != 1)
-                return false
-        return exponenceValue.categoryValues.size == categories.size
-    }
+    fun contains(exponenceValue: ExponenceValue) = possibleValues.contains(exponenceValue)
 
     fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
         try {
@@ -37,6 +32,7 @@ class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster:
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
             )
+        
         var currentCategoryIndex = 0
         for (category in categoryValues) {
             if (category.parentClassName != parentCluster.categories[currentCategoryIndex].outType)
