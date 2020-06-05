@@ -1,5 +1,7 @@
 package shmp.language
 
+import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import java.text.ParseException
 
@@ -27,14 +29,14 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
     Thirteen(13, 2.0)
 }
 
-enum class SovOrder(override val probability: Double) : SampleSpaceObject {
-    SOV(565.0),
-    SVO(488.0),
-    VSO(95.0),
-    VOS(25.0),
-    OVS(11.0),
-    OSV(4.0),
-    None(189.0)
+enum class SovOrder(val referenceOrder: List<SyntaxRelation>, override val probability: Double) : SampleSpaceObject {
+    SOV(listOf(Subject, Object, Verb), 565.0),
+    SVO(listOf(Subject, Verb, Object), 488.0),
+    VSO(listOf(Verb, Subject, Object), 95.0),
+    VOS(listOf(Verb, Object, Subject), 25.0),
+    OVS(listOf(Object, Verb, Subject), 11.0),
+    OSV(listOf(Object, Subject, Verb),4.0),
+    None(listOf(Object, Verb, Subject),189.0) //TODO none is none!
 }
 
 enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObject {

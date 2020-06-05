@@ -33,5 +33,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(LanguageGenerator(160).generateLanguage(WordBase().words.size))
+    visualize(LanguageGenerator(162).generateLanguage(WordBase().words.size))
 }

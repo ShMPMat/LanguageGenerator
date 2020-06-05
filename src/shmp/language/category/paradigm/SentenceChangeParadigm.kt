@@ -18,7 +18,12 @@ class SentenceChangeParadigm(
 
     fun apply(sentence: Sentence): Clause {
         val clausesInParadigm = applyNode(sentence.node)
-        val resultWords = clausesInParadigm.flatMap { it.second.words }
+        val resultWords = clausesInParadigm
+            .sortedBy { (r) ->
+                val i = sovOrder.referenceOrder.indexOf(r)
+                if (i == -1) throw ChangeException("No Relation $r in a relation order ${sovOrder.referenceOrder}")
+                i
+            }.flatMap { it.second.words }
         processedNodes.clear()
         return Clause(resultWords)
     }
