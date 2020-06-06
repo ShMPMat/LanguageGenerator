@@ -17,7 +17,7 @@ class SpeechPartChangeParadigm(
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
-    fun apply(word: Word, categoryValues: Set<CategoryValue>): Pair<Clause, Int> {
+    fun apply(word: Word, categoryValues: Set<ParametrizedCategoryValue>): Pair<Clause, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
@@ -59,7 +59,7 @@ class SpeechPartChangeParadigm(
     }
 
     private fun getExponenceUnion(
-        categoryValues: Set<CategoryValue>,
+        categoryValues: Set<ParametrizedCategoryValue>,
         exponenceCluster: ExponenceCluster
     ): ExponenceValue? {
         return exponenceCluster.filterExponenceUnion(categoryValues)

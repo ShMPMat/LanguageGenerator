@@ -13,7 +13,7 @@ import kotlin.random.Random
 fun visualize(language: Language) {
     fun Word.toNode() = SentenceNode(
         this,
-        language.sentenceChangeParadigm.wordChangeParadigm.getDefaultState(this)
+        language.sentenceChangeParadigm.wordChangeParadigm.getDefaultState(this).map { it.categoryValue }//TODO filter only Self-Refs
     )
 
     val subj = language.words.first { it.semanticsCore.word == "mother" }.toNode()
@@ -33,5 +33,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(LanguageGenerator(162).generateLanguage(WordBase().words.size))
+    visualize(LanguageGenerator(165).generateLanguage(WordBase().words.size))
 }

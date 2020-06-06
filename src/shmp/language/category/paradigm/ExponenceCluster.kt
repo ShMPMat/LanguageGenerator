@@ -4,17 +4,20 @@ import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.category.Category
 
-class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<List<CategoryValue>>) {
+class ExponenceCluster(
+    val categories: List<ParametrizedCategory>,
+    possibleValuesSets: Set<List<ParametrizedCategoryValue>>
+) {
     val possibleValues: List<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
 
     fun contains(exponenceValue: ExponenceValue) = possibleValues.contains(exponenceValue)
 
-    fun filterExponenceUnion(categoryValues: Set<CategoryValue>): ExponenceValue? =
+    fun filterExponenceUnion(categoryValues: Set<ParametrizedCategoryValue>): ExponenceValue? =
         try {
             val neededValues = categoryValues.filter {
                 categories.any { c ->
-                    c.allPossibleValues.contains(it)
+                    c.containsParametrizedValue(it)
                 }
             }
             possibleValues.first { it.categoryValues.containsAll(neededValues) }
@@ -25,23 +28,22 @@ class ExponenceCluster(val categories: List<Category>, possibleValuesSets: Set<L
     override fun toString() = categories.joinToString("\n")
 }
 
-class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster: ExponenceCluster) {
+class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val parentCluster: ExponenceCluster) {
     init {
-        if (parentCluster.categories.size != categoryValues.groupBy { it.parentClassName }.size)
+        if (parentCluster.categories.size != categoryValues.groupBy { it.categoryValue.parentClassName }.size)
             throw LanguageException(
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
             )
-        
+
         var currentCategoryIndex = 0
-        for (category in categoryValues) {
-            if (category.parentClassName != parentCluster.categories[currentCategoryIndex].outType)
-                if (category.parentClassName == parentCluster.categories[currentCategoryIndex + 1].outType)
+        for (value in categoryValues)
+            if (!parentCluster.categories[currentCategoryIndex].containsParametrizedValue(value))
+                if (parentCluster.categories[currentCategoryIndex + 1].containsParametrizedValue(value))
                     currentCategoryIndex++
                 else throw LanguageException(
                     "Category Values in Exponence Value are ordered not in the same as Categories in Exponence Cluster"
                 )
-        }
     }
 
     override fun toString() = categoryValues.joinToString()
@@ -63,4 +65,15 @@ class ExponenceValue(val categoryValues: List<CategoryValue>, val parentCluster:
         result = 31 * result + parentCluster.hashCode()
         return result
     }
+}
+
+data class ParametrizedCategory(val category: Category) {
+    fun containsParametrizedValue(value: ParametrizedCategoryValue) =
+        category.allPossibleValues.contains(value.categoryValue)
+
+    override fun toString() = category.toString()
+}
+
+data class ParametrizedCategoryValue(val categoryValue: CategoryValue) {
+    override fun toString() = categoryValue.toString()
 }

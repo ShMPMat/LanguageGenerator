@@ -15,11 +15,11 @@ internal class SentenceClauseConstructor(val paradigm: SentenceChangeParadigm) {
         val speechPart = sentenceNode.word.semanticsCore.speechPart
         val references = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart).categories
             .map {
-                val reference = paradigm.referenceHandler(speechPart, it)
-                    ?: throw ChangeException("$speechPart doesn't have a category ${it.outType}")
-                it to reference
+                val reference = paradigm.referenceHandler(speechPart, it.category)
+                    ?: throw ChangeException("$speechPart doesn't have a category ${it.category.outType}")
+                it.category to reference
             }
-        val categoryValues = sentenceNode.extractValues(references)
+        val categoryValues = sentenceNode.extractValues(references).map { ParametrizedCategoryValue(it.first) }
         val currentClause = relation to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
         processedNodes.add(sentenceNode)
         val childrenClauses = sentenceNode.relation

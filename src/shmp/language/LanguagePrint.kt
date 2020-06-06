@@ -1,5 +1,7 @@
 package shmp.language
 
+import shmp.language.category.paradigm.ParametrizedCategoryValue
+
 
 fun getParadigmPrinted(language: Language, word: Word): String {
     return "Base - $word\n" +
@@ -7,8 +9,8 @@ fun getParadigmPrinted(language: Language, word: Word): String {
                 language.sentenceChangeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
-                    .map { it.actualValues }
-            ).map { language.sentenceChangeParadigm.wordChangeParadigm.apply(word, it) to it }
+                    .map { it.category.actualValues }
+            ).map { language.sentenceChangeParadigm.wordChangeParadigm.apply(word, it.map { v -> ParametrizedCategoryValue(v) }) to it }
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 

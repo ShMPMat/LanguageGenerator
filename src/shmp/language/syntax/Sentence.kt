@@ -14,10 +14,11 @@ data class SentenceNode(
     val relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
 ) {
     fun extractValues(references: List<Pair<Category, CategorySource>>) = references.map { (category, source) ->
-        when(source) {
+        val res = when(source) {
             is CategorySource.SelfStated -> categoryValues
             is CategorySource.RelationGranted -> relation[source.relation]?.categoryValues
         }?.firstOrNull { it.parentClassName == category.outType }
             ?: throw LanguageException("No value for ${category.outType} and source $source in a node $this")
+        res to source
     }
 }
