@@ -10,8 +10,7 @@ import shmp.language.syntax.SyntaxRelation
 
 class SentenceChangeParadigm(
     val sovOrder: SovOrder,
-    val wordChangeParadigm: WordChangeParadigm,
-    val referenceHandler: ReferenceHandler
+    val wordChangeParadigm: WordChangeParadigm
 ) {
     fun apply(sentence: Sentence): Clause {
         val clausesInParadigm = SentenceClauseConstructor(this).applyNode(sentence.node)

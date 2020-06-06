@@ -30,7 +30,7 @@ class SpeechPartApplicatorsGenerator(
         categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply)
+        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply, speechPart)
         exponenceTemplates.forEach { map[it.exponenceCluster] = HashMap() }
 
         val realizationTypes = exponenceTemplates.zip(exponenceTemplates.indices)
@@ -82,7 +82,8 @@ class SpeechPartApplicatorsGenerator(
     }
 
     private fun splitCategoriesOnClusters(
-        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements>>
+        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements>>,
+        speechPart: SpeechPart
     ): List<ExponenceTemlate> {
         val shuffledMappers = categoriesAndSupply.shuffled(random)
         val clusters = ArrayList<ExponenceTemlate>()
@@ -90,7 +91,14 @@ class SpeechPartApplicatorsGenerator(
         val data = mutableListOf<List<RealizationMapper>>()
         while (l < shuffledMappers.size) {
             val r = randomElement(l + 1..shuffledMappers.size, { 1.0 / it }, random)
-            val categories = shuffledMappers.subList(l, r).map { ParametrizedCategory(it.first) }
+            val categories = shuffledMappers.subList(l, r)
+                .map { (c, s) ->
+                    ParametrizedCategory(
+                        c,
+                        s.speechPartCategorySource(speechPart)
+                            ?: throw GeneratorException("No Source for $speechPart and ${c.outType}")
+                    )
+                }
             val cluster = ExponenceCluster(
                 categories,
                 constructExponenceUnionSets(categories)
@@ -163,9 +171,9 @@ class SpeechPartApplicatorsGenerator(
     ): Set<List<ParametrizedCategoryValue>> =
         if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
             neighbourCategories.value--
-            setOf(category.category.actualValues.map { ParametrizedCategoryValue(it) })
+            setOf(category.actualParametrizedValues)
         } else
-            category.category.actualValues.map { listOf(ParametrizedCategoryValue(it)) }.toSet()
+            category.actualParametrizedValues.map { listOf(it) }.toSet()
 
     private fun makeRecursiveExponenceUnionSets(
         categories: List<ParametrizedCategory>,
@@ -175,7 +183,7 @@ class SpeechPartApplicatorsGenerator(
 
         return if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random))
             makeCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
-         else
+        else
             makeNonCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
     }
 
@@ -185,12 +193,12 @@ class SpeechPartApplicatorsGenerator(
         neighbourCategories: BoxedInt
     ): Set<List<ParametrizedCategoryValue>> {
         neighbourCategories.value--
-        val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
+        val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.actualParametrizedValues.size)
         val recSets = constructExponenceUnionSets(categories, existingPaths)
 
         return recSets.map {
             val list = it.toMutableList()
-            list.addAll(currentCategory.category.actualValues.map { v -> ParametrizedCategoryValue(v) })
+            list.addAll(currentCategory.actualParametrizedValues)
             list
         }.toSet()
     }
@@ -202,14 +210,14 @@ class SpeechPartApplicatorsGenerator(
     ): Set<List<ParametrizedCategoryValue>> {
         val lists = mutableSetOf<List<ParametrizedCategoryValue>>()
 
-        for (new in currentCategory.category.actualValues) {
+        for (new in currentCategory.actualParametrizedValues) {
             val recSets = constructExponenceUnionSets(
                 categories,
-                BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
+                BoxedInt(neighbourCategories.value * currentCategory.actualParametrizedValues.size)
             )
             lists.addAll(recSets.map {
                 val list = it.toMutableList()
-                list.add(ParametrizedCategoryValue(new))
+                list.add(new)
                 list
             })
         }

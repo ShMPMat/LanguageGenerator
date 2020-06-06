@@ -3,6 +3,7 @@ package shmp.language.category.paradigm
 import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.category.Category
+import shmp.language.category.CategorySource
 
 class ExponenceCluster(
     val categories: List<ParametrizedCategory>,
@@ -67,13 +68,16 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
     }
 }
 
-data class ParametrizedCategory(val category: Category) {
+data class ParametrizedCategory(val category: Category, val source: CategorySource) {
+    val allParametrizedValues = category.allPossibleValues.map { ParametrizedCategoryValue(it, source) }
+    val actualParametrizedValues = category.actualValues.map { ParametrizedCategoryValue(it, source) }
+
     fun containsParametrizedValue(value: ParametrizedCategoryValue) =
         category.allPossibleValues.contains(value.categoryValue)
 
     override fun toString() = category.toString()
 }
 
-data class ParametrizedCategoryValue(val categoryValue: CategoryValue) {
+data class ParametrizedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
     override fun toString() = categoryValue.toString()
 }

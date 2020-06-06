@@ -126,12 +126,7 @@ class LanguageGenerator(seed: Long) {
         }
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
-        val functions = categoriesWithMappers
-            .map { it.second::speechPartCategorySource to it.first }
-        val handler = { s: SpeechPart, c: Category ->
-            functions.firstOrNull { it.second.outType == c.outType }?.first?.invoke(s)
-        }
-        return SentenceChangeParadigm(wordOrder, wordChangeParadigm, handler)
+        return SentenceChangeParadigm(wordOrder, wordChangeParadigm)
     }
 
     private fun articlePresent(

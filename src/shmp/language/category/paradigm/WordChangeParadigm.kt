@@ -5,6 +5,7 @@ import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.Word
 import shmp.language.category.Category
+import shmp.language.category.CategorySource
 import shmp.language.syntax.Clause
 
 class WordChangeParadigm(
@@ -28,13 +29,13 @@ class WordChangeParadigm(
     fun getDefaultState(word: Word): List<ParametrizedCategoryValue> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
-            ?.filter { it.category.actualValues.isNotEmpty() }
-            ?.map { it.category.actualValues[0] }//TODO another method for static categories swap
-            ?.filter { enum ->
-                word.semanticsCore.staticCategories.none { it.parentClassName == enum.parentClassName }
+            ?.filter { it.actualParametrizedValues.isNotEmpty() }
+            ?.map { it.actualParametrizedValues[0] }//TODO another method for static categories swap
+            ?.filter { v ->
+                word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }
             }
-            ?.union(word.semanticsCore.staticCategories)
-            ?.map { ParametrizedCategoryValue(it) }
+            ?.union(word.semanticsCore.staticCategories.map { ParametrizedCategoryValue(it, CategorySource.SelfStated) })
+            ?.toList()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
     fun getSpeechPartParadigm(speechPart: SpeechPart) = speechPartChangeParadigms.getValue(speechPart)
