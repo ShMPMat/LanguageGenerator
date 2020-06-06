@@ -153,41 +153,69 @@ class SpeechPartApplicatorsGenerator(
         neighbourCategories: BoxedInt = BoxedInt(1)
     ): Set<List<ParametrizedCategoryValue>> =
         if (categories.size == 1)
-            if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
-                neighbourCategories.value--
-                setOf(categories.first().category.actualValues.map { ParametrizedCategoryValue(it) })
-            } else
-                categories.first().category.actualValues.map { listOf(ParametrizedCategoryValue(it)) }.toSet()
-        else {
-            val currentCategory = categories.last()
-            val lists = mutableSetOf<List<ParametrizedCategoryValue>>()
-            if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
-                neighbourCategories.value--
-                val recSets = constructExponenceUnionSets(
-                    categories.dropLast(1),
-                    BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
-                )
-                lists.addAll(recSets.map {
-                    val list = ArrayList(it)
-                    list.addAll(currentCategory.category.actualValues.map { v -> ParametrizedCategoryValue(v) })
-                    list
-                })
-            } else {
-                val box = BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
-                currentCategory.category.actualValues.forEach { new ->
-                    val recSets = constructExponenceUnionSets(
-                        categories.dropLast(1),
-                        box
-                    )
-                    lists.addAll(recSets.map {
-                        val list = ArrayList(it)
-                        list.add(ParametrizedCategoryValue(new))
-                        list
-                    })
-                }
-            }
-            lists
+            makeTrivialExponenceUnionSets(categories.first(), neighbourCategories)
+        else
+            makeRecursiveExponenceUnionSets(categories, neighbourCategories)
+
+    private fun makeTrivialExponenceUnionSets(
+        category: ParametrizedCategory,
+        neighbourCategories: BoxedInt
+    ): Set<List<ParametrizedCategoryValue>> =
+        if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
+            neighbourCategories.value--
+            setOf(category.category.actualValues.map { ParametrizedCategoryValue(it) })
+        } else
+            category.category.actualValues.map { listOf(ParametrizedCategoryValue(it)) }.toSet()
+
+    private fun makeRecursiveExponenceUnionSets(
+        categories: List<ParametrizedCategory>,
+        neighbourCategories: BoxedInt
+    ): Set<List<ParametrizedCategoryValue>> {
+        val currentCategory = categories.last()
+
+        return if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random))
+            makeCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
+         else
+            makeNonCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
+    }
+
+    private fun makeCollapsedExponenceUnionSets(
+        currentCategory: ParametrizedCategory,
+        categories: List<ParametrizedCategory>,
+        neighbourCategories: BoxedInt
+    ): Set<List<ParametrizedCategoryValue>> {
+        neighbourCategories.value--
+        val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
+        val recSets = constructExponenceUnionSets(categories, existingPaths)
+
+        return recSets.map {
+            val list = it.toMutableList()
+            list.addAll(currentCategory.category.actualValues.map { v -> ParametrizedCategoryValue(v) })
+            list
+        }.toSet()
+    }
+
+    private fun makeNonCollapsedExponenceUnionSets(
+        currentCategory: ParametrizedCategory,
+        categories: List<ParametrizedCategory>,
+        neighbourCategories: BoxedInt
+    ): Set<List<ParametrizedCategoryValue>> {
+        val lists = mutableSetOf<List<ParametrizedCategoryValue>>()
+
+        for (new in currentCategory.category.actualValues) {
+            val recSets = constructExponenceUnionSets(
+                categories,
+                BoxedInt(neighbourCategories.value * currentCategory.category.actualValues.size)
+            )
+            lists.addAll(recSets.map {
+                val list = it.toMutableList()
+                list.add(ParametrizedCategoryValue(new))
+                list
+            })
         }
+
+        return lists
+    }
 }
 
 private data class BoxedInt(var value: Int)

@@ -36,16 +36,14 @@ data class RealizationBox(val realization: CategoryRealization?, override val pr
         return true
     }
 
-    override fun hashCode(): Int {
-        return realization?.hashCode() ?: 0
-    }
+    override fun hashCode() = realization?.hashCode() ?: 0
 }
 
 internal fun noValue(probability: Double) = RealizationBox(null, probability)
 
 internal val emptyRealization = setOf(noValue(1.0))
 
-sealed class CategorySource private constructor() { // private constructor to prevent creating more subclasses outside
+sealed class CategorySource {
     object SelfStated : CategorySource()
-    class RelationGranted(val relation: SyntaxRelation) : CategorySource()
+    data class RelationGranted(val relation: SyntaxRelation) : CategorySource()
 }
