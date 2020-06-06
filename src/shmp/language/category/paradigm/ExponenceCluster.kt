@@ -69,7 +69,6 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
 }
 
 data class ParametrizedCategory(val category: Category, val source: CategorySource) {
-    val allParametrizedValues = category.allPossibleValues.map { ParametrizedCategoryValue(it, source) }
     val actualParametrizedValues = category.actualValues.map { ParametrizedCategoryValue(it, source) }
 
     fun containsParametrizedValue(value: ParametrizedCategoryValue) =
