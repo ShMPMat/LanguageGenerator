@@ -19,7 +19,7 @@ class CategoryGenerator(
     )
 
     private fun <E: CategoryValue> randomCategory(
-        constructor: (List<E>, Set<ParametrizedSpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
+        constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
         supplements: CategoryRandomSupplements
     ): Pair<AbstractChangeCategory, CategoryRandomSupplements> {
         val presentElements = supplements.randomRealization(random)
@@ -35,19 +35,18 @@ class CategoryGenerator(
         }
     }
 
-    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<ParametrizedSpeechPart> {
-        val max = SpeechPart.values().map { supplements.speechPartProbabilities(it) }.max()
+    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<PSpeechPart> {
+        val max = SpeechPart.values()
+            .flatMap { supplements.speechPartProbabilities(it) }
+            .map { it.probability }
+            .max()
             ?: throw GeneratorException("No SpeechPart exists")
-        val speechParts = SpeechPart.values().mapNotNull {
-            val probability = supplements.speechPartProbabilities(it) / max
-            if (testProbability(probability, random)) it else null
-        }.toSet()
 
-        return speechParts
-            .map { ParametrizedSpeechPart(
-                it,
-                supplements.speechPartCategorySource(it) ?: throw GeneratorException("No Source for a $speechParts"))
-            }
-            .toSet()
+        return SpeechPart.values().flatMap { speechPart ->
+            supplements.speechPartProbabilities(speechPart).mapNotNull {
+                val probability = it.probability / max
+                if (testProbability(probability, random)) it else null
+            }.map { PSpeechPart(speechPart, it.source) }
+        }.toSet()
     }
 }

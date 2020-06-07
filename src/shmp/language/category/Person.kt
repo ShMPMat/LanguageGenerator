@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
+import shmp.language.category.CategorySource.*
 import shmp.language.category.PersonValue.*
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -13,7 +14,7 @@ private const val outName = "Person"
 
 class Person(
     categories: List<PersonValue>,
-    affected: Set<ParametrizedSpeechPart>,
+    affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
@@ -35,27 +36,15 @@ object PersonRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> 0.0
-        Verb -> 10.0//TODO not an actual data
-        Adjective -> 10.0//TODO not an actual data
-        Adverb -> 0.0
-        Numeral -> 0.0
-        Article -> 0.0
-        Pronoun -> 100.0
-        Particle -> 0.0
+        Noun -> listOf()
+        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))//TODO not an actual data
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))//TODO not an actual data
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf()
+        Pronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Particle -> listOf()
     }
-
-    override fun speechPartCategorySource(speechPart: SpeechPart) =
-        when (speechPart) {
-            Noun -> null
-            Verb -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Adverb -> null
-            Numeral -> null
-            Article -> null
-            Pronoun -> CategorySource.SelfStated
-            Particle -> null
-        }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }

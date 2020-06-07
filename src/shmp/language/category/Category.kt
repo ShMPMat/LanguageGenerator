@@ -10,7 +10,7 @@ import kotlin.random.Random
 interface Category {
     val actualValues: List<CategoryValue>
     val allPossibleValues: Set<CategoryValue>
-    val affected: Set<ParametrizedSpeechPart>
+    val affected: Set<PSpeechPart>
     val speechParts: Set<SpeechPart>
     val staticSpeechParts: Set<SpeechPart>
     val outType: String
@@ -18,8 +18,7 @@ interface Category {
 
 interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
-    fun speechPartProbabilities(speechPart: SpeechPart): Double
-    fun speechPartCategorySource(speechPart: SpeechPart): CategorySource?
+    fun speechPartProbabilities(speechPart: SpeechPart): List<SourceTemplate>
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
     fun randomRealization(random: Random): List<CategoryValue>
     fun randomStaticSpeechParts(random: Random): Set<SpeechPart> = emptySet()
@@ -49,4 +48,9 @@ sealed class CategorySource {
     data class RelationGranted(val relation: SyntaxRelation) : CategorySource()
 }
 
-data class ParametrizedSpeechPart(val speechPart: SpeechPart, val source: CategorySource)
+data class PSpeechPart(val speechPart: SpeechPart, val source: CategorySource)
+
+data class SourceTemplate(
+    val source: CategorySource,
+    override val probability: Double
+): SampleSpaceObject

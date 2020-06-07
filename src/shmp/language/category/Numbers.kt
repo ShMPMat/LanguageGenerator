@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
+import shmp.language.category.CategorySource.*
 import shmp.language.category.NumbersValue.*
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -13,7 +14,7 @@ private const val outName = "Numbers"
 
 class Numbers(
     categories: List<NumbersValue>,
-    affected: Set<ParametrizedSpeechPart>,
+    affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
@@ -35,27 +36,15 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> 100.0
-        Verb -> 99.0
-        Adjective -> 99.0
-        Adverb -> 0.0
-        Numeral -> 0.0
-        Article -> 10.0
-        Pronoun -> 99.0
-        Particle -> 0.0
+        Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0))
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
+        Pronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        Particle -> listOf()
     }
-
-    override fun speechPartCategorySource(speechPart: SpeechPart) =
-        when (speechPart) {
-            Noun -> CategorySource.SelfStated
-            Verb -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Adverb -> null
-            Numeral -> null
-            Article -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Pronoun -> CategorySource.SelfStated
-            Particle -> null
-        }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }

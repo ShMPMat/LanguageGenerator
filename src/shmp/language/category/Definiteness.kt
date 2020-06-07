@@ -1,6 +1,7 @@
 package shmp.language.category
 
 import shmp.language.*
+import shmp.language.category.CategorySource.*
 import shmp.language.category.DefinitenessValue.*
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -11,7 +12,7 @@ const val definitenessName = "Definiteness"
 
 class Definiteness(
     categories: List<DefinitenessValue>,
-    affected: Set<ParametrizedSpeechPart>,
+    affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
@@ -32,29 +33,16 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.NewWord -> 0.0
         }
 
-    override fun speechPartProbabilities(speechPart: SpeechPart) =
-        when (speechPart) {
-            SpeechPart.Noun -> 500.0
-            SpeechPart.Verb -> 0.0
-            SpeechPart.Adjective -> 100.0
-            SpeechPart.Adverb -> 0.0
-            SpeechPart.Numeral -> 0.0
-            SpeechPart.Article -> 0.0
-            SpeechPart.Pronoun -> 0.0
-            SpeechPart.Particle -> 0.0
-        }
-
-    override fun speechPartCategorySource(speechPart: SpeechPart) =
-        when (speechPart) {
-            SpeechPart.Noun -> CategorySource.SelfStated
-            SpeechPart.Verb -> null
-            SpeechPart.Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            SpeechPart.Adverb -> null
-            SpeechPart.Numeral -> null
-            SpeechPart.Article -> null
-            SpeechPart.Pronoun -> null
-            SpeechPart.Particle -> null
-        }
+    override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
+        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 500.0))
+        SpeechPart.Verb -> listOf()
+        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 100.0))
+        SpeechPart.Adverb -> listOf()
+        SpeechPart.Numeral -> listOf()
+        SpeechPart.Article -> listOf()
+        SpeechPart.Pronoun -> listOf()
+        SpeechPart.Particle -> listOf()
+    }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == definitenessName }

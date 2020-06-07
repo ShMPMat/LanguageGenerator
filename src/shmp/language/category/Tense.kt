@@ -2,6 +2,7 @@ package shmp.language.category
 
 import shmp.language.*
 import shmp.language.SpeechPart.*
+import shmp.language.category.CategorySource.*
 import shmp.language.category.TenseValue.*
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -12,7 +13,7 @@ private const val outName = "Tense"
 
 class Tense(
     categories: List<TenseValue>,
-    affected: Set<ParametrizedSpeechPart>,
+    affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
@@ -34,27 +35,15 @@ object TenseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> 0.0
-        Verb -> 100.0
-        Adjective -> 2.0//TODO not an actual data
-        Adverb -> 0.0
-        Numeral -> 0.0
-        Article -> 0.0
-        Pronoun -> 0.0
-        Particle -> 0.0
+        Noun -> listOf()
+        Verb -> listOf(SourceTemplate(SelfStated, 100.0))
+        Adjective -> listOf(SourceTemplate(SelfStated, 2.0))//TODO not an actual data
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf()
+        Pronoun -> listOf()
+        Particle -> listOf()
     }
-
-    override fun speechPartCategorySource(speechPart: SpeechPart) =
-        when (speechPart) {
-            Noun -> null
-            Verb -> CategorySource.SelfStated
-            Adjective -> CategorySource.SelfStated
-            Adverb -> null
-            Numeral -> null
-            Article -> null
-            Pronoun -> null
-            Particle -> null
-        }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }

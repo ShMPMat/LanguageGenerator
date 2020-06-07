@@ -1,6 +1,7 @@
 package shmp.language.category
 
 import shmp.language.*
+import shmp.language.category.CategorySource.*
 import shmp.language.category.GenderValue.*
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -12,7 +13,7 @@ const val genderName = "Gender"
 
 class Gender(
     categories: List<GenderValue>,
-    affected: Set<ParametrizedSpeechPart>,
+    affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
@@ -33,29 +34,16 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.NewWord -> 0.0
         }
 
-    override fun speechPartProbabilities(speechPart: SpeechPart): Double =
-        when (speechPart) {
-            SpeechPart.Noun -> 100.0
-            SpeechPart.Verb -> 95.0
-            SpeechPart.Adjective -> 95.0
-            SpeechPart.Adverb -> 0.0
-            SpeechPart.Numeral -> 0.0
-            SpeechPart.Article -> 90.0
-            SpeechPart.Pronoun -> 99.0
-            SpeechPart.Particle -> 0.0
-        }
-
-    override fun speechPartCategorySource(speechPart: SpeechPart) =
-        when (speechPart) {
-            SpeechPart.Noun -> CategorySource.SelfStated
-            SpeechPart.Verb -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            SpeechPart.Adjective -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            SpeechPart.Adverb -> null
-            SpeechPart.Numeral -> null
-            SpeechPart.Article -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            SpeechPart.Pronoun -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            SpeechPart.Particle -> null
-        }
+    override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
+        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        SpeechPart.Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
+        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
+        SpeechPart.Adverb -> listOf()
+        SpeechPart.Numeral -> listOf()
+        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
+        SpeechPart.Pronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        SpeechPart.Particle -> listOf()
+    }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == genderName }
