@@ -27,10 +27,10 @@ class SpeechPartApplicatorsGenerator(
     internal fun randomApplicatorsForSpeechPart(
         speechPart: SpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
-        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements>>
+        categoriesAndSupply: List<Pair<ParametrizedCategory, CategoryRandomSupplements>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply, speechPart)
+        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply)
         exponenceTemplates.forEach { map[it.exponenceCluster] = HashMap() }
 
         val realizationTypes = exponenceTemplates.zip(exponenceTemplates.indices)
@@ -82,35 +82,28 @@ class SpeechPartApplicatorsGenerator(
     }
 
     private fun splitCategoriesOnClusters(
-        categoriesAndSupply: List<Pair<Category, CategoryRandomSupplements>>,
-        speechPart: SpeechPart
+        categories: List<Pair<ParametrizedCategory, CategoryRandomSupplements>>
     ): List<ExponenceTemlate> {
-        val shuffledMappers = categoriesAndSupply.shuffled(random)
+        val shuffledCategories = categories.shuffled(random)
         val clusters = ArrayList<ExponenceTemlate>()
         var l = 0
         val data = mutableListOf<List<RealizationMapper>>()
-        while (l < shuffledMappers.size) {
-            val r = randomElement(l + 1..shuffledMappers.size, { 1.0 / it }, random)
-            val categories = shuffledMappers.subList(l, r)
-                .map { (c, s) ->
-                    ParametrizedCategory(
-                        c,
-                        s.speechPartCategorySource(speechPart)
-                            ?: throw GeneratorException("No Source for $speechPart and ${c.outType}")
-                    )
-                }
+        while (l < shuffledCategories.size) {
+            val r = randomElement(l + 1..shuffledCategories.size, { 1.0 / it }, random)
+            val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
+            val currentCategories = currentCategoriesWithSupplement.map { it.first }
             val cluster = ExponenceCluster(
-                categories,
-                constructExponenceUnionSets(categories)
+                currentCategories,
+                constructExponenceUnionSets(currentCategories)
             )
-            data.add(shuffledMappers.subList(l, r).map { it.second::realizationTypeProbability })
+            data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
                 data[i].map { it(c) }.foldRight(0.0, Double::plus)
             }
             clusters.add(ExponenceTemlate(
                 cluster,
                 mapper,
-                shuffledMappers.subList(l, r).map { it.second }
+                currentCategoriesWithSupplement.map { it.second }
             ))
             l = r
         }

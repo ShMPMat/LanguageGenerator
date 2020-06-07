@@ -4,6 +4,7 @@ import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.category.*
+import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.language.category.paradigm.WordChangeParadigm
@@ -99,8 +100,13 @@ class LanguageGenerator(seed: Long) {
         val categories = categoriesWithMappers.map { it.first }
         val speechPartChangesMap = SpeechPart.values().map { speechPart ->
             val speechPartCategoriesAndSupply = categoriesWithMappers
-                .filter { it.first.affectedSpeechParts.contains(speechPart) }
+                .filter { it.first.speechParts.contains(speechPart) }
                 .filter { it.first.actualValues.isNotEmpty() }
+                .flatMap { (c, s) ->
+                    c.affected
+                        .filter { it.first == speechPart }
+                        .map { ParametrizedCategory(c, it.second) to s }
+                }
             val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
                 speechPart,
                 restrictionsParadigm.restrictionsMapper.getValue(speechPart),

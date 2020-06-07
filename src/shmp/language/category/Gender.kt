@@ -12,11 +12,12 @@ const val genderName = "Gender"
 
 class Gender(
     categories: List<GenderValue>,
-    override val affectedSpeechParts: Set<SpeechPart>,
+    affected: Set<ParametrizedSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
+    affected,
     genderName
 )
 

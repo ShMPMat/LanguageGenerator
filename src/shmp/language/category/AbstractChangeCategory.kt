@@ -5,8 +5,13 @@ import shmp.language.*
 abstract class AbstractChangeCategory(
     final override val actualValues: List<CategoryValue>,
     final override val allPossibleValues: Set<CategoryValue>,
+    final override val affected: Set<ParametrizedSpeechPart>,
     final override val outType: String
 ) : Category {
+    override val speechParts = affected
+        .map { it.first }
+        .toSet()
+
     init {
         if (!allPossibleValues.containsAll(actualValues))
             throw LanguageException(

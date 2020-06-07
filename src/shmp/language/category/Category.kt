@@ -10,7 +10,8 @@ import kotlin.random.Random
 interface Category {
     val actualValues: List<CategoryValue>
     val allPossibleValues: Set<CategoryValue>
-    val affectedSpeechParts: Set<SpeechPart>
+    val affected: Set<ParametrizedSpeechPart>
+    val speechParts: Set<SpeechPart>
     val staticSpeechParts: Set<SpeechPart>
     val outType: String
 }
@@ -47,3 +48,5 @@ sealed class CategorySource {
     object SelfStated : CategorySource()
     data class RelationGranted(val relation: SyntaxRelation) : CategorySource()
 }
+
+typealias ParametrizedSpeechPart = Pair<SpeechPart, CategorySource>

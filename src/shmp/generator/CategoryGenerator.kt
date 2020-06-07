@@ -19,27 +19,32 @@ class CategoryGenerator(
     )
 
     private fun <E: CategoryValue> randomCategory(
-        constructor: (List<E>, Set<SpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
+        constructor: (List<E>, Set<ParametrizedSpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
         supplements: CategoryRandomSupplements
     ): Pair<AbstractChangeCategory, CategoryRandomSupplements> {
         val presentElements = supplements.randomRealization(random)
-        val affectedSpeechParts = randomAffectedSpeechParts(supplements)
+        val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
+        val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.first }
         val staticSpeechParts = supplements.randomStaticSpeechParts(random)
             .filter { it in affectedSpeechParts }
             .toSet()
         return try {
-            constructor(presentElements as List<E>, affectedSpeechParts, staticSpeechParts) to supplements
+            constructor(presentElements as List<E>, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
         } catch (e: Exception) {
             throw GeneratorException("Wrong supplements with name ${supplements.javaClass.name}")
         }
     }
 
-    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<SpeechPart> {
+    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<Pair<SpeechPart, CategorySource>> {
         val max = SpeechPart.values().map { supplements.speechPartProbabilities(it) }.max()
             ?: throw GeneratorException("No SpeechPart exists")
-        return SpeechPart.values().mapNotNull {
+        val speechParts = SpeechPart.values().mapNotNull {
             val probability = supplements.speechPartProbabilities(it) / max
             if (testProbability(probability, random)) it else null
         }.toSet()
+
+        return speechParts
+            .map { it to (supplements.speechPartCategorySource(it) ?: throw GeneratorException("No Source for a $speechParts")) }
+            .toSet()
     }
 }

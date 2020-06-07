@@ -11,11 +11,12 @@ const val definitenessName = "Definiteness"
 
 class Definiteness(
     categories: List<DefinitenessValue>,
-    override val affectedSpeechParts: Set<SpeechPart>,
+    affected: Set<ParametrizedSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     values().toSet(),
+    affected,
     definitenessName
 )
 

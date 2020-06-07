@@ -74,9 +74,14 @@ data class ParametrizedCategory(val category: Category, val source: CategorySour
     fun containsParametrizedValue(value: ParametrizedCategoryValue) =
         category.allPossibleValues.contains(value.categoryValue)
 
-    override fun toString() = category.toString()
+    override fun toString() = category.toString() + getSourceString(source)
 }
 
 data class ParametrizedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
-    override fun toString() = categoryValue.toString()
+    override fun toString() = categoryValue.toString() + getSourceString(source)
 }
+
+private fun getSourceString(source: CategorySource) =
+    if (source is CategorySource.RelationGranted)
+        " from ${source.relation}"
+    else ""

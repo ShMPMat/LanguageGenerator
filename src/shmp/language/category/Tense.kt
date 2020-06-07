@@ -12,11 +12,12 @@ private const val outName = "Tense"
 
 class Tense(
     categories: List<TenseValue>,
-    override val affectedSpeechParts: Set<SpeechPart>,
+    affected: Set<ParametrizedSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     TenseValue.values().toSet(),
+    affected,
     outName
 )
 
