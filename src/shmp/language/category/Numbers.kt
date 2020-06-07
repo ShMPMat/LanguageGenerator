@@ -53,7 +53,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
             Adverb -> null
             Numeral -> null
             Article -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-            Pronoun -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+            Pronoun -> CategorySource.SelfStated
             Particle -> null
         }
 
