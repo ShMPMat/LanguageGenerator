@@ -19,9 +19,9 @@ class CategoryGenerator(
     )
 
     private fun <E: CategoryValue> randomCategory(
-        constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> AbstractChangeCategory,//TODO to Category?
+        constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,
         supplements: CategoryRandomSupplements
-    ): Pair<AbstractChangeCategory, CategoryRandomSupplements> {
+    ): Pair<Category, CategoryRandomSupplements> {
         val presentElements = supplements.randomRealization(random)
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
         val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.speechPart }
