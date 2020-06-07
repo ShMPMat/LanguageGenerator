@@ -16,10 +16,8 @@ class ExponenceCluster(
 
     fun filterExponenceUnion(categoryValues: Set<ParametrizedCategoryValue>): ExponenceValue? =
         try {
-            val neededValues = categoryValues.filter {
-                categories.any { c ->
-                    c.containsParametrizedValue(it)
-                }
+            val neededValues = categoryValues.filter { v ->
+                categories.any { it.containsParametrizedValue(v) }
             }
             possibleValues.first { it.categoryValues.containsAll(neededValues) }
         } catch (e: LanguageException) {
@@ -69,10 +67,10 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
 }
 
 data class ParametrizedCategory(val category: Category, val source: CategorySource) {
+    val allPossibleParametrizedValues = category.allPossibleValues.map { ParametrizedCategoryValue(it, source) }
     val actualParametrizedValues = category.actualValues.map { ParametrizedCategoryValue(it, source) }
 
-    fun containsParametrizedValue(value: ParametrizedCategoryValue) =
-        category.allPossibleValues.contains(value.categoryValue)
+    fun containsParametrizedValue(value: ParametrizedCategoryValue) = allPossibleParametrizedValues.contains(value)
 
     override fun toString() = category.toString() + getSourceString(source)
 }

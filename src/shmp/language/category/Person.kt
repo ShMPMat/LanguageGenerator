@@ -37,12 +37,15 @@ object PersonRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))//TODO not an actual data
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))//TODO not an actual data
+        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0))//TODO not an actual data
+        Adjective -> listOf(
+            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0),
+            SourceTemplate(RelationGranted(SyntaxRelation.Object), 1.0)
+        )//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
-        Pronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Pronoun -> listOf(SourceTemplate(SelfStated, 200.0))
         Particle -> listOf()
     }
 

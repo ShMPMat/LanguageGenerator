@@ -37,7 +37,10 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 100.0))
-        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0))
+        Verb -> listOf(
+            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0),
+            SourceTemplate(RelationGranted(SyntaxRelation.Object), 99.0) //TODO dial it back down to 5!
+        )
         Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0))
         Adverb -> listOf()
         Numeral -> listOf()

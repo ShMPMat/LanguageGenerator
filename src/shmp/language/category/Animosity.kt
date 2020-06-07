@@ -33,13 +33,16 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 100.0))//TODO no data at all
-        SpeechPart.Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
-        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
+        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 200.0))//TODO no data at all
+        SpeechPart.Verb -> listOf(
+            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0),
+            SourceTemplate(RelationGranted(SyntaxRelation.Object), 1.0)
+        )
+        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0))
         SpeechPart.Adverb -> listOf()
         SpeechPart.Numeral -> listOf()
-        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 5.0))
-        SpeechPart.Pronoun -> listOf(SourceTemplate(SelfStated, 5.0))
+        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
+        SpeechPart.Pronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         SpeechPart.Particle -> listOf()
     }
 
