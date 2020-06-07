@@ -9,7 +9,7 @@ abstract class AbstractChangeCategory(
     final override val outType: String
 ) : Category {
     override val speechParts = affected
-        .map { it.first }
+        .map { it.speechPart }
         .toSet()
 
     init {

@@ -104,8 +104,8 @@ class LanguageGenerator(seed: Long) {
                 .filter { it.first.actualValues.isNotEmpty() }
                 .flatMap { (c, s) ->
                     c.affected
-                        .filter { it.first == speechPart }
-                        .map { ParametrizedCategory(c, it.second) to s }
+                        .filter { it.speechPart == speechPart }
+                        .map { ParametrizedCategory(c, it.source) to s }
                 }
             val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
                 speechPart,

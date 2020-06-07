@@ -24,7 +24,7 @@ class CategoryGenerator(
     ): Pair<AbstractChangeCategory, CategoryRandomSupplements> {
         val presentElements = supplements.randomRealization(random)
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
-        val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.first }
+        val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.speechPart }
         val staticSpeechParts = supplements.randomStaticSpeechParts(random)
             .filter { it in affectedSpeechParts }
             .toSet()
@@ -35,7 +35,7 @@ class CategoryGenerator(
         }
     }
 
-    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<Pair<SpeechPart, CategorySource>> {
+    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<ParametrizedSpeechPart> {
         val max = SpeechPart.values().map { supplements.speechPartProbabilities(it) }.max()
             ?: throw GeneratorException("No SpeechPart exists")
         val speechParts = SpeechPart.values().mapNotNull {
@@ -44,7 +44,10 @@ class CategoryGenerator(
         }.toSet()
 
         return speechParts
-            .map { it to (supplements.speechPartCategorySource(it) ?: throw GeneratorException("No Source for a $speechParts")) }
+            .map { ParametrizedSpeechPart(
+                it,
+                supplements.speechPartCategorySource(it) ?: throw GeneratorException("No Source for a $speechParts"))
+            }
             .toSet()
     }
 }

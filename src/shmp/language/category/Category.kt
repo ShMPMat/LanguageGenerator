@@ -49,4 +49,4 @@ sealed class CategorySource {
     data class RelationGranted(val relation: SyntaxRelation) : CategorySource()
 }
 
-typealias ParametrizedSpeechPart = Pair<SpeechPart, CategorySource>
+data class ParametrizedSpeechPart(val speechPart: SpeechPart, val source: CategorySource)
