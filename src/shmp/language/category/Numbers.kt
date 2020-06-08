@@ -39,7 +39,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Noun -> listOf(SourceTemplate(SelfStated, 100.0))
         Verb -> listOf(
             SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0),
-            SourceTemplate(RelationGranted(SyntaxRelation.Object), 99.0) //TODO dial it back down to 5!
+            SourceTemplate(RelationGranted(SyntaxRelation.Object), 5.0)
         )
         Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 99.0))
         Adverb -> listOf()

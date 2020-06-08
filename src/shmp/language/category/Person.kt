@@ -3,9 +3,11 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
+import shmp.language.SpeechPart.Verb
 import shmp.language.category.CategorySource.*
 import shmp.language.category.PersonValue.*
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -37,11 +39,11 @@ object PersonRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0))//TODO not an actual data
-        Adjective -> listOf(
-            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 20.0),
-            SourceTemplate(RelationGranted(SyntaxRelation.Object), 1.0)
+        Verb -> listOf(
+            SourceTemplate(RelationGranted(Subject), 20.0),
+            SourceTemplate(RelationGranted(Object), 1.0)
         )//TODO not an actual data
+        Adjective -> listOf(SourceTemplate(RelationGranted(Subject), 20.0))//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
