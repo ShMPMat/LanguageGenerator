@@ -3,6 +3,8 @@ package shmp
 import shmp.containers.WordBase
 import shmp.generator.LanguageGenerator
 import shmp.language.Language
+import shmp.language.getClauseAndInfoPrinted
+import shmp.language.getClauseInfoPrinted
 import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
@@ -24,7 +26,8 @@ fun visualize(language: Language) {
     obj.relation[SyntaxRelation.Verb] = verb
 
     val testSentence = Sentence(verb)
-    println(language.sentenceChangeParadigm.apply(testSentence))
+    val sentenceClause = language.sentenceChangeParadigm.apply(testSentence)
+    println(getClauseAndInfoPrinted(sentenceClause))
     print("\n\n")
 
     print(language)

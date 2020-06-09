@@ -1,6 +1,9 @@
 package shmp.language
 
+import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
+import shmp.language.syntax.Clause
+import kotlin.math.max
 
 
 fun getParadigmPrinted(language: Language, word: Word): String {
@@ -13,6 +16,34 @@ fun getParadigmPrinted(language: Language, word: Word): String {
             ).map { language.sentenceChangeParadigm.wordChangeParadigm.apply(word, it) to it }
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
+
+fun getClauseAndInfoPrinted(clause: Clause): String {
+    val (words, infos) = clause.words
+        .map { it.toString() }
+        .zip(getClauseInfoPrinted(clause).split(" "))
+        .map { (s1, s2) -> lineUp(s1, s2) }
+        .unzip()
+    return words.joinToString(" ") + "\n" +
+            infos.joinToString(" ")
+}
+
+
+private fun lineUp(s1: String, s2: String): Pair<String, String> {
+    val max = max(s1.length, s2.length)
+    return s1 + " ".repeat(max - s1.length) to s2 + " ".repeat(max - s2.length)
+}
+
+fun getClauseInfoPrinted(clause: Clause) = clause.words.joinToString(" ") { getWordInfoPrinted(it) }
+
+fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore) +
+        word.categoryValues
+            .joinToString("") { "-$it" }
+            .replace(" ", "_")
+
+private fun getSemanticsCorePrinted(semanticsCore: SemanticsCore) =
+    if (semanticsCore.speechPart in listOf(SpeechPart.Particle, SpeechPart.Article)) ""
+    else semanticsCore.word
+
 
 private fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {
     if (l.isEmpty()) return emptyList()
