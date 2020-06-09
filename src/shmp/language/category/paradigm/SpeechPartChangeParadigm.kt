@@ -1,10 +1,7 @@
 package shmp.language.category.paradigm
 
-import shmp.language.CategoryValue
-import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.Word
-import shmp.language.category.Category
 import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.syntax.Clause

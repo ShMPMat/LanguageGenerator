@@ -6,7 +6,6 @@ import shmp.language.category.Category
 import shmp.language.category.CategorySource
 import shmp.language.syntax.Clause
 import shmp.language.syntax.Sentence
-import shmp.language.syntax.SyntaxRelation
 
 class SentenceChangeParadigm(
     val sovOrder: SovOrder,
@@ -14,7 +13,11 @@ class SentenceChangeParadigm(
 ) {
     fun apply(sentence: Sentence): Clause {
         val clausesInParadigm = SentenceClauseConstructor(this).applyNode(sentence.node)
-        val resultWords = clausesInParadigm
+        return joinClauses(clausesInParadigm)
+    }
+
+    fun joinClauses(clauses: List<NonJoinedClause>): Clause {
+        val resultWords = clauses
             .sortedBy { (r) ->
                 val i = sovOrder.referenceOrder.indexOf(r)
                 if (i == -1) throw ChangeException("No Relation $r in a relation order ${sovOrder.referenceOrder}")
@@ -29,6 +32,8 @@ class SentenceChangeParadigm(
         |$wordChangeParadigm
     """.trimMargin()
 }
+
+
 
 
 typealias ReferenceHandler = (SpeechPart, Category) -> CategorySource?
