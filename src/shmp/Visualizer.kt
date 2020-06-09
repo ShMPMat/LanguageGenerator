@@ -18,12 +18,15 @@ fun visualize(language: Language) {
 
     val subj = language.words.first { it.semanticsCore.word == "mother" }.toNode()
     val verb = language.words.first { it.semanticsCore.word == "have" }.toNode()
+    val objAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
     val obj = language.words.first { it.semanticsCore.word == "time" }.toNode()
 
     subj.relation[SyntaxRelation.Verb] = verb
     verb.relation[SyntaxRelation.Subject] = subj
     verb.relation[SyntaxRelation.Object] = obj
+    objAdj.relation[SyntaxRelation.Subject] = obj
     obj.relation[SyntaxRelation.Verb] = verb
+//    obj.relation[SyntaxRelation.Definition] = objAdj//TODO make it work
 
     val testSentence = Sentence(verb)
     val sentenceClause = language.sentenceChangeParadigm.apply(testSentence)
