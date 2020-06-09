@@ -5,6 +5,9 @@ import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.WordBase
 import shmp.language.*
 import shmp.language.category.Category
+import shmp.language.lexis.SemanticsCore
+import shmp.language.lexis.SemanticsTag
+import shmp.language.lexis.Word
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -38,7 +41,14 @@ class LexisGenerator(
                 core.word,
                 core.speechPart,
                 core.tagClusters
-                    .map { SemanticsTag(randomElement(it.semanticsTags, random).name) }
+                    .map {
+                        SemanticsTag(
+                            randomElement(
+                                it.semanticsTags,
+                                random
+                            ).name
+                        )
+                    }
                     .toSet(),
                 staticCategories
             )))
@@ -97,7 +107,8 @@ class LexisGenerator(
                 syllables.add(syllable)
                 break
             }
-        return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
+        return generateStress(stressType,
+            Word(syllables, syllableGenerator.template, core), random)
     }
 
     fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) = checkBorderCoherency(syllable, prefix)

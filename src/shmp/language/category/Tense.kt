@@ -4,7 +4,7 @@ import shmp.language.*
 import shmp.language.SpeechPart.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.TenseValue.*
-import shmp.language.syntax.SyntaxRelation
+import shmp.language.lexis.SemanticsCore
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -92,7 +92,13 @@ enum class TenseValue(override val semanticsCore: SemanticsCore) : CategoryValue
     Future(SemanticsCore("(future tense indicator)", Particle, setOf())),
     Past(SemanticsCore("(past tense indicator)", Particle, setOf())),
     DayPast(SemanticsCore("(day past tense indicator)", Particle, setOf())),
-    SomeDaysPast(SemanticsCore("(some days past tense indicator)", Particle, setOf())),
+    SomeDaysPast(
+        SemanticsCore(
+            "(some days past tense indicator)",
+            Particle,
+            setOf()
+        )
+    ),
     MonthPast(SemanticsCore("(month past tense indicator)", Particle, setOf())),
     YearPast(SemanticsCore("(year past tense indicator)", Particle, setOf()));
 

@@ -2,7 +2,7 @@ package shmp.language.category.realization
 
 import shmp.language.syntax.Clause
 import shmp.language.CategoryRealization
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 
 class SuffixWordCategoryApplicator(suffixWord: Word) :

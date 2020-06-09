@@ -1,7 +1,7 @@
 package shmp.language.phonology.prosody
 
 import shmp.generator.GeneratorException
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.random.SampleSpaceObject
 import kotlin.math.max
 import kotlin.math.min

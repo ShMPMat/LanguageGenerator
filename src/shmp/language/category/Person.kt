@@ -6,7 +6,7 @@ import shmp.language.SpeechPart.*
 import shmp.language.SpeechPart.Verb
 import shmp.language.category.CategorySource.*
 import shmp.language.category.PersonValue.*
-import shmp.language.syntax.SyntaxRelation
+import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement

@@ -1,6 +1,7 @@
 package shmp.language.morphem.change
 
 import shmp.language.*
+import shmp.language.lexis.Word
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
 

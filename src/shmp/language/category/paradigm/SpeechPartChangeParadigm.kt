@@ -1,7 +1,7 @@
 package shmp.language.category.paradigm
 
 import shmp.language.SpeechPart
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.syntax.Clause

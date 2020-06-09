@@ -1,6 +1,6 @@
 package shmp.language.morphem.change
 
-import shmp.language.*
+import shmp.language.lexis.Word
 
 class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange {
     constructor(vararg changes: WordChange) : this(changes.toList())

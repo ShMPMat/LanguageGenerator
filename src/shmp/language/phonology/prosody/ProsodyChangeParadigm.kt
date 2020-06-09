@@ -1,6 +1,6 @@
 package shmp.language.phonology.prosody
 
-import shmp.language.Word
+import shmp.language.lexis.Word
 
 class ProsodyChangeParadigm(val stress: StressType) {
     fun apply(sourceWord: Word, newWord: Word): Word {

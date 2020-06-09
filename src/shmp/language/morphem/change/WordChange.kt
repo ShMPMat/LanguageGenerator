@@ -1,7 +1,6 @@
 package shmp.language.morphem.change
 
-import shmp.language.Word
-import shmp.language.morphem.change.Position
+import shmp.language.lexis.Word
 
 interface WordChange {
     val position: Position?

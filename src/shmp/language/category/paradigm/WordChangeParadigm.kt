@@ -1,7 +1,7 @@
 package shmp.language.category.paradigm
 
 import shmp.language.SpeechPart
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.language.category.Category
 import shmp.language.category.CategorySource
 import shmp.language.syntax.Clause

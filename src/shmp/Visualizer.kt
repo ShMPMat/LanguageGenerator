@@ -3,12 +3,10 @@ package shmp
 import shmp.containers.WordBase
 import shmp.generator.LanguageGenerator
 import shmp.language.Language
-import shmp.language.Word
-import shmp.language.syntax.Clause
+import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxRelation
-import kotlin.random.Random
 
 fun visualize(language: Language) {
     fun Word.toNode() = SentenceNode(

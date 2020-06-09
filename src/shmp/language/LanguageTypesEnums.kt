@@ -1,5 +1,6 @@
 package shmp.language
 
+import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject

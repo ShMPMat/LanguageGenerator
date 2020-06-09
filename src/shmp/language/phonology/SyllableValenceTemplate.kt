@@ -1,6 +1,8 @@
 package shmp.language.phonology
 
 import shmp.language.*
+import shmp.language.lexis.SemanticsCore
+import shmp.language.lexis.Word
 
 class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
     val nucleusIndex: Int

@@ -2,6 +2,7 @@ package shmp.language.category
 
 import shmp.language.*
 import shmp.language.category.CategorySource.*
+import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement

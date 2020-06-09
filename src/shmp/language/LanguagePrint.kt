@@ -1,6 +1,6 @@
 package shmp.language
 
-import shmp.language.category.paradigm.ParametrizedCategoryValue
+import shmp.language.lexis.Word
 
 
 fun getParadigmPrinted(language: Language, word: Word): String {

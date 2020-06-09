@@ -16,7 +16,7 @@ class SentenceChangeParadigm(
         return joinClauses(clausesInParadigm)
     }
 
-    fun joinClauses(clauses: List<NonJoinedClause>): Clause {
+    private fun joinClauses(clauses: List<NonJoinedClause>): Clause {
         val resultWords = clauses
             .sortedBy { (r) ->
                 val i = sovOrder.referenceOrder.indexOf(r)

@@ -1,6 +1,6 @@
 package shmp.language.morphem
 
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.language.morphem.change.WordChange
 
 interface Affix: WordChange {

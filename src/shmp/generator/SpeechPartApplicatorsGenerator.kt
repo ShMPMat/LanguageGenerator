@@ -7,6 +7,7 @@ import shmp.language.category.paradigm.ExponenceValue
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.category.realization.*
+import shmp.language.lexis.SemanticsCore
 import shmp.language.morphem.*
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions

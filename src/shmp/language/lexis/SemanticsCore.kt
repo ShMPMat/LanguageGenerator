@@ -1,4 +1,7 @@
-package shmp.language
+package shmp.language.lexis
+
+import shmp.language.CategoryValue
+import shmp.language.SpeechPart
 
 data class SemanticsCore(
     val word: String,

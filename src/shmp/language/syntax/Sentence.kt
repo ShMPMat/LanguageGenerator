@@ -2,7 +2,7 @@ package shmp.language.syntax
 
 import shmp.language.CategoryValue
 import shmp.language.LanguageException
-import shmp.language.Word
+import shmp.language.lexis.Word
 import shmp.language.category.Category
 import shmp.language.category.CategorySource
 import shmp.language.category.PersonValue

@@ -1,4 +1,4 @@
-package shmp.language
+package shmp.language.lexis
 
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.phonology.Syllable

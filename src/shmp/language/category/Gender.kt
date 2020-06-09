@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.GenderValue.*
+import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
@@ -86,15 +87,45 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
 
 enum class GenderValue(override val semanticsCore: SemanticsCore) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(SemanticsCore("(female gender indicator)", SpeechPart.Particle, setOf())),
+    Female(
+        SemanticsCore(
+            "(female gender indicator)",
+            SpeechPart.Particle,
+            setOf()
+        )
+    ),
     Male(SemanticsCore("(male gender indicator)", SpeechPart.Particle, setOf())),
-    Neutral(SemanticsCore("(neutral gender indicator)", SpeechPart.Particle, setOf())),
-    Common(SemanticsCore("(common gender indicator)", SpeechPart.Particle, setOf())),
+    Neutral(
+        SemanticsCore(
+            "(neutral gender indicator)",
+            SpeechPart.Particle,
+            setOf()
+        )
+    ),
+    Common(
+        SemanticsCore(
+            "(common gender indicator)",
+            SpeechPart.Particle,
+            setOf()
+        )
+    ),
 
-    Person(SemanticsCore("(person class indicator)", SpeechPart.Particle, setOf())),
+    Person(
+        SemanticsCore(
+            "(person class indicator)",
+            SpeechPart.Particle,
+            setOf()
+        )
+    ),
     Plant(SemanticsCore("(plant class indicator)", SpeechPart.Particle, setOf())),
     Fruit(SemanticsCore("(fruit class indicator)", SpeechPart.Particle, setOf())),
-    LongObject(SemanticsCore("(long object class indicator)", SpeechPart.Particle, setOf()));
+    LongObject(
+        SemanticsCore(
+            "(long object class indicator)",
+            SpeechPart.Particle,
+            setOf()
+        )
+    );
 
     override val parentClassName = genderName
 }
