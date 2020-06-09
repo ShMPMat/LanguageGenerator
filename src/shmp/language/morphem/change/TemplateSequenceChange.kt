@@ -2,7 +2,7 @@ package shmp.language.morphem.change
 
 import shmp.language.*
 
-class TemplateSequenceChange(val changes: List<WordChange>) : WordChange {
+class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange {
     constructor(vararg changes: WordChange) : this(changes.toList())
 
     override val position: Position?

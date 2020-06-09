@@ -40,7 +40,7 @@ class TemplateSingleChange(
 
         val testResult = findGoodIndex(word)
         if (testResult != null) {
-            return when (position) {
+            val prosodicSyllables = when (position) {
                 Position.End -> {
                     val change =
                         getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
@@ -54,12 +54,10 @@ class TemplateSingleChange(
                         ),
                         word.semanticsCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
-                        s.copy(
-                            prosodicEnums = word.takeProsody(i)
-                        )
+
+                    noProsodyWord.syllables.mapIndexed { i, s ->
+                        s.copy(prosodicEnums = word.takeProsody(i))
                     }
-                    return noProsodyWord.copy(syllables = prosodicSyllables)
                 }
                 Position.Beginning -> {
                     val change =
@@ -75,12 +73,13 @@ class TemplateSingleChange(
                         word.semanticsCore
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                     val shift = noProsodyWord.syllables.size - word.syllables.size
-                    val prosodicSyllables = noProsodyWord.syllables.mapIndexed { i, s ->
+
+                    noProsodyWord.syllables.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i - shift))
                     }
-                    return noProsodyWord.copy(syllables = prosodicSyllables)
                 }
             }
+            return word.copy(syllables = prosodicSyllables)
         } else {
             return word.copy()
         }

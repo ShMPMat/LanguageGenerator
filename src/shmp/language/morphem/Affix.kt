@@ -8,7 +8,5 @@ interface Affix: WordChange {
 
     override fun test(word: Word): Boolean = templateChange.test(word)
 
-    override fun change(word: Word): Word {
-        return templateChange.change(word)
-    }
+    override fun change(word: Word) = templateChange.change(word)
 }

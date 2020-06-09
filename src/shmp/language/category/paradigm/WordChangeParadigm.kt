@@ -1,7 +1,5 @@
 package shmp.language.category.paradigm
 
-import shmp.language.CategoryValue
-import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.Word
 import shmp.language.category.Category
@@ -21,7 +19,10 @@ class WordChangeParadigm(
         return Clause(allWords)
     }
 
-    private fun innerApply(word: Word, categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)): Pair<Clause, Int> =
+    private fun innerApply(
+        word: Word,
+        categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)
+    ): Pair<Clause, Int> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, categoryValues.toSet())
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")

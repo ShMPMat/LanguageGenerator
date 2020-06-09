@@ -24,7 +24,14 @@ class SpeechPartChangeParadigm(
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
             val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
-            val newClause = useCategoryApplicator(currentClause, wordPosition, exponenceCluster, exponenceUnion)
+            val actualValues = categoryValues.filter { it in exponenceUnion.categoryValues }
+            val newClause = useCategoryApplicator(
+                currentClause,
+                wordPosition,
+                exponenceCluster,
+                exponenceUnion,
+                actualValues
+            )
             if (currentClause.size != newClause.size) {
                 for (i in wordPosition until newClause.size) {
                     if (currentWord == newClause[i]) {
@@ -43,11 +50,14 @@ class SpeechPartChangeParadigm(
         clause: Clause,
         wordPosition: Int,
         exponenceCluster: ExponenceCluster,
-        exponenceValue: ExponenceValue
+        exponenceValue: ExponenceValue,
+        actualValues: List<ParametrizedCategoryValue>
     ): Clause {
         val word = clause[wordPosition]
         return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
-            applicators[exponenceCluster]?.get(exponenceValue)?.apply(clause, wordPosition)
+            applicators[exponenceCluster]
+                ?.get(exponenceValue)
+                ?.apply(clause, wordPosition, actualValues)
                 ?: throw ChangeException(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"

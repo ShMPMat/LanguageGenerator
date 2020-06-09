@@ -17,4 +17,10 @@ data class Word(
     override fun toString() = syllables.joinToString("")
 
     operator fun get(position: Int) = toPhonemes()[position]
+
+    fun copyAndAddValues(values: Collection<ParametrizedCategoryValue>) =
+        copy(categoryValues = categoryValues + values)
+
+    fun copyWithValues(values: Collection<ParametrizedCategoryValue>) =
+        copy(categoryValues = values.toList())
 }
