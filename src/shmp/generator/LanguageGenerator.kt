@@ -15,6 +15,8 @@ import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
+import shmp.language.syntax.SovOrder
+import shmp.language.syntax.WordOrder
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import java.io.File
@@ -58,7 +60,6 @@ class LanguageGenerator(seed: Long) {
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
     private val categoryGenerator = CategoryGenerator(random)
     private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
-    private val wordOrder = randomElement(SovOrder.values(), random)
 
     fun generateLanguage(wordAmount: Int): Language {
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
@@ -132,7 +133,13 @@ class LanguageGenerator(seed: Long) {
         }
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
+        val wordOrder = generateWordOrder()
         return SentenceChangeParadigm(wordOrder, wordChangeParadigm)
+    }
+
+    private fun generateWordOrder(): WordOrder {
+        val sovOrder = randomElement(SovOrder.values(), random)
+        return WordOrder(sovOrder)
     }
 
     private fun articlePresent(

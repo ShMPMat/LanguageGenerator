@@ -30,16 +30,6 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
     Thirteen(13, 2.0)
 }
 
-enum class SovOrder(val referenceOrder: List<SyntaxRelation>, override val probability: Double) : SampleSpaceObject {
-    SOV(listOf(Subject, Object, Verb), 565.0),
-    SVO(listOf(Subject, Verb, Object), 488.0),
-    VSO(listOf(Verb, Subject, Object), 95.0),
-    VOS(listOf(Verb, Object, Subject), 25.0),
-    OVS(listOf(Object, Verb, Subject), 11.0),
-    OSV(listOf(Object, Subject, Verb),4.0),
-    None(listOf(Object, Verb, Subject),189.0) //TODO none is none!
-}
-
 enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObject {
     Decimal( 125.0),
     Vigesimal( 20.0),
