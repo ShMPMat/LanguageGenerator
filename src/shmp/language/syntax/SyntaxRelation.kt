@@ -5,5 +5,6 @@ enum class SyntaxRelation {
     Object,
     Verb,
 
+    Nominal,
     Definition
 }
