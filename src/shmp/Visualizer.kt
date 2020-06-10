@@ -2,22 +2,34 @@ package shmp
 
 import shmp.containers.WordBase
 import shmp.generator.LanguageGenerator
+import shmp.language.CategoryValue
 import shmp.language.Language
+import shmp.language.category.CategorySource
+import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoPrinted
-import shmp.language.getClauseInfoPrinted
 import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxRelation
 
 fun visualize(language: Language) {
-    fun Word.toNode() = SentenceNode(
-        this,
-        language.sentenceChangeParadigm.wordChangeParadigm.getDefaultState(this).map { it.categoryValue }//TODO filter only Self-Refs
-    )
+    fun Word.toNode(presetCategories: List<CategoryValue> = listOf()): SentenceNode {
+        val classNames = presetCategories
+            .map { it.parentClassName }
+
+        return SentenceNode(
+            this,
+            language.sentenceChangeParadigm.wordChangeParadigm
+                .getDefaultState(this)
+                .filter { it.source == CategorySource.SelfStated }
+                .map { it.categoryValue }
+                .filter { it.parentClassName !in classNames }
+                    + presetCategories
+        )
+    }
 
     val subjAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
-    val subj = language.words.first { it.semanticsCore.word == "mother" }.toNode()
+    val subj = language.words.first { it.semanticsCore.word == "mother" }.toNode(listOf(NumbersValue.Plural))
     val verb = language.words.first { it.semanticsCore.word == "have" }.toNode()
     val objAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
     val obj = language.words.first { it.semanticsCore.word == "time" }.toNode()
@@ -40,5 +52,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(LanguageGenerator(183).generateLanguage(WordBase().words.size))
+    visualize(LanguageGenerator(185).generateLanguage(WordBase().words.size))
 }
