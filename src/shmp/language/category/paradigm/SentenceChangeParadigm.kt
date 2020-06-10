@@ -11,21 +11,7 @@ class SentenceChangeParadigm(
     val wordOrder: WordOrder,
     val wordChangeParadigm: WordChangeParadigm
 ) {
-    fun apply(sentence: Sentence): Clause {
-        val clausesInParadigm = SentenceClauseConstructor(this).applyNode(sentence.node)
-        return joinClauses(clausesInParadigm)
-    }
-
-    private fun joinClauses(clauses: List<NonJoinedClause>): Clause {
-        val resultWords = clauses
-            .sortedBy { (r) ->
-                val i = wordOrder.sovOrder.referenceOrder.indexOf(r)
-                if (i == -1)
-                    throw ChangeException("No Relation $r in a relation order ${wordOrder.sovOrder.referenceOrder}")
-                i
-            }.flatMap { it.second.words }
-        return Clause(resultWords)
-    }
+    fun apply(sentence: Sentence): Clause = SentenceClauseConstructor(this).applyNode(sentence.node)
 
     override fun toString() = """
         |Word order: $wordOrder

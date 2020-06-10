@@ -1,9 +1,28 @@
 package shmp.language.syntax
 
+import shmp.language.category.paradigm.ChangeException
+import shmp.language.category.paradigm.NonJoinedClause
 import shmp.random.SampleSpaceObject
 
 data class WordOrder(val sovOrder: SovOrder) {
     override fun toString() = sovOrder.toString()
+    fun uniteToClause(
+        currentNonJoinedClause: NonJoinedClause,
+        childrenClauses: MutableList<NonJoinedClause>
+    ): Clause {
+        return joinSovClauses(childrenClauses + listOf(currentNonJoinedClause))
+    }
+
+    private fun joinSovClauses(clauses: List<NonJoinedClause>): Clause {
+        val resultWords = clauses
+            .sortedBy { (r) ->
+                val i = sovOrder.referenceOrder.indexOf(r)
+                if (i == -1)
+                    throw ChangeException("No Relation $r in a relation order ${sovOrder.referenceOrder}")
+                i
+            }.flatMap { it.second.words }
+        return Clause(resultWords)
+    }
 }
 
 enum class SovOrder(val referenceOrder: List<SyntaxRelation>, override val probability: Double) : SampleSpaceObject {

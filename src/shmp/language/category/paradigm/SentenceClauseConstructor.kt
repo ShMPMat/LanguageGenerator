@@ -8,12 +8,12 @@ internal class SentenceClauseConstructor(val paradigm: SentenceChangeParadigm) {
     private val processedNodes = mutableListOf<SentenceNode>()
 
     //TODO the first is always a Verb!
-    fun applyNode(sentenceNode: SentenceNode): List<NonJoinedClause> {
+    fun applyNode(sentenceNode: SentenceNode): Clause {
         processedNodes.clear()
-        return applyNodeInternal(sentenceNode, SyntaxRelation.Verb)
+        return applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
     }
 
-    private fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): List<NonJoinedClause> {
+    private fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause = relation to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
@@ -21,10 +21,10 @@ internal class SentenceClauseConstructor(val paradigm: SentenceChangeParadigm) {
 
         val childrenClauses = sentenceNode.relation
             .filter { it.value !in processedNodes }
-            .flatMap { (r, n) -> applyNodeInternal(n, r) }
+            .map { (r, n) -> applyNodeInternal(n, r) }
             .toMutableList()
-        childrenClauses.add(currentClause)
-        return childrenClauses
+
+        return relation to paradigm.wordOrder.uniteToClause(currentClause, childrenClauses)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {
