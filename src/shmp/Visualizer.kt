@@ -11,6 +11,7 @@ import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxRelation
+import kotlin.random.Random
 
 fun visualize(language: Language) {
     fun Word.toNode(presetCategories: List<CategoryValue> = listOf()): SentenceNode {
@@ -44,7 +45,7 @@ fun visualize(language: Language) {
     obj.relation[SyntaxRelation.Definition] = objAdj
 
     val testSentence = Sentence(verb)
-    val sentenceClause = language.sentenceChangeParadigm.apply(testSentence)
+    val sentenceClause = language.sentenceChangeParadigm.apply(testSentence, Random(4))
     println(getClauseAndInfoPrinted(sentenceClause))
     print("\n\n")
 
@@ -52,5 +53,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(LanguageGenerator(185).generateLanguage(WordBase().words.size))
+    visualize(LanguageGenerator(186).generateLanguage(WordBase().words.size))
 }
