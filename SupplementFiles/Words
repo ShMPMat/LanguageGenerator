@@ -2,63 +2,63 @@
 /
 /
 _personal_pronoun  Pronoun
-be                 Verb      T|t:1,i:0
+be                 Verb      T|trans:1,intrans:0
 one                Numeral
-have               Verb      T|t:1,i:0
+have               Verb      T|trans:1,intrans:0
 hot                Adjective
 word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-do                 Verb      T|t:1,i:0
+do                 Verb      T|trans:1,intrans:0
 time               Noun      G|LongObject:100                       A|Inanimate:100
-say                Verb      T|t:100,i:1
-/set                Verb      T|t:100,i:0                                                    set what?
+say                Verb      T|trans:100,intrans:1
+/set                Verb      T|trans:1,intrans:0                                              set what?
 three              Numeral
-want               Verb      T|t:100,i:1
+want               Verb      T|trans:100,intrans:1
 want               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 air                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 well               Adverb
-play               Verb      T|t:100,i:1
+play               Verb      T|trans:100,intrans:1
 small              Adjective
 end                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-end                Verb      T|t:100,i:1
-put                Verb      T|t:100,i:1
+end                Verb      T|trans:100,intrans:1
+put                Verb      T|trans:100,intrans:1
 home               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-read               Verb      T|t:100,i:1
+read               Verb      T|trans:100,intrans:1
 hand               Noun      G|LongObject:100                       A|Inanimate:20
 port               Noun
 large              Adjective
-spell              Verb      T|t:100,i:1
+spell              Verb      T|trans:100,intrans:1
 spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-add                Verb      T|t:100,i:1
+add                Verb      T|trans:100,intrans:1
 land               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-land               Verb      T|t:10,i:1
+land               Verb      T|trans:100,intrans:1
 high               Adjective
-follow             Verb      T|t:100,i:1
-ask                Verb      T|t:100,i:1
-change             Verb      T|t:100,i:1
+follow             Verb      T|trans:100,intrans:1
+ask                Verb      T|trans:100,intrans:1
+change             Verb      T|trans:100,intrans:1
 change             Noun      G|LongObject:100                       A|Inanimate:100
 light              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 kind               Noun      G|Plant:20                             A|Inanimate:100
 need               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-need               Verb      T|t:100,i:1
+need               Verb      T|trans:100,intrans:1
 house              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 picture            Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-picture            Verb      T|t:100,i:1
+picture            Verb      T|trans:100,intrans:1
 animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100
 point              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-point              Verb      T|t:100,i:1
+point              Verb      T|trans:100,intrans:1
 mother             Noun      G|Person:1000,Female:5000,Common:1000  A|Animate:1000
 world              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 near               Adjective
-build              Verb      T|t:100,i:1
+build              Verb      T|trans:100,intrans:1
 father             Noun      G|Person:1000,Male:5000,Common:1000    A|Animate:1000
 new                Adjective
-work               Verb      T|t:100,i:1
+work               Verb      T|trans:100,intrans:1
 work               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 part               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-part               Verb      T|t:100,i:1
-take               Verb      T|t:100,i:1
+part               Verb      T|trans:100,intrans:1
+take               Verb      T|trans:100,intrans:1
 place              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-live               Verb      T|t:100,i:1
+live               Verb      T|trans:100,intrans:1
 
 /other
 /some

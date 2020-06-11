@@ -33,7 +33,10 @@ class WordBase() {
 
 fun parseSemanticsTagTemplates(string: String) = string
     .split(",")
-    .map { SemanticsTagTemplate(it.split(":")[0], it.split(":")[1].toDouble()) }
+    .map {
+        val (name, prob) = it.split(":")
+        SemanticsTagTemplate(name, prob.toDouble())
+    }
 
 fun getType(string: String) = when(string) {
     "G" -> genderName
