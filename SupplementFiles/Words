@@ -1,64 +1,64 @@
-/   Default Gender probability - 10
+/   Default CategoryValue probability - 10
 /
 /
 _personal_pronoun  Pronoun
-be                 Verb
+be                 Verb      T|t:1,i:0
 one                Numeral
-have               Verb
+have               Verb      T|t:1,i:0
 hot                Adjective
 word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-do                 Verb
+do                 Verb      T|t:1,i:0
 time               Noun      G|LongObject:100                       A|Inanimate:100
-say                Verb
-set                Verb
+say                Verb      T|t:100,i:1
+/set                Verb      T|t:100,i:0                                                    set what?
 three              Numeral
-want               Verb
+want               Verb      T|t:100,i:1
 want               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 air                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 well               Adverb
-play               Verb
+play               Verb      T|t:100,i:1
 small              Adjective
 end                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-end                Verb
-put                Verb
+end                Verb      T|t:100,i:1
+put                Verb      T|t:100,i:1
 home               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-read               Verb
+read               Verb      T|t:100,i:1
 hand               Noun      G|LongObject:100                       A|Inanimate:20
 port               Noun
 large              Adjective
-spell              Verb
+spell              Verb      T|t:100,i:1
 spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-add                Verb
+add                Verb      T|t:100,i:1
 land               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-land               Verb
+land               Verb      T|t:10,i:1
 high               Adjective
-follow             Verb
-ask                Verb
-change             Verb
+follow             Verb      T|t:100,i:1
+ask                Verb      T|t:100,i:1
+change             Verb      T|t:100,i:1
 change             Noun      G|LongObject:100                       A|Inanimate:100
 light              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 kind               Noun      G|Plant:20                             A|Inanimate:100
 need               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-need               Verb
+need               Verb      T|t:100,i:1
 house              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 picture            Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-picture            Verb
+picture            Verb      T|t:100,i:1
 animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100
 point              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-point              Verb
+point              Verb      T|t:100,i:1
 mother             Noun      G|Person:1000,Female:5000,Common:1000  A|Animate:1000
 world              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 near               Adjective
-build              Verb
+build              Verb      T|t:100,i:1
 father             Noun      G|Person:1000,Male:5000,Common:1000    A|Animate:1000
 new                Adjective
-work               Verb
+work               Verb      T|t:100,i:1
 work               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 part               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-part               Verb
-take               Verb
-place              Noun
-live               Verb
+part               Verb      T|t:100,i:1
+take               Verb      T|t:100,i:1
+place              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+live               Verb      T|t:100,i:1
 
 /other
 /some

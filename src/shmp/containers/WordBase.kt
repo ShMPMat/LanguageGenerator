@@ -38,6 +38,7 @@ fun parseSemanticsTagTemplates(string: String) = string
 fun getType(string: String) = when(string) {
     "G" -> genderName
     "A" -> animosityName
+    "T" -> "transitivity"
     else -> throw GeneratorException("Unknown SemanticsTag type alias $string")
 }
 

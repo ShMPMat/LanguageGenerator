@@ -42,6 +42,7 @@ class LexisGenerator(
                 core.word,
                 core.speechPart,
                 core.tagClusters
+                    .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
                     .map {
                         SemanticsTag(
                             randomElement(
@@ -66,17 +67,17 @@ class LexisGenerator(
             .filter { it.actualValues.isNotEmpty() && core.speechPart in it.staticSpeechParts }
 
         for (category in neededCategories) {
-            val genderAndMappers = core.tagClusters.firstOrNull { it.type == category.outType }?.semanticsTags
-                ?.map { n -> Box(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
+            val value = core.tagClusters.firstOrNull { it.type == category.outType }?.semanticsTags
+                ?.map { n -> CValueBox(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
                 ?.filter { category.actualValues.contains(it.categoryValue) }
                 ?.toMutableList()
                 ?: mutableListOf()
             category.actualValues.forEach { v ->
-                if (genderAndMappers.none { it.categoryValue == v }) {
-                    genderAndMappers.add(Box(v, 10.0))
+                if (value.none { it.categoryValue == v }) {
+                    value.add(CValueBox(v, 10.0))
                 }
             }
-            staticCategories.add(randomElement(genderAndMappers, random).categoryValue)
+            staticCategories.add(randomElement(value, random).categoryValue)
         }
         return staticCategories
     }
@@ -134,4 +135,4 @@ class LexisGenerator(
     }
 }
 
-private data class Box(val categoryValue: CategoryValue, override val probability: Double) : SampleSpaceObject
+private data class CValueBox(val categoryValue: CategoryValue, override val probability: Double) : SampleSpaceObject
