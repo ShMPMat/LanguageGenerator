@@ -15,6 +15,7 @@ import shmp.language.phonology.prosody.generateStress
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import kotlin.math.abs
 import kotlin.random.Random
 
 class LexisGenerator(
@@ -81,34 +82,45 @@ class LexisGenerator(
     }
 
     internal fun randomWord(
-        core: SemanticsCore,
-        maxSyllableLength: Int = 4,
-        lengthWeight: (Int) -> Double = { (maxSyllableLength * maxSyllableLength + 1 - it * it).toDouble() }
+        core: SemanticsCore
     ): Word {
-        val syllables = ArrayList<Syllable>()
-        val length = getRandomWordLength(maxSyllableLength, lengthWeight)
-        for (j in 0..length)
+        val syllables = mutableListOf<Syllable>()
+        val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
+        val length = randomElement(1..10, { 1 / (1 + abs(it - avgWordLength)) }, random)
+
+        fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
+            var syllable = Syllable(listOf())
             for (i in 1..SYLLABLE_TESTS) {
-                val syllable = syllableGenerator.generateSyllable(
+                syllable = syllableGenerator.generateSyllable(
                     SyllableRestrictions(
                         phonemeContainer,
                         restrictionsParadigm.restrictionsMapper.getValue(core.speechPart),
-                        when (j) {
-                            0 -> SyllablePosition.Start
-                            length -> SyllablePosition.End
-                            else -> SyllablePosition.Middle
-                        },
+                        syllablePosition,
                         prefix = syllables
                     ),
                     random
                 )
-                if (!checkSyllable(syllable, syllables))
-                    continue
-                syllables.add(syllable)
-                break
+                if (checkSyllable(syllable, syllables))
+                    break
             }
-        return generateStress(stressType,
-            Word(syllables, syllableGenerator.template, core), random)
+            return syllable
+        }
+
+        for (j in 0..length) {
+            if (syllables.flatMap { it.phonemeSequence.phonemes }.size >= length)
+                break
+
+            val syllablePosition = when (j) {
+                0 -> SyllablePosition.Start
+                else -> SyllablePosition.Middle
+            }
+            val syllable = makeSyllable(syllablePosition)
+            syllables.add(syllable)
+        }
+        syllables.removeAt(syllables.lastIndex)
+        syllables.add(makeSyllable(SyllablePosition.End))
+
+        return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }
 
     fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) = checkBorderCoherency(syllable, prefix)
@@ -120,9 +132,6 @@ class LexisGenerator(
         return leftBorder != rightBorder
                 && (leftBorder.type != PhonemeType.Vowel || rightBorder.type != PhonemeType.Vowel)
     }
-
-    private fun getRandomWordLength(max: Int, lengthWeight: (Int) -> Double) =
-        randomElement((1..max), lengthWeight, random)
 }
 
 private data class Box(val categoryValue: CategoryValue, override val probability: Double) : SampleSpaceObject

@@ -45,7 +45,7 @@ fun visualize(language: Language) {
     obj.relation[SyntaxRelation.Definition] = objAdj
 
     val testSentence = Sentence(verb)
-    val sentenceClause = language.sentenceChangeParadigm.apply(testSentence, Random(4))
+    val sentenceClause = language.sentenceChangeParadigm.apply(testSentence, Random(1))
     println(getClauseAndInfoPrinted(sentenceClause))
     print("\n\n")
 
@@ -53,5 +53,5 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    visualize(LanguageGenerator(186).generateLanguage(WordBase().words.size))
+    visualize(LanguageGenerator(189).generateLanguage(WordBase().words.size))
 }

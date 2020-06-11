@@ -5,6 +5,7 @@ import shmp.language.SpeechPart
 class RestrictionsParadigm(val restrictionsMapper: Map<SpeechPart, PhoneticRestrictions>)
 
 class PhoneticRestrictions(
+    val avgWordLength: Int,
     val initialSyllablePhonemes: Set<Phoneme>,
     val nucleusSyllablePhonemes: Set<Phoneme>,
     val finalSyllablePhonemes: Set<Phoneme>,

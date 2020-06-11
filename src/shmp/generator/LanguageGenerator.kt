@@ -3,6 +3,7 @@ package shmp.generator
 import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
+import shmp.language.SpeechPart.*
 import shmp.language.category.*
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.SentenceChangeParadigm
@@ -79,6 +80,8 @@ class LanguageGenerator(seed: Long) {
     }
 
     private fun generateRestrictionParadigm(): RestrictionsParadigm {//TODO make smth meaningful
+        val generalAvgWordLength = 5
+
         val map = EnumMap<SpeechPart, PhoneticRestrictions>(SpeechPart::class.java)
         val allInitial = syllableGenerator.template.initialPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
@@ -89,9 +92,13 @@ class LanguageGenerator(seed: Long) {
         val allFinals = syllableGenerator.template.finalPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .toSet()
-        for (speechPart in SpeechPart.values()) {
-            map[speechPart] = PhoneticRestrictions(allInitial, allNucleus, allFinals)
+        for (speechPart in values()) {
+            val actualAvgWordLength = if (speechPart in listOf(Article, Particle, Pronoun))
+                2
+            else generalAvgWordLength
+            map[speechPart] = PhoneticRestrictions(actualAvgWordLength, allInitial, allNucleus, allFinals)
         }
+
         return RestrictionsParadigm(map)
     }
 
@@ -100,7 +107,7 @@ class LanguageGenerator(seed: Long) {
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
     ): SentenceChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
-        val speechPartChangesMap = SpeechPart.values().map { speechPart ->
+        val speechPartChangesMap = values().map { speechPart ->
             val speechPartCategoriesAndSupply = categoriesWithMappers
                 .filter { it.first.speechParts.contains(speechPart) }
                 .filter { it.first.actualValues.isNotEmpty() }
@@ -124,12 +131,12 @@ class LanguageGenerator(seed: Long) {
         }.toMap().toMutableMap()
 
         if (!articlePresent(categories, speechPartChangesMap)) {
-            speechPartChangesMap[SpeechPart.Article] =
+            speechPartChangesMap[Article] =
                 SpeechPartChangeParadigm(
-                    SpeechPart.Article,
+                    Article,
                     listOf(),
                     mapOf(),
-                    speechPartChangesMap.getValue(SpeechPart.Article).prosodyChangeParadigm
+                    speechPartChangesMap.getValue(Article).prosodyChangeParadigm
                 )
         }
 
@@ -149,11 +156,11 @@ class LanguageGenerator(seed: Long) {
         categories: List<Category>,
         speechPartChangesMap: MutableMap<SpeechPart, SpeechPartChangeParadigm>
     ): Boolean {
-        if (categories.first { it.outType == definitenessName}.actualValues.isEmpty()) return false
+        if (categories.first { it.outType == definitenessName }.actualValues.isEmpty()) return false
         return speechPartChangesMap.any { (_, u) ->
             u.applicators.values
                 .flatMap { it.values }
-                .any { it is WordCategoryApplicator && it.applicatorWord.semanticsCore.speechPart == SpeechPart.Article }
+                .any { it is WordCategoryApplicator && it.applicatorWord.semanticsCore.speechPart == Article }
         }
     }
 

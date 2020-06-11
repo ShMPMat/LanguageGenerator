@@ -117,14 +117,10 @@ class SpeechPartApplicatorsGenerator(
         semanticsCore: SemanticsCore
     ): CategoryApplicator = when (realizationType) {
         CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.randomWord(
-            semanticsCore,
-            maxSyllableLength = 3,
-            lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
+            semanticsCore
         ))
         CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(lexisGenerator.randomWord(
-            semanticsCore,
-            maxSyllableLength = 3,
-            lengthWeight = { ((3 * 3 + 1 - it * it) * (3 * 3 + 1 - it * it)).toDouble() }
+            semanticsCore
         ))
         CategoryRealization.Prefix -> {
             val changes = changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)
