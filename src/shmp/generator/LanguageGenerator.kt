@@ -16,10 +16,7 @@ import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
-import shmp.language.syntax.BasicSovOrder
-import shmp.language.syntax.NominalGroupOrder
-import shmp.language.syntax.SovOrder
-import shmp.language.syntax.WordOrder
+import shmp.language.syntax.*
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import java.io.File
@@ -155,7 +152,25 @@ class LanguageGenerator(seed: Long) {
 
     private fun generateSovOrder() : SovOrder {
         val basicTemplate = randomElement(BasicSovOrder.values(), random)
-        return SovOrder(basicTemplate.referenceOrder)
+
+        val (references, name) = when(basicTemplate) {
+            BasicSovOrder.Two -> {
+                val (t1, t2) = randomSublist(
+                    BasicSovOrder.values().take(6),
+                    { it.probability },
+                    random,
+                    2,
+                    3
+                )
+                val referenceOrder = ({ r: Random ->
+                    (if (r.nextBoolean()) t1 else t2).referenceOrder(r)
+                })
+                referenceOrder to "$t1 or $t2"
+            }
+            else -> basicTemplate.referenceOrder to basicTemplate.name
+        }
+
+        return SovOrder(references, name)
     }
 
     private fun articlePresent(

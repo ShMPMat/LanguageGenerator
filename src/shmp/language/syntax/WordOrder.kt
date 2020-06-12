@@ -24,9 +24,10 @@ data class WordOrder(val sovOrder: SovOrder, val nominalGroupOrder: NominalGroup
     }
 
     private fun orderWithRelation(clauses: List<NonJoinedClause>, relationOrder: RelationOrder, random: Random): Clause {
+        val relation = relationOrder.referenceOrder(random)
         val resultWords = clauses
             .sortedBy { (r) ->
-                val i = relationOrder.referenceOrder(random).indexOf(r)
+                val i = relation.indexOf(r)
                 if (i == -1)
                     throw ChangeException("No Relation $r in a relation order ${sovOrder.referenceOrder}")
                 i
@@ -41,7 +42,9 @@ interface RelationOrder {
     val referenceOrder: (Random) -> List<SyntaxRelation>
 }
 
-class SovOrder(override val referenceOrder: (Random) -> List<SyntaxRelation>) : RelationOrder
+class SovOrder(override val referenceOrder: (Random) -> List<SyntaxRelation>, val name: String) : RelationOrder {
+    override fun toString() = name
+}
 
 enum class BasicSovOrder(
     override val referenceOrder: (Random) -> List<SyntaxRelation>,
@@ -53,7 +56,8 @@ enum class BasicSovOrder(
     VOS({ listOf(SyntaxRelation.Verb, SyntaxRelation.Object, SyntaxRelation.Subject) }, 25.0),
     OVS({ listOf(SyntaxRelation.Object, SyntaxRelation.Verb, SyntaxRelation.Subject) }, 11.0),
     OSV({ listOf(SyntaxRelation.Object, SyntaxRelation.Subject, SyntaxRelation.Verb) }, 4.0),
-    None({ SOV.referenceOrder(it).shuffled(it) }, 189.0)
+    Two({ throw shmp.generator.GeneratorException("Proper SOV order wasn't generated") }, 670000.0),
+    None({ SOV.referenceOrder(it).shuffled(it) }, 122.0)
 }
 
 enum class NominalGroupOrder(
