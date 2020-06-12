@@ -10,6 +10,7 @@ import shmp.language.getClauseAndInfoPrinted
 import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
+import shmp.language.syntax.SentenceType
 import shmp.language.syntax.SyntaxRelation
 import kotlin.random.Random
 
@@ -44,7 +45,7 @@ fun visualize(language: Language) {
     obj.setRelation(SyntaxRelation.Verb, verb)
     obj.setRelation(SyntaxRelation.Definition, objAdj)
 
-    val testSentence = Sentence(verb)
+    val testSentence = Sentence(verb, SentenceType.MainClause)
     val sentenceClause = language.sentenceChangeParadigm.apply(testSentence, Random(10))
     println(getClauseAndInfoPrinted(sentenceClause))
     print("\n\n")

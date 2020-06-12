@@ -10,7 +10,7 @@ import shmp.language.category.paradigm.ChangeException
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 
-data class Sentence(val node: SentenceNode)
+data class Sentence(val node: SentenceNode, val type: SentenceType)
 
 data class SentenceNode(
     val word: Word,
@@ -45,4 +45,10 @@ data class SentenceNode(
 
         return null
     }
+}
+
+enum class SentenceType {
+    MainClause,
+    SubordinateClause,
+    Question
 }
