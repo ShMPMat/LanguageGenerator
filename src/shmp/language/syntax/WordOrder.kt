@@ -41,7 +41,9 @@ interface RelationOrder {
     val referenceOrder: (Random) -> List<SyntaxRelation>
 }
 
-enum class SovOrder(
+class SovOrder(override val referenceOrder: (Random) -> List<SyntaxRelation>) : RelationOrder
+
+enum class BasicSovOrder(
     override val referenceOrder: (Random) -> List<SyntaxRelation>,
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {

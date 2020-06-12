@@ -16,6 +16,7 @@ import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
+import shmp.language.syntax.BasicSovOrder
 import shmp.language.syntax.NominalGroupOrder
 import shmp.language.syntax.SovOrder
 import shmp.language.syntax.WordOrder
@@ -146,10 +147,15 @@ class LanguageGenerator(seed: Long) {
     }
 
     private fun generateWordOrder(): WordOrder {
-        val sovOrder = randomElement(SovOrder.values(), random)
+        val sovOrder = generateSovOrder()
         val nominalGroupOrder = randomElement(NominalGroupOrder.values(), random)
 
         return WordOrder(sovOrder, nominalGroupOrder)
+    }
+
+    private fun generateSovOrder() : SovOrder {
+        val basicTemplate = randomElement(BasicSovOrder.values(), random)
+        return SovOrder(basicTemplate.referenceOrder)
     }
 
     private fun articlePresent(
