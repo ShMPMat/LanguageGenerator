@@ -4,19 +4,11 @@ import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.SpeechPart.*
-import shmp.language.category.*
-import shmp.language.category.paradigm.ParametrizedCategory
-import shmp.language.category.paradigm.SentenceChangeParadigm
-import shmp.language.category.paradigm.SpeechPartChangeParadigm
-import shmp.language.category.paradigm.WordChangeParadigm
-import shmp.language.category.realization.WordCategoryApplicator
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.SyllableValenceTemplate
 import shmp.language.phonology.ValencyPlace
-import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
-import shmp.language.syntax.*
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import java.io.File
@@ -59,13 +51,18 @@ class LanguageGenerator(seed: Long) {
     )
     private val changeGenerator = ChangeGenerator(lexisGenerator, random)
     private val categoryGenerator = CategoryGenerator(random)
-    private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
+    private val changeParadigmGenerator = ChangeParadigmGenerator(
+        stressPattern,
+        lexisGenerator,
+        changeGenerator,
+        restrictionsParadigm,
+        random)
 
     fun generateLanguage(wordAmount: Int): Language {
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
-        val changeParadigm = generateChangeParadigm(restrictionsParadigm, categoriesWithMappers)
+        val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
         val words = lexisGenerator.generateWords(wordAmount, categories)
         return Language(
             words,
@@ -98,91 +95,6 @@ class LanguageGenerator(seed: Long) {
         }
 
         return RestrictionsParadigm(map)
-    }
-
-    private fun generateChangeParadigm(
-        restrictionsParadigm: RestrictionsParadigm,
-        categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
-    ): SentenceChangeParadigm {
-        val categories = categoriesWithMappers.map { it.first }
-        val speechPartChangesMap = values().map { speechPart ->
-            val speechPartCategoriesAndSupply = categoriesWithMappers
-                .filter { it.first.speechParts.contains(speechPart) }
-                .filter { it.first.actualValues.isNotEmpty() }
-                .flatMap { (c, s) ->
-                    c.affected
-                        .filter { it.speechPart == speechPart }
-                        .map { ParametrizedCategory(c, it.source) to s }
-                }
-            val applicators = speechPartApplicatorsGenerator.randomApplicatorsForSpeechPart(
-                speechPart,
-                restrictionsParadigm.restrictionsMapper.getValue(speechPart),
-                speechPartCategoriesAndSupply
-            )
-            val orderedApplicators = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
-            speechPart to SpeechPartChangeParadigm(
-                speechPart,
-                orderedApplicators,
-                applicators,
-                ProsodyChangeParadigm(stressPattern)
-            )
-        }.toMap().toMutableMap()
-
-        if (!articlePresent(categories, speechPartChangesMap)) {
-            speechPartChangesMap[Article] =
-                SpeechPartChangeParadigm(
-                    Article,
-                    listOf(),
-                    mapOf(),
-                    speechPartChangesMap.getValue(Article).prosodyChangeParadigm
-                )
-        }
-
-        val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
-        val wordOrder = generateWordOrder()
-        return SentenceChangeParadigm(wordOrder, wordChangeParadigm)
-    }
-
-    private fun generateWordOrder(): WordOrder {
-        val sovOrder = generateSovOrder()
-        val nominalGroupOrder = randomElement(NominalGroupOrder.values(), random)
-
-        return WordOrder(sovOrder, nominalGroupOrder)
-    }
-
-    private fun generateSovOrder() : SovOrder {
-        val basicTemplate = randomElement(BasicSovOrder.values(), random)
-
-        val (references, name) = when(basicTemplate) {
-            BasicSovOrder.Two -> {
-                val (t1, t2) = randomSublist(
-                    BasicSovOrder.values().take(6),
-                    { it.probability },
-                    random,
-                    2,
-                    3
-                )
-                val referenceOrder = ({ r: Random ->
-                    (if (r.nextBoolean()) t1 else t2).referenceOrder(r)
-                })
-                referenceOrder to "$t1 or $t2"
-            }
-            else -> basicTemplate.referenceOrder to basicTemplate.name
-        }
-
-        return SovOrder(references, name)
-    }
-
-    private fun articlePresent(
-        categories: List<Category>,
-        speechPartChangesMap: MutableMap<SpeechPart, SpeechPartChangeParadigm>
-    ): Boolean {
-        if (categories.first { it.outType == definitenessName }.actualValues.isEmpty()) return false
-        return speechPartChangesMap.any { (_, u) ->
-            u.applicators.values
-                .flatMap { it.values }
-                .any { it is WordCategoryApplicator && it.applicatorWord.semanticsCore.speechPart == Article }
-        }
     }
 
     private fun randomSyllableGenerator(): SyllableValenceGenerator {

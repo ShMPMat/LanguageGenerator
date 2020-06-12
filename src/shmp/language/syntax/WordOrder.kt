@@ -56,7 +56,7 @@ enum class BasicSovOrder(
     VOS({ listOf(SyntaxRelation.Verb, SyntaxRelation.Object, SyntaxRelation.Subject) }, 25.0),
     OVS({ listOf(SyntaxRelation.Object, SyntaxRelation.Verb, SyntaxRelation.Subject) }, 11.0),
     OSV({ listOf(SyntaxRelation.Object, SyntaxRelation.Subject, SyntaxRelation.Verb) }, 4.0),
-    Two({ throw shmp.generator.GeneratorException("Proper SOV order wasn't generated") }, 670000.0),
+    Two({ throw shmp.generator.GeneratorException("Proper SOV order wasn't generated") }, 67.0),
     None({ SOV.referenceOrder(it).shuffled(it) }, 122.0)
 }
 
