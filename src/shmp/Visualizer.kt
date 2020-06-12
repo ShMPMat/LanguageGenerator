@@ -35,20 +35,21 @@ fun visualize(language: Language) {
     val objAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
     val obj = language.words.first { it.semanticsCore.word == "time" }.toNode()
 
-    subjAdj.relation[SyntaxRelation.Subject] = subj
-    subj.relation[SyntaxRelation.Verb] = verb
-    subj.relation[SyntaxRelation.Definition] = subjAdj
-    verb.relation[SyntaxRelation.Subject] = subj
-    verb.relation[SyntaxRelation.Object] = obj
-    objAdj.relation[SyntaxRelation.Subject] = obj
-    obj.relation[SyntaxRelation.Verb] = verb
-    obj.relation[SyntaxRelation.Definition] = objAdj
+    subjAdj.setRelation(SyntaxRelation.Subject, subj)
+    subj.setRelation(SyntaxRelation.Verb, verb)
+    subj.setRelation(SyntaxRelation.Definition, subjAdj)
+    verb.setRelation(SyntaxRelation.Subject, subj)
+    verb.setRelation(SyntaxRelation.Object, obj)
+    objAdj.setRelation(SyntaxRelation.Subject, obj)
+    obj.setRelation(SyntaxRelation.Verb, verb)
+    obj.setRelation(SyntaxRelation.Definition, objAdj)
 
     val testSentence = Sentence(verb)
     val sentenceClause = language.sentenceChangeParadigm.apply(testSentence, Random(1))
     println(getClauseAndInfoPrinted(sentenceClause))
     print("\n\n")
 
+    val test = language.words.filter { it.semanticsCore.tags.any { it.name == "intrans" } }
     print(language)
 }
 
