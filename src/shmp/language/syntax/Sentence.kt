@@ -52,3 +52,9 @@ enum class SentenceType {
     SubordinateClause,
     Question
 }
+
+fun differentWordOrderProbability(sentenceType: SentenceType) = when (sentenceType) {
+    SentenceType.MainClause -> 0.0
+    SentenceType.SubordinateClause -> 0.03
+    SentenceType.Question -> 0.1
+}

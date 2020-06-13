@@ -5,17 +5,18 @@ import shmp.language.category.paradigm.NonJoinedClause
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
-data class WordOrder(val sovOrder: SovOrder, val nominalGroupOrder: NominalGroupOrder) {
+data class WordOrder(private  val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
     fun uniteToClause(
         currentNonJoinedClause: NonJoinedClause,
         childrenClauses: MutableList<NonJoinedClause>,
+        sentenceType: SentenceType,
         random: Random
     ): Clause {
         if (childrenClauses.isEmpty()) return currentNonJoinedClause.second
 
         val fullClauses = childrenClauses + listOf(currentNonJoinedClause)
         return when (currentNonJoinedClause.first) {
-            SyntaxRelation.Verb -> orderWithRelation(fullClauses, sovOrder, random)
+            SyntaxRelation.Verb -> orderWithRelation(fullClauses, sovOrder.getValue(sentenceType), random)
             SyntaxRelation.Object -> orderWithRelation(fullClauses, nominalGroupOrder, random)
             SyntaxRelation.Subject -> orderWithRelation(fullClauses, nominalGroupOrder, random)
             else -> throw ChangeException("No ordering for a ${currentNonJoinedClause.first}")
@@ -29,7 +30,7 @@ data class WordOrder(val sovOrder: SovOrder, val nominalGroupOrder: NominalGroup
             .sortedBy { (r) ->
                 val i = relation.indexOf(r)
                 if (i == -1)
-                    throw ChangeException("No Relation $r in a relation order ${sovOrder.referenceOrder}")
+                    throw ChangeException("No Relation $r in a relation order ${relationOrder.referenceOrder}")
                 i
             }.flatMap { it.second.words }
         return Clause(resultWords)

@@ -2,10 +2,15 @@ package shmp.language.category.paradigm
 
 import shmp.language.syntax.Clause
 import shmp.language.syntax.SentenceNode
+import shmp.language.syntax.SentenceType
 import shmp.language.syntax.SyntaxRelation
 import kotlin.random.Random
 
-internal class SentenceClauseConstructor(val paradigm: SentenceChangeParadigm, val random: Random) {
+internal class SentenceClauseConstructor(
+    private val paradigm: SentenceChangeParadigm,
+    private val sentenceType: SentenceType,
+    private val random: Random
+) {
     private val processedNodes = mutableListOf<SentenceNode>()
 
     //TODO the first is always a Verb!
@@ -25,7 +30,7 @@ internal class SentenceClauseConstructor(val paradigm: SentenceChangeParadigm, v
             .map { (r, n) -> applyNodeInternal(n, r) }
             .toMutableList()
 
-        return relation to paradigm.wordOrder.uniteToClause(currentClause, childrenClauses, random)
+        return relation to paradigm.wordOrder.uniteToClause(currentClause, childrenClauses, sentenceType, random)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {

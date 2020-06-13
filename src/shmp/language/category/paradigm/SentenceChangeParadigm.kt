@@ -13,7 +13,7 @@ class SentenceChangeParadigm(
     val wordChangeParadigm: WordChangeParadigm
 ) {
     fun apply(sentence: Sentence, random: Random): Clause
-            = SentenceClauseConstructor(this, random).applyNode(sentence.node)
+            = SentenceClauseConstructor(this, sentence.type, random).applyNode(sentence.node)
 
     override fun toString() = """
         |Word order: $wordOrder
