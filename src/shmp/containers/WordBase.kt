@@ -5,7 +5,9 @@ import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
+import shmp.language.derivation.DerivationType
 import shmp.language.lexis.DerivationCluster
+import shmp.language.lexis.DerivationLink
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.SemanticsTag
 import shmp.random.SampleSpaceObject
@@ -13,7 +15,7 @@ import shmp.random.randomElement
 import java.io.File
 import kotlin.random.Random
 
-class WordBase() {
+class WordBase {
     val words: MutableList<SemanticsCoreTemplate> = ArrayList()
 
     init {
@@ -30,7 +32,8 @@ class WordBase() {
                             parseSemanticsTagTemplates(it.drop(2)),
                             getType(it.take(1))
                         ) }
-                        .toSet()
+                        .toSet(),
+                    DerivationClusterTemplate()
                 ))
             }
         }
@@ -51,7 +54,12 @@ fun getType(string: String) = when(string) {
     else -> throw GeneratorException("Unknown SemanticsTag type alias $string")
 }
 
-data class SemanticsCoreTemplate(val word: String, val speechPart: SpeechPart, val tagClusters: Set<SemanticsTagCluster>)
+data class SemanticsCoreTemplate(
+    val word: String,
+    val speechPart: SpeechPart,
+    val tagClusters: Set<SemanticsTagCluster>,
+    val derivationClusterTemplate: DerivationClusterTemplate
+)
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) = SemanticsCore(
     this.word,
@@ -67,9 +75,11 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
             )
         }
         .toSet(),//TODO DERIVATION!!!!
-    DerivationCluster(mapOf()),
+    DerivationCluster(this.derivationClusterTemplate.typeToCore),
     staticCategories
 )
+
+data class DerivationClusterTemplate(val typeToCore: MutableMap<DerivationType, DerivationLink> = mutableMapOf())
 
 data class SemanticsTagCluster(val semanticsTags: List<SemanticsTagTemplate>, val type: String)
 
