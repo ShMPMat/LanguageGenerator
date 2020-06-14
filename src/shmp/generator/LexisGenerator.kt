@@ -31,6 +31,7 @@ class LexisGenerator(
     private val random: Random
 ) {
     private val wordBase = WordBase()
+    private val words = mutableListOf<Word>()
 
     private val SYLLABLE_TESTS = 10
 
@@ -39,7 +40,6 @@ class LexisGenerator(
         categories: List<Category>,
         changeGenerator: ChangeGenerator
     ): List<Word> {
-        val words = mutableListOf<Word>()
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         cores.add(wordBase.baseWords.first { it.word == "_personal_pronoun" })
         for (core in cores) {
@@ -47,21 +47,33 @@ class LexisGenerator(
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
 
-        val derivations = randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size+1)
-            .map{
-                val affix = if (random.nextBoolean()) {
-                    Prefix(changeGenerator.generateChanges(
-                        Position.Beginning,
-                        restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
-                    ))
-                } else {
-                    Suffix(changeGenerator.generateChanges(
-                        Position.End,
-                        restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
-                    ))
+        makeDerivations(changeGenerator)
+
+        return words
+    }
+
+    private fun makeDerivations(changeGenerator: ChangeGenerator) {
+        val derivations =
+            randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size + 1)
+                .map {
+                    val affix = if (random.nextBoolean()) {
+                        Prefix(
+                            changeGenerator.generateChanges(
+                                Position.Beginning,
+                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
+                            )
+                        )
+                    } else {
+                        Suffix(
+                            changeGenerator.generateChanges(
+                                Position.End,
+                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
+                            )
+                        )
+                    }
+                    Derivation(affix, it)
                 }
-                Derivation(affix, it)
-            }
+
         var i = 0
         while (i < words.size) {
             val word = words[i]
@@ -72,8 +84,6 @@ class LexisGenerator(
             }
             i++
         }
-
-        return words
     }
 
     private fun computeStaticCategories(
