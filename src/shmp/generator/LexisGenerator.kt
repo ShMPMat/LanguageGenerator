@@ -32,6 +32,7 @@ class LexisGenerator(
 ) {
     private val wordBase = WordBase()
     private val words = mutableListOf<Word>()
+    private val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
 
     private val SYLLABLE_TESTS = 10
 
@@ -47,43 +48,9 @@ class LexisGenerator(
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
 
-        makeDerivations(changeGenerator)
+        derivationGenerator.makeDerivations(words, changeGenerator)
 
         return words
-    }
-
-    private fun makeDerivations(changeGenerator: ChangeGenerator) {
-        val derivations =
-            randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size + 1)
-                .map {
-                    val affix = if (random.nextBoolean()) {
-                        Prefix(
-                            changeGenerator.generateChanges(
-                                Position.Beginning,
-                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
-                            )
-                        )
-                    } else {
-                        Suffix(
-                            changeGenerator.generateChanges(
-                                Position.End,
-                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
-                            )
-                        )
-                    }
-                    Derivation(affix, it)
-                }
-
-        var i = 0
-        while (i < words.size) {
-            val word = words[i]
-            for (derivation in derivations) {
-                val derivedWord = derivation.derive(word, random)
-                    ?: continue
-                words.add(derivedWord)
-            }
-            i++
-        }
     }
 
     private fun computeStaticCategories(
