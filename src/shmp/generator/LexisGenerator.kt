@@ -47,17 +47,17 @@ class LexisGenerator(
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
 
-        val derivations = randomSublist(DerivationClass.values().toList(), random, 1, DerivationClass.values().size+1)
+        val derivations = randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size+1)
             .map{
                 val affix = if (random.nextBoolean()) {
                     Prefix(changeGenerator.generateChanges(
                         Position.Beginning,
-                        restrictionsParadigm.restrictionsMapper.getValue(SpeechPart.Noun)//TODO very BAD
+                        restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
                     ))
                 } else {
                     Suffix(changeGenerator.generateChanges(
                         Position.End,
-                        restrictionsParadigm.restrictionsMapper.getValue(SpeechPart.Noun)//TODO very BAD
+                        restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
                     ))
                 }
                 Derivation(affix, it)

@@ -9,7 +9,7 @@ import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
-class Derivation(private val affix: Affix, val derivationClass: DerivationClass) {
+class Derivation(private val affix: Affix, private val derivationClass: DerivationClass) {
     fun derive(word: Word, random: Random): Word? {
         val applicableTypes = derivationClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.type) }
@@ -29,17 +29,15 @@ class Derivation(private val affix: Affix, val derivationClass: DerivationClass)
     }
 }
 
-enum class DerivationClass(val possibilities: List<Box>) {
-    Diminutive(listOf(Box(Smallness, 1.0), Box(Child, 1.0)))
+enum class DerivationClass(val possibilities: List<Box>, val speechPart: SpeechPart) {
+    Diminutive(listOf(Box(Smallness, 1.0), Box(Child, 1.0)), SpeechPart.Noun)
 }
 
-fun DerivationClass.types() = this.possibilities.map { it.type }
+enum class DerivationType() {
+    Smallness,
+    Child,
 
-enum class DerivationType(val matcher: SemanticsCoreMatcher) {
-    Smallness(ConcatMatcher(SpeechPartMatcher(SpeechPart.Noun))),
-    Child(ConcatMatcher(SpeechPartMatcher(SpeechPart.Noun), TagMatcher(SemanticsTag("species")))),
-
-    Passing(PassingMatcher)
+    Passing
 }
 
 data class Box(val type: DerivationType, override val probability: Double): SampleSpaceObject
