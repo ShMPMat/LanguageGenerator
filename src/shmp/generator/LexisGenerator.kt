@@ -6,10 +6,13 @@ import shmp.containers.WordBase
 import shmp.containers.toSemanticsCore
 import shmp.language.*
 import shmp.language.category.Category
-import shmp.language.lexis.DerivationCluster
+import shmp.language.derivation.Derivation
+import shmp.language.derivation.DerivationClass
 import shmp.language.lexis.SemanticsCore
-import shmp.language.lexis.SemanticsTag
 import shmp.language.lexis.Word
+import shmp.language.morphem.Prefix
+import shmp.language.morphem.Suffix
+import shmp.language.morphem.change.Position
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -33,15 +36,43 @@ class LexisGenerator(
 
     internal fun generateWords(
         wordAmount: Int,
-        categories: List<Category>
+        categories: List<Category>,
+        changeGenerator: ChangeGenerator
     ): List<Word> {
-        val words = ArrayList<Word>()
-        val cores = randomSublist(wordBase.words, random, wordAmount, wordAmount + 1).toMutableList()
-        cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
+        val words = mutableListOf<Word>()
+        val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
+        cores.add(wordBase.baseWords.first { it.word == "_personal_pronoun" })
         for (core in cores) {
             val staticCategories = computeStaticCategories(core, categories)
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
+
+        val derivations = randomSublist(DerivationClass.values().toList(), random, 1, DerivationClass.values().size+1)
+            .map{
+                val affix = if (random.nextBoolean()) {
+                    Prefix(changeGenerator.generateChanges(
+                        Position.Beginning,
+                        restrictionsParadigm.restrictionsMapper.getValue(SpeechPart.Noun)//TODO very BAD
+                    ))
+                } else {
+                    Suffix(changeGenerator.generateChanges(
+                        Position.End,
+                        restrictionsParadigm.restrictionsMapper.getValue(SpeechPart.Noun)//TODO very BAD
+                    ))
+                }
+                Derivation(affix, it)
+            }
+        var i = 0
+        while (i < words.size) {
+            val word = words[i]
+            for (derivation in derivations) {
+                val derivedWord = derivation.derive(word, random)
+                    ?: continue
+                words.add(derivedWord)
+            }
+            i++
+        }
+
         return words
     }
 
@@ -69,9 +100,7 @@ class LexisGenerator(
         return staticCategories
     }
 
-    internal fun randomWord(
-        core: SemanticsCore
-    ): Word {
+    internal fun randomWord(core: SemanticsCore): Word {
         val syllables = mutableListOf<Syllable>()
         val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
         val length = randomElement(1..10, { 1 / (1 + abs(it - avgWordLength)) }, random)

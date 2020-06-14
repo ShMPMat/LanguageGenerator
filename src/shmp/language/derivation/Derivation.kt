@@ -1,5 +1,6 @@
 package shmp.language.derivation
 
+import shmp.containers.toSemanticsCore
 import shmp.language.SpeechPart
 import shmp.language.derivation.DerivationType.*
 import shmp.language.lexis.*
@@ -15,11 +16,14 @@ class Derivation(private val affix: Affix, val derivationClass: DerivationClass)
 
         if (applicableTypes.isEmpty()) return null
 
-        val chosenType = randomElement(applicableTypes, random).type
+        val chosenType = randomElement(applicableTypes + noType, random).type
+        if (chosenType == Passing)
+            return null
         val derivedWord = affix.change(word)
         val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(derivationClass.name))
-        val newCore = derivedWord.semanticsCore.copy(tags = newTags)
-        val newLexis =
+        var newCore = word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType)
+            .template.toSemanticsCore(word.semanticsCore.staticCategories, random)
+        newCore = newCore.copy(tags = newTags)
 
         return derivedWord.copy(semanticsCore = newCore)
     }
@@ -31,9 +35,13 @@ enum class DerivationClass(val possibilities: List<Box>) {
 
 fun DerivationClass.types() = this.possibilities.map { it.type }
 
-enum class DerivationType(val matcher: WordMatcher) {
+enum class DerivationType(val matcher: SemanticsCoreMatcher) {
     Smallness(ConcatMatcher(SpeechPartMatcher(SpeechPart.Noun))),
-    Child(ConcatMatcher(SpeechPartMatcher(SpeechPart.Noun), TagMatcher(SemanticsTag("species"))))
+    Child(ConcatMatcher(SpeechPartMatcher(SpeechPart.Noun), TagMatcher(SemanticsTag("species")))),
+
+    Passing(PassingMatcher)
 }
 
 data class Box(val type: DerivationType, override val probability: Double): SampleSpaceObject
+
+val noType = listOf(Box(Passing, 1.0))

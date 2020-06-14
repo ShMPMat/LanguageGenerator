@@ -63,7 +63,11 @@ class LanguageGenerator(seed: Long) {
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = categoriesWithMappers.map { it.first }
         val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
-        val words = lexisGenerator.generateWords(wordAmount, categories)
+        val words = lexisGenerator.generateWords(
+            wordAmount,
+            categories,
+            changeGenerator
+        )
         return Language(
             words,
             phonemeContainer,

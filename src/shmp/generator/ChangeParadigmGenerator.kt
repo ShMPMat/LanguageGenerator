@@ -25,7 +25,7 @@ class ChangeParadigmGenerator(
     private val restrictionsParadigm: RestrictionsParadigm,
     private val random: Random
 ) {
-    private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
+    val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
 
     fun generateChangeParadigm(
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>

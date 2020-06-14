@@ -16,7 +16,8 @@ import java.io.File
 import kotlin.random.Random
 
 class WordBase {
-    val words: MutableList<SemanticsCoreTemplate> = ArrayList()
+    val baseWords: MutableList<SemanticsCoreTemplate> = ArrayList()
+    val allWords: MutableList<SemanticsCoreTemplate> = ArrayList()
 
     init {
         File("SupplementFiles/Words").forEachLine { line ->
@@ -24,7 +25,7 @@ class WordBase {
                 val tokens = line.split(" +".toRegex())
                 val word = tokens[0]
                 val speechPart = SpeechPart.valueOf(tokens[1])
-                words.add(SemanticsCoreTemplate(
+                baseWords.add(SemanticsCoreTemplate(
                     word,
                     speechPart,
                     tokens.drop(2)
@@ -36,6 +37,28 @@ class WordBase {
                     DerivationClusterTemplate()
                 ))
             }
+        }
+        allWords.addAll(baseWords)
+
+        fillDerivationSystem()
+    }
+
+    private fun fillDerivationSystem() {//TODO special commands
+        val goodWords = baseWords
+            .filter { it.speechPart == SpeechPart.Noun }
+
+        goodWords.forEach {
+            val link = DerivationLink(
+                SemanticsCoreTemplate(
+                    "little_" + it.word,
+                    SpeechPart.Noun,
+                    it.tagClusters,
+                    DerivationClusterTemplate()
+                ),
+                1.0
+            )
+            it.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
+            allWords.add(link.template)
         }
     }
 }
