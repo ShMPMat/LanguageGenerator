@@ -1,11 +1,17 @@
 package shmp.containers
 
 import shmp.generator.GeneratorException
+import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
+import shmp.language.lexis.DerivationCluster
+import shmp.language.lexis.SemanticsCore
+import shmp.language.lexis.SemanticsTag
 import shmp.random.SampleSpaceObject
+import shmp.random.randomElement
 import java.io.File
+import kotlin.random.Random
 
 class WordBase() {
     val words: MutableList<SemanticsCoreTemplate> = ArrayList()
@@ -46,6 +52,24 @@ fun getType(string: String) = when(string) {
 }
 
 data class SemanticsCoreTemplate(val word: String, val speechPart: SpeechPart, val tagClusters: Set<SemanticsTagCluster>)
+
+fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) = SemanticsCore(
+    this.word,
+    this.speechPart,
+    this.tagClusters
+        .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
+        .map {
+            SemanticsTag(
+                randomElement(
+                    it.semanticsTags,
+                    random
+                ).name
+            )
+        }
+        .toSet(),//TODO DERIVATION!!!!
+    DerivationCluster(mapOf()),
+    staticCategories
+)
 
 data class SemanticsTagCluster(val semanticsTags: List<SemanticsTagTemplate>, val type: String)
 

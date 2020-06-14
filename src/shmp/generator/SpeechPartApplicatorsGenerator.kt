@@ -51,6 +51,7 @@ class SpeechPartApplicatorsGenerator(
                         semanticsCore.word + core.word,
                         semanticsCore.speechPart,
                         semanticsCore.tags.union(core.tags),
+                        semanticsCore.derivationCluster,
                         semanticsCore.staticCategories.union(core.staticCategories)
                     )
                 }

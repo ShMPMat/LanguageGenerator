@@ -3,8 +3,10 @@ package shmp.generator
 import shmp.containers.PhonemeContainer
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.WordBase
+import shmp.containers.toSemanticsCore
 import shmp.language.*
 import shmp.language.category.Category
+import shmp.language.lexis.DerivationCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.SemanticsTag
 import shmp.language.lexis.Word
@@ -38,22 +40,7 @@ class LexisGenerator(
         cores.add(wordBase.words.first { it.word == "_personal_pronoun" })
         for (core in cores) {
             val staticCategories = computeStaticCategories(core, categories)
-            words.add(randomWord(SemanticsCore(
-                core.word,
-                core.speechPart,
-                core.tagClusters
-                    .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
-                    .map {
-                        SemanticsTag(
-                            randomElement(
-                                it.semanticsTags,
-                                random
-                            ).name
-                        )
-                    }
-                    .toSet(),
-                staticCategories
-            )))
+            words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
         return words
     }
