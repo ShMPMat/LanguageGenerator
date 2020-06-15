@@ -4,15 +4,11 @@ import shmp.containers.PhonemeContainer
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.WordBase
 import shmp.containers.toSemanticsCore
-import shmp.language.*
+import shmp.language.CategoryValue
+import shmp.language.PhonemeType
 import shmp.language.category.Category
-import shmp.language.derivation.Derivation
-import shmp.language.derivation.DerivationClass
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
-import shmp.language.morphem.Prefix
-import shmp.language.morphem.Suffix
-import shmp.language.morphem.change.Position
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -24,13 +20,14 @@ import kotlin.math.abs
 import kotlin.random.Random
 
 class LexisGenerator(
+    supplementPath: String,
     val syllableGenerator: SyllableValenceGenerator,
     private val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
     val stressType: StressType,
     private val random: Random
 ) {
-    private val wordBase = WordBase()
+    private val wordBase = WordBase(supplementPath)
     private val words = mutableListOf<Word>()
     private val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
 

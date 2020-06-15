@@ -18,9 +18,9 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
 
-class LanguageGenerator(seed: Long) {
+class LanguageGenerator(val supplementPath: String, seed: Long) {
     private val random = Random(seed)
-    private val phonemeBase = PhonemeBase()
+    private val phonemeBase = PhonemeBase(supplementPath)
     private val vowelAmount = randomElement(VowelQualityAmount.values(), random).amount
     private val consonantAmount = random.nextInt(6, 16)
     private val phonemeContainer = PhonemeImmutableContainer(
@@ -43,6 +43,7 @@ class LanguageGenerator(seed: Long) {
     private val restrictionsParadigm = generateRestrictionParadigm()
     private val stressPattern = randomElement(StressType.values(), random)
     private val lexisGenerator = LexisGenerator(
+        supplementPath,
         syllableGenerator,
         restrictionsParadigm,
         phonemeContainer,
@@ -103,7 +104,7 @@ class LanguageGenerator(seed: Long) {
 
     private fun randomSyllableGenerator(): SyllableValenceGenerator {
         val syllableTemplates = HashMap<SyllableValenceTemplate, Double>()
-        File("SupplementFiles/SyllableTypes").forEachLine {
+        File("$supplementPath/SyllableTypes").forEachLine {
             if (!it.isBlank()) {
                 val (template, syllableProbability) = it.split(" +".toRegex())
                 val valencies = ArrayList<ValencyPlace>()

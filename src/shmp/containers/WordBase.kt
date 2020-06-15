@@ -8,12 +8,12 @@ import shmp.language.derivation.DerivationType
 import shmp.language.lexis.DerivationLink
 import java.io.File
 
-class WordBase {
+class WordBase(supplementPath: String) {
     val baseWords: MutableList<SemanticsCoreTemplate> = ArrayList()
     val allWords: MutableList<SemanticsCoreTemplate> = ArrayList()
 
     init {
-        File("SupplementFiles/Words").forEachLine { line ->
+        File("$supplementPath/Words").forEachLine { line ->
             if (!line.isBlank() && line[0] != '/') {
                 val tokens = line.split(" +".toRegex())
                 val word = tokens[0]

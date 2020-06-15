@@ -7,11 +7,11 @@ import shmp.language.phonology.ArticulationPlace
 import shmp.language.toPhonemeType
 import java.io.File
 
-class PhonemeBase : PhonemeContainer {
+class PhonemeBase(supplementPath: String) : PhonemeContainer {
     override val phonemes: MutableList<Phoneme> = ArrayList()
 
     init {
-        File("SupplementFiles/Phonemes").forEachLine {
+        File("$supplementPath/Phonemes").forEachLine {
             if (!it.isBlank()) {
                 val tags = it.drop(1).split(" +".toRegex())
                 phonemes.add(Phoneme(
