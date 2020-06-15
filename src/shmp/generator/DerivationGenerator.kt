@@ -2,6 +2,7 @@ package shmp.generator
 
 import shmp.containers.DerivationClusterTemplate
 import shmp.containers.SemanticsCoreTemplate
+import shmp.containers.SemanticsTagCluster
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationClass
@@ -66,24 +67,38 @@ class DerivationGenerator(
     }
 }
 
-data class DerivationInjector(val injector: (SemanticsCoreTemplate) -> SemanticsCoreTemplate?)
+data class DerivationInjector(
+    val type: DerivationType,
+    val applicableSpeechPart: SpeechPart,
+    val descriptionCreator: (String) -> String,
+    val additionalTest: (SemanticsCoreTemplate) -> Boolean = { true },
+    val newSpeechPart: SpeechPart = applicableSpeechPart,
+    val tagCreator: (Set<SemanticsTagCluster>) -> Set<SemanticsTagCluster> = { it },
+    val probability: Double = 1.0
+) {
+    fun injector(core: SemanticsCoreTemplate): SemanticsCoreTemplate? {
+        if (
+            core.speechPart != applicableSpeechPart
+            || core.derivationClusterTemplate.internalTypes.contains(type)
+            || !additionalTest(core)
+        ) return null
 
-val defaultInjectors = listOf(
-    DerivationInjector {
-        if (it.speechPart != SpeechPart.Noun || it.derivationClusterTemplate.internalTypes.contains(DerivationType.Smallness))
-            return@DerivationInjector null
         val link = DerivationLink(
             SemanticsCoreTemplate(
-                "little_" + it.word,
-                SpeechPart.Noun,
-                it.tagClusters,
+                descriptionCreator(core.word),
+                newSpeechPart,
+                tagCreator(core.tagClusters),
                 DerivationClusterTemplate(
-                    internalTypes = it.derivationClusterTemplate.internalTypes + setOf(DerivationType.Smallness)
+                    internalTypes = core.derivationClusterTemplate.internalTypes + setOf(DerivationType.Smallness)
                 )
             ),
-            1.0
+            probability
         )
-        it.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
-        return@DerivationInjector link.template
+        core.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
+        return link.template
     }
+}
+
+val defaultInjectors = listOf(
+    DerivationInjector(DerivationType.Smallness, SpeechPart.Noun, { "little_$it" })
 )
