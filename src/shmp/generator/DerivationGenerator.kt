@@ -28,7 +28,7 @@ class DerivationGenerator(
             words.mapNotNull { inj.injector(it) }
         }
 
-        return newWords //+ injectDerivationOptions(newWords)
+        return newWords + injectDerivationOptions(newWords)
     }
 
     internal fun makeDerivations(words: MutableList<Word>, changeGenerator: ChangeGenerator) {
@@ -70,14 +70,16 @@ data class DerivationInjector(val injector: (SemanticsCoreTemplate) -> Semantics
 
 val defaultInjectors = listOf(
     DerivationInjector {
-        if (it.speechPart != SpeechPart.Noun)
+        if (it.speechPart != SpeechPart.Noun || it.derivationClusterTemplate.internalTypes.contains(DerivationType.Smallness))
             return@DerivationInjector null
         val link = DerivationLink(
             SemanticsCoreTemplate(
                 "little_" + it.word,
                 SpeechPart.Noun,
                 it.tagClusters,
-                DerivationClusterTemplate()
+                DerivationClusterTemplate(
+                    internalTypes = it.derivationClusterTemplate.internalTypes + setOf(DerivationType.Smallness)
+                )
             ),
             1.0
         )

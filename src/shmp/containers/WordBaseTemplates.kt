@@ -37,7 +37,10 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
     staticCategories
 )
 
-data class DerivationClusterTemplate(val typeToCore: MutableMap<DerivationType, DerivationLink> = mutableMapOf())
+data class DerivationClusterTemplate(
+    val typeToCore: MutableMap<DerivationType, DerivationLink> = mutableMapOf(),
+    val internalTypes: Set<DerivationType> = setOf()
+)
 
 data class SemanticsTagCluster(val semanticsTags: List<SemanticsTagTemplate>, val type: String)
 
