@@ -4,8 +4,6 @@ import shmp.generator.GeneratorException
 import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
-import shmp.language.derivation.DerivationType
-import shmp.language.lexis.DerivationLink
 import java.io.File
 
 class WordBase(supplementPath: String) {
@@ -32,27 +30,6 @@ class WordBase(supplementPath: String) {
             }
         }
         allWords.addAll(baseWords)
-
-        fillDerivationSystem()
-    }
-
-    private fun fillDerivationSystem() {//TODO special commands
-        val goodWords = baseWords
-            .filter { it.speechPart == SpeechPart.Noun }
-
-        goodWords.forEach {
-            val link = DerivationLink(
-                SemanticsCoreTemplate(
-                    "little_" + it.word,
-                    SpeechPart.Noun,
-                    it.tagClusters,
-                    DerivationClusterTemplate()
-                ),
-                1.0
-            )
-            it.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
-            allWords.add(link.template)
-        }
     }
 }
 

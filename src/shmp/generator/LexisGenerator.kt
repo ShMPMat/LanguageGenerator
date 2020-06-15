@@ -27,9 +27,12 @@ class LexisGenerator(
     val stressType: StressType,
     private val random: Random
 ) {
-    private val wordBase = WordBase(supplementPath)
-    private val words = mutableListOf<Word>()
     private val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
+    private val wordBase = WordBase(supplementPath)
+    init {
+        derivationGenerator.injectDerivationOptions(wordBase)
+    }
+    private val words = mutableListOf<Word>()
 
     private val SYLLABLE_TESTS = 10
 
