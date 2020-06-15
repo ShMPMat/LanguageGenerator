@@ -30,7 +30,8 @@ class LexisGenerator(
     private val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
     private val wordBase = WordBase(supplementPath)
     init {
-        derivationGenerator.injectDerivationOptions(wordBase)
+        val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
+        wordBase.allWords.addAll(newWords)
     }
     private val words = mutableListOf<Word>()
 

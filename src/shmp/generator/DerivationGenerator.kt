@@ -2,7 +2,6 @@ package shmp.generator
 
 import shmp.containers.DerivationClusterTemplate
 import shmp.containers.SemanticsCoreTemplate
-import shmp.containers.WordBase
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationClass
@@ -16,26 +15,20 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.random.randomSublist
 import kotlin.random.Random
 
-class DerivationGenerator(val restrictionsParadigm: RestrictionsParadigm, val random: Random) {
-    internal fun injectDerivationOptions(wordBase: WordBase): WordBase {//TODO special commands
-        val goodWords = wordBase.baseWords
-            .filter { it.speechPart == SpeechPart.Noun }
+class DerivationGenerator(
+    private val restrictionsParadigm: RestrictionsParadigm,
+    private val random: Random,
+    private val injectors: List<DerivationInjector> = defaultInjectors
+) {
+    internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
+        if (words.isEmpty())
+            return emptyList()
 
-        goodWords.forEach {
-            val link = DerivationLink(
-                SemanticsCoreTemplate(
-                    "little_" + it.word,
-                    SpeechPart.Noun,
-                    it.tagClusters,
-                    DerivationClusterTemplate()
-                ),
-                1.0
-            )
-            it.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
-            wordBase.allWords.add(link.template)
+        val newWords = injectors.flatMap { inj ->
+            words.mapNotNull { inj.injector(it) }
         }
 
-        return wordBase
+        return newWords //+ injectDerivationOptions(newWords)
     }
 
     internal fun makeDerivations(words: MutableList<Word>, changeGenerator: ChangeGenerator) {
@@ -72,3 +65,23 @@ class DerivationGenerator(val restrictionsParadigm: RestrictionsParadigm, val ra
         }
     }
 }
+
+data class DerivationInjector(val injector: (SemanticsCoreTemplate) -> SemanticsCoreTemplate?)
+
+val defaultInjectors = listOf(
+    DerivationInjector {
+        if (it.speechPart != SpeechPart.Noun)
+            return@DerivationInjector null
+        val link = DerivationLink(
+            SemanticsCoreTemplate(
+                "little_" + it.word,
+                SpeechPart.Noun,
+                it.tagClusters,
+                DerivationClusterTemplate()
+            ),
+            1.0
+        )
+        it.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
+        return@DerivationInjector link.template
+    }
+)
