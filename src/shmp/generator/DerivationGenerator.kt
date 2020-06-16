@@ -108,5 +108,12 @@ val defaultInjectors = listOf(
         Noun,
         { "young_$it" },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
+    ),
+    DerivationInjector(Big, Noun, { "big_$it" }),
+    DerivationInjector(
+        Old,
+        Noun,
+        { "old_$it" },
+        additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
     )
 )
