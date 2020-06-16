@@ -57,7 +57,7 @@ fun visualize(language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 190)
+    val generator = LanguageGenerator("SupplementFiles", 191)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     visualize(generator.generateLanguage(wordAmount))

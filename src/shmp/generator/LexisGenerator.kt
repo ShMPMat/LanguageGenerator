@@ -43,7 +43,6 @@ class LexisGenerator(
         changeGenerator: ChangeGenerator
     ): List<Word> {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
-        cores.add(wordBase.baseWords.first { it.word == "_personal_pronoun" })
         for (core in cores) {
             val staticCategories = computeStaticCategories(core, categories)
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))

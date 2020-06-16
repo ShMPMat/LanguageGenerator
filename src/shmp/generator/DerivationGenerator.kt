@@ -4,9 +4,11 @@ import shmp.containers.DerivationClusterTemplate
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.SemanticsTagCluster
 import shmp.language.SpeechPart
+import shmp.language.SpeechPart.*
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationClass
 import shmp.language.derivation.DerivationType
+import shmp.language.derivation.DerivationType.*
 import shmp.language.lexis.DerivationLink
 import shmp.language.lexis.Word
 import shmp.language.morphem.Prefix
@@ -89,16 +91,22 @@ data class DerivationInjector(
                 newSpeechPart,
                 tagCreator(core.tagClusters),
                 DerivationClusterTemplate(
-                    internalTypes = core.derivationClusterTemplate.internalTypes + setOf(DerivationType.Smallness)
+                    internalTypes = core.derivationClusterTemplate.internalTypes + setOf(type)
                 )
             ),
             probability
         )
-        core.derivationClusterTemplate.typeToCore[DerivationType.Smallness] = link
+        core.derivationClusterTemplate.typeToCore[type] = link
         return link.template
     }
 }
 
 val defaultInjectors = listOf(
-    DerivationInjector(DerivationType.Smallness, SpeechPart.Noun, { "little_$it" })
+    DerivationInjector(Smallness, Noun, { "little_$it" }),
+    DerivationInjector(
+        Young,
+        Noun,
+        { "young_$it" },
+        additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
+    )
 )
