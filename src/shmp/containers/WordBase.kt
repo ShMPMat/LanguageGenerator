@@ -20,10 +20,13 @@ class WordBase(supplementPath: String) {
                     word,
                     speechPart,
                     tokens.drop(2)
-                        .map { SemanticsTagCluster(
-                            parseSemanticsTagTemplates(it.drop(2)),
-                            getType(it.take(1))
-                        ) }
+                        .map {
+                            val (name, tags) = it.split("|")
+                            SemanticsTagCluster(
+                                parseSemanticsTagTemplates(tags),
+                                getType(name)
+                            )
+                        }
                         .toSet(),
                     DerivationClusterTemplate()
                 ))
@@ -40,9 +43,11 @@ fun parseSemanticsTagTemplates(string: String) = string
         SemanticsTagTemplate(name, prob.toDouble())
     }
 
-fun getType(string: String) = when(string) {
+fun getType(string: String) = when (string) {
     "G" -> genderName
     "A" -> animosityName
     "T" -> "transitivity"
-    else -> throw GeneratorException("Unknown SemanticsTag type alias $string")
+    else -> if (string.length > 1)
+        string
+    else throw GeneratorException("Unknown SemanticsTag type alias $string")
 }
