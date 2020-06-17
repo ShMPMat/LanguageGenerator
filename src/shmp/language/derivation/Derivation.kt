@@ -50,7 +50,7 @@ class Derivation(private val affix: Affix, private val derivationClass: Derivati
         return result
     }
 
-
+    override fun toString() = "Class - $derivationClass; $affix"
 }
 
 enum class DerivationClass(val possibilities: List<Box>, val speechPart: SpeechPart) {

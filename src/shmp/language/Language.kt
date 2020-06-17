@@ -3,6 +3,7 @@ package shmp.language
 import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
 import shmp.language.category.paradigm.SentenceChangeParadigm
+import shmp.language.derivation.DerivationParadigm
 import shmp.language.lexis.Word
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.StressType
@@ -13,6 +14,7 @@ class Language(
     internal val stressType: StressType,
     internal val numeralSystemBase: NumeralSystemBase,
     internal val restrictionsParadigm: RestrictionsParadigm,
+    internal val derivationParadigm: DerivationParadigm,
     internal val sentenceChangeParadigm: SentenceChangeParadigm
 ) {
     override fun toString(): String {
@@ -29,7 +31,7 @@ class Language(
          |$sentenceChangeParadigm
          |
          |
-         |Paradigms elaborated:
+         |Change paradigms elaborated:
          |
          |Personal pronoun:
          |${getParadigmPrinted(this, words.first { it.semanticsCore.word == "_personal_pronoun" })}
@@ -39,6 +41,9 @@ class Language(
          |
          |Verb:
          |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Verb })}
+         |
+         |
+         |$derivationParadigm
          |""".trimMargin()
     }
 }

@@ -27,7 +27,7 @@ class LexisGenerator(
     val stressType: StressType,
     private val random: Random
 ) {
-    private val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
+    internal val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
     private val wordBase = WordBase(supplementPath)
     init {
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
@@ -39,8 +39,7 @@ class LexisGenerator(
 
     internal fun generateWords(
         wordAmount: Int,
-        categories: List<Category>,
-        changeGenerator: ChangeGenerator
+        categories: List<Category>
     ): List<Word> {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         for (core in cores) {
@@ -48,7 +47,7 @@ class LexisGenerator(
             words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
         }
 
-        derivationGenerator.makeDerivations(words, changeGenerator)
+        derivationGenerator.makeDerivations(words)
 
         return words
     }

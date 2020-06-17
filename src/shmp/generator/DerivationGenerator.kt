@@ -7,6 +7,7 @@ import shmp.language.SpeechPart
 import shmp.language.SpeechPart.*
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationClass
+import shmp.language.derivation.DerivationParadigm
 import shmp.language.derivation.DerivationType
 import shmp.language.derivation.DerivationType.*
 import shmp.language.lexis.DerivationLink
@@ -23,6 +24,8 @@ class DerivationGenerator(
     private val random: Random,
     private val injectors: List<DerivationInjector> = defaultInjectors
 ) {
+    private var derivationParadigm = DerivationParadigm(listOf())
+
     internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
         if (words.isEmpty())
             return emptyList()
@@ -34,7 +37,7 @@ class DerivationGenerator(
         return newWords + injectDerivationOptions(newWords)
     }
 
-    internal fun makeDerivations(words: MutableList<Word>, changeGenerator: ChangeGenerator) {
+    internal fun generateDerivationParadigm(changeGenerator: ChangeGenerator): DerivationParadigm {
         val derivations =
             randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size + 1)
                 .map {
@@ -55,11 +58,15 @@ class DerivationGenerator(
                     }
                     Derivation(affix, it)
                 }
+        derivationParadigm = DerivationParadigm(derivations)
+        return derivationParadigm
+    }
 
+    internal fun makeDerivations(words: MutableList<Word>) {
         var i = 0
         while (i < words.size) {
             val word = words[i]
-            for (derivation in derivations) {
+            for (derivation in derivationParadigm.derivations) {
                 val derivedWord = derivation.derive(word, random)
                     ?: continue
                 words.add(derivedWord)
