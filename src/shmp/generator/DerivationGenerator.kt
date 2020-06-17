@@ -3,6 +3,7 @@ package shmp.generator
 import shmp.containers.DerivationClusterTemplate
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.SemanticsTagCluster
+import shmp.containers.SemanticsTagTemplate
 import shmp.language.SpeechPart
 import shmp.language.SpeechPart.*
 import shmp.language.derivation.Derivation
@@ -80,6 +81,7 @@ data class DerivationInjector(
     val type: DerivationType,
     val applicableSpeechPart: SpeechPart,
     val descriptionCreator: (String) -> String,
+    val prohibitedTags: List<String> = listOf(),
     val additionalTest: (SemanticsCoreTemplate) -> Boolean = { true },
     val newSpeechPart: SpeechPart = applicableSpeechPart,
     val tagCreator: (Set<SemanticsTagCluster>) -> Set<SemanticsTagCluster> = { it },
@@ -88,6 +90,7 @@ data class DerivationInjector(
     fun injector(core: SemanticsCoreTemplate): SemanticsCoreTemplate? {
         if (
             core.speechPart != applicableSpeechPart
+            || core.tagClusters.map { it.type }.any { it in prohibitedTags }
             || core.derivationClusterTemplate.internalTypes.contains(type)
             || !additionalTest(core)
         ) return null
@@ -96,7 +99,8 @@ data class DerivationInjector(
             SemanticsCoreTemplate(
                 descriptionCreator(core.word),
                 newSpeechPart,
-                tagCreator(core.tagClusters),
+                tagCreator(core.tagClusters)
+                        + setOf(SemanticsTagCluster(listOf(SemanticsTagTemplate(type.name, 1.0)), type.name)),
                 DerivationClusterTemplate(
                     internalTypes = core.derivationClusterTemplate.internalTypes + setOf(type)
                 )
@@ -109,18 +113,20 @@ data class DerivationInjector(
 }
 
 val defaultInjectors = listOf(
-    DerivationInjector(Smallness, Noun, { "little_$it" }),
+    DerivationInjector(Smallness, Noun, { "little_$it" }, prohibitedTags = listOf(Big, Old).map { it.toString() }),
     DerivationInjector(
         Young,
         Noun,
         { "young_$it" },
+        prohibitedTags = listOf(Big, Old).map { it.toString() },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
     ),
-    DerivationInjector(Big, Noun, { "big_$it" }),
+    DerivationInjector(Big, Noun, { "big_$it" },  prohibitedTags = listOf(Smallness, Young).map { it.toString() }),
     DerivationInjector(
         Old,
         Noun,
         { "old_$it" },
+        prohibitedTags = listOf(Smallness, Young).map { it.toString() },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
     )
 )
