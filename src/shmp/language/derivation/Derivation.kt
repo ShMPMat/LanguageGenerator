@@ -1,16 +1,16 @@
 package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
-import shmp.language.SpeechPart
-import shmp.language.derivation.DerivationType.*
-import shmp.language.lexis.*
+import shmp.language.derivation.DerivationType.Passing
+import shmp.language.lexis.SemanticsTag
+import shmp.language.lexis.Word
 import shmp.language.morphem.Affix
-import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
 class Derivation(private val affix: Affix, private val derivationClass: DerivationClass) {
     fun derive(word: Word, random: Random): Word? {
+
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 

@@ -6,7 +6,7 @@ be                 Verb      T|trans:1,intrans:0
 one                Numeral
 have               Verb      T|trans:1,intrans:0
 hot                Adjective
-word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100                             NNPlace@scene:0.01
 do                 Verb      T|trans:1,intrans:0
 time               Noun      G|LongObject:100                       A|Inanimate:100
 say                Verb      T|trans:100,intrans:1
@@ -62,6 +62,8 @@ live               Verb      T|trans:100,intrans:1
 
 cat                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100                   species|species:1
 dog                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100                   species|species:1
+
+scene              Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
 
 /other
 /some

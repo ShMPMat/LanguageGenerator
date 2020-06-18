@@ -91,7 +91,7 @@ data class DerivationInjector(
         if (
             core.speechPart != applicableSpeechPart
             || core.tagClusters.map { it.type }.any { it in prohibitedTags }
-            || core.derivationClusterTemplate.internalTypes.contains(type)
+            || core.derivationClusterTemplate.appliedDerivations.contains(type)
             || !additionalTest(core)
         ) return null
 
@@ -102,7 +102,7 @@ data class DerivationInjector(
                 tagCreator(core.tagClusters)
                         + setOf(SemanticsTagCluster(listOf(SemanticsTagTemplate(type.name, 1.0)), type.name)),
                 DerivationClusterTemplate(
-                    internalTypes = core.derivationClusterTemplate.internalTypes + setOf(type)
+                    appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
                 )
             ),
             probability

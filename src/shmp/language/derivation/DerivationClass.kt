@@ -6,7 +6,8 @@ import shmp.random.SampleSpaceObject
 
 enum class DerivationClass(val possibilities: List<Box>, val speechPart: SpeechPart) {
     Diminutive(listOf(Box(Smallness, 1.0), Box(Young, 1.0)), SpeechPart.Noun),
-    Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), SpeechPart.Noun)
+    Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), SpeechPart.Noun),
+    Place(listOf(Box(NNPlace, 1.0)), SpeechPart.Noun),
 }
 
 enum class DerivationType {
@@ -15,6 +16,8 @@ enum class DerivationType {
 
     Big,
     Old,
+
+    NNPlace,
 
     Passing
 }
