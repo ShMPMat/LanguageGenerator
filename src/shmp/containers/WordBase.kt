@@ -73,6 +73,6 @@ fun parseDerivationTemplates(string: String, wordsAndDataMap: WordsAndDataMap) =
     .map {
         val (name, prob) = it.split(":")
         DerivationLink(wordsAndDataMap.getValue(name).first, prob.toDouble())
-    }[0]//TODO to lists
+    }
 
 private typealias WordsAndDataMap = Map<String, Pair<SemanticsCoreTemplate, List<String>>>

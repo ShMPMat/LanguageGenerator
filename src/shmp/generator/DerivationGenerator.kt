@@ -107,7 +107,8 @@ data class DerivationInjector(
             ),
             probability
         )
-        core.derivationClusterTemplate.typeToCore[type] = link
+        val existingLinks = core.derivationClusterTemplate.typeToCore[type] ?: listOf()
+        core.derivationClusterTemplate.typeToCore[type] = existingLinks + listOf(link)
         return link.template
     }
 }

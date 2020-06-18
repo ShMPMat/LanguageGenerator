@@ -22,11 +22,14 @@ class Derivation(private val affix: Affix, private val derivationClass: Derivati
         val chosenType = randomElement(applicableTypes + noType, random).type
         if (chosenType == Passing)
             return null
+        val chosenSemantics = randomElement(
+            word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType),
+            random
+        )
         val derivedWord = affix.change(word)
         val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(derivationClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
-        var newCore = word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType)
-            .template.toSemanticsCore(word.semanticsCore.staticCategories, random)
+        var newCore = chosenSemantics.template.toSemanticsCore(word.semanticsCore.staticCategories, random)
         newCore = newCore.copy(tags = newTags, appliedDerivations = newDerivations)
 
         return derivedWord.copy(semanticsCore = newCore)
