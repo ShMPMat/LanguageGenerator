@@ -2,8 +2,10 @@ package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
 import shmp.language.derivation.DerivationType.Passing
+import shmp.language.lexis.DerivationLink
 import shmp.language.lexis.SemanticsTag
 import shmp.language.lexis.Word
+import shmp.language.lexis.noDerivationLink
 import shmp.language.morphem.Affix
 import shmp.random.randomElement
 import kotlin.random.Random
@@ -23,9 +25,12 @@ class Derivation(private val affix: Affix, private val derivationClass: Derivati
         if (chosenType == Passing)
             return null
         val chosenSemantics = randomElement(
-            word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType),
+            word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
         )
+        if (chosenSemantics.template == null)
+            return null
+
         val derivedWord = affix.change(word)
         val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(derivationClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)

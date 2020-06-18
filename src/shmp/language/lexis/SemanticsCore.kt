@@ -20,4 +20,6 @@ data class SemanticsTag(val name: String)
 
 data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>)
 
-data class DerivationLink(val template: SemanticsCoreTemplate, override val probability: Double): SampleSpaceObject
+data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double): SampleSpaceObject
+
+val noDerivationLink = listOf(DerivationLink(null, 1.0))

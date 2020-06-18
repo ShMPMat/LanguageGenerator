@@ -1,5 +1,5 @@
 /   Default CategoryValue probability - 10
-/
+/   Default no derivation probability - 1.0
 /
 _personal_pronoun  Pronoun
 be                 Verb      T|trans:1,intrans:0

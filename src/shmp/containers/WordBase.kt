@@ -8,28 +8,13 @@ import shmp.language.derivation.DerivationType
 import shmp.language.lexis.DerivationLink
 import java.io.File
 
-class WordBase(supplementPath: String) {
+class WordBase(private val supplementPath: String) {
     val baseWords: MutableList<SemanticsCoreTemplate> = ArrayList()
     val allWords: MutableList<SemanticsCoreTemplate> = ArrayList()
 
     init {
         val wordsAndDataMap = mutableMapOf<String, Pair<SemanticsCoreTemplate, List<String>>>()
-
-        val semiLines = File("$supplementPath/Words")
-            .readLines()
-            .filter { !it.isBlank() && it[0] != '/' }
-
-
-        val lines = mutableListOf(semiLines[0])
-
-        for (line in semiLines)
-            lines.add(
-                if (line[0].isWhitespace()) {
-                    val last = lines.last()
-                    lines.removeAt(lines.lastIndex)
-                    last + line
-                } else line
-            )
+        val lines = readLines()
 
         lines.forEach { line ->
             val tokens = line.split(" +".toRegex())
@@ -63,6 +48,25 @@ class WordBase(supplementPath: String) {
 
         baseWords.addAll(wordsAndDataMap.values.map { it.first }.sortedBy { it.word })
         allWords.addAll(allWords)
+    }
+
+    private fun readLines(): List<String> {
+        val semiLines = File("$supplementPath/Words")
+            .readLines()
+            .filter { !it.isBlank() && it[0] != '/' }
+
+
+        val lines = mutableListOf(semiLines[0])
+
+        for (line in semiLines)
+            lines.add(
+                if (line[0].isWhitespace()) {
+                    val last = lines.last()
+                    lines.removeAt(lines.lastIndex)
+                    last + line
+                } else line
+            )
+        return lines
     }
 }
 
