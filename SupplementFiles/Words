@@ -6,30 +6,35 @@ be                 Verb      T|trans:1,intrans:0
 one                Numeral
 have               Verb      T|trans:1,intrans:0
 hot                Adjective
-word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100                             NNPlace@scene:0.01,school:0.001
+word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@scene:0.01,school:0.001
 do                 Verb      T|trans:1,intrans:0
 time               Noun      G|LongObject:100                       A|Inanimate:100
+                             NNPlace@camp:0.01
 say                Verb      T|trans:100,intrans:1
-/set                Verb      T|trans:1,intrans:0                                              set what?
 three              Numeral
 want               Verb      T|trans:100,intrans:1
 want               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 air                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@sky:0.05
 well               Adverb
 play               Verb      T|trans:100,intrans:1
 small              Adjective
 end                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@cemetery:0.01
 end                Verb      T|trans:100,intrans:1
 put                Verb      T|trans:100,intrans:1
 home               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@city:0.1,neighbourhood:0.1
 read               Verb      T|trans:100,intrans:1
 hand               Noun      G|LongObject:100                       A|Inanimate:20
 port               Noun
 large              Adjective
 spell              Verb      T|trans:100,intrans:1
-spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+/spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100               spell what?
 add                Verb      T|trans:100,intrans:1
 land               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@earth:0.05
 land               Verb      T|trans:100,intrans:1
 high               Adjective
 follow             Verb      T|trans:100,intrans:1
@@ -37,17 +42,24 @@ ask                Verb      T|trans:100,intrans:1
 change             Verb      T|trans:100,intrans:1
 change             Noun      G|LongObject:100                       A|Inanimate:100
 light              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@sun:0.01
 kind               Noun      G|Plant:20                             A|Inanimate:100
 need               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@toilet:0.01
 need               Verb      T|trans:100,intrans:1
 house              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@city:0.1,neighbourhood:0.1
 picture            Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@art_gallery:0.01,museum:0.01
 picture            Verb      T|trans:100,intrans:1
-animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100                   species|species:1
+animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
+                             NNPlace@wild:0.01,forest:0.01,zoo:0.01
 point              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 point              Verb      T|trans:100,intrans:1
 mother             Noun      G|Person:1000,Female:5000,Common:1000  A|Animate:1000
+                             NNPlace@home:0.01,motherland:0.01
 world              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+                             NNPlace@universe:0.01
 near               Adjective
 build              Verb      T|trans:100,intrans:1
 father             Noun      G|Person:1000,Male:5000,Common:1000    A|Animate:1000
@@ -60,12 +72,33 @@ take               Verb      T|trans:100,intrans:1
 place              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
 live               Verb      T|trans:100,intrans:1
 
-cat                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100                   species|species:1
-dog                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100                   species|species:1
+
+cat                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
+dog                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
+
 
 scene              Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
 book               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
 school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+camp               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+
+sky                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+cemetery           Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+city               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+neighbourhood      Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+earth              Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+sun                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+toilet             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+art_gallery        Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+museum             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+wild               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+forest             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+zoo                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+motherland         Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+universe           Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+
+
+/set                Verb      T|trans:1,intrans:0                                              set what?
 
 /other
 /some
@@ -102,7 +135,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /try
 /again
 /self
-/earth
 /any
 
 /get
@@ -204,7 +236,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /country
 /found
 /answer
-/school
 /grow
 /study
 /still
@@ -212,7 +243,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /plant
 /cover
 /food
-/sun
 /four
 /between
 /state
@@ -222,7 +252,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /last
 /let
 /thought
-/city
 /tree
 /cross
 /farm
@@ -246,7 +275,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /life
 /few
 /north
-/book
 /carry
 /took
 /science
@@ -547,7 +575,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /sail
 /material
 /fraction
-/forest
 /sit
 /race
 /window
@@ -563,7 +590,6 @@ school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /catch
 /mount
 /wish
-/sky
 /board
 /joy
 /winter

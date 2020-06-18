@@ -15,28 +15,42 @@ class WordBase(supplementPath: String) {
     init {
         val wordsAndDataMap = mutableMapOf<String, Pair<SemanticsCoreTemplate, List<String>>>()
 
-        File("$supplementPath/Words").forEachLine { line ->
-            if (!line.isBlank() && line[0] != '/') {
-                val tokens = line.split(" +".toRegex())
-                val word = tokens[0]
-                val speechPart = SpeechPart.valueOf(tokens[1])
-                val tags = tokens.filter { it.contains("|") }
-                val derivations = tokens.filter { it.contains("@") }
+        val semiLines = File("$supplementPath/Words")
+            .readLines()
+            .filter { !it.isBlank() && it[0] != '/' }
 
-                val core = SemanticsCoreTemplate(
-                    word,
-                    speechPart,
-                    tags.map {
-                        val (name, tags) = it.split("|")
-                        SemanticsTagCluster(
-                            parseSemanticsTagTemplates(tags),
-                            getType(name)
-                        )
-                    }.toSet(),
-                    DerivationClusterTemplate()
-                )
-                wordsAndDataMap[core.word] = core to derivations
-            }
+
+        val lines = mutableListOf(semiLines[0])
+
+        for (line in semiLines)
+            lines.add(
+                if (line[0].isWhitespace()) {
+                    val last = lines.last()
+                    lines.removeAt(lines.lastIndex)
+                    last + line
+                } else line
+            )
+
+        lines.forEach { line ->
+            val tokens = line.split(" +".toRegex())
+            val word = tokens[0]
+            val speechPart = SpeechPart.valueOf(tokens[1])
+            val tags = tokens.filter { it.contains("|") }
+            val derivations = tokens.filter { it.contains("@") }
+
+            val core = SemanticsCoreTemplate(
+                word,
+                speechPart,
+                tags.map {
+                    val (name, tags) = it.split("|")
+                    SemanticsTagCluster(
+                        parseSemanticsTagTemplates(tags),
+                        getType(name)
+                    )
+                }.toSet(),
+                DerivationClusterTemplate()
+            )
+            wordsAndDataMap[core.word] = core to derivations
         }
 
         wordsAndDataMap.values.forEach { (w, ds) ->
