@@ -16,7 +16,9 @@ import shmp.language.phonology.prosody.generateStress
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.testProbability
 import kotlin.math.abs
+import kotlin.math.pow
 import kotlin.random.Random
 
 class LexisGenerator(
@@ -24,16 +26,20 @@ class LexisGenerator(
     val syllableGenerator: SyllableValenceGenerator,
     private val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
-    val stressType: StressType,
-    private val random: Random
+    private val stressType: StressType,
+    private val random: Random,
+    private val wordDoubleProbability: Double = 0.75
 ) {
     internal val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
     private val wordBase = WordBase(supplementPath)
+
     init {
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
         wordBase.allWords.addAll(newWords)
     }
+
     private val words = mutableListOf<Word>()
+    val usedMeanings = mutableListOf<String>()
 
     private val SYLLABLE_TESTS = 10
 
@@ -43,13 +49,21 @@ class LexisGenerator(
     ): List<Word> {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         for (core in cores) {
+            if (!isWordNeeded(core))
+                continue
             val staticCategories = computeStaticCategories(core, categories)
-            words.add(randomWord(core.toSemanticsCore(staticCategories, random)))
+            val newWords = mutableListOf(randomWord(core.toSemanticsCore(staticCategories, random)))
+            derivationGenerator.makeDerivations(newWords)
+            words.addAll(newWords)
+            usedMeanings.addAll(newWords.map { it.semanticsCore.word })
         }
 
-        derivationGenerator.makeDerivations(words)
-
         return words
+    }
+
+    private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
+        val successProbability = wordDoubleProbability.pow(usedMeanings.count { it == core.word })
+        return testProbability(successProbability, random)
     }
 
     private fun computeStaticCategories(
