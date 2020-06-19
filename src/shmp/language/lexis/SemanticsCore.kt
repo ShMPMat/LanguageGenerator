@@ -22,4 +22,4 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
 
 data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double): SampleSpaceObject
 
-val noDerivationLink = listOf(DerivationLink(null, 1.0))
+val noDerivationLink = listOf(DerivationLink(null, 0.0)) //TODO back to 1.0

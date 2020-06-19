@@ -54,6 +54,18 @@ fun visualize(language: Language) {
     print("\n\n")
 
     print(language)
+    println()
+
+    val synonyms = language.words
+        .groupBy { it.semanticsCore.word }
+        .map { it.value }
+        .filter { it.size > 1 }
+
+    print("""
+        |Synonyms:
+        |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore.word}" }}
+        |
+    """.trimMargin())
 }
 
 fun main() {
