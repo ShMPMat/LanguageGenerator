@@ -16,8 +16,9 @@ data class SemanticsCoreTemplate(
     val word: String,
     val speechPart: SpeechPart,
     val tagClusters: Set<SemanticsTagCluster>,
-    val derivationClusterTemplate: DerivationClusterTemplate
-)
+    val derivationClusterTemplate: DerivationClusterTemplate,
+    override val probability: Double
+) : SampleSpaceObject
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) = SemanticsCore(
     this.word,

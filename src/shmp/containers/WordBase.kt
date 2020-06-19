@@ -20,6 +20,7 @@ class WordBase(private val supplementPath: String) {
             val tokens = line.split(" +".toRegex())
             val word = tokens[0]
             val speechPart = SpeechPart.valueOf(tokens[1])
+            val realizationProbability = tokens[2].toDouble()
             val tags = tokens.filter { it.contains("|") }
             val derivations = tokens.filter { it.contains("@") }
 
@@ -27,13 +28,14 @@ class WordBase(private val supplementPath: String) {
                 word,
                 speechPart,
                 tags.map {
-                    val (name, tags) = it.split("|")
+                    val (name, semanticTags) = it.split("|")
                     SemanticsTagCluster(
-                        parseSemanticsTagTemplates(tags),
+                        parseSemanticsTagTemplates(semanticTags),
                         getType(name)
                     )
                 }.toSet(),
-                DerivationClusterTemplate()
+                DerivationClusterTemplate(),
+                realizationProbability
             )
             wordsAndDataMap[core.word] = core to derivations
         }

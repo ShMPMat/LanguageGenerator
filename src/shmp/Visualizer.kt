@@ -65,6 +65,8 @@ fun visualize(language: Language) {
         |Synonyms:
         |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore.word}" }}
         |
+        |Lexis size - ${language.words.size} words
+        |
     """.trimMargin())
 }
 

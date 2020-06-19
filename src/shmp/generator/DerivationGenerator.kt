@@ -85,7 +85,8 @@ data class DerivationInjector(
     val additionalTest: (SemanticsCoreTemplate) -> Boolean = { true },
     val newSpeechPart: SpeechPart = applicableSpeechPart,
     val tagCreator: (Set<SemanticsTagCluster>) -> Set<SemanticsTagCluster> = { it },
-    val probability: Double = 1.0
+    val probability: Double = 1.0,
+    val coreRealizationProbability: Double = 0.05
 ) {
     fun injector(core: SemanticsCoreTemplate): SemanticsCoreTemplate? {
         if (
@@ -103,7 +104,8 @@ data class DerivationInjector(
                         + setOf(SemanticsTagCluster(listOf(SemanticsTagTemplate(type.name, 1.0)), type.name)),
                 DerivationClusterTemplate(
                     appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
-                )
+                ),
+                coreRealizationProbability
             ),
             probability
         )

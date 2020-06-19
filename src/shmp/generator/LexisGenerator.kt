@@ -62,7 +62,7 @@ class LexisGenerator(
     }
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
-        val successProbability = wordDoubleProbability.pow(usedMeanings.count { it == core.word })
+        val successProbability = core.probability * wordDoubleProbability.pow(usedMeanings.count { it == core.word })
         return testProbability(successProbability, random)
     }
 
