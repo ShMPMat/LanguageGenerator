@@ -8,6 +8,7 @@ enum class DerivationClass(val possibilities: List<Box>, val speechPart: SpeechP
     Diminutive(listOf(Box(Smallness, 1.0), Box(Young, 1.0)), SpeechPart.Noun),
     Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), SpeechPart.Noun),
     Place(listOf(Box(NNPlace, 1.0)), SpeechPart.Noun),
+    Person(listOf(Box(NNPerson, 1.0)), SpeechPart.Noun),
 }
 
 enum class DerivationType {
@@ -18,6 +19,7 @@ enum class DerivationType {
     Old,
 
     NNPlace,
+    NNPerson,
 
     Passing
 }

@@ -6,99 +6,132 @@ be                 Verb      T|trans:1,intrans:0
 one                Numeral
 have               Verb      T|trans:1,intrans:0
 hot                Adjective
-word               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@scene:0.01,school:0.001
+word               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
 do                 Verb      T|trans:1,intrans:0
-time               Noun      G|LongObject:100                       A|Inanimate:100
-                             NNPlace@camp:0.01
+time               Noun      G|LongObject:100                                    A|Inanimate:100
+                             NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
 say                Verb      T|trans:100,intrans:1
 three              Numeral
 want               Verb      T|trans:100,intrans:1
-want               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-air                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@sky:0.05
+want               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                                                                                 NNPerson@one_who_wants_smth:0.1
+air                Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@sky:0.05                                    NNPerson@aviator:0.1
 well               Adverb
 play               Verb      T|trans:100,intrans:1
 small              Adjective
-end                Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@cemetery:0.01
+end                Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
 end                Verb      T|trans:100,intrans:1
 put                Verb      T|trans:100,intrans:1
-home               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@city:0.1,neighbourhood:0.1
+home               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
 read               Verb      T|trans:100,intrans:1
-hand               Noun      G|LongObject:100                       A|Inanimate:20
+hand               Noun      G|LongObject:100                                    A|Inanimate:20
+                                                                                 NNPerson@helper:0.1,friend:0.025
 port               Noun
+                                                                                 NNPerson@sailor:0.1
 large              Adjective
 spell              Verb      T|trans:100,intrans:1
-/spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100               spell what?
 add                Verb      T|trans:100,intrans:1
-land               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@earth:0.05
+land               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@earth:0.05                                  NNPerson@countryman:0.2
 land               Verb      T|trans:100,intrans:1
 high               Adjective
 follow             Verb      T|trans:100,intrans:1
 ask                Verb      T|trans:100,intrans:1
 change             Verb      T|trans:100,intrans:1
-change             Noun      G|LongObject:100                       A|Inanimate:100
-light              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+change             Noun      G|LongObject:100                                    A|Inanimate:100
+                                                                                 NNPerson@changer:0.2
+light              Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                              NNPlace@sun:0.01
-kind               Noun      G|Plant:20                             A|Inanimate:100
-need               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@toilet:0.01
+kind               Noun      G|Plant:20                                          A|Inanimate:100
+need               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@toilet:0.01                                 NNPerson@poor_person:0.1,one_in_need:0.1
 need               Verb      T|trans:100,intrans:1
-house              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@city:0.1,neighbourhood:0.1
-picture            Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@art_gallery:0.01,museum:0.01
+house              Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
+picture            Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
 picture            Verb      T|trans:100,intrans:1
-animal             Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
-                             NNPlace@wild:0.01,forest:0.01,zoo:0.01
-point              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+animal             Noun      G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+                             NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
+point              Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
 point              Verb      T|trans:100,intrans:1
-mother             Noun      G|Person:1000,Female:5000,Common:1000  A|Animate:1000
+mother             Noun      G|Person:1000,Female:5000,Common:1000               A|Animate:1000
                              NNPlace@home:0.01,motherland:0.01
-world              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-                             NNPlace@universe:0.01
+world              Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
 near               Adjective
 build              Verb      T|trans:100,intrans:1
-father             Noun      G|Person:1000,Male:5000,Common:1000    A|Animate:1000
+father             Noun      G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
+                             NNPlace@home:0.01,motherland:0.01
 new                Adjective
 work               Verb      T|trans:100,intrans:1
-work               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
-part               Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+job                Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@factory:0.1,workplace:0.1,workshop:0.1      NNPerson@worker:0.3
+part               Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                             NNPlace@valley:0.025
 part               Verb      T|trans:100,intrans:1
 take               Verb      T|trans:100,intrans:1
-place              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100
+place              Noun      G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                                                                                 NNPerson@local_person:0.3
 live               Verb      T|trans:100,intrans:1
 
 
-cat                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
-dog                Noun      G|Plant:1,Fruit:0,Person:1             A|Animate:100          species|species:1
+cat                Noun      G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+dog                Noun      G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
+scene              Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+book               Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+school             Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+camp               Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+sky                Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+cemetery           Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+city               Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+neighbourhood      Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+earth              Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+sun                Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+toilet             Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+art_gallery        Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+museum             Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+wild               Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+forest             Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+zoo                Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+motherland         Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+universe           Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+factory            Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+workplace          Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+workshop           Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+valley             Noun      G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
-scene              Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-book               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-school             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-camp               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+speaker            Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+writer             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+aviator            Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+relative           Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+helper             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+friend             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+sailor             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+changer            Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+poor_person        Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+painter            Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+artist             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+stock_farmer       Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+barbarian          Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+traveller          Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+adventurer         Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+worker             Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+local_person       Noun      G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 
-sky                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-cemetery           Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-city               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-neighbourhood      Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-earth              Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-sun                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-toilet             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-art_gallery        Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-museum             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-wild               Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-forest             Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-zoo                Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-motherland         Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
-universe           Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:100
+person_who_finishes_smt      Noun      G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_who_does_smth_temporary  Noun      G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_who_wants_smth           Noun      G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_in_need                  Noun      G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 
 
 /set                Verb      T|trans:1,intrans:0                                              set what?
+/spell              Noun      G|Plant:1,Fruit:0,Person:1             A|Inanimate:100               spell what?
 
 /other
 /some
@@ -280,7 +313,6 @@ universe           Noun      G|Plant:0,Fruit:0,Person:0             A|Inanimate:
 /science
 /eat
 /room
-/friend
 /began
 /idea
 /fish
