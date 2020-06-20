@@ -28,7 +28,7 @@ fun getClauseAndInfoPrinted(clause: Clause): String {
 }
 
 
-private fun lineUp(s1: String, s2: String): Pair<String, String> {
+fun lineUp(s1: String, s2: String): Pair<String, String> {
     val max = max(s1.length, s2.length)
     return s1 + " ".repeat(max - s1.length) to s2 + " ".repeat(max - s2.length)
 }

@@ -13,7 +13,8 @@ data class SemanticsCore(
     val tags: Set<SemanticsTag>,
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
     val staticCategories: Set<CategoryValue> = setOf(),
-    val appliedDerivations: List<Derivation> = listOf()
+    val appliedDerivations: List<Derivation> = listOf(),
+    val derivationHistory: DerivationHistory? = null
 )
 
 data class SemanticsTag(val name: String)
@@ -21,5 +22,7 @@ data class SemanticsTag(val name: String)
 data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>)
 
 data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double): SampleSpaceObject
+
+data class DerivationHistory(val derivation: Derivation, val parent: Word)
 
 val noDerivationLink = listOf(DerivationLink(null, 0.0)) //TODO back to 1.0

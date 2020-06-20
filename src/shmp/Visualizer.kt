@@ -76,8 +76,28 @@ data class Visualizer(val language: Language) {
         |
         |Lexis size - ${language.words.size} words
         |
+        |Derivations:
+        |${language.words
+                .filter { it.semanticsCore.derivationHistory != null }
+                .sortedBy { derivationDepth(it) }
+                .joinToString("\n") { printDerivationStory(it) }
+            }
+        |
     """.trimMargin()
         )
+    }
+
+    private fun printDerivationStory(word: Word): String {
+        val previous = word.semanticsCore.derivationHistory
+        val prefix = if (previous == null) ""
+        else printDerivationStory(previous.parent) + " ->${previous.derivation.dClass}-> "
+        return prefix + word
+    }
+
+    private fun derivationDepth(word: Word): Int {
+        val previous = word.semanticsCore.derivationHistory
+        return if (previous == null) 0
+        else 1 + derivationDepth(previous.parent)
     }
 }
 

@@ -2,21 +2,18 @@ package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
 import shmp.language.derivation.DerivationType.Passing
-import shmp.language.lexis.DerivationLink
-import shmp.language.lexis.SemanticsTag
-import shmp.language.lexis.Word
-import shmp.language.lexis.noDerivationLink
+import shmp.language.lexis.*
 import shmp.language.morphem.Affix
 import shmp.random.randomElement
 import kotlin.random.Random
 
-class Derivation(private val affix: Affix, private val derivationClass: DerivationClass) {
+class Derivation(private val affix: Affix, val dClass: DerivationClass) {
     fun derive(word: Word, random: Random): Word? {
 
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 
-        val applicableTypes = derivationClass.possibilities
+        val applicableTypes = dClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.type) }
 
         if (applicableTypes.isEmpty()) return null
@@ -32,10 +29,14 @@ class Derivation(private val affix: Affix, private val derivationClass: Derivati
             return null
 
         val derivedWord = affix.change(word)
-        val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(derivationClass.name))
+        val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(dClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
         var newCore = chosenSemantics.template.toSemanticsCore(word.semanticsCore.staticCategories, random)
-        newCore = newCore.copy(tags = newTags, appliedDerivations = newDerivations)
+        newCore = newCore.copy(
+            tags = newTags,
+            appliedDerivations = newDerivations,
+            derivationHistory = DerivationHistory(this, word)
+        )
 
         return derivedWord.copy(semanticsCore = newCore)
     }
@@ -47,16 +48,16 @@ class Derivation(private val affix: Affix, private val derivationClass: Derivati
         other as Derivation
 
         if (affix.toString() != other.affix.toString()) return false
-        if (derivationClass != other.derivationClass) return false
+        if (dClass != other.dClass) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = affix.toString().hashCode()
-        result = 31 * result + derivationClass.hashCode()
+        result = 31 * result + dClass.hashCode()
         return result
     }
 
-    override fun toString() = "Class - $derivationClass; $affix"
+    override fun toString() = "Class - $dClass; $affix"
 }
