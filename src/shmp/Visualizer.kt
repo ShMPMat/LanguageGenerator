@@ -8,6 +8,7 @@ import shmp.language.category.CategorySource
 import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoPrinted
 import shmp.language.lexis.Word
+import shmp.language.lineUp
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SentenceType
@@ -80,7 +81,7 @@ data class Visualizer(val language: Language) {
         |${language.words
                 .filter { it.semanticsCore.derivationHistory != null }
                 .sortedBy { derivationDepth(it) }
-                .joinToString("\n") { printDerivationStory(it) }
+                .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
     """.trimMargin()
@@ -89,9 +90,15 @@ data class Visualizer(val language: Language) {
 
     private fun printDerivationStory(word: Word): String {
         val previous = word.semanticsCore.derivationHistory
-        val prefix = if (previous == null) ""
-        else printDerivationStory(previous.parent) + " ->${previous.derivation.dClass}-> "
-        return prefix + word
+        val prefix = if (previous == null) "\n"
+        else {
+            printDerivationStory(previous.parent)
+                .lines()
+                .joinToString("\n") { it + " ->${previous.derivation.dClass}-> " }
+        }
+        val (lanPrefix, commentPrefix) = prefix.lines()
+        val (lanPostfix, commentPostfix) = lineUp(word.toString(), word.semanticsCore.word)
+        return lanPrefix + lanPostfix + "\n" + commentPrefix + commentPostfix
     }
 
     private fun derivationDepth(word: Word): Int {
