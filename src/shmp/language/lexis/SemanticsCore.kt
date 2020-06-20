@@ -8,7 +8,7 @@ import shmp.language.derivation.DerivationType
 import shmp.random.SampleSpaceObject
 
 data class SemanticsCore(
-    val word: String,
+    val words: List<String>,
     val speechPart: SpeechPart,
     val tags: Set<SemanticsTag>,
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
@@ -16,11 +16,11 @@ data class SemanticsCore(
     val appliedDerivations: List<Derivation> = listOf(),
     val derivationHistory: DerivationHistory? = null
 ) {
-    val meanings = listOf(word)
+    val meanings = words
 
-    fun hasMeaning(meaning: String) = word in meanings
+    fun hasMeaning(meaning: String) = meaning in meanings
 
-    override fun toString() = word
+    override fun toString() = words.joinToString()
 }
 
 data class SemanticsTag(val name: String)

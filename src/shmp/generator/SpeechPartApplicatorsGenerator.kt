@@ -48,7 +48,7 @@ class SpeechPartApplicatorsGenerator(
                 var semanticsCore = categoryEnums[0].categoryValue.semanticsCore
                 for (core in categoryEnums.subList(1, it.categoryValues.size).map { semanticsCore }) {
                     semanticsCore = SemanticsCore(
-                        semanticsCore.toString() + core.toString(),
+                        semanticsCore.meanings + core.meanings,
                         semanticsCore.speechPart,
                         semanticsCore.tags.union(core.tags),
                         semanticsCore.derivationCluster,

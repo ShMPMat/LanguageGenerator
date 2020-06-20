@@ -89,9 +89,9 @@ enum class NumbersPresence(override val probability: Double, val possibilities: 
 }
 
 enum class NumbersValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Singular(SemanticsCore("(singular number indicator)", Particle, setOf())),//TODO more diversity
-    Dual(SemanticsCore("(dual number indicator)", Particle, setOf())),
-    Plural(SemanticsCore("(plural number indicator)", Particle, setOf()));
+    Singular(SemanticsCore(listOf("(singular number indicator)"), Particle, setOf())),//TODO more diversity
+    Dual(SemanticsCore(listOf("(dual number indicator)"), Particle, setOf())),
+    Plural(SemanticsCore(listOf("(plural number indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

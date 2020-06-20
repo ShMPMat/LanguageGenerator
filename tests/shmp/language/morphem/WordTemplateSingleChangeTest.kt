@@ -179,5 +179,5 @@ internal class WordTemplateSingleChangeTest {
         Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close)
 
     private fun makeSemanticsCore() =
-        SemanticsCore("phony", SpeechPart.Noun, setOf())
+        SemanticsCore(listOf("phony"), SpeechPart.Noun, setOf())
 }

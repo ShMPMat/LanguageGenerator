@@ -75,9 +75,9 @@ enum class PersonPresence(override val probability: Double, val possibilities: L
 }
 
 enum class PersonValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    First(SemanticsCore("(first person indicator)", Particle, setOf())),
-    Second(SemanticsCore("(second person indicator)", Particle, setOf())),
-    Third(SemanticsCore("(third person indicator)", Particle, setOf()));
+    First(SemanticsCore(listOf("(first person indicator)"), Particle, setOf())),
+    Second(SemanticsCore(listOf("(second person indicator)"), Particle, setOf())),
+    Third(SemanticsCore(listOf("(third person indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

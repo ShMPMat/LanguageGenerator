@@ -88,19 +88,19 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Present(SemanticsCore("(present tense indicator)", Particle, setOf())),
-    Future(SemanticsCore("(future tense indicator)", Particle, setOf())),
-    Past(SemanticsCore("(past tense indicator)", Particle, setOf())),
-    DayPast(SemanticsCore("(day past tense indicator)", Particle, setOf())),
+    Present(SemanticsCore(listOf("(present tense indicator)"), Particle, setOf())),
+    Future(SemanticsCore(listOf("(future tense indicator)"), Particle, setOf())),
+    Past(SemanticsCore(listOf("(past tense indicator)"), Particle, setOf())),
+    DayPast(SemanticsCore(listOf("(day past tense indicator)"), Particle, setOf())),
     SomeDaysPast(
         SemanticsCore(
-            "(some days past tense indicator)",
+            listOf("(some days past tense indicator)"),
             Particle,
             setOf()
         )
     ),
-    MonthPast(SemanticsCore("(month past tense indicator)", Particle, setOf())),
-    YearPast(SemanticsCore("(year past tense indicator)", Particle, setOf()));
+    MonthPast(SemanticsCore(listOf("(month past tense indicator)"), Particle, setOf())),
+    YearPast(SemanticsCore(listOf("(year past tense indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

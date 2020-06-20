@@ -21,7 +21,7 @@ data class SemanticsCoreTemplate(
 ) : SampleSpaceObject
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) = SemanticsCore(
-    this.word,
+    listOf(this.word),
     this.speechPart,
     this.tagClusters
         .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }

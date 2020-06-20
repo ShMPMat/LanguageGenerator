@@ -77,8 +77,8 @@ enum class AnimosityPresence(
 }
 
 enum class AnimosityValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Animate(SemanticsCore("animate indicator", SpeechPart.Particle, setOf())),
-    Inanimate(SemanticsCore("inanimate indicator", SpeechPart.Particle, setOf()));
+    Animate(SemanticsCore(listOf("animate indicator"), SpeechPart.Particle, setOf())),
+    Inanimate(SemanticsCore(listOf("inanimate indicator"), SpeechPart.Particle, setOf()));
 
     override val parentClassName = animosityName
 }

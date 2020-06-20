@@ -73,9 +73,9 @@ enum class DefinitenessPresence(
 
 enum class DefinitenessValue(override val semanticsCore: SemanticsCore) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
-    None(SemanticsCore("", SpeechPart.Article, setOf())),
-    Definite(SemanticsCore("the", SpeechPart.Article, setOf())),
-    Indefinite(SemanticsCore("a", SpeechPart.Article, setOf()));
+    None(SemanticsCore(listOf(""), SpeechPart.Article, setOf())),
+    Definite(SemanticsCore(listOf("the"), SpeechPart.Article, setOf())),
+    Indefinite(SemanticsCore(listOf("a"), SpeechPart.Article, setOf()));
 
     override val parentClassName = definitenessName
 }
