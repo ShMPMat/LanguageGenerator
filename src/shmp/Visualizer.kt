@@ -41,11 +41,11 @@ data class Visualizer(val language: Language) {
             )
         }
 
-        val subjAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
-        val subj = language.words.first { it.semanticsCore.word == "mother" }.toNode(listOf(NumbersValue.Plural))
-        val verb = language.words.first { it.semanticsCore.word == "have" }.toNode()
-        val objAdj = language.words.first { it.semanticsCore.word == "new" }.toNode()
-        val obj = language.words.first { it.semanticsCore.word == "time" }.toNode()
+        val subjAdj = language.words.first { it.semanticsCore.hasMeaning("new") }.toNode()
+        val subj = language.words.first { it.semanticsCore.hasMeaning("mother") }.toNode(listOf(NumbersValue.Plural))
+        val verb = language.words.first { it.semanticsCore.hasMeaning("have") }.toNode()
+        val objAdj = language.words.first { it.semanticsCore.hasMeaning("new") }.toNode()
+        val obj = language.words.first { it.semanticsCore.hasMeaning("time") }.toNode()
 
         subjAdj.setRelation(SyntaxRelation.Subject, subj)
         subj.setRelation(SyntaxRelation.Verb, verb)
@@ -66,14 +66,14 @@ data class Visualizer(val language: Language) {
 
     fun printAdditionalLexisInfo() {
         val synonyms = language.words
-            .groupBy { it.semanticsCore.word }
+            .groupBy { it.semanticsCore.toString() }
             .map { it.value }
             .filter { it.size > 1 }
 
         print(
             """
         |Synonyms:
-        |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore.word}" }}
+        |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore}" }}
         |
         |Lexis size - ${language.words.size} words
         |
@@ -97,7 +97,7 @@ data class Visualizer(val language: Language) {
                 .joinToString("\n") { it + " ->${previous.derivation.dClass}-> " }
         }
         val (lanPrefix, commentPrefix) = prefix.lines()
-        val (lanPostfix, commentPostfix) = lineUp(word.toString(), word.semanticsCore.word)
+        val (lanPostfix, commentPostfix) = lineUp(word.toString(), word.semanticsCore.toString())
         return lanPrefix + lanPostfix + "\n" + commentPrefix + commentPostfix
     }
 

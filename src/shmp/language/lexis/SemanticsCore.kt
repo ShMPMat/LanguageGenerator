@@ -15,7 +15,13 @@ data class SemanticsCore(
     val staticCategories: Set<CategoryValue> = setOf(),
     val appliedDerivations: List<Derivation> = listOf(),
     val derivationHistory: DerivationHistory? = null
-)
+) {
+    val meanings = listOf(word)
+
+    fun hasMeaning(meaning: String) = word in meanings
+
+    override fun toString() = word
+}
 
 data class SemanticsTag(val name: String)
 

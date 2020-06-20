@@ -42,7 +42,7 @@ fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore)
 
 private fun getSemanticsCorePrinted(semanticsCore: SemanticsCore) =
     if (semanticsCore.speechPart in listOf(SpeechPart.Particle, SpeechPart.Article)) ""
-    else semanticsCore.word
+    else semanticsCore.toString()
 
 
 private fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {

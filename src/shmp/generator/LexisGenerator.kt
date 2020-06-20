@@ -55,7 +55,7 @@ class LexisGenerator(
             val newWords = mutableListOf(randomWord(core.toSemanticsCore(staticCategories, random)))
             derivationGenerator.makeDerivations(newWords)
             words.addAll(newWords)
-            usedMeanings.addAll(newWords.map { it.semanticsCore.word })
+            usedMeanings.addAll(newWords.flatMap { it.semanticsCore.meanings })
         }
 
         return words

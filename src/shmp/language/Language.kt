@@ -24,8 +24,8 @@ class Language(
          |Stress patern: $stressType
          |Numeral system base: $numeralSystemBase
          |words:
-         |${words.joinToString { it.toString() + " - " + it.semanticsCore.word }}
-         |${words.joinToString { "${sentenceChangeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore.word}" }}
+         |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
+         |${words.joinToString { "${sentenceChangeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
          |
          |
          |$sentenceChangeParadigm
@@ -34,7 +34,7 @@ class Language(
          |Change paradigms elaborated:
          |
          |Personal pronoun:
-         |${getParadigmPrinted(this, words.first { it.semanticsCore.word == "_personal_pronoun" })}
+         |${getParadigmPrinted(this, words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
          |
          |Noun:
          |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Noun })}
