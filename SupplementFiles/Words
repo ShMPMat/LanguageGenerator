@@ -107,6 +107,8 @@ factory            Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 workplace          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 workshop           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 speaker            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000

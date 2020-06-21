@@ -5,3 +5,5 @@
 (sun:1.0,moon:0.01)
 (workplace:1.0,workshop:0.1)
 (land:1.0,earth:0.1)
+(home:1.0,house:0.2)
+(language:1.0,tongue:0.6)
