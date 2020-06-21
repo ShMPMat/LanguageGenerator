@@ -32,11 +32,22 @@ class LexisGenerator(
 ) {
     internal val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
     private val wordBase = WordBase(supplementPath)
-    private val wordClusters = readWordClusters(supplementPath)
 
     init {
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
         wordBase.allWords.addAll(newWords)
+    }
+
+    private val wordClusters = readWordClusters(supplementPath)
+
+    init {
+        val allMeanings = wordBase.allWords.map { it.word }
+
+        val unknownMeaning = wordClusters.clusters
+            .flatMap { it.meanings }
+            .firstOrNull { it.meaning !in allMeanings }
+
+        if (unknownMeaning != null) throw GeneratorException("Unknown meaning in cluster - $unknownMeaning")
     }
 
     private val words = mutableListOf<Word>()

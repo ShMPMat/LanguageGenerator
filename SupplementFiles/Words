@@ -93,7 +93,8 @@ cemetery           Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 city               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 neighbourhood      Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 earth              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-sun                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+sun                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
+moon               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
 toilet             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 art_gallery        Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 museum             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -420,7 +421,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /decide
 /surface
 /deep
-/moon
 /island
 /foot
 /system
