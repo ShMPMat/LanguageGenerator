@@ -2,6 +2,7 @@ package shmp.language.lexis
 
 import shmp.containers.SemanticsCoreTemplate
 import shmp.language.CategoryValue
+import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationType
@@ -16,6 +17,11 @@ data class SemanticsCore(
     val appliedDerivations: List<Derivation> = listOf(),
     val derivationHistory: DerivationHistory? = null
 ) {
+    init {
+        if (speechPart == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
+            throw LanguageException("Verb $this doesn't have transitivity")
+    }
+
     val meanings = words
 
     fun hasMeaning(meaning: String) = meaning in meanings

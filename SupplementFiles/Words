@@ -1058,4 +1058,4 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /claim
 /continent
 
-return_home     Verb   0.1
+return_home     Verb   0.1       T|trans:1,intrans:100
