@@ -9,7 +9,7 @@ import shmp.language.derivation.DerivationType
 import shmp.random.SampleSpaceObject
 
 data class SemanticsCore(
-    val words: List<String>,
+    val words: List<Meaning>,
     val speechPart: SpeechPart,
     val tags: Set<SemanticsTag>,
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
@@ -36,5 +36,7 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
 data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double): SampleSpaceObject
 
 data class DerivationHistory(val derivation: Derivation, val parent: Word)
+
+typealias Meaning = String
 
 val noDerivationLink = listOf(DerivationLink(null, 0.0)) //TODO back to 1.0

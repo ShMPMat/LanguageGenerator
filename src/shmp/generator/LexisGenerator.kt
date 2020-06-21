@@ -51,7 +51,7 @@ class LexisGenerator(
     }
 
     private val words = mutableListOf<Word>()
-    val usedMeanings = mutableListOf<String>()
+    private val usedMeanings = mutableListOf<String>()
 
     private val SYLLABLE_TESTS = 10
 
@@ -80,9 +80,20 @@ class LexisGenerator(
         val applicableClusters = wordClusters.clusters.filter { it.main in core.words }
 
         for (cluster in applicableClusters) {
-            val resultMeanings = cluster.chooseMeanings(random)
+            val chosenCores = cluster.chooseMeanings(random)
                 .filter { it !in core.meanings }
-            resultCore = resultCore.copy(words = resultCore.meanings + resultMeanings)
+                .map { wordBase.allWords.first { w -> w.word == it } }
+
+//            for (core in chosenCores) {
+//                resultCore =
+//            }
+
+            resultCore = resultCore.copy(
+                words = resultCore.meanings + chosenCores.map { it.word }
+            )
+            if (chosenCores.isNotEmpty()) {
+                val k = 0
+            }
         }
 
         return resultCore

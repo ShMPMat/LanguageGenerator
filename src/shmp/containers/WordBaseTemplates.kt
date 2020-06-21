@@ -3,17 +3,14 @@ package shmp.containers
 import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 import shmp.language.derivation.DerivationType
-import shmp.language.lexis.DerivationCluster
-import shmp.language.lexis.DerivationLink
-import shmp.language.lexis.SemanticsCore
-import shmp.language.lexis.SemanticsTag
+import shmp.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
 
 data class SemanticsCoreTemplate(
-    val word: String,
+    val word: Meaning,
     val speechPart: SpeechPart,
     val tagClusters: Set<SemanticsTagCluster>,
     val derivationClusterTemplate: DerivationClusterTemplate,
