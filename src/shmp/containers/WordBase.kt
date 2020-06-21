@@ -1,6 +1,6 @@
 package shmp.containers
 
-import shmp.generator.GeneratorException
+import shmp.generator.DataConsistencyException
 import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
@@ -85,7 +85,7 @@ fun getType(string: String) = when (string) {
     "T" -> "transitivity"
     else -> if (string.length > 1)
         string
-    else throw GeneratorException("Unknown SemanticsTag type alias $string")
+    else throw DataConsistencyException("Unknown SemanticsTag type alias $string")
 }
 
 fun parseDerivationTemplates(string: String, wordsAndDataMap: WordsAndDataMap) = string

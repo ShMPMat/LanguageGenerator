@@ -22,7 +22,7 @@ data class SentenceNode(
 
     fun setRelation(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
         if (syntaxRelation == SyntaxRelation.Subject && word.semanticsCore.tags.any { it.name == "intrans" })
-            throw ChangeException("Cannot assign a direct subject to an intransitive verb $word") //TODO new exception
+            throw SyntaxException("Cannot assign a direct subject to an intransitive verb $word")
 
         _relation[syntaxRelation] = sentenceNode
     }

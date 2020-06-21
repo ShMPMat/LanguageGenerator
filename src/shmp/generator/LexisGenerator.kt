@@ -44,7 +44,7 @@ class LexisGenerator(
             .flatMap { it.meanings }
             .firstOrNull { it.meaning !in allMeanings }
 
-        if (unknownMeaning != null) throw GeneratorException("Unknown meaning in cluster - $unknownMeaning")
+        if (unknownMeaning != null) throw DataConsistencyException("Unknown meaning in cluster - $unknownMeaning")
     }
 
     private val words = mutableListOf<Word>()

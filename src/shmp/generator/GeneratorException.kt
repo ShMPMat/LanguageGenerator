@@ -1,5 +1,6 @@
 package shmp.generator
 
-class GeneratorException(message: String) : Exception(message) {
+open class GeneratorException(message: String) : Exception(message)
 
-}
+class DataConsistencyException(message: String) : GeneratorException(message)
+

@@ -31,7 +31,7 @@ class CategoryGenerator(
         return try {
             constructor(presentElements as List<E>, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
         } catch (e: Exception) {
-            throw GeneratorException("Wrong supplements with name ${supplements.javaClass.name}")
+            throw DataConsistencyException("Wrong supplements with name ${supplements.javaClass.name}")
         }
     }
 
@@ -40,7 +40,7 @@ class CategoryGenerator(
             .flatMap { supplements.speechPartProbabilities(it) }
             .map { it.probability }
             .max()
-            ?: throw GeneratorException("No SpeechPart exists")
+            ?: throw DataConsistencyException("No SpeechPart exists")
 
         return SpeechPart.values().flatMap { speechPart ->
             supplements.speechPartProbabilities(speechPart).mapNotNull {

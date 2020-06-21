@@ -10,7 +10,7 @@ data class WordClusterContainer(val clusters: List<WordCluster>)
 data class WordCluster(val meanings: List<WordClusterInstance>) {
     init {
         if (meanings.none { it.probability == 1.0 })
-            throw GeneratorException("No main word in the WordCluster $this")
+            throw DataConsistencyException("No main word in the WordCluster $this")
     }
 
     val main = meanings.first { it.probability == 1.0 }.meaning
