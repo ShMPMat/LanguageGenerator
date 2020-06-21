@@ -1,9 +1,6 @@
 package shmp.generator
 
-import shmp.containers.PhonemeContainer
-import shmp.containers.SemanticsCoreTemplate
-import shmp.containers.WordBase
-import shmp.containers.toSemanticsCore
+import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
 import shmp.language.category.Category
@@ -84,16 +81,8 @@ class LexisGenerator(
                 .filter { it !in core.meanings }
                 .map { wordBase.allWords.first { w -> w.word == it } }
 
-//            for (core in chosenCores) {
-//                resultCore =
-//            }
-
-            resultCore = resultCore.copy(
-                words = resultCore.meanings + chosenCores.map { it.word }
-            )
-            if (chosenCores.isNotEmpty()) {
-                val k = 0
-            }
+            for (c in chosenCores)
+                resultCore = c.merge(resultCore, random)
         }
 
         return resultCore
