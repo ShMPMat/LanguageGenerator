@@ -17,6 +17,8 @@ wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                
                                                                                           NNPerson@one_who_wants_smth:0.1
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05                                    NNPerson@aviator:0.1
+wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                                      NNPlace@sky:0.05,air:0.05                           NNPerson@aviator:0.1
 well               Adverb      0.99
 play               Verb        0.99   T|trans:100,intrans:1
 small              Adjective   1.0
@@ -385,7 +387,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /short
 /numeral
 /class
-/wind
 /question
 /happen
 /complete

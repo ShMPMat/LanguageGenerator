@@ -84,6 +84,12 @@ data class Visualizer(val language: Language) {
                 .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
+        |Collapsed meanings:
+        |${language.words
+                .filter { it.semanticsCore.meanings.size > 1 }
+                .joinToString("\n") { "$it - ${it.semanticsCore.meanings.joinToString()}" }
+            }
+        |
     """.trimMargin()
         )
     }

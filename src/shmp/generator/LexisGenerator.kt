@@ -32,6 +32,7 @@ class LexisGenerator(
 ) {
     internal val derivationGenerator = DerivationGenerator(restrictionsParadigm, random)
     private val wordBase = WordBase(supplementPath)
+    private val wordClusters = readWordClusters(supplementPath)
 
     init {
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
@@ -52,13 +53,28 @@ class LexisGenerator(
             if (!isWordNeeded(core))
                 continue
             val staticCategories = computeStaticCategories(core, categories)
-            val newWords = mutableListOf(randomWord(core.toSemanticsCore(staticCategories, random)))
+            val mainCore = core.toSemanticsCore(staticCategories, random)
+            val extendedCore = extendCore(mainCore)
+            val newWords = mutableListOf(randomWord(extendedCore))
             derivationGenerator.makeDerivations(newWords)
             words.addAll(newWords)
             usedMeanings.addAll(newWords.flatMap { it.semanticsCore.meanings })
         }
 
         return words
+    }
+
+    private fun extendCore(core: SemanticsCore): SemanticsCore {
+        var resultCore = core
+        val applicableClusters = wordClusters.clusters.filter { it.main in core.words }
+
+        for (cluster in applicableClusters) {
+            val resultMeanings = cluster.chooseMeanings(random)
+                .filter { it !in core.meanings }
+            resultCore = resultCore.copy(words = resultCore.meanings + resultMeanings)
+        }
+
+        return resultCore
     }
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
