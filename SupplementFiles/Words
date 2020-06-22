@@ -2,47 +2,26 @@
 /   Default no derivation probability - 1.0
 /
 _personal_pronoun  Pronoun     1.0
-be                 Verb        1.0    T|trans:1,intrans:0
-one                Numeral     1.0
-have               Verb        1.0    T|trans:1,intrans:0
-hot                Adjective   1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
-do                 Verb        1.0    T|trans:1,intrans:0
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
-say                Verb        1.0    T|trans:100,intrans:1
-want               Verb        1.0    T|trans:100,intrans:1
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05                                    NNPerson@aviator:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05,air:0.05                           NNPerson@aviator:0.1
-well               Adverb      0.99
-play               Verb        0.99   T|trans:100,intrans:1
-small              Adjective   1.0
 end                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
-end                Verb        1.0    T|trans:100,intrans:1
-put                Verb        1.0    T|trans:100,intrans:1
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
-read               Verb        1.0    T|trans:100,intrans:1
 hand               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:20
                                                                                           NNPerson@helper:0.1,friend:0.025
 port               Noun        0.8
                                                                                           NNPerson@sailor:0.1
-large              Adjective   1.0
-spell              Verb        0.9    T|trans:100,intrans:1
-add                Verb        0.9    T|trans:100,intrans:1
 land               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
-land               Verb        0.8    T|trans:100,intrans:1
-high               Adjective   1.0
-follow             Verb        0.99   T|trans:100,intrans:1
-ask                Verb        1.0    T|trans:100,intrans:1
-change             Verb        1.0    T|trans:100,intrans:1
 change             Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                                                                           NNPerson@changer:0.2
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -50,41 +29,63 @@ light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
 need               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@toilet:0.01                                 NNPerson@poor_person:0.1,one_in_need:0.1
-need               Verb        1.0    T|trans:100,intrans:1
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
 picture            Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
-picture            Verb        0.9    T|trans:100,intrans:1
 animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
                                       NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
 point              Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-point              Verb        0.9    T|trans:100,intrans:1
 mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000               A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
-near               Adjective   1.0
-build              Verb        1.0    T|trans:100,intrans:1
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
-new                Adjective   1.0
-work               Verb        1.0    T|trans:100,intrans:1
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@factory:0.1,workplace:0.1,workshop:0.1      NNPerson@worker:0.3
 part               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@valley:0.025
-part               Verb        0.9    T|trans:100,intrans:1
-take               Verb        1.0    T|trans:100,intrans:1
 place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@local_person:0.3
+scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      NNPlace@theater:0.2      NNPerson@actor:0.3
+be                 Verb        1.0    T|trans:1,intrans:0
+have               Verb        1.0    T|trans:1,intrans:0
+do                 Verb        1.0    T|trans:1,intrans:0
+say                Verb        1.0    T|trans:100,intrans:1
+want               Verb        1.0    T|trans:100,intrans:1
+play               Verb        0.99   T|trans:100,intrans:1
+end                Verb        1.0    T|trans:100,intrans:1
+put                Verb        1.0    T|trans:100,intrans:1
+read               Verb        1.0    T|trans:100,intrans:1
+spell              Verb        0.9    T|trans:100,intrans:1
+add                Verb        0.9    T|trans:100,intrans:1
+land_on_earth      Verb        0.8    T|trans:100,intrans:1
+follow             Verb        0.99   T|trans:100,intrans:1
+ask                Verb        1.0    T|trans:100,intrans:1
+change             Verb        1.0    T|trans:100,intrans:1
+need               Verb        1.0    T|trans:100,intrans:1
+picture            Verb        0.9    T|trans:100,intrans:1
+point              Verb        0.9    T|trans:100,intrans:1
+build              Verb        1.0    T|trans:100,intrans:1
+work               Verb        1.0    T|trans:100,intrans:1
+part               Verb        0.9    T|trans:100,intrans:1
+take               Verb        1.0    T|trans:100,intrans:1
 live               Verb        1.0    T|trans:100,intrans:1
-
+return_home     Verb   0.1       T|trans:1,intrans:100
+hot                Adjective   1.0
+small              Adjective   1.0
+large              Adjective   1.0
+high               Adjective   1.0
+near               Adjective   1.0
+new                Adjective   1.0
+well               Adverb      0.99
+one                Numeral     1.0
 
 cat                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 dog                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
-scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -109,6 +110,7 @@ workshop           Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 speaker            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -127,6 +129,8 @@ traveller          Noun        0.5    G|Person:1000,Female:1000,Common:5000     
 adventurer         Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 worker             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 local_person       Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+actor              Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+countryman         Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 
 person_who_finishes_smt       Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_does_smth_temporary   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
@@ -1057,5 +1061,3 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /anger
 /claim
 /continent
-
-return_home     Verb   0.1       T|trans:1,intrans:100

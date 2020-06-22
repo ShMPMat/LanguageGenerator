@@ -50,6 +50,8 @@ class WordBase(private val supplementPath: String) {
 
         baseWords.addAll(wordsAndDataMap.values.map { it.first }.sortedBy { it.word })
         allWords.addAll(baseWords)
+
+
     }
 
     private fun readLines(): List<String> {
