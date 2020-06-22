@@ -47,9 +47,11 @@ job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                
 part               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@valley:0.025
 place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                                                                          NNPerson@local_person:0.3
+                                                                                         NNPerson@local_person:0.3
 scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@theater:0.2      NNPerson@actor:0.3
+book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      NNPlace@library:0.5                                 NNPerson@writer:0.3
 be                 Verb        1.0    T|trans:1,intrans:0
 have               Verb        1.0    T|trans:1,intrans:0
 do                 Verb        1.0    T|trans:1,intrans:0
@@ -73,7 +75,7 @@ work               Verb        1.0    T|trans:100,intrans:1
 part               Verb        0.9    T|trans:100,intrans:1
 take               Verb        1.0    T|trans:100,intrans:1
 live               Verb        1.0    T|trans:100,intrans:1
-return_home     Verb   0.1       T|trans:1,intrans:100
+return_home        Verb        0.1    T|trans:1,intrans:100
 hot                Adjective   1.0
 small              Adjective   1.0
 large              Adjective   1.0
@@ -86,7 +88,6 @@ one                Numeral     1.0
 cat                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 dog                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
-book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sky                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -111,6 +112,17 @@ valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+
+water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+stone              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+fire               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+ashes              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+smoke              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+dust               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+salt               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+sand               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 speaker            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
