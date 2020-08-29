@@ -12,15 +12,15 @@ enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: Spe
     Person(listOf(Box(NNPerson, 1.0)), SpeechPart.Noun, SpeechPart.Noun),
 }
 
-enum class DerivationType {
-    Smallness,
-    Young,
+enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart) {
+    Smallness(SpeechPart.Noun, SpeechPart.Noun),
+    Young(SpeechPart.Noun, SpeechPart.Noun),
 
-    Big,
-    Old,
+    Big(SpeechPart.Noun, SpeechPart.Noun),
+    Old(SpeechPart.Noun, SpeechPart.Noun),
 
-    NNPlace,
-    NNPerson
+    NNPlace(SpeechPart.Noun, SpeechPart.Noun),
+    NNPerson(SpeechPart.Noun, SpeechPart.Noun)
 }
 
 data class Box(val type: DerivationType?, override val probability: Double): SampleSpaceObject

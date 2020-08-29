@@ -1,12 +1,14 @@
 package shmp.language.lexis
 
 import shmp.containers.SemanticsCoreTemplate
+import shmp.generator.GeneratorException
 import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationType
 import shmp.random.SampleSpaceObject
+
 
 data class SemanticsCore(
     val words: List<Meaning>,
@@ -20,6 +22,12 @@ data class SemanticsCore(
     init {
         if (speechPart == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
             throw LanguageException("Verb $this doesn't have transitivity")
+
+        derivationCluster.typeToCore.keys
+            .firstOrNull { it.fromSpeechPart != speechPart }
+            ?.let {
+                throw LanguageException("$speechPart has a derivation for ${it.fromSpeechPart}")
+            }
     }
 
     val meanings = words
@@ -31,9 +39,21 @@ data class SemanticsCore(
 
 data class SemanticsTag(val name: String)
 
-data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>)
+data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>) {
+    init {
+        for ((type, lst) in typeToCore) {
+            val existingTemplates = lst.mapNotNull { it.template }
 
-data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double): SampleSpaceObject
+            existingTemplates.firstOrNull() { it.speechPart != type.toSpeechPart }?.let {
+                throw GeneratorException(
+                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart}"
+                )
+            }
+        }
+    }
+}
+
+data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double) : SampleSpaceObject
 
 data class DerivationHistory(val derivation: Derivation, val parent: Word)
 
