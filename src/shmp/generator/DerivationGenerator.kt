@@ -20,6 +20,7 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.random.randomSublist
 import kotlin.random.Random
 
+
 class DerivationGenerator(
     private val restrictionsParadigm: RestrictionsParadigm,
     private val random: Random,

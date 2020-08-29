@@ -7,6 +7,7 @@ import shmp.language.morphem.Affix
 import shmp.random.randomElement
 import kotlin.random.Random
 
+
 class Derivation(private val affix: Affix, val dClass: DerivationClass) {
     fun derive(word: Word, random: Random): Word? {
 

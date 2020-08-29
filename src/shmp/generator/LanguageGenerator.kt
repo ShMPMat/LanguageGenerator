@@ -4,6 +4,7 @@ import shmp.containers.PhonemeBase
 import shmp.containers.PhonemeImmutableContainer
 import shmp.language.*
 import shmp.language.SpeechPart.*
+import shmp.language.category.CategoryPool
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.SyllableValenceTemplate
@@ -62,7 +63,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     fun generateLanguage(wordAmount: Int): Language {
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
         val categoriesWithMappers = categoryGenerator.randomCategories()
-        val categories = categoriesWithMappers.map { it.first }
+        val categories = CategoryPool(categoriesWithMappers.map { it.first })
         val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
         val derivationParadigm = lexisGenerator.derivationGenerator.generateDerivationParadigm(changeGenerator)
         val words = lexisGenerator.generateWords(wordAmount, categories)

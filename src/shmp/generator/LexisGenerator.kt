@@ -4,6 +4,7 @@ import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
 import shmp.language.category.Category
+import shmp.language.category.CategoryPool
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
 import shmp.language.phonology.RestrictionsParadigm
@@ -54,13 +55,13 @@ class LexisGenerator(
 
     internal fun generateWords(
         wordAmount: Int,
-        categories: List<Category>
+        categoryPool: CategoryPool
     ): List<Word> {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         for (core in cores) {
             if (!isWordNeeded(core))
                 continue
-            val staticCategories = computeStaticCategories(core, categories)
+            val staticCategories = computeStaticCategories(core, categoryPool)
             val mainCore = core.toSemanticsCore(staticCategories, random)
             val extendedCore = extendCore(mainCore)
             val newWords = mutableListOf(randomWord(extendedCore))
@@ -95,26 +96,28 @@ class LexisGenerator(
 
     private fun computeStaticCategories(
         core: SemanticsCoreTemplate,
-        categories: List<Category>
+        categoryPool: CategoryPool
     ): Set<CategoryValue> {
-        val staticCategories = mutableSetOf<CategoryValue>()
-        val neededCategories = categories
-            .filter { it.actualValues.isNotEmpty() && core.speechPart in it.staticSpeechParts }
+        val resultCategories = mutableSetOf<CategoryValue>()
 
-        for (category in neededCategories) {
-            val value = core.tagClusters.firstOrNull { it.type == category.outType }?.semanticsTags
+        for (category in categoryPool.getStaticFor(core.speechPart)) {
+            val values = core.tagClusters
+                .firstOrNull { it.type == category.outType }
+                ?.semanticsTags
                 ?.map { n -> CValueBox(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
                 ?.filter { category.actualValues.contains(it.categoryValue) }
                 ?.toMutableList()
                 ?: mutableListOf()
+
             category.actualValues.forEach { v ->
-                if (value.none { it.categoryValue == v }) {
-                    value.add(CValueBox(v, 10.0))
+                if (values.none { it.categoryValue == v }) {
+                    values.add(CValueBox(v, 10.0))
                 }
             }
-            staticCategories.add(randomElement(value, random).categoryValue)
+
+            resultCategories.add(randomElement(values, random).categoryValue)
         }
-        return staticCategories
+        return resultCategories
     }
 
     internal fun randomWord(core: SemanticsCore): Word {

@@ -7,6 +7,7 @@ import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
+
 interface Category {
     val actualValues: List<CategoryValue>
     val allPossibleValues: Set<CategoryValue>
