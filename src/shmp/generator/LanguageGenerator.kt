@@ -19,8 +19,10 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
 
+
 class LanguageGenerator(val supplementPath: String, seed: Long) {
     private val random = Random(seed)
+
     private val phonemeBase = PhonemeBase(supplementPath)
     private val vowelAmount = randomElement(VowelQualityAmount.values(), random).amount
     private val consonantAmount = random.nextInt(6, 16)
@@ -58,7 +60,8 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         lexisGenerator,
         changeGenerator,
         restrictionsParadigm,
-        random)
+        random
+    )
 
     fun generateLanguage(wordAmount: Int): Language {
         val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
@@ -94,10 +97,13 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         val allFinals = syllableGenerator.template.finalPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .toSet()
+
         for (speechPart in values()) {
-            val actualAvgWordLength = if (speechPart in listOf(Article, Particle, Pronoun))
-                2
-            else generalAvgWordLength
+            val actualAvgWordLength =
+                if (speechPart in listOf(Article, Particle, Pronoun))
+                    2
+                else generalAvgWordLength
+
             map[speechPart] = PhoneticRestrictions(actualAvgWordLength, allInitial, allNucleus, allFinals)
         }
 
@@ -114,6 +120,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
                 while (i < template.length) {
                     var char = template[i]
                     var probability = 1.0
+
                     if (char == '(') {
                         if (template[i + 2] != ')')
                             throw ParseException("Wrong syntax for syllable templates: no ) found", i + 2)
@@ -122,6 +129,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
                         i += 3
                     } else
                         i++
+
                     valencies.add(
                         ValencyPlace(
                             char.toPhonemeType(),
@@ -141,5 +149,3 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         )
     }
 }
-
-

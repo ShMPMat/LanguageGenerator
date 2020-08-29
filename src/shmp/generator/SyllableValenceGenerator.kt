@@ -9,6 +9,7 @@ import shmp.random.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
 
+
 class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private val ADD_TESTS = 10
 
@@ -116,5 +117,4 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
             return false
         return true
     }
-
 }
