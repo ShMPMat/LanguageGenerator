@@ -1,7 +1,6 @@
 package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
-import shmp.language.derivation.DerivationType.Passing
 import shmp.language.lexis.*
 import shmp.language.morphem.Affix
 import shmp.random.randomElement
@@ -19,8 +18,7 @@ class Derivation(private val affix: Affix, val dClass: DerivationClass, private 
             return null
 
         val chosenType = randomElement(applicableTypes + noType, random).type
-        if (chosenType == Passing)
-            return null
+            ?: return null
 
         val chosenSemantics = randomElement(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,

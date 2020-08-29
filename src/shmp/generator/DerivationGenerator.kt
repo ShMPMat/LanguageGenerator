@@ -49,20 +49,20 @@ class DerivationGenerator(
                         Prefix(
                             changeGenerator.generateChanges(
                                 Position.Beginning,
-                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.speechPart)
+                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.toSpeechPart)
                             )
                         )
                     } else {
                         Suffix(
                             changeGenerator.generateChanges(
                                 Position.End,
-                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.speechPart)
+                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.toSpeechPart)
                             )
                         )
                     }
 
                     val possibleCategoryMakers = listOf(ConstantCategoryMaker(
-                        categoryPool.getStaticFor(derivationClass.speechPart)
+                        categoryPool.getStaticFor(derivationClass.toSpeechPart)
                             .map { randomElement(it.actualValues, random) }
                             .toSet()
                     ))//TODO add passing possibility
