@@ -6,10 +6,8 @@ import shmp.containers.SemanticsTagCluster
 import shmp.containers.SemanticsTagTemplate
 import shmp.language.SpeechPart
 import shmp.language.SpeechPart.*
-import shmp.language.derivation.Derivation
-import shmp.language.derivation.DerivationClass
-import shmp.language.derivation.DerivationParadigm
-import shmp.language.derivation.DerivationType
+import shmp.language.category.CategoryPool
+import shmp.language.derivation.*
 import shmp.language.derivation.DerivationType.*
 import shmp.language.lexis.DerivationLink
 import shmp.language.lexis.Word
@@ -17,6 +15,7 @@ import shmp.language.morphem.Prefix
 import shmp.language.morphem.Suffix
 import shmp.language.morphem.change.Position
 import shmp.language.phonology.RestrictionsParadigm
+import shmp.random.randomElement
 import shmp.random.randomSublist
 import kotlin.random.Random
 
@@ -39,26 +38,40 @@ class DerivationGenerator(
         return newWords + injectDerivationOptions(newWords)
     }
 
-    internal fun generateDerivationParadigm(changeGenerator: ChangeGenerator): DerivationParadigm {
+    internal fun generateDerivationParadigm(
+        changeGenerator: ChangeGenerator,
+        categoryPool: CategoryPool
+    ): DerivationParadigm {
         val derivations =
             randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size + 1)
-                .map {
+                .map { derivationClass ->
                     val affix = if (random.nextBoolean()) {
                         Prefix(
                             changeGenerator.generateChanges(
                                 Position.Beginning,
-                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
+                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.speechPart)
                             )
                         )
                     } else {
                         Suffix(
                             changeGenerator.generateChanges(
                                 Position.End,
-                                restrictionsParadigm.restrictionsMapper.getValue(it.speechPart)
+                                restrictionsParadigm.restrictionsMapper.getValue(derivationClass.speechPart)
                             )
                         )
                     }
-                    Derivation(affix, it)
+
+                    val possibleCategoryMakers = listOf(ConstantCategoryMaker(
+                        categoryPool.getStaticFor(derivationClass.speechPart)
+                            .map { randomElement(it.actualValues, random) }
+                            .toSet()
+                    ))//TODO add passing possibility
+
+                    Derivation(
+                        affix,
+                        derivationClass,
+                        randomElement(possibleCategoryMakers, random)
+                    )
                 }
         derivationParadigm = DerivationParadigm(derivations)
         return derivationParadigm
@@ -125,7 +138,7 @@ val defaultInjectors = listOf(
         prohibitedTags = listOf(Big, Old).map { it.toString() },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
     ),
-    DerivationInjector(Big, Noun, { "big_$it" },  prohibitedTags = listOf(Smallness, Young).map { it.toString() }),
+    DerivationInjector(Big, Noun, { "big_$it" }, prohibitedTags = listOf(Smallness, Young).map { it.toString() }),
     DerivationInjector(
         Old,
         Noun,
