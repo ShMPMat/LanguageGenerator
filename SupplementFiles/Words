@@ -52,30 +52,50 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       NNPlace@theater:0.2      NNPerson@actor:0.3
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
+
 be                 Verb        1.0    T|trans:1,intrans:0
+                                      VNPlace@existence:0.7
 have               Verb        1.0    T|trans:1,intrans:0
+                                      VNPlace@warehouse:0.3
 do                 Verb        1.0    T|trans:1,intrans:0
+                                      VNPlace@workplace:0.3
 say                Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@forum_(place):0.3
 want               Verb        1.0    T|trans:100,intrans:1
 play               Verb        0.99   T|trans:100,intrans:1
+                                      VNPlace@playground:0.2
 end                Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@end_(place):0.5,dead_end:0.2
 put                Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@warehouse:0.1
 read               Verb        1.0    T|trans:100,intrans:1
-spell              Verb        0.9    T|trans:100,intrans:1
+                                      VNPlace@library:0.4
 add                Verb        0.9    T|trans:100,intrans:1
+                                      VNPlace@shop:0.1,market:0.1
 land_on_earth      Verb        0.8    T|trans:100,intrans:1
+                                      VNPlace@landing:0.05
 follow             Verb        0.99   T|trans:100,intrans:1
 ask                Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@forum_(place):0.05
 change             Verb        1.0    T|trans:100,intrans:1
 need               Verb        1.0    T|trans:100,intrans:1
 picture            Verb        0.9    T|trans:100,intrans:1
+                                      VNPlace@beautiful_place:0.05
 point              Verb        0.9    T|trans:100,intrans:1
+                                      VNPlace@destination:0.4
 build              Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@building:0.6
 work               Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@workplace:0.6
 part               Verb        0.9    T|trans:100,intrans:1
+                                      VNPlace@canyon:0.6
 take               Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@shop:0.1,market:0.1
 live               Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@home:0.4,building:0.2
 return_home        Verb        0.1    T|trans:1,intrans:100
+                                      VNPlace@home:0.01
+
 hot                Adjective   1.0
 small              Adjective   1.0
 large              Adjective   1.0
@@ -113,6 +133,19 @@ language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+existence          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+warehouse          Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+forum_(place)      Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+end_(place)        Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+dead_end           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+playground         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+shop               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+market             Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+beautiful_place    Noun        0.01   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+building           Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+destination        Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+landing            Noun        0.02   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
 ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -124,6 +157,8 @@ dust               Noun        1.0    G|Plant:0,Fruit:0,Person:0                
 salt               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sand               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
+being              Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:100
+person             Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 speaker            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 aviator            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -153,6 +188,7 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /set                Verb               T|trans:1,intrans:0                                              set what?
 /spell              Noun               G|Plant:1,Fruit:0,Person:1             A|Inanimate:100               spell what?
 /three              Numeral                                                                             make adequate numerals ok ga?
+//spell              Verb        0.9    T|trans:100,intrans:1
 
 /other
 /some
@@ -562,7 +598,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /slow
 /center
 /love
-/person
 /money
 /serve
 /appear
@@ -950,7 +985,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /slave
 /duck
 /instant
-/market
 /degree
 /populate
 /chick
@@ -1053,7 +1087,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /level
 /chance
 /gather
-/shop
 /stretch
 /throw
 /shine
