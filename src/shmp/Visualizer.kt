@@ -96,14 +96,15 @@ data class Visualizer(val language: Language) {
 
     private fun printDerivationStory(word: Word): String {
         val previous = word.semanticsCore.derivationHistory
-        val prefix = if (previous == null) "\n"
-        else {
-            printDerivationStory(previous.parent)
-                .lines()
-                .joinToString("\n") { it + " ->${previous.derivation.dClass}-> " }
-        }
+        val prefix =
+            if (previous != null) {
+                printDerivationStory(previous.parent)
+                    .lines()
+                    .joinToString("\n") { it + " ->${previous.derivation.dClass}-> " }
+            } else "\n"
         val (lanPrefix, commentPrefix) = prefix.lines()
         val (lanPostfix, commentPostfix) = lineUp(word.toString(), word.semanticsCore.toString())
+
         return lanPrefix + lanPostfix + "\n" + commentPrefix + commentPostfix
     }
 
@@ -115,7 +116,7 @@ data class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 203)
+    val generator = LanguageGenerator("SupplementFiles", 204)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

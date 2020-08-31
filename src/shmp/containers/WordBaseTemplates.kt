@@ -69,6 +69,7 @@ fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>
 
 data class DerivationClusterTemplate(
     val typeToCore: MutableMap<DerivationType, List<DerivationLink>> = mutableMapOf(),
+    val possibleCompositions: MutableList<CompositionLink> = mutableListOf(),
     val appliedDerivations: Set<DerivationType> = setOf()
 )
 

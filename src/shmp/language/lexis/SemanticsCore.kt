@@ -44,7 +44,7 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
         for ((type, lst) in typeToCore) {
             val existingTemplates = lst.mapNotNull { it.template }
 
-            existingTemplates.firstOrNull() { it.speechPart != type.toSpeechPart }?.let {
+            existingTemplates.firstOrNull { it.speechPart != type.toSpeechPart }?.let {
                 throw GeneratorException(
                     "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart}"
                 )
@@ -55,8 +55,15 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
 
 data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double) : SampleSpaceObject
 
+val noDerivationLink = listOf(DerivationLink(null, 1.0))
+
+data class CompositionLink(
+    val templates: List<SemanticsCoreTemplate>?,
+    override val probability: Double
+) : SampleSpaceObject
+
+val noCompositionLink = listOf(CompositionLink(null, 0.0)) //TODO back to 1.0
+
 data class DerivationHistory(val derivation: Derivation, val parent: Word)
 
 typealias Meaning = String
-
-val noDerivationLink = listOf(DerivationLink(null, 0.0)) //TODO back to 1.0

@@ -9,11 +9,12 @@ import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
 
+
 class ChangeGenerator(
-    private val lexisGenerator: LexisGenerator,
+    val lexisGenerator: LexisGenerator,
     private val random: Random
 ) {
-    val GENERATION_ATTEMPTS = 10
+    private val generationAttempts = 10
 
     internal fun generateChanges(
         position: Position,
@@ -87,7 +88,7 @@ class ChangeGenerator(
         restrictions: PhoneticRestrictions,
         borderPhoneme: Phoneme
     ): WordChange? {
-        for (i in 1..GENERATION_ATTEMPTS) {
+        for (i in 1..generationAttempts) {
             val newChange =
                 generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
             val newBorderPhoneme = when (wordChange.position) {
@@ -159,6 +160,7 @@ class ChangeGenerator(
     ).phonemeSequence.phonemes
         .map { PhonemePositionSubstitution(it) }
 }
+
 
 enum class AffixTypes(override val probability: Double) : SampleSpaceObject {
     UniversalAffix(100.0),

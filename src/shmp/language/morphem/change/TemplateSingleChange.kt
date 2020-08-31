@@ -5,6 +5,7 @@ import shmp.language.lexis.Word
 import shmp.language.phonology.Phoneme
 import shmp.language.phonology.PhonemeSequence
 
+
 class TemplateSingleChange(
     override val position: Position,
     val phonemeMatchers: List<PositionMatcher>,

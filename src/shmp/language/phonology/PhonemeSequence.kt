@@ -12,4 +12,6 @@ data class PhonemeSequence(val phonemes: List<Phoneme>) {
     fun last(): Phoneme = phonemes.last()
 
     fun getTypeRepresentation(): String = phonemes.joinToString("") { it.type.char.toString() }
+
+    override fun toString() = phonemes.joinToString("")
 }

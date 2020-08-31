@@ -7,7 +7,7 @@ import shmp.random.randomElement
 import kotlin.random.Random
 
 
-class Derivation(private val affix: Affix, val dClass: DerivationClass, private val categoriesMaker: CategoryMaker) {
+class Derivation(private val affix: Affix, val dClass: DerivationClass, private val categoriesChanger: CategoryChanger) {
     fun derive(word: Word, random: Random): Word? {
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
@@ -30,7 +30,7 @@ class Derivation(private val affix: Affix, val dClass: DerivationClass, private 
         val derivedWord = affix.change(word)
         val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(dClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
-        val newStaticCategories = categoriesMaker.getNewStaticCategories(word.semanticsCore)
+        val newStaticCategories = categoriesChanger.getNewStaticCategories(listOf(word.semanticsCore))
         val newCore = chosenSemantics.template.toSemanticsCore(newStaticCategories, random)
             .copy(
                 tags = newTags,
@@ -63,5 +63,5 @@ class Derivation(private val affix: Affix, val dClass: DerivationClass, private 
         return result
     }
 
-    override fun toString() = "Class - $dClass; $affix; $categoriesMaker"
+    override fun toString() = "Class - $dClass; $affix; $categoriesChanger"
 }

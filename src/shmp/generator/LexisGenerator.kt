@@ -3,7 +3,6 @@ package shmp.generator
 import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
-import shmp.language.category.Category
 import shmp.language.category.CategoryPool
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
@@ -22,7 +21,7 @@ import kotlin.random.Random
 class LexisGenerator(
     supplementPath: String,
     val syllableGenerator: SyllableValenceGenerator,
-    private val restrictionsParadigm: RestrictionsParadigm,
+    val restrictionsParadigm: RestrictionsParadigm,
     val phonemeContainer: PhonemeContainer,
     private val stressType: StressType,
     private val random: Random,
@@ -51,7 +50,7 @@ class LexisGenerator(
     private val words = mutableListOf<Word>()
     private val usedMeanings = mutableListOf<String>()
 
-    private val SYLLABLE_TESTS = 10
+    private val syllableTests = 10
 
     internal fun generateWords(
         wordAmount: Int,
@@ -127,7 +126,7 @@ class LexisGenerator(
 
         fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
             var syllable = Syllable(listOf())
-            for (i in 1..SYLLABLE_TESTS) {
+            for (i in 1..syllableTests) {
                 syllable = syllableGenerator.generateSyllable(
                     SyllableRestrictions(
                         phonemeContainer,
