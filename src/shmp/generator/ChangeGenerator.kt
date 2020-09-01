@@ -24,11 +24,7 @@ class ChangeGenerator(
             Position.Beginning -> false
             Position.End -> true
         }
-        val rawSubstitutions = when (
-            randomElement(
-                AffixTypes.values(),
-                random
-            )) {
+        val rawSubstitutions = when (randomElement(AffixTypes.values(), random)) {
             AffixTypes.UniversalAffix -> {
                 val templates = listOf(
                     TemplateSingleChange(

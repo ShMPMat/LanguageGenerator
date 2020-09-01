@@ -5,6 +5,7 @@ import shmp.language.CategoryValue
 import shmp.language.SpeechPart
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
+import shmp.random.UnwrappableSSO
 import kotlin.random.Random
 
 
@@ -25,7 +26,10 @@ interface CategoryRandomSupplements {
     fun randomStaticSpeechParts(random: Random): Set<SpeechPart> = emptySet()
 }
 
-data class RealizationBox(val realization: CategoryRealization?, override val probability: Double) : SampleSpaceObject {
+data class RealizationBox(
+    val realization: CategoryRealization?,
+    override val probability: Double
+) : UnwrappableSSO<CategoryRealization?>(realization) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

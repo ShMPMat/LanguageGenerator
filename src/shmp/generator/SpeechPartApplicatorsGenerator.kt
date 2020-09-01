@@ -13,6 +13,7 @@ import shmp.language.morphem.change.Position
 import shmp.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
+import shmp.random.randomUnwrappedElement
 import shmp.random.testProbability
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -78,9 +79,11 @@ class SpeechPartApplicatorsGenerator(
         speechPart: SpeechPart
     ): CategoryRealization {
         val variants = supplements
-            .map { it.specialRealization(value.categoryValues.map { it.categoryValue }, speechPart) }
+            .map { s -> s.specialRealization(value.categoryValues.map { it.categoryValue }, speechPart) }
         val finalVariants = uniteMutualProbabilities(variants) { this.copy(probability = it) }
-        return randomElement(finalVariants, random).realization ?: categoryRealization
+
+        return randomUnwrappedElement(finalVariants, random)
+            ?: categoryRealization
     }
 
     private fun splitCategoriesOnClusters(
@@ -90,6 +93,7 @@ class SpeechPartApplicatorsGenerator(
         val clusters = ArrayList<ExponenceTemlate>()
         var l = 0
         val data = mutableListOf<List<RealizationMapper>>()
+
         while (l < shuffledCategories.size) {
             val r = randomElement(l + 1..shuffledCategories.size, { 1.0 / it }, random)
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
@@ -109,6 +113,7 @@ class SpeechPartApplicatorsGenerator(
             ))
             l = r
         }
+
         return clusters
     }
 
@@ -233,6 +238,7 @@ fun <E : SampleSpaceObject> uniteMutualProbabilities(
 ): List<E> {
     var previousVariants = objectLists.first().toMutableSet()
     var newVariants = mutableSetOf<E>()
+
     for (variantList in objectLists.drop(1)) {
         for (variant in variantList) {
             val same = previousVariants.firstOrNull { it == variant }
@@ -244,5 +250,6 @@ fun <E : SampleSpaceObject> uniteMutualProbabilities(
         previousVariants = newVariants
         newVariants = mutableSetOf()
     }
+
     return previousVariants.toList()
 }

@@ -10,10 +10,7 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
 import shmp.language.phonology.prosody.generateStress
-import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import shmp.random.randomSublist
-import shmp.random.testProbability
+import shmp.random.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.random.Random
@@ -103,18 +100,19 @@ class LexisGenerator(
             val values = core.tagClusters
                 .firstOrNull { it.type == category.outType }
                 ?.semanticsTags
-                ?.map { n -> CValueBox(category.allPossibleValues.first { it.toString() == n.name }, n.probability) }
-                ?.filter { category.actualValues.contains(it.categoryValue) }
+                ?.map { n ->
+                    category.allPossibleValues.first { it.toString() == n.name }.toSampleSpaceObject(n.probability)
+                }
+                ?.filter { category.actualValues.contains(it.value) }
                 ?.toMutableList()
                 ?: mutableListOf()
 
             category.actualValues.forEach { v ->
-                if (values.none { it.categoryValue == v }) {
-                    values.add(CValueBox(v, 10.0))
-                }
+                if (values.none { it.value == v })
+                    values.add(v.toSampleSpaceObject(10.0))
             }
 
-            resultCategories.add(randomElement(values, random).categoryValue)
+            resultCategories.add(randomUnwrappedElement(values, random))
         }
         return resultCategories
     }
@@ -169,5 +167,3 @@ class LexisGenerator(
                 && (leftBorder.type != PhonemeType.Vowel || rightBorder.type != PhonemeType.Vowel)
     }
 }
-
-private data class CValueBox(val categoryValue: CategoryValue, override val probability: Double) : SampleSpaceObject

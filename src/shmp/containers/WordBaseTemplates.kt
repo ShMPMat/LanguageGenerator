@@ -6,7 +6,9 @@ import shmp.language.SpeechPart
 import shmp.language.derivation.DerivationType
 import shmp.language.lexis.*
 import shmp.random.SampleSpaceObject
+import shmp.random.UnwrappableSSO
 import shmp.random.randomElement
+import shmp.random.randomUnwrappedElement
 import kotlin.random.Random
 
 
@@ -25,10 +27,10 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
         .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
         .map {
             SemanticsTag(
-                randomElement(
+                randomUnwrappedElement(
                     it.semanticsTags,
                     random
-                ).name
+                )
             )
         }
         .toSet(),
@@ -39,6 +41,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
     if (this.speechPart != core.speechPart)
         throw GeneratorException("Core merge error: $core and ${this.word} has different speech parts")
+
     return SemanticsCore(
         core.words + listOf(this.word),
         core.speechPart,
@@ -46,10 +49,10 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
             .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
             .map {
                 SemanticsTag(
-                    randomElement(
+                    randomUnwrappedElement(
                         it.semanticsTags,
                         random
-                    ).name
+                    )
                 )
             }
             .toSet() + core.tags,
@@ -75,4 +78,4 @@ data class DerivationClusterTemplate(
 
 data class SemanticsTagCluster(val semanticsTags: List<SemanticsTagTemplate>, val type: String)
 
-data class SemanticsTagTemplate(val name: String, override val probability: Double): SampleSpaceObject
+data class SemanticsTagTemplate(val name: String, override val probability: Double): UnwrappableSSO<String>(name)

@@ -81,8 +81,10 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
     ).possibilities
 }
 
-enum class NumbersPresence(override val probability: Double, val possibilities: List<NumbersValue>) :
-    SampleSpaceObject {
+enum class NumbersPresence(
+    override val probability: Double,
+    val possibilities: List<NumbersValue>
+) : SampleSpaceObject {
     None(100.0, listOf()),
     Plural(180.0, listOf(Singular, NumbersValue.Plural)),
     Dual(20.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Plural))

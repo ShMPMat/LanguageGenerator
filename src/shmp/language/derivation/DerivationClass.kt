@@ -1,9 +1,10 @@
 package shmp.language.derivation
 
 import shmp.language.SpeechPart
-import shmp.language.SpeechPart.*
+import shmp.language.SpeechPart.Noun
+import shmp.language.SpeechPart.Verb
 import shmp.language.derivation.DerivationType.*
-import shmp.random.SampleSpaceObject
+import shmp.random.UnwrappableSSO
 
 
 enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart) {
@@ -30,6 +31,6 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
 //    VNPerson(Verb, Noun)
 }
 
-data class Box(val type: DerivationType?, override val probability: Double): SampleSpaceObject
+data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
 
 val noType = listOf(Box(null, 1.0))

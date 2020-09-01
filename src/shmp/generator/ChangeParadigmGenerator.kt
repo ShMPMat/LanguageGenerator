@@ -18,6 +18,7 @@ import shmp.random.randomSublist
 import shmp.random.testProbability
 import kotlin.random.Random
 
+
 class ChangeParadigmGenerator(
     private val stressPattern: StressType,
     lexisGenerator: LexisGenerator,

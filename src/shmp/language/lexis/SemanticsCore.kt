@@ -7,7 +7,7 @@ import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
 import shmp.language.derivation.DerivationType
-import shmp.random.SampleSpaceObject
+import shmp.random.UnwrappableSSO
 
 
 data class SemanticsCore(
@@ -37,7 +37,9 @@ data class SemanticsCore(
     override fun toString() = words.joinToString()
 }
 
+
 data class SemanticsTag(val name: String)
+
 
 data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>) {
     init {
@@ -53,17 +55,24 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
     }
 }
 
-data class DerivationLink(val template: SemanticsCoreTemplate?, override val probability: Double) : SampleSpaceObject
+
+data class DerivationLink(
+    val template: SemanticsCoreTemplate?,
+    override val probability: Double
+) : UnwrappableSSO<SemanticsCoreTemplate?>(template)
 
 val noDerivationLink = listOf(DerivationLink(null, 1.0))
+
 
 data class CompositionLink(
     val templates: List<SemanticsCoreTemplate>?,
     override val probability: Double
-) : SampleSpaceObject
+) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
 
 val noCompositionLink = listOf(CompositionLink(null, 0.0)) //TODO back to 1.0
 
+
 data class DerivationHistory(val derivation: Derivation, val parent: Word)
+
 
 typealias Meaning = String

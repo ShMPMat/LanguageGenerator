@@ -1,6 +1,7 @@
 package shmp.generator
 
-import shmp.random.SampleSpaceObject
+import shmp.language.lexis.Meaning
+import shmp.random.UnwrappableSSO
 import shmp.random.testProbability
 import java.io.File
 import kotlin.random.Random
@@ -22,7 +23,7 @@ data class WordCluster(val meanings: List<WordClusterInstance>) {
     }
 }
 
-data class WordClusterInstance(val meaning: String, override val probability: Double): SampleSpaceObject
+data class WordClusterInstance(val meaning: Meaning, override val probability: Double): UnwrappableSSO<Meaning>(meaning)
 
 fun readWordClusters(supplementPath: String): WordClusterContainer {
     val clusters = File("$supplementPath/WordClusters")

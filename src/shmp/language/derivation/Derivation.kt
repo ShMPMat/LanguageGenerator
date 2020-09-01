@@ -1,9 +1,12 @@
 package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
-import shmp.language.lexis.*
+import shmp.language.lexis.DerivationHistory
+import shmp.language.lexis.SemanticsTag
+import shmp.language.lexis.Word
+import shmp.language.lexis.noDerivationLink
 import shmp.language.morphem.Affix
-import shmp.random.randomElement
+import shmp.random.randomUnwrappedElement
 import kotlin.random.Random
 
 
@@ -14,24 +17,21 @@ class Derivation(private val affix: Affix, val dClass: DerivationClass, private 
 
         val applicableTypes = dClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.type) }
-        if (applicableTypes.isEmpty())
-            return null
 
-        val chosenType = randomElement(applicableTypes + noType, random).type
+        val chosenType = randomUnwrappedElement(applicableTypes + noType, random)
             ?: return null
 
-        val chosenSemantics = randomElement(
+        val chosenSemantics = randomUnwrappedElement(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
         )
-        if (chosenSemantics.template == null)
-            return null
+            ?: return null
 
         val derivedWord = affix.change(word)
         val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(dClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
         val newStaticCategories = categoriesChanger.getNewStaticCategories(listOf(word.semanticsCore))
-        val newCore = chosenSemantics.template.toSemanticsCore(newStaticCategories, random)
+        val newCore = chosenSemantics.toSemanticsCore(newStaticCategories, random)
             .copy(
                 tags = newTags,
                 appliedDerivations = newDerivations,

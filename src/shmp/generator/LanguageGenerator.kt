@@ -140,6 +140,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
                 syllableTemplates[SyllableValenceTemplate(valencies)] = syllableProbability.toDouble()
             }
         }
+
         return SyllableValenceGenerator(
             randomElement(
                 syllableTemplates.keys.sortedBy { it.toString() },

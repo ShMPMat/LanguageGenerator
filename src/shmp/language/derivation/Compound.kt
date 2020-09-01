@@ -6,8 +6,7 @@ import shmp.language.SpeechPart
 import shmp.language.lexis.CompositionLink
 import shmp.language.lexis.Word
 import shmp.language.phonology.PhonemeSequence
-import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
+import shmp.random.*
 import shmp.utils.joinToList
 import kotlin.random.Random
 
@@ -23,10 +22,9 @@ class Compound(
 
         val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompositions)
 
-        if (options.isEmpty())
-            return null
+        val chosenComposition = randomUnwrappedElementOrNull(options, random)
+            ?: return null
 
-        val chosenComposition = randomElement(options, random).options
         val chosenWords = chosenComposition.map { randomElement(it, random) }
 
         val newPhonemeList = chosenWords
@@ -60,5 +58,7 @@ class Compound(
 }
 
 
-private data class CompoundOptions(val options: List<List<Word>>, override val probability: Double) :
-    SampleSpaceObject
+private class CompoundOptions(
+    options: List<List<Word>>,
+    override val probability: Double
+) : UnwrappableSSO<List<List<Word>>>(options)
