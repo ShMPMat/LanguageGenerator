@@ -7,7 +7,6 @@ import shmp.language.derivation.DerivationType
 import shmp.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.UnwrappableSSO
-import shmp.random.randomElement
 import shmp.random.randomUnwrappedElement
 import kotlin.random.Random
 
@@ -72,7 +71,7 @@ fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>
 
 data class DerivationClusterTemplate(
     val typeToCore: MutableMap<DerivationType, List<DerivationLink>> = mutableMapOf(),
-    val possibleCompositions: MutableList<CompositionLink> = mutableListOf(),
+    val possibleCompounds: MutableList<CompoundLink> = mutableListOf(),
     val appliedDerivations: Set<DerivationType> = setOf()
 )
 

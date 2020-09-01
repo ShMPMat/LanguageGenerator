@@ -6,7 +6,7 @@ class DerivationParadigm(val derivations: List<Derivation>, val compounds: List<
         |
         |${derivations.joinToString("\n")}
         |
-        |Compositions:
+        |Compounds:
         |
         |${compounds.joinToString("\n")}
     """.trimMargin()

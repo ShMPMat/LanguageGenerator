@@ -64,12 +64,12 @@ data class DerivationLink(
 val noDerivationLink = listOf(DerivationLink(null, 1.0))
 
 
-data class CompositionLink(
+data class CompoundLink(
     val templates: List<SemanticsCoreTemplate>?,
     override val probability: Double
 ) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
 
-val noCompositionLink = listOf(CompositionLink(null, 0.0)) //TODO back to 1.0
+val noCompoundLink = listOf(CompoundLink(null, 0.0)) //TODO back to 1.0
 
 
 data class DerivationHistory(val derivation: Derivation, val parent: Word)

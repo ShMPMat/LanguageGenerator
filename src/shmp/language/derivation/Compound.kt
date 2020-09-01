@@ -3,7 +3,7 @@ package shmp.language.derivation
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.toSemanticsCore
 import shmp.language.SpeechPart
-import shmp.language.lexis.CompositionLink
+import shmp.language.lexis.CompoundLink
 import shmp.language.lexis.Word
 import shmp.language.phonology.PhonemeSequence
 import shmp.random.*
@@ -20,12 +20,12 @@ class Compound(
         if (resultCore.speechPart != speechPart)
             return null
 
-        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompositions)
+        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds)
 
-        val chosenComposition = randomUnwrappedElementOrNull(options, random)
+        val chosenCompound = randomUnwrappedElementOrNull(options, random)
             ?: return null
 
-        val chosenWords = chosenComposition.map { randomElement(it, random) }
+        val chosenWords = chosenCompound.map { randomElement(it, random) }
 
         val newPhonemeList = chosenWords
             .map { w -> w.syllables.flatMap { it.phonemeSequence.phonemes } }
@@ -41,10 +41,10 @@ class Compound(
         )
     }
 
-    private fun chooseOptions(words: List<Word>, templates: List<CompositionLink>): List<CompoundOptions> =
+    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>): List<CompoundOptions> =
         templates.mapNotNull { pickOptionWords(words, it) }
 
-    private fun pickOptionWords(words: List<Word>, template: CompositionLink): CompoundOptions? = template.templates
+    private fun pickOptionWords(words: List<Word>, template: CompoundLink): CompoundOptions? = template.templates
         ?.map { t ->
             words.filter {
                 it.semanticsCore.derivationHistory == null &&//TODO take words with history only with some probability
