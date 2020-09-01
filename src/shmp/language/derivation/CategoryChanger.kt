@@ -1,29 +1,39 @@
 package shmp.language.derivation
 
 import shmp.language.CategoryValue
+import shmp.language.SpeechPart
 import shmp.language.lexis.SemanticsCore
 
 
 interface CategoryChanger {
-    fun getNewStaticCategories(semanticsCores: List<SemanticsCore>): Set<CategoryValue>
+    fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart): Set<CategoryValue>?
 
     val defaultToString: String
 }
 
-abstract class AbstractCategoryChanger: CategoryChanger {
+abstract class AbstractCategoryChanger : CategoryChanger {
     override fun toString() = defaultToString
 }
 
 
-class PassingCategoryChanger(private val index: Int): AbstractCategoryChanger() {
-    override fun getNewStaticCategories(semanticsCores: List<SemanticsCore>) =
-        semanticsCores[index].staticCategories
+class PassingCategoryChanger(private val index: Int) : AbstractCategoryChanger() {
+    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart) =
+        semanticsCores.getOrNull(index)?.let {
+            if (it.speechPart == speechPart)
+                it.staticCategories
+            else null
+        }
 
     override val defaultToString = "Same categories which a parent have"
 }
 
-class ConstantCategoryChanger(val categories: Set<CategoryValue>): AbstractCategoryChanger() {
-    override fun getNewStaticCategories(semanticsCores: List<SemanticsCore>) = categories
+class ConstantCategoryChanger(
+    val categories: Set<CategoryValue>,
+    val targetSpeechPart: SpeechPart
+) : AbstractCategoryChanger() {
+    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart) =
+        if (targetSpeechPart == speechPart) categories
+        else null
 
     override val defaultToString = "Always makes word " + categories.joinToString()
 }

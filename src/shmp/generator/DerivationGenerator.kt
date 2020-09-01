@@ -110,7 +110,8 @@ class DerivationGenerator(
         val possibleCategoryMakers = mutableListOf<CategoryChanger>(ConstantCategoryChanger(
             categoryPool.getStaticFor(derivationClass.toSpeechPart)
                 .map { randomElement(it.actualValues, random) }
-                .toSet()
+                .toSet(),
+            derivationClass.toSpeechPart
         ))
 
         if (derivationClass.fromSpeechPart == derivationClass.toSpeechPart)

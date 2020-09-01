@@ -57,7 +57,7 @@ class LexisGenerator(
         for (core in cores) {
             if (!isWordNeeded(core))
                 continue
-            val staticCategories = computeStaticCategories(core, categoryPool)
+            val staticCategories = makeStaticCategories(core, categoryPool)
             val mainCore = core.toSemanticsCore(staticCategories, random)
             val extendedCore = extendCore(mainCore)
             val newWords = mutableListOf(randomWord(extendedCore))
@@ -90,7 +90,7 @@ class LexisGenerator(
         return testProbability(successProbability, random)
     }
 
-    private fun computeStaticCategories(
+    private fun makeStaticCategories(
         core: SemanticsCoreTemplate,
         categoryPool: CategoryPool
     ): Set<CategoryValue> {

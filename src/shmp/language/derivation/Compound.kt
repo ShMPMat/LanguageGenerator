@@ -31,11 +31,13 @@ class Compound(
             .map { w -> w.syllables.flatMap { it.phonemeSequence.phonemes } }
             .joinToList(separator = infix.phonemes)
         val syllableTemplate = words[0].syllableTemplate
+        val newCategories = categoriesChanger.makeStaticCategories(words.map { it.semanticsCore }, speechPart)
+            ?: return null
 
         return syllableTemplate.createWord(
             PhonemeSequence(newPhonemeList),
             resultCore.toSemanticsCore(
-                categoriesChanger.getNewStaticCategories(words.map { it.semanticsCore }),
+                newCategories,
                 random
             )
         )
