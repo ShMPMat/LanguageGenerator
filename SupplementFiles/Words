@@ -53,6 +53,10 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
 
+
+
+
+
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
 have               Verb        1.0    T|trans:1,intrans:0

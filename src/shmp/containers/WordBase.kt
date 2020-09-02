@@ -5,24 +5,29 @@ import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
 import shmp.language.derivation.DerivationType
+import shmp.language.lexis.CompoundLink
 import shmp.language.lexis.DerivationLink
 import java.io.File
+
 
 class WordBase(private val supplementPath: String) {
     val baseWords: MutableList<SemanticsCoreTemplate> = ArrayList()
     val allWords: MutableList<SemanticsCoreTemplate> = ArrayList()
 
     init {
-        val wordsAndDataMap = mutableMapOf<String, Pair<SemanticsCoreTemplate, List<String>>>()
+        val wordsAndDataMap = mutableMapOf<String, UnparsedLinksTemplate>()
         val lines = readLines()
 
         lines.forEach { line ->
             val tokens = line.split(" +".toRegex())
+
             val word = tokens[0]
             val speechPart = SpeechPart.valueOf(tokens[1])
             val realizationProbability = tokens[2].toDouble()
+
             val tags = tokens.filter { it.contains("|") }
             val derivations = tokens.filter { it.contains("@") }
+            val compounds = tokens.filter { it.contains("&") }
 
             val core = SemanticsCoreTemplate(
                 word,
@@ -37,18 +42,23 @@ class WordBase(private val supplementPath: String) {
                 DerivationClusterTemplate(),
                 realizationProbability
             )
-            wordsAndDataMap[core.word] = core to derivations
+            wordsAndDataMap[core.word] = UnparsedLinksTemplate(core, derivations, compounds)
         }
 
-        wordsAndDataMap.values.forEach { (w, ds) ->
-            ds.forEach {
-                val (name, tags) = it.split("@")
-                w.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
+        for (data in wordsAndDataMap.values)
+            for (derivation in data.derivations) {
+                val (name, tags) = derivation.split("@")
+                data.template.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
                     parseDerivationTemplates(tags, wordsAndDataMap)
             }
-        }
 
-        baseWords.addAll(wordsAndDataMap.values.map { it.first }.sortedBy { it.word })
+        for (data in wordsAndDataMap.values)
+            for (compound in data.compounds)
+                data.template.derivationClusterTemplate.possibleCompounds.add(
+                    parseCompoundTemplate(compound, wordsAndDataMap)
+                )
+
+        baseWords.addAll(wordsAndDataMap.values.map { it.template }.sortedBy { it.word })
         allWords.addAll(baseWords)
 
 
@@ -58,7 +68,6 @@ class WordBase(private val supplementPath: String) {
         val semiLines = File("$supplementPath/Words")
             .readLines()
             .filter { !it.isBlank() && it[0] != '/' }
-
 
         val lines = mutableListOf(semiLines[0])
 
@@ -85,16 +94,33 @@ fun getType(string: String) = when (string) {
     "G" -> genderName
     "A" -> animosityName
     "T" -> "transitivity"
-    else -> if (string.length > 1)
-        string
-    else throw DataConsistencyException("Unknown SemanticsTag type alias $string")
+    else ->
+        if (string.length > 1)
+            string
+        else
+            throw DataConsistencyException("Unknown SemanticsTag type alias $string")
 }
 
-fun parseDerivationTemplates(string: String, wordsAndDataMap: WordsAndDataMap) = string
+private fun parseDerivationTemplates(string: String, wordsAndDataMap: WordsAndDataMap) = string
     .split(",")
     .map {
         val (name, prob) = it.split(":")
-        DerivationLink(wordsAndDataMap.getValue(name).first, prob.toDouble())
+        DerivationLink(wordsAndDataMap.getValue(name).template, prob.toDouble())
     }
 
-private typealias WordsAndDataMap = Map<String, Pair<SemanticsCoreTemplate, List<String>>>
+
+private fun parseCompoundTemplate(string: String, wordsAndDataMap: WordsAndDataMap): CompoundLink {
+    val (names, prob) = string.split(":")
+    val cores = names.split("&").map { wordsAndDataMap.getValue(it).template }
+
+    return CompoundLink(cores, prob.toDouble())
+}
+
+
+private typealias WordsAndDataMap = Map<String, UnparsedLinksTemplate>
+
+private data class UnparsedLinksTemplate(
+    val template: SemanticsCoreTemplate,
+    val derivations: List<String>,
+    val compounds: List<String>
+)

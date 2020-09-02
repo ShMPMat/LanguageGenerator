@@ -77,8 +77,8 @@ class DerivationGenerator(
 
         val changer = PassingCategoryChanger(random.nextInt(2))
 
-        val infixCompoundsAmount = random.nextInt(3)
-        for (i in 0 until infixCompoundsAmount) {
+        val infixCompoundsAmount = random.nextInt(1, 5)
+        for (i in 1 until infixCompoundsAmount) {
             val speechPart = SpeechPart.Noun
 
             compounds.add(
