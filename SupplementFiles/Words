@@ -1,5 +1,6 @@
 /   Default CategoryValue probability - 10
 /   Default no derivation probability - 1.0
+/   Default no compound   probability - 1.0
 /
 _personal_pronoun  Pronoun     1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -16,14 +17,17 @@ end                Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
+                                      house&live:1.0
 hand               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:20
                                                                                           NNPerson@helper:0.1,friend:0.025
-port               Noun        0.8
+seaport            Noun        0.8
                                                                                           NNPerson@sailor:0.1
-land               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+                                      sea&home:0.05
+territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
 change             Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                                                                           NNPerson@changer:0.2
+                                      appearance&change:0.05
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sun:0.01
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
@@ -40,6 +44,7 @@ mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000     
                                       NNPlace@home:0.01,motherland:0.01
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
+                                      world&existence:0.07
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -47,11 +52,14 @@ job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                
 part               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@valley:0.025
 place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                                                                         NNPerson@local_person:0.3
+                                                                                          NNPerson@local_person:0.3
+                                      world&point:0.07
 scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@theater:0.2      NNPerson@actor:0.3
+                                      theater&place:0.02
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
+                                      word&place:0.05   word&home:0.05 word&house:0.05
 
 
 
@@ -150,6 +158,8 @@ building           Noun        0.2    G|Plant:0,Fruit:0,Person:0                
 destination        Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 landing            Noun        0.02   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+appearance         Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+sea                Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
 
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
 ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -355,7 +365,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /story
 /saw
 /far
-/sea
 /draw
 /left
 /late

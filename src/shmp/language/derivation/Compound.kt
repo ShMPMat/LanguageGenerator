@@ -5,6 +5,7 @@ import shmp.containers.toSemanticsCore
 import shmp.language.SpeechPart
 import shmp.language.lexis.CompoundLink
 import shmp.language.lexis.Word
+import shmp.language.lexis.noCompoundLink
 import shmp.language.phonology.PhonemeSequence
 import shmp.random.*
 import shmp.utils.joinToList
@@ -22,7 +23,7 @@ class Compound(
 
         val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds)
 
-        val chosenCompound = randomUnwrappedElementOrNull(options, random)
+        val chosenCompound = randomElementOrNull(options, random)?.options
             ?: return null
 
         val chosenWords = chosenCompound.map { randomElement(it, random) }
@@ -44,7 +45,8 @@ class Compound(
     }
 
     private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>): List<CompoundOptions> =
-        templates.mapNotNull { pickOptionWords(words, it) }
+        templates.mapNotNull { pickOptionWords(words, it) } +
+                CompoundOptions(null, noCompoundLink.probability)
 
     private fun pickOptionWords(words: List<Word>, template: CompoundLink): CompoundOptions? = template.templates
         ?.map { t ->
@@ -61,6 +63,6 @@ class Compound(
 
 
 private class CompoundOptions(
-    options: List<List<Word>>,
+    val options: List<List<Word>>?,
     override val probability: Double
-) : UnwrappableSSO<List<List<Word>>>(options)
+) : SampleSpaceObject

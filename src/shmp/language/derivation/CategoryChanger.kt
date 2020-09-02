@@ -35,5 +35,7 @@ class ConstantCategoryChanger(
         if (targetSpeechPart == speechPart) categories
         else null
 
-    override val defaultToString = "Always makes word " + categories.joinToString()
+    override val defaultToString =
+        if (categories.isEmpty()) "Makes no categories"
+        else "Always makes word " + categories.joinToString()
 }

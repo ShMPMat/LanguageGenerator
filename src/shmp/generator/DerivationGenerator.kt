@@ -132,4 +132,15 @@ class DerivationGenerator(
             i++
         }
     }
+
+    internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: MutableList<Word>) {
+        for (template in templates.shuffled())
+            for (compound in derivationParadigm.compounds.shuffled()) {
+                val derivedWord = compound.compose(availableWords, template, random)
+                    ?: continue
+
+                availableWords.add(derivedWord)
+                break
+            }
+    }
 }

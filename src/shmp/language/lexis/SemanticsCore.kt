@@ -69,7 +69,7 @@ data class CompoundLink(
     override val probability: Double
 ) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
 
-val noCompoundLink = listOf(CompoundLink(null, 0.0)) //TODO back to 1.0
+val noCompoundLink = CompoundLink(null, 0.0) //TODO back to 1.0
 
 
 data class DerivationHistory(val derivation: Derivation, val parent: Word)
