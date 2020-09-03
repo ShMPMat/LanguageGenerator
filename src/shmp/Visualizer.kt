@@ -80,7 +80,7 @@ data class Visualizer(val language: Language) {
         |Derivations:
         |${language.words
                 .filter { it.semanticsCore.derivationHistory != null }
-                .sortedBy { derivationDepth(it) }
+                .sortedBy { it.semanticsCore.derivationHistory?.derivationDepth ?: 0 }
                 .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
@@ -94,25 +94,8 @@ data class Visualizer(val language: Language) {
         )
     }
 
-    private fun printDerivationStory(word: Word): String {
-        val previous = word.semanticsCore.derivationHistory
-        val prefix =
-            if (previous != null) {
-                printDerivationStory(previous.parent)
-                    .lines()
-                    .joinToString("\n") { it + " ->${previous.derivation.dClass}-> " }
-            } else "\n"
-        val (lanPrefix, commentPrefix) = prefix.lines()
-        val (lanPostfix, commentPostfix) = lineUp(word.toString(), word.semanticsCore.toString())
-
-        return lanPrefix + lanPostfix + "\n" + commentPrefix + commentPostfix
-    }
-
-    private fun derivationDepth(word: Word): Int {
-        val previous = word.semanticsCore.derivationHistory
-        return if (previous == null) 0
-        else 1 + derivationDepth(previous.parent)
-    }
+    private fun printDerivationStory(word: Word) = word.semanticsCore.derivationHistory?.printHistory(word)
+        ?: "No derivations"
 }
 
 fun main() {

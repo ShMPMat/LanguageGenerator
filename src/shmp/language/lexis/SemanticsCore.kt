@@ -6,6 +6,7 @@ import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
+import shmp.language.derivation.DerivationHistory
 import shmp.language.derivation.DerivationType
 import shmp.random.UnwrappableSSO
 
@@ -70,9 +71,6 @@ data class CompoundLink(
 ) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
 
 val noCompoundLink = CompoundLink(null, 0.0) //TODO back to 1.0
-
-
-data class DerivationHistory(val derivation: Derivation, val parent: Word)
 
 
 typealias Meaning = String

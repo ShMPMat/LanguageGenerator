@@ -1,7 +1,6 @@
 package shmp.language.derivation
 
 import shmp.containers.toSemanticsCore
-import shmp.language.lexis.DerivationHistory
 import shmp.language.lexis.SemanticsTag
 import shmp.language.lexis.Word
 import shmp.language.lexis.noDerivationLink
