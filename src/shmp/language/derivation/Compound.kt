@@ -14,7 +14,7 @@ import kotlin.random.Random
 
 class Compound(
     private val speechPart: SpeechPart,
-    private val infix: PhonemeSequence,
+    val infix: PhonemeSequence,
     private val categoriesChanger: CategoryChanger
 ) {
     fun compose(words: List<Word>, resultCore: SemanticsCoreTemplate, random: Random): Word? {
@@ -40,6 +40,8 @@ class Compound(
             resultCore.toSemanticsCore(
                 newCategories,
                 random
+            ).copy(
+                changeHistory = CompoundHistory(this, chosenWords)
             )
         )
     }
@@ -51,7 +53,7 @@ class Compound(
     private fun pickOptionWords(words: List<Word>, template: CompoundLink): CompoundOptions? = template.templates
         ?.map { t ->
             words.filter {
-                it.semanticsCore.derivationHistory == null &&//TODO take words with history only with some probability
+                it.semanticsCore.changeHistory == null &&//TODO take words with history only with some probability
                         it.semanticsCore.words.contains(t.word)
             }
         }

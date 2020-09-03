@@ -1,5 +1,6 @@
 package shmp.language
 
+import shmp.generator.GeneratorException
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
 import shmp.language.syntax.Clause
@@ -22,16 +23,21 @@ fun getClauseAndInfoPrinted(clause: Clause): String {
         .map { it.toString() }
         .zip(getClauseInfoPrinted(clause).split(" "))
         .map { (s1, s2) -> lineUp(s1, s2) }
+        .map { (s1, s2) -> s1 to s2 }
         .unzip()
     return words.joinToString(" ") + "\n" +
             infos.joinToString(" ")
 }
 
-
-fun lineUp(s1: String, s2: String): Pair<String, String> {
-    val max = max(s1.length, s2.length)
-    return s1 + " ".repeat(max - s1.length) to s2 + " ".repeat(max - s2.length)
+fun lineUp(ss: List<String>): List<String> {
+    val max = ss
+        .map { it.length }
+        .max()
+        ?: throw GeneratorException("Cannot line up list of strings, because it's empty")
+    return ss.map { it + " ".repeat(max - it.length) }
 }
+
+fun lineUp(vararg ss: String) = lineUp(ss.toList())
 
 fun getClauseInfoPrinted(clause: Clause) = clause.words.joinToString(" ") { getWordInfoPrinted(it) }
 

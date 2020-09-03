@@ -8,7 +8,6 @@ import shmp.language.category.CategorySource
 import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoPrinted
 import shmp.language.lexis.Word
-import shmp.language.lineUp
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SentenceType
@@ -79,8 +78,8 @@ data class Visualizer(val language: Language) {
         |
         |Derivations:
         |${language.words
-                .filter { it.semanticsCore.derivationHistory != null }
-                .sortedBy { it.semanticsCore.derivationHistory?.derivationDepth ?: 0 }
+                .filter { it.semanticsCore.changeHistory != null }
+                .sortedBy { it.semanticsCore.changeHistory?.derivationDepth ?: 0 }
                 .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
@@ -94,12 +93,12 @@ data class Visualizer(val language: Language) {
         )
     }
 
-    private fun printDerivationStory(word: Word) = word.semanticsCore.derivationHistory?.printHistory(word)
+    private fun printDerivationStory(word: Word) = word.semanticsCore.changeHistory?.printHistory(word)
         ?: "No derivations"
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 205)
+    val generator = LanguageGenerator("SupplementFiles", 209)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

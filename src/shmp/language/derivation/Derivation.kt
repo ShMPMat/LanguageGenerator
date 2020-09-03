@@ -39,7 +39,7 @@ class Derivation(
             it.copy(
                 tags = it.tags + listOf(SemanticsTag(dClass.name)),
                 appliedDerivations = newDerivations,
-                derivationHistory = DerivationHistory(this, word)
+                changeHistory = DerivationHistory(this, word)
             )
         }
 

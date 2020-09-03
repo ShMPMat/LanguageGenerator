@@ -6,7 +6,7 @@ import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.derivation.Derivation
-import shmp.language.derivation.DerivationHistory
+import shmp.language.derivation.ChangeHistory
 import shmp.language.derivation.DerivationType
 import shmp.random.UnwrappableSSO
 
@@ -18,7 +18,7 @@ data class SemanticsCore(
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
     val staticCategories: Set<CategoryValue> = setOf(),
     val appliedDerivations: List<Derivation> = listOf(),
-    val derivationHistory: DerivationHistory? = null
+    val changeHistory: ChangeHistory? = null
 ) {
     init {
         if (speechPart == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
