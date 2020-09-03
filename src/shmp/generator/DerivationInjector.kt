@@ -41,7 +41,8 @@ data class DerivationInjector(
                                 type.name,
                                 1.0
                             )
-                        ), type.name
+                        ), type.name,
+                        true
                     )
                 ),
                 DerivationClusterTemplate(

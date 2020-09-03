@@ -19,23 +19,19 @@ data class SemanticsCoreTemplate(
     override val probability: Double
 ) : SampleSpaceObject
 
-fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) = SemanticsCore(
-    listOf(this.word),
-    this.speechPart,
-    this.tagClusters
-        .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
-        .map {
-            SemanticsTag(
-                randomUnwrappedElement(
-                    it.semanticsTags,
-                    random
-                )
-            )
-        }
-        .toSet(),
-    DerivationCluster(this.derivationClusterTemplate.typeToCore),
-    staticCategories
-)
+fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) =
+    SemanticsCore(
+        listOf(this.word),
+        this.speechPart,
+        this.tagClusters
+            .filter { it.shouldBeInstantiated }
+            .map {
+                SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
+            }
+            .toSet(),
+        DerivationCluster(this.derivationClusterTemplate.typeToCore),
+        staticCategories
+    )
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
     if (this.speechPart != core.speechPart)
@@ -47,12 +43,7 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
         this.tagClusters
             .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
             .map {
-                SemanticsTag(
-                    randomUnwrappedElement(
-                        it.semanticsTags,
-                        random
-                    )
-                )
+                SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
             }
             .toSet() + core.tags,
         core.derivationCluster.merge(this.derivationClusterTemplate.typeToCore),
@@ -60,7 +51,7 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
     )
 }
 
-fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>>): DerivationCluster{
+fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>>): DerivationCluster {
     val newMap = this.typeToCore.toMutableMap()
     newEntries.entries.forEach { (t, ls) ->
         val old = newMap[t] ?: listOf()
@@ -75,6 +66,10 @@ data class DerivationClusterTemplate(
     val appliedDerivations: Set<DerivationType> = setOf()
 )
 
-data class SemanticsTagCluster(val semanticsTags: List<SemanticsTagTemplate>, val type: String)
+data class SemanticsTagCluster(
+    val semanticsTags: List<SemanticsTagTemplate>,
+    val type: String,
+    val shouldBeInstantiated: Boolean
+)
 
-data class SemanticsTagTemplate(val name: String, override val probability: Double): UnwrappableSSO<String>(name)
+data class SemanticsTagTemplate(val name: String, override val probability: Double) : UnwrappableSSO<String>(name)

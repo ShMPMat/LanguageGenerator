@@ -36,7 +36,8 @@ class WordBase(private val supplementPath: String) {
                     val (name, semanticTags) = it.split("|")
                     SemanticsTagCluster(
                         parseSemanticsTagTemplates(semanticTags),
-                        getType(name)
+                        getType(name),
+                        getInstantiationType(name)
                     )
                 }.toSet(),
                 DerivationClusterTemplate(),
@@ -97,6 +98,17 @@ fun getType(string: String) = when (string) {
     else ->
         if (string.length > 1)
             string
+        else
+            throw DataConsistencyException("Unknown SemanticsTag type alias $string")
+}
+
+fun getInstantiationType(string: String) = when (string) {
+    "G" -> false
+    "A" -> false
+    "T" -> true
+    else ->
+        if (string.length > 1)
+            true
         else
             throw DataConsistencyException("Unknown SemanticsTag type alias $string")
 }

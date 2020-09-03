@@ -28,22 +28,21 @@ class Derivation(
         val chosenSemantics = randomUnwrappedElement(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
-        )
-            ?: return null
+        ) ?: return null
 
         val derivedWord = affix.change(word)
-        val newTags = derivedWord.semanticsCore.tags + listOf(SemanticsTag(dClass.name))
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(word.semanticsCore),
             dClass.toSpeechPart
         ) ?: return null
-        val newCore = chosenSemantics.toSemanticsCore(newStaticCategories, random)
-            .copy(
-                tags = newTags,
+        val newCore = chosenSemantics.toSemanticsCore(newStaticCategories, random).let {
+            it.copy(
+                tags = it.tags + listOf(SemanticsTag(dClass.name)),
                 appliedDerivations = newDerivations,
                 derivationHistory = DerivationHistory(this, word)
             )
+        }
 
         return derivedWord.copy(semanticsCore = newCore)
     }
