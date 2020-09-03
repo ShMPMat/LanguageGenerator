@@ -7,7 +7,7 @@ import shmp.language.lineUp
 interface ChangeHistory {
     fun printHistory(parent: Word): String
 
-    val derivationDepth: Int
+    val changeDepth: Int
 }
 
 
@@ -15,8 +15,8 @@ data class DerivationHistory(val derivation: Derivation, val previous: Word): Ch
     override fun printHistory(parent: Word) =
         constructChangeTree(listOf(previous), parent, derivation.dClass.toString())
 
-    override val derivationDepth: Int
-        get() = 1 + (previous.semanticsCore.changeHistory?.derivationDepth ?: 0)
+    override val changeDepth: Int
+        get() = 1 + (previous.semanticsCore.changeHistory?.changeDepth ?: 0)
 }
 
 
@@ -24,8 +24,8 @@ data class CompoundHistory(val compound: Compound, val previous: List<Word>): Ch
     override fun printHistory(parent: Word) =
         constructChangeTree(previous, parent, compound.infix.toString())
 
-    override val derivationDepth: Int
-        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.derivationDepth ?: 0 }.max() ?: 0 )
+    override val changeDepth: Int
+        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.max() ?: 0 )
 }
 
 

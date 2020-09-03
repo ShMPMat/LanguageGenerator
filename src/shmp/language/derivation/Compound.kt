@@ -21,7 +21,7 @@ class Compound(
         if (resultCore.speechPart != speechPart)
             return null
 
-        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds)
+        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds, random)
 
         val chosenCompound = randomElementOrNull(options, random)?.options
             ?: return null
@@ -46,14 +46,18 @@ class Compound(
         )
     }
 
-    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>): List<CompoundOptions> =
-        templates.mapNotNull { pickOptionWords(words, it) } +
+    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>, random: Random): List<CompoundOptions> =
+        templates.mapNotNull { pickOptionWords(words, it, random) } +
                 CompoundOptions(null, noCompoundLink.probability)
 
-    private fun pickOptionWords(words: List<Word>, template: CompoundLink): CompoundOptions? = template.templates
+    private fun pickOptionWords(
+        words: List<Word>,
+        template: CompoundLink,
+        random: Random
+    ): CompoundOptions? = template.templates
         ?.map { t ->
-            words.filter {
-                it.semanticsCore.changeHistory == null &&//TODO take words with history only with some probability
+            words.filter {//TODO generate probability test
+                testProbability(1 / (it.semanticsCore.changeDepth.toDouble() + 1), random) &&
                         it.semanticsCore.words.contains(t.word)
             }
         }

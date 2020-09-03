@@ -87,7 +87,8 @@ class DerivationGenerator(
                     changeGenerator.lexisGenerator.syllableGenerator.generateSyllable(
                         SyllableRestrictions(
                             changeGenerator.lexisGenerator.phonemeContainer,
-                            changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart),
+                            changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+                                .copy(avgWordLength = 1),
                             SyllablePosition.Middle
                         ),
                         random

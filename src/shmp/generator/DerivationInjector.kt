@@ -36,12 +36,8 @@ data class DerivationInjector(
                 tagCreator(core.tagClusters)
                         + setOf(
                     SemanticsTagCluster(
-                        listOf(
-                            SemanticsTagTemplate(
-                                type.name,
-                                1.0
-                            )
-                        ), type.name,
+                        listOf(SemanticsTagTemplate(type.name, 1.0)),
+                        type.name,
                         true
                     )
                 ),

@@ -79,7 +79,7 @@ data class Visualizer(val language: Language) {
         |Derivations:
         |${language.words
                 .filter { it.semanticsCore.changeHistory != null }
-                .sortedBy { it.semanticsCore.changeHistory?.derivationDepth ?: 0 }
+                .sortedBy { it.semanticsCore.changeDepth }
                 .joinToString("\n\n") { printDerivationStory(it) }
             }
         |

@@ -33,6 +33,8 @@ data class SemanticsCore(
 
     val meanings = words
 
+    val changeDepth = changeHistory?.changeDepth ?: 0
+
     fun hasMeaning(meaning: String) = meaning in meanings
 
     override fun toString() = words.joinToString()

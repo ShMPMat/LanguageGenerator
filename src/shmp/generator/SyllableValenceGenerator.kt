@@ -31,33 +31,43 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         restrictions: SyllableRestrictions,
         random: Random
     ): Syllable {
-        val actualSyllable = chooseSyllableStructure(restrictions, random)
+        var syllable = Syllable(listOf())
 
-        val onset = makeSyllablePart(
-            restrictions,
-            { lst, p ->
-                testPhoneme(lst, p) && (lst.isEmpty()
-                        || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
-            },
-            actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel },
-            random
-        )
-        val nucleus = makeSyllablePart(
-            restrictions,
-            this::testPhoneme,
-            listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel }),
-            random
-        )
-        val coda = makeSyllablePart(
-            restrictions,
-            { lst, p ->
-                testPhoneme(lst, p) && (lst.isEmpty()
-                        || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
-            },
-            actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel },
-            random
-        )
-        return Syllable(onset + nucleus + coda)
+        for (i in 1..ADD_TESTS) {
+            val actualSyllable = chooseSyllableStructure(restrictions, random)
+
+            val onset = makeSyllablePart(
+                restrictions,
+                { lst, p ->
+                    testPhoneme(lst, p) && (lst.isEmpty()
+                            || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
+                },
+                actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel },
+                random
+            )
+            val nucleus = makeSyllablePart(
+                restrictions,
+                this::testPhoneme,
+                listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel }),
+                random
+            )
+            val coda = makeSyllablePart(
+                restrictions,
+                { lst, p ->
+                    testPhoneme(lst, p) && (lst.isEmpty()
+                            || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
+                },
+                actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel },
+                random
+            )
+
+            syllable = Syllable(onset + nucleus + coda)
+
+            if (syllable.size <= restrictions.phoneticRestrictions.avgWordLength)
+                break
+        }
+
+        return syllable
     }
 
     private fun makeSyllablePart(
