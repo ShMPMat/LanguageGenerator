@@ -1,5 +1,6 @@
 package shmp.language.derivation
 
+import shmp.generator.GeneratorException
 import shmp.language.lexis.Word
 import shmp.language.lineUp
 
@@ -11,7 +12,7 @@ interface ChangeHistory {
 }
 
 
-data class DerivationHistory(val derivation: Derivation, val previous: Word): ChangeHistory {
+data class DerivationHistory(val derivation: Derivation, val previous: Word) : ChangeHistory {
     override fun printHistory(parent: Word) =
         constructChangeTree(listOf(previous), parent, derivation.dClass.toString())
 
@@ -20,20 +21,29 @@ data class DerivationHistory(val derivation: Derivation, val previous: Word): Ch
 }
 
 
-data class CompoundHistory(val compound: Compound, val previous: List<Word>): ChangeHistory {
+data class CompoundHistory(val compound: Compound, val previous: List<Word>) : ChangeHistory {
     override fun printHistory(parent: Word) =
         constructChangeTree(previous, parent, compound.infix.toString())
 
     override val changeDepth: Int
-        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.max() ?: 0 )
+        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.max() ?: 0)
 }
 
 
 private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arrowLabel: String): String {
-    val prefix =
-        previousWords.joinToString("\n") {
-            it.semanticsCore.changeHistory?.printHistory(it)
-                ?: lineUp(it.toString(), it.semanticsCore.toString()).let { (f, s) -> "$f\n$s" }
+    val (maxDepthString, maxDepth) = previousWords.maxBy { it.semanticsCore.changeDepth }
+        ?.let { it.printChange() to it.semanticsCore.changeDepth }
+        ?: throw GeneratorException("Empty word list has been given")
+    val indexes = getIndexes(maxDepthString)
+    val prefix = previousWords
+        .map { it.semanticsCore.changeDepth to it.printChange() }
+        .joinToString("\n") { (d, s) ->
+            if (maxDepth - d >= indexes.size) {
+                val k = 0
+            }
+
+            s.lines()
+                .joinToString("\n") { " ".repeat(indexes[maxDepth - d]) + it }
         }
 
     val prefixWithArrows = lineUp(prefix.lines())
@@ -47,3 +57,24 @@ private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arr
             lanPrefix + lanPostfix + "\n" +
             commentPrefix + commentPostfix
 }
+
+private fun getIndexes(maxDepthString: String): List<Int> {
+    val (oneLine) = maxDepthString.lines()
+    val indexes = mutableListOf(0)
+    var index = 0
+
+    while (true) {
+        index = oneLine.indexOf("->", index + 1)
+        index = oneLine.indexOf("->", index + 1)
+
+        if (index == -1)
+            break
+
+        indexes.add(index + 3)
+    }
+
+    return indexes
+}
+
+private fun Word.printChange() = semanticsCore.changeHistory?.printHistory(this)
+    ?: lineUp(toString(), semanticsCore.toString()).let { (f, s) -> "$f\n$s" }
