@@ -35,13 +35,15 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         return getRegexp().containsMatchIn(string)
     }
 
-    override fun createWord(phonemes: PhonemeSequence, semanticsCore: SemanticsCore): Word? {
-        val syllables = ArrayList<Syllable>()
+    override fun splitOnSyllables(phonemes: PhonemeSequence): List<Syllable>? {
+        val syllables = mutableListOf<Syllable>()
         val regex = getRegexp()
         val currentPhonemes = phonemes.getTypeRepresentation()
+
         var lastIndex = 0
         while (lastIndex < currentPhonemes.length) {
-            val range = regex.find(currentPhonemes, lastIndex)?.range ?: return null
+            val range = regex.find(currentPhonemes, lastIndex)?.range
+                ?: return null
             if (range.first != lastIndex) return null
             syllables.add(
                 Syllable(
@@ -53,7 +55,8 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
             )
             lastIndex = range.last + 1
         }
-        return Word(syllables, this, semanticsCore)
+
+        return syllables
     }
 
     fun getRegexp(): Regex {

@@ -19,6 +19,7 @@ enum class StressType(override val probability: Double) : SampleSpaceObject {
     Ultimate(51.0)
 }
 
+
 fun generateStress(stressType: StressType, word: Word, random: Random): Word {
     if (word.syllables.any { s -> s.prosodicEnums.any { it is Stress } })
         throw GeneratorException("Word $word already has stress")

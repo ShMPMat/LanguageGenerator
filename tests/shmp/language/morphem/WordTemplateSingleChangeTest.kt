@@ -9,6 +9,7 @@ import shmp.language.lexis.Word
 import shmp.language.morphem.change.*
 import shmp.language.phonology.*
 
+
 internal class WordTemplateSingleChangeTest {
     @Test
     fun prefixIsolatingTest() {

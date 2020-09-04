@@ -2,6 +2,7 @@ package shmp.language.phonology
 
 import shmp.language.PhonemeType
 
+
 data class Phoneme(
     val sound : String,
     val type: PhonemeType,
@@ -12,6 +13,7 @@ data class Phoneme(
         return sound
     }
 }
+
 
 fun doesPhonemesCollide(firstPhoneme: Phoneme, secondPhoneme: Phoneme) =
     firstPhoneme == secondPhoneme

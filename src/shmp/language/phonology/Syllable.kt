@@ -2,6 +2,7 @@ package shmp.language.phonology
 
 import shmp.language.phonology.prosody.Prosody
 
+
 data class Syllable(val phonemeSequence: PhonemeSequence, var prosodicEnums: List<Prosody>) {
     constructor(phonemeList: List<Phoneme>) : this(
         PhonemeSequence(phonemeList),

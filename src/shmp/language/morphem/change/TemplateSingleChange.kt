@@ -47,17 +47,16 @@ class TemplateSingleChange(
                     val change =
                         getFullChange().zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
                             .map { it.first.substitute(word, it.second) }
-                    val noProsodyWord = word.syllableTemplate.createWord(
+                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
                             word.toPhonemes().subList(
                                 0,
                                 word.size - phonemeMatchers.size
                             ) + change
-                        ),
-                        word.semanticsCore
+                        )
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
 
-                    noProsodyWord.syllables.mapIndexed { i, s ->
+                    noProsodyWord.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i))
                     }
                 }
@@ -65,18 +64,17 @@ class TemplateSingleChange(
                     val change =
                         getFullChange().zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
                             .map { it.first.substitute(word, it.second) }
-                    val noProsodyWord = word.syllableTemplate.createWord(
+                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
                             change + word.toPhonemes().subList(
                                 phonemeMatchers.size,
                                 word.size
                             )
-                        ),
-                        word.semanticsCore
+                        )
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val shift = noProsodyWord.syllables.size - word.syllables.size
+                    val shift = noProsodyWord.size - word.syllables.size
 
-                    noProsodyWord.syllables.mapIndexed { i, s ->
+                    noProsodyWord.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i - shift))
                     }
                 }
