@@ -5,6 +5,7 @@ import shmp.language.CategoryRealization
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.morphem.Affix
 
+
 class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) :
     AbstractCategoryApplicator(type) { //TODO no guaranty for correctness
     override fun apply(clause: Clause, wordPosition: Int, values: Collection<ParametrizedCategoryValue>): Clause =

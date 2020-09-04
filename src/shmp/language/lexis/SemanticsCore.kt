@@ -72,7 +72,7 @@ data class CompoundLink(
     override val probability: Double
 ) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
 
-val noCompoundLink = CompoundLink(null, 0.0) //TODO back to 1.0
+val noCompoundLink = CompoundLink(null, 1.0)
 
 
 typealias Meaning = String

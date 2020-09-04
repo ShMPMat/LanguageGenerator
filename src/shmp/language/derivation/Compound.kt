@@ -65,6 +65,19 @@ class Compound(
         ?.let { CompoundOptions(it, template.probability) }
 
     override fun toString() = "Make a compound $speechPart, with infix '$infix'; $categoriesChanger"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Compound) return false
+
+        if (toString() != other.toString()) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return toString().hashCode()
+    }
 }
 
 

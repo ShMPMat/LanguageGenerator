@@ -9,7 +9,7 @@ import kotlin.math.max
 
 fun getParadigmPrinted(language: Language, word: Word): String {
     return "Base - $word\n" +
-            listCartesianProduct(//TODO no hardcoded genders for nouns!
+            listCartesianProduct(
                 language.sentenceChangeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }

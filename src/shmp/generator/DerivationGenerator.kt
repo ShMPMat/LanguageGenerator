@@ -80,22 +80,24 @@ class DerivationGenerator(
         val infixCompoundsAmount = random.nextInt(1, 5)
         for (i in 1 until infixCompoundsAmount) {
             val speechPart = SpeechPart.Noun
-
-            compounds.add(
-                Compound(
-                    speechPart,
-                    changeGenerator.lexisGenerator.syllableGenerator.generateSyllable(
-                        SyllableRestrictions(
-                            changeGenerator.lexisGenerator.phonemeContainer,
-                            changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
-                                .copy(avgWordLength = 1),
-                            SyllablePosition.Middle
-                        ),
-                        random
-                    ).phonemeSequence,
-                    changer
-                )
+            val compound = Compound(
+                speechPart,
+                changeGenerator.lexisGenerator.syllableGenerator.generateSyllable(
+                    SyllableRestrictions(
+                        changeGenerator.lexisGenerator.phonemeContainer,
+                        changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+                            .copy(avgWordLength = 1),
+                        SyllablePosition.Middle
+                    ),
+                    random
+                ).phonemeSequence,
+                changer
             )
+
+            if (compound in compounds)
+                continue
+
+            compounds.add(compound)
         }
 
         if (testProbability(0.5, random))

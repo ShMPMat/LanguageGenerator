@@ -5,10 +5,13 @@
 _personal_pronoun  Pronoun     1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
+                                      say&thing:0.2
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
+                                      flow&thing:0.03
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
+                                      need&thing:0.2
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05                                    NNPerson@aviator:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -31,24 +34,28 @@ change             Noun        1.0    G|LongObject:100                          
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sun:0.01
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
+                                      part&thing:0.08
 need               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@toilet:0.01                                 NNPerson@poor_person:0.1,one_in_need:0.1
+                                      wish&thing:0.05
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
 picture            Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
 animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
                                       NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
+                                      live&thing:0.3
 point              Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
 mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000               A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
-                                      world&existence:0.07
+                                      world&existence:0.07     existence&thing:0.05
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@factory:0.1,workplace:0.1,workshop:0.1      NNPerson@worker:0.3
+                                      work&thing:0.08
 part               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@valley:0.025
 place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -59,7 +66,10 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       theater&place:0.02
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
-                                      word&place:0.05   word&home:0.05 word&house:0.05
+                                      word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05
+thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+                                      NNPlace@world:0.001                                 NNPerson@person:0.0005
+                                      world&part:0.005
 
 
 
@@ -197,6 +207,9 @@ person_who_finishes_smt       Noun      0.1    G|Person:1000,Female:1000,Common:
 one_who_does_smth_temporary   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_wants_smth            Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+
+
+flow               Verb        0.85   T|trans:0,intrans:1
 
 
 /set                Verb               T|trans:1,intrans:0                                              set what?
