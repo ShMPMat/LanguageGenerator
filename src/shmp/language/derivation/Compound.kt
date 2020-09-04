@@ -7,6 +7,7 @@ import shmp.language.lexis.CompoundLink
 import shmp.language.lexis.Word
 import shmp.language.lexis.noCompoundLink
 import shmp.language.phonology.PhonemeSequence
+import shmp.language.phonology.Syllable
 import shmp.random.*
 import shmp.utils.joinToList
 import kotlin.random.Random
@@ -35,14 +36,18 @@ class Compound(
         val newCategories = categoriesChanger.makeStaticCategories(words.map { it.semanticsCore }, speechPart)
             ?: return null
 
-        return syllableTemplate.createWord(
-            PhonemeSequence(newPhonemeList),
-            resultCore.toSemanticsCore(
-                newCategories,
-                random
-            ).copy(
-                changeHistory = CompoundHistory(this, chosenWords)
-            )
+        val syllables = syllableTemplate.splitOnSyllables(PhonemeSequence(newPhonemeList))
+            ?: return null
+
+        return Word(
+            putProsodies(
+                syllables,
+                chosenWords,
+                if (syllableTemplate.splitOnSyllables(infix) == null) 0 else 1
+            ),
+            syllableTemplate,
+            resultCore.toSemanticsCore(newCategories, random)
+                .copy(changeHistory = CompoundHistory(this, chosenWords))
         )
     }
 
@@ -63,6 +68,26 @@ class Compound(
         }
         ?.takeIf { o -> o.all { it.isNotEmpty() } }
         ?.let { CompoundOptions(it, template.probability) }
+
+    private fun putProsodies(syllables: List<Syllable>, sourceWords: List<Word>, wordGap: Int): List<Syllable> {
+        val prosodySyllables = mutableListOf<Syllable>()
+        var syllableInd = 0
+
+        for (word in sourceWords) {
+            for (syllable in word.syllables) {
+                prosodySyllables.add(syllables[syllableInd].copy(prosodicEnums = syllable.prosodicEnums))
+
+                syllableInd++
+            }
+
+            if (syllables.size != syllableInd) {
+                prosodySyllables.addAll(syllables.drop(syllableInd).take(wordGap))
+                syllableInd += wordGap
+            }
+        }
+
+        return prosodySyllables
+    }
 
     override fun toString() = "Make a compound $speechPart, with infix '$infix'; $categoriesChanger"
 
