@@ -8,10 +8,7 @@ import shmp.language.category.CategorySource
 import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
-import shmp.language.syntax.Sentence
-import shmp.language.syntax.SentenceNode
-import shmp.language.syntax.SentenceType
-import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.*
 import kotlin.random.Random
 
 
@@ -25,35 +22,27 @@ data class Visualizer(val language: Language) {
     }
 
     fun printTestSentences() {
-        fun Word.toNode(presetCategories: List<CategoryValue> = listOf()): SentenceNode {
-            val classNames = presetCategories
-                .map { it.parentClassName }
+        val subjAdj = language.getWord("new").toNode(language)
+        val subj = language.getWord("mother").toNode(language, listOf(NumbersValue.Plural))
+//        val subjAdj2 = language.getWord("small").toNode(language)
 
-            return SentenceNode(
-                this,
-                language.sentenceChangeParadigm.wordChangeParadigm
-                    .getDefaultState(this)
-                    .filter { it.source == CategorySource.SelfStated }
-                    .map { it.categoryValue }
-                    .filter { it.parentClassName !in classNames }
-                        + presetCategories
-            )
-        }
+        val verb = language.getWord("have").toNode(language)
 
-        val subjAdj = language.getWord("new").toNode()
-        val subj = language.getWord("mother").toNode(listOf(NumbersValue.Plural))
-        val verb = language.getWord("have").toNode()
-        val objAdj = language.getWord("new").toNode()
-        val obj = language.getWord("time").toNode()
+        val objAdj = language.getWord("new").toNode(language)
+        val obj = language.getWord("time").toNode(language)
 
         subjAdj.setRelation(SyntaxRelation.Subject, subj)
-        subj.setRelation(SyntaxRelation.Verb, verb)
         subj.setRelation(SyntaxRelation.Definition, subjAdj)
+//        subjAdj2.setRelation(SyntaxRelation.Subject, subj)
+//        subj.setRelation(SyntaxRelation.Definition, subjAdj2)
+        subj.setRelation(SyntaxRelation.Verb, verb)
+
         verb.setRelation(SyntaxRelation.Subject, subj)
         verb.setRelation(SyntaxRelation.Object, obj)
+
         objAdj.setRelation(SyntaxRelation.Subject, obj)
-        obj.setRelation(SyntaxRelation.Verb, verb)
         obj.setRelation(SyntaxRelation.Definition, objAdj)
+        obj.setRelation(SyntaxRelation.Verb, verb)
 
         val testSentenceMain = Sentence(verb, SentenceType.MainClause)
         val testSentenceQuestion = Sentence(verb, SentenceType.Question)

@@ -13,6 +13,7 @@ import shmp.language.category.paradigm.ParametrizedCategoryValue
 
 data class Sentence(val node: SentenceNode, val type: SentenceType)
 
+
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,

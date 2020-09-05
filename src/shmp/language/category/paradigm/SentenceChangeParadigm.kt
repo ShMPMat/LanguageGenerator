@@ -1,12 +1,10 @@
 package shmp.language.category.paradigm
 
-import shmp.language.SpeechPart
-import shmp.language.category.Category
-import shmp.language.category.CategorySource
 import shmp.language.syntax.Clause
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.WordOrder
 import kotlin.random.Random
+
 
 class SentenceChangeParadigm(
     val wordOrder: WordOrder,
@@ -21,8 +19,3 @@ class SentenceChangeParadigm(
         |$wordChangeParadigm
     """.trimMargin()
 }
-
-
-
-
-typealias ReferenceHandler = (SpeechPart, Category) -> CategorySource?

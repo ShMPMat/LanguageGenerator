@@ -5,7 +5,8 @@ import shmp.language.category.paradigm.NonJoinedClause
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
-data class WordOrder(private  val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
+
+data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
     fun uniteToClause(
         currentNonJoinedClause: NonJoinedClause,
         childrenClauses: MutableList<NonJoinedClause>,

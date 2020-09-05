@@ -37,8 +37,10 @@ internal class SentenceClauseConstructor(
     private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {
         val speechPart = sentenceNode.word.semanticsCore.speechPart
         val references = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart).categories
+
         return sentenceNode.extractValues(references)
     }
 }
+
 
 typealias NonJoinedClause = Pair<SyntaxRelation, Clause>
