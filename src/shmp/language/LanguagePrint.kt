@@ -45,7 +45,7 @@ fun getClauseInfoPrinted(clause: Clause) = clause.words.joinToString(" ") { getW
 fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore) +
         word.categoryValues
             .joinToString("") { "-$it" }
-            .replace(" ", "_")
+            .replace(" ", ".")
 
 private fun getSemanticsCorePrinted(semanticsCore: SemanticsCore) =
     if (semanticsCore.speechPart in listOf(SpeechPart.Particle, SpeechPart.Article)) ""
