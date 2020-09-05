@@ -10,6 +10,7 @@ import shmp.language.category.paradigm.ChangeException
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 
+
 data class Sentence(val node: SentenceNode, val type: SentenceType)
 
 data class SentenceNode(
@@ -38,7 +39,8 @@ data class SentenceNode(
     }
 
     private fun nullReferenceHandler(category: Category, source: CategorySource): CategoryValue? {
-        if (source == CategorySource.SelfStated) return null
+        if (source == CategorySource.SelfStated)
+            return null
 
         if (category.actualValues.contains(PersonValue.Third))
             return PersonValue.Third
@@ -46,6 +48,7 @@ data class SentenceNode(
         return null
     }
 }
+
 
 enum class SentenceType {
     MainClause,

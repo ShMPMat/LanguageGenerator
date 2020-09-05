@@ -19,7 +19,7 @@ fun getParadigmPrinted(language: Language, word: Word): String {
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 
-fun getClauseAndInfoPrinted(clause: Clause): String {
+fun getClauseAndInfoStr(clause: Clause): String {
     val (words, infos) = clause.words
         .map { it.toString() }
         .zip(getClauseInfoPrinted(clause).split(" "))

@@ -4,6 +4,7 @@ import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
 import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.derivation.DerivationParadigm
+import shmp.language.lexis.Meaning
 import shmp.language.lexis.Word
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.StressType
@@ -17,6 +18,9 @@ class Language(
     internal val derivationParadigm: DerivationParadigm,
     internal val sentenceChangeParadigm: SentenceChangeParadigm
 ) {
+    fun getWord(meaning: Meaning) = words
+        .first { it.semanticsCore.hasMeaning(meaning) }
+
     override fun toString(): String {
         return """phonemes:
          |${phonemeContainer}

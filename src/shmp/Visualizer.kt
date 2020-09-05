@@ -6,7 +6,7 @@ import shmp.language.CategoryValue
 import shmp.language.Language
 import shmp.language.category.CategorySource
 import shmp.language.category.NumbersValue
-import shmp.language.getClauseAndInfoPrinted
+import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
 import shmp.language.syntax.Sentence
 import shmp.language.syntax.SentenceNode
@@ -40,11 +40,11 @@ data class Visualizer(val language: Language) {
             )
         }
 
-        val subjAdj = language.words.first { it.semanticsCore.hasMeaning("new") }.toNode()
-        val subj = language.words.first { it.semanticsCore.hasMeaning("mother") }.toNode(listOf(NumbersValue.Plural))
-        val verb = language.words.first { it.semanticsCore.hasMeaning("have") }.toNode()
-        val objAdj = language.words.first { it.semanticsCore.hasMeaning("new") }.toNode()
-        val obj = language.words.first { it.semanticsCore.hasMeaning("time") }.toNode()
+        val subjAdj = language.getWord("new").toNode()
+        val subj = language.getWord("mother").toNode(listOf(NumbersValue.Plural))
+        val verb = language.getWord("have").toNode()
+        val objAdj = language.getWord("new").toNode()
+        val obj = language.getWord("time").toNode()
 
         subjAdj.setRelation(SyntaxRelation.Subject, subj)
         subj.setRelation(SyntaxRelation.Verb, verb)
@@ -58,9 +58,9 @@ data class Visualizer(val language: Language) {
         val testSentenceMain = Sentence(verb, SentenceType.MainClause)
         val testSentenceQuestion = Sentence(verb, SentenceType.Question)
         println("Main:")
-        println(getClauseAndInfoPrinted(language.sentenceChangeParadigm.apply(testSentenceMain, Random(10))))
+        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(testSentenceMain, Random(10))))
         println("General question:")
-        println(getClauseAndInfoPrinted(language.sentenceChangeParadigm.apply(testSentenceQuestion, Random(10))))
+        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(testSentenceQuestion, Random(10))))
     }
 
     fun printAdditionalLexisInfo() {
