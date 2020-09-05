@@ -4,6 +4,7 @@ import shmp.generator.GeneratorException
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
 import shmp.language.syntax.Clause
+import shmp.utils.listCartesianProduct
 import kotlin.math.max
 
 
@@ -49,19 +50,3 @@ fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore)
 private fun getSemanticsCorePrinted(semanticsCore: SemanticsCore) =
     if (semanticsCore.speechPart in listOf(SpeechPart.Particle, SpeechPart.Article)) ""
     else semanticsCore.toString()
-
-
-private fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {
-    if (l.isEmpty()) return emptyList()
-    var result = l[0].map { mutableListOf(it) }
-    for (cl in l.drop(1)) {
-        result = cartesianProduct(result, cl)
-            .map { setOf(it.second).union(it.first).toMutableList() }
-            .toMutableList()
-    }
-    return result
-}
-
-private fun <T, U> cartesianProduct(c1: Collection<T>, c2: Collection<U>): List<Pair<T, U>> {
-    return c1.flatMap { lhsElem -> c2.map { rhsElem -> lhsElem to rhsElem } }
-}
