@@ -22,6 +22,10 @@ class Compound(
         if (resultCore.speechPart != speechPart)
             return null
 
+        val existingDoubles = words.count { it.semanticsCore.words.contains(resultCore.word) }
+        if (testProbability(1.0 - 1.0 / (existingDoubles + 1), random))
+            return null
+
         val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds, random)
 
         val chosenCompound = randomElementOrNull(options, random)?.options
