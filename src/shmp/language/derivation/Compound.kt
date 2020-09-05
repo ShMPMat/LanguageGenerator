@@ -5,6 +5,7 @@ import shmp.containers.toSemanticsCore
 import shmp.language.SpeechPart
 import shmp.language.lexis.CompoundLink
 import shmp.language.lexis.Word
+import shmp.language.lexis.getMeaningDistance
 import shmp.language.lexis.noCompoundLink
 import shmp.language.phonology.PhonemeSequence
 import shmp.language.phonology.Syllable
@@ -22,8 +23,10 @@ class Compound(
         if (resultCore.speechPart != speechPart)
             return null
 
-        val existingDoubles = words.count { it.semanticsCore.words.contains(resultCore.word) }
-        if (testProbability(1.0 - 1.0 / (existingDoubles + 1), random))
+        val existingDoubles = words
+            .map { getMeaningDistance(it.semanticsCore.meaningCluster, resultCore.word) }
+            .foldRight(0.0, Double::plus)
+        if (!testProbability(1.0 / (existingDoubles + 1), random))
             return null
 
         val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds, random)
@@ -67,7 +70,7 @@ class Compound(
         ?.map { t ->
             words.filter {//TODO generate probability test
                 testProbability(1 / (it.semanticsCore.changeDepth.toDouble() + 1), random) &&
-                        it.semanticsCore.words.contains(t.word)
+                        it.semanticsCore.meaningCluster.contains(t.word)
             }
         }
         ?.takeIf { o -> o.all { it.isNotEmpty() } }

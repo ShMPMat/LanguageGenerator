@@ -6,6 +6,7 @@ import shmp.language.SpeechPart.*
 import shmp.language.SpeechPart.Verb
 import shmp.language.category.CategorySource.*
 import shmp.language.category.PersonValue.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
@@ -75,9 +76,9 @@ enum class PersonPresence(override val probability: Double, val possibilities: L
 }
 
 enum class PersonValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    First(SemanticsCore(listOf("(first person indicator)"), Particle, setOf())),
-    Second(SemanticsCore(listOf("(second person indicator)"), Particle, setOf())),
-    Third(SemanticsCore(listOf("(third person indicator)"), Particle, setOf()));
+    First(SemanticsCore(MeaningCluster("(first person indicator)"), Particle, setOf())),
+    Second(SemanticsCore(MeaningCluster("(second person indicator)"), Particle, setOf())),
+    Third(SemanticsCore(MeaningCluster("(third person indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.GenderValue.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -89,22 +90,22 @@ enum class GenderValue(override val semanticsCore: SemanticsCore) : CategoryValu
     //TODO more classes (don't forget to add tags for words after it!)
     Female(
         SemanticsCore(
-            listOf("(female gender indicator)"),
+            MeaningCluster("(female gender indicator)"),
             SpeechPart.Particle,
             setOf()
         )
     ),
-    Male(SemanticsCore(listOf("(male gender indicator)"), SpeechPart.Particle, setOf())),
+    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle, setOf())),
     Neutral(
         SemanticsCore(
-            listOf("(neutral gender indicator)"),
+            MeaningCluster("(neutral gender indicator)"),
             SpeechPart.Particle,
             setOf()
         )
     ),
     Common(
         SemanticsCore(
-            listOf("(common gender indicator)"),
+            MeaningCluster("(common gender indicator)"),
             SpeechPart.Particle,
             setOf()
         )
@@ -112,16 +113,16 @@ enum class GenderValue(override val semanticsCore: SemanticsCore) : CategoryValu
 
     Person(
         SemanticsCore(
-            listOf("(person class indicator)"),
+            MeaningCluster("(person class indicator)"),
             SpeechPart.Particle,
             setOf()
         )
     ),
-    Plant(SemanticsCore(listOf("(plant class indicator)"), SpeechPart.Particle, setOf())),
-    Fruit(SemanticsCore(listOf("(fruit class indicator)"), SpeechPart.Particle, setOf())),
+    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle, setOf())),
+    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle, setOf())),
     LongObject(
         SemanticsCore(
-            listOf("(long object class indicator)"),
+            MeaningCluster("(long object class indicator)"),
             SpeechPart.Particle,
             setOf()
         )

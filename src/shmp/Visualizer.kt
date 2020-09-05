@@ -85,8 +85,8 @@ data class Visualizer(val language: Language) {
         |
         |Collapsed meanings:
         |${language.words
-                .filter { it.semanticsCore.meanings.size > 1 }
-                .joinToString("\n") { "$it - ${it.semanticsCore.meanings.joinToString()}" }
+                .filter { it.semanticsCore.meaningCluster.size > 1 }
+                .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
         |
     """.trimMargin()
@@ -98,7 +98,7 @@ data class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 212)
+    val generator = LanguageGenerator("SupplementFiles", 213)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

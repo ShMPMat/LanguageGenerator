@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.opentest4j.TestAbortedException
 import shmp.language.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
 import shmp.language.morphem.change.*
@@ -180,5 +181,5 @@ internal class WordTemplateSingleChangeTest {
         Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close)
 
     private fun makeSemanticsCore() =
-        SemanticsCore(listOf("phony"), SpeechPart.Noun, setOf())
+        SemanticsCore(MeaningCluster("phony"), SpeechPart.Noun, setOf())
 }

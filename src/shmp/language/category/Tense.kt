@@ -4,6 +4,7 @@ import shmp.language.*
 import shmp.language.SpeechPart.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.TenseValue.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
@@ -88,19 +89,19 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Present(SemanticsCore(listOf("(present tense indicator)"), Particle, setOf())),
-    Future(SemanticsCore(listOf("(future tense indicator)"), Particle, setOf())),
-    Past(SemanticsCore(listOf("(past tense indicator)"), Particle, setOf())),
-    DayPast(SemanticsCore(listOf("(day past tense indicator)"), Particle, setOf())),
+    Present(SemanticsCore(MeaningCluster("(present tense indicator)"), Particle, setOf())),
+    Future(SemanticsCore(MeaningCluster("(future tense indicator)"), Particle, setOf())),
+    Past(SemanticsCore(MeaningCluster("(past tense indicator)"), Particle, setOf())),
+    DayPast(SemanticsCore(MeaningCluster("(day past tense indicator)"), Particle, setOf())),
     SomeDaysPast(
         SemanticsCore(
-            listOf("(some days past tense indicator)"),
+            MeaningCluster("(some days past tense indicator)"),
             Particle,
             setOf()
         )
     ),
-    MonthPast(SemanticsCore(listOf("(month past tense indicator)"), Particle, setOf())),
-    YearPast(SemanticsCore(listOf("(year past tense indicator)"), Particle, setOf()));
+    MonthPast(SemanticsCore(MeaningCluster("(month past tense indicator)"), Particle, setOf())),
+    YearPast(SemanticsCore(MeaningCluster("(year past tense indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

@@ -2,6 +2,7 @@ package shmp.language.category
 
 import shmp.language.*
 import shmp.language.category.CategorySource.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -77,8 +78,8 @@ enum class AnimosityPresence(
 }
 
 enum class AnimosityValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Animate(SemanticsCore(listOf("animate indicator"), SpeechPart.Particle, setOf())),
-    Inanimate(SemanticsCore(listOf("inanimate indicator"), SpeechPart.Particle, setOf()));
+    Animate(SemanticsCore(MeaningCluster("animate indicator"), SpeechPart.Particle, setOf())),
+    Inanimate(SemanticsCore(MeaningCluster("inanimate indicator"), SpeechPart.Particle, setOf()));
 
     override val parentClassName = animosityName
 }

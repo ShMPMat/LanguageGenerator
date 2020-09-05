@@ -3,6 +3,7 @@ package shmp.language.category
 import shmp.language.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.DefinitenessValue.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -73,9 +74,9 @@ enum class DefinitenessPresence(
 
 enum class DefinitenessValue(override val semanticsCore: SemanticsCore) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
-    None(SemanticsCore(listOf(""), SpeechPart.Article, setOf())),
-    Definite(SemanticsCore(listOf("the"), SpeechPart.Article, setOf())),
-    Indefinite(SemanticsCore(listOf("a"), SpeechPart.Article, setOf()));
+    None(SemanticsCore(MeaningCluster(""), SpeechPart.Article, setOf())),
+    Definite(SemanticsCore(MeaningCluster("the"), SpeechPart.Article, setOf())),
+    Indefinite(SemanticsCore(MeaningCluster("a"), SpeechPart.Article, setOf()));
 
     override val parentClassName = definitenessName
 }

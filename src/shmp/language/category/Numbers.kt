@@ -5,6 +5,7 @@ import shmp.language.CategoryRealization.*
 import shmp.language.SpeechPart.*
 import shmp.language.category.CategorySource.*
 import shmp.language.category.NumbersValue.*
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -91,9 +92,9 @@ enum class NumbersPresence(
 }
 
 enum class NumbersValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Singular(SemanticsCore(listOf("(singular number indicator)"), Particle, setOf())),//TODO more diversity
-    Dual(SemanticsCore(listOf("(dual number indicator)"), Particle, setOf())),
-    Plural(SemanticsCore(listOf("(plural number indicator)"), Particle, setOf()));
+    Singular(SemanticsCore(MeaningCluster("(singular number indicator)"), Particle, setOf())),//TODO more diversity
+    Dual(SemanticsCore(MeaningCluster("(dual number indicator)"), Particle, setOf())),
+    Plural(SemanticsCore(MeaningCluster("(plural number indicator)"), Particle, setOf()));
 
     override val parentClassName = outName
 }

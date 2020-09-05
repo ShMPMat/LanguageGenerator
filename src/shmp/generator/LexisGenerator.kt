@@ -4,8 +4,10 @@ import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
 import shmp.language.category.CategoryPool
+import shmp.language.lexis.MeaningCluster
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
+import shmp.language.lexis.getMeaningDistance
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -46,7 +48,6 @@ class LexisGenerator(
     }
 
     private val words = mutableListOf<Word>()
-    private val usedMeanings = mutableListOf<String>()
 
     private val syllableTests = 10
 
@@ -64,7 +65,6 @@ class LexisGenerator(
             val newWords = mutableListOf(randomWord(extendedCore))
             derivationGenerator.makeDerivations(newWords)
             words.addAll(newWords)
-            usedMeanings.addAll(newWords.flatMap { it.semanticsCore.meanings })
         }
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
@@ -74,11 +74,11 @@ class LexisGenerator(
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {
         var resultCore = core
-        val applicableClusters = wordClusters.clusters.filter { it.main in core.words }
+        val applicableClusters = wordClusters.clusters.filter { it.main in core.meaningCluster }
 
         for (cluster in applicableClusters) {
             val chosenCores = cluster.chooseMeanings(random)
-                .filter { it !in core.meanings }
+                .filter { it !in core.meaningCluster }
                 .map { wordBase.allWords.first { w -> w.word == it } }
 
             for (c in chosenCores)
@@ -89,7 +89,10 @@ class LexisGenerator(
     }
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
-        val successProbability = core.probability * wordDoubleProbability.pow(usedMeanings.count { it == core.word })
+        val doubles = words
+            .map { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
+            .foldRight(0.0, Double::plus)
+        val successProbability = core.probability * wordDoubleProbability.pow(doubles)
         return testProbability(successProbability, random)
     }
 
