@@ -76,6 +76,7 @@ class DerivationGenerator(
         val compounds = mutableListOf<Compound>()
 
         val changer = PassingCategoryChanger(random.nextInt(2))
+        val prosodyRule = generateCompoundProsodyRule()
 
         val infixCompoundsAmount = random.nextInt(1, 5)
         for (i in 1 until infixCompoundsAmount) {
@@ -91,7 +92,8 @@ class DerivationGenerator(
                     ),
                     random
                 ).phonemeSequence,
-                changer
+                changer,
+                prosodyRule
             )
 
             if (compound in compounds)
@@ -101,10 +103,16 @@ class DerivationGenerator(
         }
 
         if (testProbability(0.5, random))
-            compounds.add(Compound(SpeechPart.Noun, PhonemeSequence(), changer))
+            compounds.add(Compound(SpeechPart.Noun, PhonemeSequence(), changer, prosodyRule))
 
         return compounds
     }
+
+    private fun generateCompoundProsodyRule() =
+        if (testProbability(0.2, random))
+            PassingProsodyRule
+        else
+            StressOnWordRule(random.nextInt(2))
 
     private fun generateCategoryMaker(
         categoryPool: CategoryPool,

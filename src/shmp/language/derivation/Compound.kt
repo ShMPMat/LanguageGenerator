@@ -17,7 +17,8 @@ import kotlin.random.Random
 class Compound(
     private val speechPart: SpeechPart,
     val infix: PhonemeSequence,
-    private val categoriesChanger: CategoryChanger
+    private val categoriesChanger: CategoryChanger,
+    private val prosodyRule: CompoundProsodyRule
 ) {
     fun compose(words: List<Word>, resultCore: SemanticsCoreTemplate, random: Random): Word? {
         if (resultCore.speechPart != speechPart)
@@ -50,7 +51,7 @@ class Compound(
             putProsodies(
                 syllables,
                 chosenWords,
-                if (syllableTemplate.splitOnSyllables(infix) == null) 0 else 1
+                if (infix.size == 0 || syllableTemplate.splitOnSyllables(infix) == null) 0 else 1
             ),
             syllableTemplate,
             resultCore.toSemanticsCore(newCategories, random)
@@ -80,9 +81,11 @@ class Compound(
         val prosodySyllables = mutableListOf<Syllable>()
         var syllableInd = 0
 
-        for (word in sourceWords) {
+        for ((wordInd, word) in sourceWords.withIndex()) {
             for (syllable in word.syllables) {
-                prosodySyllables.add(syllables[syllableInd].copy(prosodicEnums = syllable.prosodicEnums))
+                prosodySyllables.add(syllables[syllableInd].copy(
+                    prosodicEnums = prosodyRule.changeProsody(wordInd, syllable.prosodicEnums))
+                )
 
                 syllableInd++
             }
@@ -96,7 +99,8 @@ class Compound(
         return prosodySyllables
     }
 
-    override fun toString() = "Make a compound $speechPart, with infix '$infix'; $categoriesChanger"
+    override fun toString() =
+        "Make a compound $speechPart, with infix '$infix'; $categoriesChanger; $prosodyRule"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
