@@ -4,25 +4,25 @@ import shmp.language.SpeechPart
 import shmp.language.lexis.Word
 import shmp.language.category.Category
 import shmp.language.category.CategorySource
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 
 class WordChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)): Clause {
+    fun apply(word: Word, categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)): WordSequence {
         val (startClause, wordPosition) = innerApply(word, categoryValues)
         val allWords = startClause.words.mapIndexed { i, w ->
             if (i == wordPosition || w == startClause[i]) listOf(w)
             else apply(w, categoryValues).words
         }.flatten()
-        return Clause(allWords)
+        return WordSequence(allWords)
     }
 
     private fun innerApply(
         word: Word,
         categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)
-    ): Pair<Clause, Int> =
+    ): Pair<WordSequence, Int> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, categoryValues.toSet())
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")

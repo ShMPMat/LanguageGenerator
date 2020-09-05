@@ -8,15 +8,15 @@ import shmp.language.category.CategorySource
 import shmp.language.lexis.Word
 
 
-interface SyntaxConstruction {
+interface SyntaxClause {
     //TODO move presetCategories into the class itself
     fun toNode(language: Language, presetCategories: List<CategoryValue> = listOf()): SentenceNode
 }
 
 
-abstract class NounDefiner : SyntaxConstruction
+abstract class NounDefinerClause : SyntaxClause
 
-class AdjectiveDefiner(val adjective: Word) : NounDefiner() {
+class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
     init {
         if (adjective.semanticsCore.speechPart != SpeechPart.Adjective)
             throw LanguageException("$adjective is not an adjective")
@@ -29,7 +29,7 @@ class AdjectiveDefiner(val adjective: Word) : NounDefiner() {
 }
 
 
-class NominalClause(val noun: Word, val definitions: List<NounDefiner>) : SyntaxConstruction {
+class NominalClause(val noun: Word, val definitions: List<NounDefinerClause>) : SyntaxClause {
     //TODO multiple definitions
     override fun toNode(language: Language, presetCategories: List<CategoryValue>): SentenceNode {
         val node = noun.toNode(language, presetCategories)

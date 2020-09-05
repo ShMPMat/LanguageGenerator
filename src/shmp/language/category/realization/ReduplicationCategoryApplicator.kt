@@ -1,16 +1,16 @@
 package shmp.language.category.realization
 
 import shmp.language.category.paradigm.ParametrizedCategoryValue
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 
 class ReduplicationCategoryApplicator : CategoryApplicator {
-    override fun apply(clause: Clause, wordPosition: Int, values: Collection<ParametrizedCategoryValue>): Clause {
-        val newWord = clause[wordPosition].copyAndAddValues(values)
-        return Clause(
-            clause.words.take(wordPosition)
+    override fun apply(wordSequence: WordSequence, wordPosition: Int, values: Collection<ParametrizedCategoryValue>): WordSequence {
+        val newWord = wordSequence[wordPosition].copyAndAddValues(values)
+        return WordSequence(
+            wordSequence.words.take(wordPosition)
                     + newWord
                     + newWord.copy()
-                    + clause.words.drop(wordPosition + 1)
+                    + wordSequence.words.drop(wordPosition + 1)
         )
     }
 

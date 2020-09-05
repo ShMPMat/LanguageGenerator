@@ -1,16 +1,16 @@
 package shmp.language.category.realization
 
 import shmp.language.CategoryRealization
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 import shmp.language.lexis.Word
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 
 class NewWordCategoryApplicator(applicatorWord: Word) :
     WordCategoryApplicator(applicatorWord, CategoryRealization.NewWord) {
 
-    override fun apply(clause: Clause, wordPosition: Int, values: Collection<ParametrizedCategoryValue>): Clause =
-        Clause(
-            clause.words.mapIndexed { i, w ->
+    override fun apply(wordSequence: WordSequence, wordPosition: Int, values: Collection<ParametrizedCategoryValue>): WordSequence =
+        WordSequence(
+            wordSequence.words.mapIndexed { i, w ->
                 if (i == wordPosition)
                     applicatorWord.copyWithValues(values)
                 else w

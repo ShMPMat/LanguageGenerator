@@ -3,9 +3,8 @@ package shmp.language
 import shmp.generator.GeneratorException
 import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 import shmp.utils.listCartesianProduct
-import kotlin.math.max
 
 
 fun getParadigmPrinted(language: Language, word: Word): String {
@@ -19,10 +18,10 @@ fun getParadigmPrinted(language: Language, word: Word): String {
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 
-fun getClauseAndInfoStr(clause: Clause): String {
-    val (words, infos) = clause.words
+fun getClauseAndInfoStr(wordSequence: WordSequence): String {
+    val (words, infos) = wordSequence.words
         .map { it.toString() }
-        .zip(getClauseInfoPrinted(clause).split(" "))
+        .zip(getClauseInfoPrinted(wordSequence).split(" "))
         .map { (s1, s2) -> lineUp(s1, s2) }
         .map { (s1, s2) -> s1 to s2 }
         .unzip()
@@ -40,7 +39,7 @@ fun lineUp(ss: List<String>): List<String> {
 
 fun lineUp(vararg ss: String) = lineUp(ss.toList())
 
-fun getClauseInfoPrinted(clause: Clause) = clause.words.joinToString(" ") { getWordInfoPrinted(it) }
+fun getClauseInfoPrinted(wordSequence: WordSequence) = wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
 
 fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore) +
         word.categoryValues

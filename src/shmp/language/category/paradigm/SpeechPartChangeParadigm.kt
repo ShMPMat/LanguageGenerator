@@ -4,7 +4,7 @@ import shmp.language.SpeechPart
 import shmp.language.lexis.Word
 import shmp.language.category.realization.CategoryApplicator
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 
 class SpeechPartChangeParadigm(
     val speechPart: SpeechPart,
@@ -14,12 +14,12 @@ class SpeechPartChangeParadigm(
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
-    fun apply(word: Word, categoryValues: Set<ParametrizedCategoryValue>): Pair<Clause, Int> {
+    fun apply(word: Word, categoryValues: Set<ParametrizedCategoryValue>): Pair<WordSequence, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
-        var currentClause = Clause(listOf(word))
+        var currentClause = WordSequence(listOf(word))
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
@@ -47,22 +47,22 @@ class SpeechPartChangeParadigm(
     }
 
     private fun useCategoryApplicator(
-        clause: Clause,
+        wordSequence: WordSequence,
         wordPosition: Int,
         exponenceCluster: ExponenceCluster,
         exponenceValue: ExponenceValue,
         actualValues: List<ParametrizedCategoryValue>
-    ): Clause {
-        val word = clause[wordPosition]
+    ): WordSequence {
+        val word = wordSequence[wordPosition]
         return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
             applicators[exponenceCluster]
                 ?.get(exponenceValue)
-                ?.apply(clause, wordPosition, actualValues)
+                ?.apply(wordSequence, wordPosition, actualValues)
                 ?: throw ChangeException(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"
                 )
-        else Clause(listOf(word.copy()))
+        else WordSequence(listOf(word.copy()))
     }
 
     private fun getExponenceUnion(
@@ -72,10 +72,10 @@ class SpeechPartChangeParadigm(
         return exponenceCluster.filterExponenceUnion(categoryValues)
     }
 
-    private fun applyProsodyParadigm(clause: Clause, wordPosition: Int, oldWord: Word) = Clause(
-        clause.words.subList(0, wordPosition)
-                + listOf(prosodyChangeParadigm.apply(oldWord, clause[wordPosition]))
-                + clause.words.subList(wordPosition + 1, clause.size)
+    private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) = WordSequence(
+        wordSequence.words.subList(0, wordPosition)
+                + listOf(prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition]))
+                + wordSequence.words.subList(wordPosition + 1, wordSequence.size)
     )
 
     fun hasChanges() = applicators.any { it.value.isNotEmpty() }

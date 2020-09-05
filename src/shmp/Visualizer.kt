@@ -2,9 +2,7 @@ package shmp
 
 import shmp.containers.WordBase
 import shmp.generator.LanguageGenerator
-import shmp.language.CategoryValue
 import shmp.language.Language
-import shmp.language.category.CategorySource
 import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
@@ -24,14 +22,14 @@ data class Visualizer(val language: Language) {
     fun printTestSentences() {
         val subj = NominalClause(
             language.getWord("mother"),
-            listOf(AdjectiveDefiner(language.getWord("new")))
+            listOf(AdjectiveClause(language.getWord("new")))
         ).toNode(language, listOf(NumbersValue.Plural))
 
         val verb = language.getWord("have").toNode(language)
 
         val obj = NominalClause(
             language.getWord("time"),
-            listOf(AdjectiveDefiner(language.getWord("new")))
+            listOf(AdjectiveClause(language.getWord("new")))
         ).toNode(language)
 
         subj.setRelation(SyntaxRelation.Verb, verb)

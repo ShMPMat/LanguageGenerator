@@ -12,7 +12,7 @@ data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nomi
         childrenClauses: MutableList<NonJoinedClause>,
         sentenceType: SentenceType,
         random: Random
-    ): Clause {
+    ): WordSequence {
         if (childrenClauses.isEmpty()) return currentNonJoinedClause.second
 
         val fullClauses = childrenClauses + listOf(currentNonJoinedClause)
@@ -25,7 +25,7 @@ data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nomi
 
     }
 
-    private fun orderWithRelation(clauses: List<NonJoinedClause>, relationOrder: RelationOrder, random: Random): Clause {
+    private fun orderWithRelation(clauses: List<NonJoinedClause>, relationOrder: RelationOrder, random: Random): WordSequence {
         val relation = relationOrder.referenceOrder(random)
         val resultWords = clauses
             .sortedBy { (r) ->
@@ -34,7 +34,7 @@ data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nomi
                     throw ChangeException("No Relation $r in a relation order ${relationOrder.referenceOrder}")
                 i
             }.flatMap { it.second.words }
-        return Clause(resultWords)
+        return WordSequence(resultWords)
     }
 
     override fun toString() = "$sovOrder, $nominalGroupOrder"

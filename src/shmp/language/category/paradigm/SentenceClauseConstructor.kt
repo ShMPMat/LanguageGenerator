@@ -1,6 +1,6 @@
 package shmp.language.category.paradigm
 
-import shmp.language.syntax.Clause
+import shmp.language.syntax.WordSequence
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SentenceType
 import shmp.language.syntax.SyntaxRelation
@@ -15,7 +15,7 @@ internal class SentenceClauseConstructor(
     private val processedNodes = mutableListOf<SentenceNode>()
 
     //TODO the first is always a Verb!
-    fun applyNode(sentenceNode: SentenceNode): Clause {
+    fun applyNode(sentenceNode: SentenceNode): WordSequence {
         processedNodes.clear()
         return applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
     }
@@ -43,4 +43,4 @@ internal class SentenceClauseConstructor(
 }
 
 
-typealias NonJoinedClause = Pair<SyntaxRelation, Clause>
+typealias NonJoinedClause = Pair<SyntaxRelation, WordSequence>
