@@ -7,6 +7,9 @@ import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
 import shmp.language.syntax.*
+import shmp.language.syntax.clause.AdjectiveClause
+import shmp.language.syntax.clause.NominalClause
+import shmp.language.syntax.clause.TransitiveVerbClause
 import kotlin.random.Random
 
 
