@@ -1,6 +1,7 @@
 package shmp.language.syntax
 
 import shmp.language.CategoryValue
+import shmp.language.Language
 import shmp.language.LanguageException
 import shmp.language.lexis.Word
 import shmp.language.category.Category
@@ -11,7 +12,7 @@ import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 
 
-data class Sentence(val node: SentenceNode, val type: SentenceType)
+data class Sentence(val syntaxClause: SyntaxClause, val type: SentenceType)
 
 
 data class SentenceNode(

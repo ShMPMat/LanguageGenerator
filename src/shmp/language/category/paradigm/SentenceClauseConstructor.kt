@@ -17,6 +17,7 @@ internal class SentenceClauseConstructor(
     //TODO the first is always a Verb!
     fun applyNode(sentenceNode: SentenceNode): WordSequence {
         processedNodes.clear()
+
         return applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
     }
 

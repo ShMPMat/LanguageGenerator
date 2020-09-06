@@ -27,21 +27,29 @@ data class Visualizer(val language: Language) {
         )
         val obj = NominalClause(
             language.getWord("time"),
-            listOf(AdjectiveClause(language.getWord("new")))
+            listOf(AdjectiveClause(language.getWord("small")))
         )
 
         val verb = TransitiveVerbClause(
             language.getWord("have"),
             subj,
             obj
-        ).toNode(language)
+        )
 
         val testSentenceMain = Sentence(verb, SentenceType.MainClause)
         val testSentenceQuestion = Sentence(verb, SentenceType.Question)
         println("Main:")
-        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(testSentenceMain, Random(10))))
+        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(
+            testSentenceMain,
+            language,
+            Random(10)
+        )))
         println("General question:")
-        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(testSentenceQuestion, Random(10))))
+        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(
+            testSentenceQuestion,
+            language,
+            Random(10)
+        )))
     }
 
     fun printAdditionalLexisInfo() {
