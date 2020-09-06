@@ -22,22 +22,19 @@ data class Visualizer(val language: Language) {
     fun printTestSentences() {
         val subj = NominalClause(
             language.getWord("mother"),
-            listOf(AdjectiveClause(language.getWord("new")))
-        ).toNode(language, listOf(NumbersValue.Plural))
-
-        val verb = language.getWord("have").toNode(language)
-
+            listOf(AdjectiveClause(language.getWord("new"))),
+            listOf(NumbersValue.Plural)
+        )
         val obj = NominalClause(
             language.getWord("time"),
             listOf(AdjectiveClause(language.getWord("new")))
+        )
+
+        val verb = TransitiveVerbClause(
+            language.getWord("have"),
+            subj,
+            obj
         ).toNode(language)
-
-        subj.setRelation(SyntaxRelation.Verb, verb)
-
-        verb.setRelation(SyntaxRelation.Subject, subj)
-        verb.setRelation(SyntaxRelation.Object, obj)
-
-        obj.setRelation(SyntaxRelation.Verb, verb)
 
         val testSentenceMain = Sentence(verb, SentenceType.MainClause)
         val testSentenceQuestion = Sentence(verb, SentenceType.Question)
