@@ -26,15 +26,17 @@ data class SentenceNode(
         _relation[syntaxRelation] = sentenceNode
     }
 
-    fun extractValues(references: List<ParametrizedCategory>) = references.map { (category, source) ->
-        val res = when (source) {
-            is CategorySource.SelfStated -> categoryValues
-            is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
-        }?.firstOrNull { it.parentClassName == category.outType }
-            ?: nullReferenceHandler(category, source)
-            ?: throw LanguageException("No value for ${category.outType} and source $source")
-        ParametrizedCategoryValue(res, source)
-    }
+    fun extractValues(references: List<ParametrizedCategory>) =
+        references.map { (category, source) ->
+            val res = when (source) {
+                is CategorySource.SelfStated -> categoryValues
+                is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
+            }
+                ?.firstOrNull { it.parentClassName == category.outType }
+                ?: nullReferenceHandler(category, source)
+                ?: throw LanguageException("No value for ${category.outType} and source $source")
+            ParametrizedCategoryValue(res, source)
+        }
 
     private fun nullReferenceHandler(category: Category, source: CategorySource): CategoryValue? {
         if (source == CategorySource.SelfStated)

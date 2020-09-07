@@ -14,7 +14,6 @@ internal class SentenceClauseConstructor(
 ) {
     private val processedNodes = mutableListOf<SentenceNode>()
 
-    //TODO the first is always a Verb!
     fun applyNode(sentenceNode: SentenceNode): WordSequence {
         processedNodes.clear()
 
