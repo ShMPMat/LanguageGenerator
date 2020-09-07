@@ -79,7 +79,7 @@ class DerivationGenerator(
         val prosodyRule = generateCompoundProsodyRule()
 
         val infixCompoundsAmount = random.nextInt(1, 5)
-        for (i in 1 until infixCompoundsAmount) {
+        for (i in 1..infixCompoundsAmount) {
             val speechPart = SpeechPart.Noun
             val compound = Compound(
                 speechPart,

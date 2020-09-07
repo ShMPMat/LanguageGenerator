@@ -11,9 +11,6 @@ import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.syntax.clause.SyntaxClause
 
 
-data class Sentence(val syntaxClause: SyntaxClause, val type: SentenceType)
-
-
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,

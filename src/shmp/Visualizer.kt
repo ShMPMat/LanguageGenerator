@@ -7,9 +7,7 @@ import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
 import shmp.language.syntax.*
-import shmp.language.syntax.clause.AdjectiveClause
-import shmp.language.syntax.clause.NominalClause
-import shmp.language.syntax.clause.TransitiveVerbClause
+import shmp.language.syntax.clause.*
 import kotlin.random.Random
 
 
@@ -39,8 +37,8 @@ data class Visualizer(val language: Language) {
             obj
         )
 
-        val testSentenceMain = Sentence(verb, SentenceType.MainClause)
-        val testSentenceQuestion = Sentence(verb, SentenceType.Question)
+        val testSentenceMain = TransitiveVerbMainSentence(verb)
+        val testSentenceQuestion = TransitiveVerbQuestion(verb)
         println("Main:")
         println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(
             testSentenceMain,
