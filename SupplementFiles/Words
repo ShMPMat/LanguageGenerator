@@ -115,6 +115,8 @@ take               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
 live               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@home:0.4,building:0.2
+flow               Verb        0.85   T|trans:0,intrans:1
+                                      VNPlace@river:0.03 VNPlace@time:0.002
 return_home        Verb        0.1    T|trans:1,intrans:100
                                       VNPlace@home:0.01
 
@@ -140,14 +142,14 @@ earth              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 sun                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
 moon               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
 toilet             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-art_gallery        Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-museum             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+art_gallery        Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+museum             Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 wild               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 forest             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-zoo                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-motherland         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+zoo                Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+motherland         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 universe           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-factory            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+factory            Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 workplace          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 workshop           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -162,14 +164,15 @@ end_(place)        Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 dead_end           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 playground         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 shop               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-market             Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+market             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 beautiful_place    Noun        0.01   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-building           Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+building           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 destination        Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 landing            Noun        0.02   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 appearance         Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-sea                Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+sea                Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+river              Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
 
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
 ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -178,38 +181,35 @@ fire               Noun        1.0    G|Plant:0,Fruit:0,Person:0                
 ashes              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 smoke              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 dust               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-salt               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+salt               Noun        0.98   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sand               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 being              Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:100
 person             Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-speaker            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-writer             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-aviator            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-relative           Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-helper             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-friend             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-sailor             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-changer            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-poor_person        Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-painter            Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-artist             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-stock_farmer       Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-barbarian          Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-traveller          Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-adventurer         Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-worker             Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-local_person       Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-actor              Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-countryman         Noun        0.5    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+speaker            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+writer             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+aviator            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+relative           Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+helper             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+friend             Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+sailor             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+changer            Noun        0.05   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+poor_person        Noun        0.03   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+painter            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+artist             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+stock_farmer       Noun        0.03   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+barbarian          Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+traveller          Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+adventurer         Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+worker             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+local_person       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+actor              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+countryman         Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 
 person_who_finishes_smt       Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_does_smth_temporary   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_wants_smth            Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-
-
-flow               Verb        0.85   T|trans:0,intrans:1
 
 
 /set                Verb               T|trans:1,intrans:0                                              set what?
@@ -434,7 +434,6 @@ flow               Verb        0.85   T|trans:0,intrans:1
 /letter
 /until
 /mile
-/river
 /car
 /feet
 /care
@@ -777,7 +776,6 @@ flow               Verb        0.85   T|trans:0,intrans:1
 /choose
 /fell
 /fit
-/flow
 /fair
 /bank
 /collect
