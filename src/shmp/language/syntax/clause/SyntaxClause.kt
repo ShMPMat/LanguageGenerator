@@ -15,7 +15,6 @@ import kotlin.random.Random
 
 interface SyntaxClause {
     fun toNode(language: Language): SentenceNode
-
 }
 
 interface UnfoldableClause: SyntaxClause {
