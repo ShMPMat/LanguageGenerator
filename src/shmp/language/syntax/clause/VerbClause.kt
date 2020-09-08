@@ -26,11 +26,11 @@ class TransitiveVerbClause(
         val obj = objectClause.toNode(language)
         val subj = subjectClause.toNode(language)
 
-        subj.setRelation(SyntaxRelation.Verb, node)
-        obj.setRelation(SyntaxRelation.Verb, node)
+        subj.setRelation(SyntaxRelation.Verb, node, false)
+        obj.setRelation(SyntaxRelation.Verb, node, false)
 
-        node.setRelation(SyntaxRelation.Subject, subj)
-        node.setRelation(SyntaxRelation.Object, obj)
+        node.setRelation(SyntaxRelation.Subject, subj, true)
+        node.setRelation(SyntaxRelation.Object, obj, true)
 
         return node
     }

@@ -25,8 +25,8 @@ class NominalClause(
         val definers = definitions
             .map { it.toNode(language) }
             .forEach {
-                it.setRelation(SyntaxRelation.Subject, node)
-                node.setRelation(SyntaxRelation.Definition, it)
+                it.setRelation(SyntaxRelation.Subject, node, false)
+                node.setRelation(SyntaxRelation.Definition, it, true)
             }
 
         return node

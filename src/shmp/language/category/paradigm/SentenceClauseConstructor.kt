@@ -12,22 +12,15 @@ class SentenceClauseConstructor(
     private val sentenceType: SentenceType,
     private val random: Random
 ) {
-    private val processedNodes = mutableListOf<SentenceNode>()
+    fun applyNode(sentenceNode: SentenceNode): WordSequence =
+        applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
 
-    fun applyNode(sentenceNode: SentenceNode): WordSequence {
-        processedNodes.clear()
-
-        return applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
-    }
-
-    private fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
+    fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause = relation to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
-        processedNodes.add(sentenceNode)
 
-        val childrenClauses = sentenceNode.relation
-            .filter { it.value !in processedNodes }
+        val childrenClauses = sentenceNode.children
             .map { (r, n) -> applyNodeInternal(n, r) }
             .toMutableList()
 

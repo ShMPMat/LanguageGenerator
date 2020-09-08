@@ -16,11 +16,15 @@ data class SentenceNode(
     val categoryValues: List<CategoryValue>,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
 ) {
-    val relation: Map<SyntaxRelation, SentenceNode>
-        get() = _relation
+    private val _children = mutableMapOf<SyntaxRelation, SentenceNode>()
+    val children: Map<SyntaxRelation, SentenceNode>
+        get() = _children
 
-    fun setRelation(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
+    fun setRelation(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode, isChild: Boolean) {
         _relation[syntaxRelation] = sentenceNode
+
+        if (isChild)
+            _children[syntaxRelation] = sentenceNode
     }
 
     fun extractValues(references: List<ParametrizedCategory>) =
