@@ -9,10 +9,17 @@ import shmp.language.lexis.Word
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.WordSequence
+import kotlin.random.Random
 
 
 interface SyntaxClause {
     fun toNode(language: Language): SentenceNode
+
+}
+
+interface UnfoldableClause: SyntaxClause {
+    fun unfold(language: Language, random: Random): WordSequence
 }
 
 

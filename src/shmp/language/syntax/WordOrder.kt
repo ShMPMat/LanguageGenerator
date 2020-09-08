@@ -13,9 +13,11 @@ data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nomi
         sentenceType: SentenceType,
         random: Random
     ): WordSequence {
-        if (childrenClauses.isEmpty()) return currentNonJoinedClause.second
+        if (childrenClauses.isEmpty())
+            return currentNonJoinedClause.second
 
         val fullClauses = childrenClauses + listOf(currentNonJoinedClause)
+
         return when (currentNonJoinedClause.first) {
             SyntaxRelation.Verb -> orderWithRelation(fullClauses, sovOrder.getValue(sentenceType), random)
             SyntaxRelation.Object -> orderWithRelation(fullClauses, nominalGroupOrder, random)

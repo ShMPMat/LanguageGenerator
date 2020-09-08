@@ -7,7 +7,7 @@ import shmp.language.syntax.SyntaxRelation
 import kotlin.random.Random
 
 
-internal class SentenceClauseConstructor(
+class SentenceClauseConstructor(
     private val paradigm: SentenceChangeParadigm,
     private val sentenceType: SentenceType,
     private val random: Random

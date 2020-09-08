@@ -40,17 +40,17 @@ data class Visualizer(val language: Language) {
         val testSentenceMain = TransitiveVerbMainSentence(verb)
         val testSentenceQuestion = TransitiveVerbQuestion(verb)
         println("Main:")
-        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(
-            testSentenceMain,
-            language,
-            Random(10)
-        )))
+        println(
+            getClauseAndInfoStr(
+                testSentenceMain.unfold(language, Random(10))
+            )
+        )
         println("General question:")
-        println(getClauseAndInfoStr(language.sentenceChangeParadigm.apply(
-            testSentenceQuestion,
-            language,
-            Random(10)
-        )))
+        println(
+            getClauseAndInfoStr(
+                testSentenceQuestion.unfold(language, Random(10))
+            )
+        )
     }
 
     fun printAdditionalLexisInfo() {
