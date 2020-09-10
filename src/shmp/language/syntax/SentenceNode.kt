@@ -14,11 +14,15 @@ import shmp.language.syntax.clause.SyntaxClause
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
-    private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
+    private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
+    private val _children: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
 ) {
-    private val _children = mutableMapOf<SyntaxRelation, SentenceNode>()
     val children: Map<SyntaxRelation, SentenceNode>
         get() = _children
+
+    fun withCategoryValue(value: CategoryValue) = this.copy(
+        categoryValues = categoryValues + listOf(value)
+    )
 
     fun setRelation(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode, isChild: Boolean) {
         _relation[syntaxRelation] = sentenceNode
@@ -34,20 +38,9 @@ data class SentenceNode(
                 is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
-                ?: nullReferenceHandler(category, source)
                 ?: throw LanguageException("No value for ${category.outType} and source $source")
             ParametrizedCategoryValue(res, source)
         }
-
-    private fun nullReferenceHandler(category: Category, source: CategorySource): CategoryValue? {
-        if (source == CategorySource.SelfStated)
-            return null
-
-        if (category.actualValues.contains(PersonValue.Third))
-            return PersonValue.Third
-
-        return null
-    }
 }
 
 

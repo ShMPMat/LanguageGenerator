@@ -3,6 +3,7 @@ package shmp.language.syntax.clause
 import shmp.language.Language
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
+import shmp.language.category.PersonValue
 import shmp.language.lexis.Word
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxException
@@ -23,8 +24,8 @@ class TransitiveVerbClause(
 
     override fun toNode(language: Language): SentenceNode {
         val node = verb.toNode(language)
-        val obj = objectClause.toNode(language)
-        val subj = subjectClause.toNode(language)
+        val obj = objectClause.toNode(language).addThirdPerson()
+        val subj = subjectClause.toNode(language).addThirdPerson()
 
         subj.setRelation(SyntaxRelation.Verb, node, false)
         obj.setRelation(SyntaxRelation.Verb, node, false)
@@ -35,3 +36,9 @@ class TransitiveVerbClause(
         return node
     }
 }
+
+
+private fun SentenceNode.addThirdPerson() =
+    if (this.categoryValues.none { it.parentClassName == "Person" })
+        this.withCategoryValue(PersonValue.Third)
+    else this.copy()

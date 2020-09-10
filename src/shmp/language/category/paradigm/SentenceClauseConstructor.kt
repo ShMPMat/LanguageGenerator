@@ -12,9 +12,6 @@ class SentenceClauseConstructor(
     private val sentenceType: SentenceType,
     private val random: Random
 ) {
-    fun applyNode(sentenceNode: SentenceNode): WordSequence =
-        applyNodeInternal(sentenceNode, SyntaxRelation.Verb).second
-
     fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
