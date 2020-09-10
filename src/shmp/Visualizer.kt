@@ -23,7 +23,10 @@ data class Visualizer(val language: Language) {
     fun printTestSentences() {
         val subj = NominalClause(
             language.getWord("mother"),
-            listOf(AdjectiveClause(language.getWord("new"))),
+            listOf(
+                AdjectiveClause(language.getWord("new")),
+                AdjectiveClause(language.getWord("small"))
+            ),
             listOf(NumbersValue.Plural)
         )
         val obj = NominalClause(
@@ -88,7 +91,7 @@ data class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 214)
+    val generator = LanguageGenerator("SupplementFiles", 215) //216
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

@@ -15,9 +15,9 @@ data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
-    private val _children: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf()
+    private val _children: MutableList<SentenceNodeChild> = mutableListOf()
 ) {
-    val children: Map<SyntaxRelation, SentenceNode>
+    val children: List<SentenceNodeChild>
         get() = _children
 
     fun withCategoryValue(value: CategoryValue) = this.copy(
@@ -28,8 +28,11 @@ data class SentenceNode(
         _relation[syntaxRelation] = sentenceNode
 
         if (isChild)
-            _children[syntaxRelation] = sentenceNode
+            addChild(syntaxRelation, sentenceNode)
     }
+
+    fun addChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) =
+        _children.add(syntaxRelation to sentenceNode)
 
     fun extractValues(references: List<ParametrizedCategory>) =
         references.map { (category, source) ->
@@ -55,3 +58,6 @@ fun differentWordOrderProbability(sentenceType: SentenceType) = when (sentenceTy
     SentenceType.SubordinateClause -> 0.03
     SentenceType.Question -> 0.1
 }
+
+
+typealias SentenceNodeChild = Pair<SyntaxRelation, SentenceNode>

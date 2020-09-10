@@ -26,7 +26,7 @@ class NominalClause(
             .map { it.toNode(language) }
             .forEach {
                 it.setRelation(SyntaxRelation.Subject, node, false)
-                node.setRelation(SyntaxRelation.Definition, it, true)
+                node.addChild(SyntaxRelation.Definition, it)
             }
 
         return node
