@@ -5,6 +5,7 @@ import shmp.language.LanguageException
 import shmp.language.category.Category
 import shmp.language.category.CategorySource
 
+
 class ExponenceCluster(
     val categories: List<ParametrizedCategory>,
     possibleValuesSets: Set<List<ParametrizedCategoryValue>>
@@ -29,7 +30,9 @@ class ExponenceCluster(
 
 class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val parentCluster: ExponenceCluster) {
     init {
-        if (parentCluster.categories.size != categoryValues.groupBy { it.categoryValue.parentClassName }.size)
+        val valueTypesAmount = categoryValues.groupBy { it.categoryValue.parentClassName to it.source }.size
+
+        if (parentCluster.categories.size != valueTypesAmount)
             throw LanguageException(
                 "Tried to create Exponence Value of size ${categoryValues.size} " +
                         "for Exponence Cluster of size ${parentCluster.categories.size}"
@@ -41,7 +44,7 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
                 if (parentCluster.categories[currentCategoryIndex + 1].containsParametrizedValue(value))
                     currentCategoryIndex++
                 else throw LanguageException(
-                    "Category Values in Exponence Value are ordered not in the same as Categories in Exponence Cluster"
+                    "Category Values in Exponence Value are ordered not in the same as  Categories in Exponence Cluster"
                 )
     }
 

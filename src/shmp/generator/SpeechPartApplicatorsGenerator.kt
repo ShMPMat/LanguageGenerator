@@ -192,11 +192,7 @@ class SpeechPartApplicatorsGenerator(
         val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.actualParametrizedValues.size)
         val recSets = constructExponenceUnionSets(categories, existingPaths)
 
-        return recSets.map {
-            val list = it.toMutableList()
-            list.addAll(currentCategory.actualParametrizedValues)
-            list
-        }.toSet()
+        return recSets.map { it + currentCategory.actualParametrizedValues }.toSet()
     }
 
     private fun makeNonCollapsedExponenceUnionSets(
@@ -205,17 +201,16 @@ class SpeechPartApplicatorsGenerator(
         neighbourCategories: BoxedInt
     ): Set<List<ParametrizedCategoryValue>> {
         val lists = mutableSetOf<List<ParametrizedCategoryValue>>()
+        if (categories.size == 4) {
+            val k = 0
+        }
 
         for (new in currentCategory.actualParametrizedValues) {
             val recSets = constructExponenceUnionSets(
                 categories,
                 BoxedInt(neighbourCategories.value * currentCategory.actualParametrizedValues.size)
             )
-            lists.addAll(recSets.map {
-                val list = it.toMutableList()
-                list.add(new)
-                list
-            })
+            lists.addAll(recSets.map { it + listOf(new) })
         }
 
         return lists
