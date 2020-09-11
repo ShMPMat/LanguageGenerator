@@ -1,7 +1,6 @@
 package shmp.language.syntax
 
 import shmp.language.category.paradigm.ChangeException
-import shmp.language.category.paradigm.NonJoinedClause
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
@@ -35,7 +34,9 @@ data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nomi
                 if (i == -1)
                     throw ChangeException("No Relation $r in a relation order ${relationOrder.referenceOrder}")
                 i
-            }.flatMap { it.second.words }
+            }
+            .flatMap { it.second.words }
+
         return WordSequence(resultWords)
     }
 

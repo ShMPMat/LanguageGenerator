@@ -19,10 +19,10 @@ class NominalClause(
             throw LanguageException("$noun is not a noun")
     }
 
-    //TODO multiple definitions
     override fun toNode(language: Language): SentenceNode {
         val node = noun.toNode(language, additionalCategories)
-        val definers = definitions
+
+        definitions
             .map { it.toNode(language) }
             .forEach {
                 it.setRelation(SyntaxRelation.Subject, node, false)

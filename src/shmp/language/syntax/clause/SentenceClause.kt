@@ -1,7 +1,7 @@
 package shmp.language.syntax.clause
 
 import shmp.language.Language
-import shmp.language.category.paradigm.SentenceClauseConstructor
+import shmp.language.syntax.SentenceClauseConstructor
 import shmp.language.syntax.SentenceType
 import shmp.language.syntax.SyntaxRelation
 import kotlin.random.Random
@@ -14,7 +14,7 @@ interface SentenceClause : UnfoldableClause {
 abstract class AbstractSentenceClause(override val type: SentenceType) : SentenceClause {
     override fun unfold(language: Language, random: Random) =
         SentenceClauseConstructor(language.sentenceChangeParadigm, type, random)
-            .applyNodeInternal(toNode(language), SyntaxRelation.Verb).second
+            .applyNode(toNode(language), SyntaxRelation.Verb).second
 }
 
 

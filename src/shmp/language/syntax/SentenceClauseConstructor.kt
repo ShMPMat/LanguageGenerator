@@ -1,9 +1,7 @@
-package shmp.language.category.paradigm
+package shmp.language.syntax
 
-import shmp.language.syntax.WordSequence
-import shmp.language.syntax.SentenceNode
-import shmp.language.syntax.SentenceType
-import shmp.language.syntax.SyntaxRelation
+import shmp.language.category.paradigm.ParametrizedCategoryValue
+import shmp.language.category.paradigm.SentenceChangeParadigm
 import kotlin.random.Random
 
 
@@ -12,13 +10,13 @@ class SentenceClauseConstructor(
     private val sentenceType: SentenceType,
     private val random: Random
 ) {
-    fun applyNodeInternal(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
+    internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause = relation to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
 
         val childrenClauses = sentenceNode.children
-            .map { (r, n) -> applyNodeInternal(n, r) }
+            .map { (r, n) -> applyNode(n, r) }
             .toMutableList()
 
         return relation to paradigm.wordOrder.uniteToClause(currentClause, childrenClauses, sentenceType, random)
