@@ -1,14 +1,12 @@
-package shmp.language.syntax
+package shmp.language.syntax.clause.translation
 
 import shmp.language.CategoryValue
 import shmp.language.LanguageException
 import shmp.language.lexis.Word
-import shmp.language.category.Category
 import shmp.language.category.CategorySource
-import shmp.language.category.PersonValue
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
-import shmp.language.syntax.clause.SyntaxClause
+import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.orderer.Orderer
 
 

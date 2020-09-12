@@ -2,13 +2,9 @@ package shmp.language.syntax.clause
 
 import shmp.language.CategoryValue
 import shmp.language.Language
-import shmp.language.LanguageException
-import shmp.language.SpeechPart
 import shmp.language.category.CategorySource
 import shmp.language.lexis.Word
-import shmp.language.syntax.SentenceNode
-import shmp.language.syntax.SyntaxException
-import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.WordSequence
 import shmp.language.syntax.orderer.Orderer
 import kotlin.random.Random

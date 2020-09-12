@@ -1,5 +1,6 @@
 package shmp.language.syntax
 
+import shmp.language.syntax.clause.translation.SentenceType
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 

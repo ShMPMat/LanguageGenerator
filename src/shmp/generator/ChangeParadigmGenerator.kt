@@ -13,6 +13,8 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
 import shmp.language.syntax.*
+import shmp.language.syntax.clause.translation.SentenceType
+import shmp.language.syntax.clause.translation.differentWordOrderProbability
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import shmp.random.testProbability

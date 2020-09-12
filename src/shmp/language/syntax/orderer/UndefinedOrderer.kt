@@ -1,7 +1,7 @@
 package shmp.language.syntax.orderer
 
 import shmp.language.LanguageException
-import shmp.language.syntax.NonJoinedClause
+import shmp.language.syntax.clause.translation.NonJoinedClause
 import shmp.language.syntax.WordSequence
 
 

@@ -1,7 +1,7 @@
 package shmp.language.syntax.orderer
 
 import shmp.language.category.paradigm.ChangeException
-import shmp.language.syntax.NonJoinedClause
+import shmp.language.syntax.clause.translation.NonJoinedClause
 import shmp.language.syntax.RelationOrder
 import shmp.language.syntax.WordSequence
 import kotlin.random.Random

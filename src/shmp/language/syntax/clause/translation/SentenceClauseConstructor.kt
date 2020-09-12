@@ -1,8 +1,9 @@
-package shmp.language.syntax
+package shmp.language.syntax.clause.translation
 
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.category.paradigm.SentenceChangeParadigm
-import kotlin.random.Random
+import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.WordSequence
 
 
 class SentenceClauseConstructor(

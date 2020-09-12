@@ -1,9 +1,9 @@
 package shmp.language.syntax.clause
 
 import shmp.language.Language
-import shmp.language.syntax.SentenceClauseConstructor
-import shmp.language.syntax.SentenceNode
-import shmp.language.syntax.SentenceType
+import shmp.language.syntax.clause.translation.SentenceClauseConstructor
+import shmp.language.syntax.clause.translation.SentenceNode
+import shmp.language.syntax.clause.translation.SentenceType
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.orderer.RelationOrderer
 import kotlin.random.Random
