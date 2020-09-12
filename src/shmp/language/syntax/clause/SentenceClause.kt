@@ -1,6 +1,7 @@
 package shmp.language.syntax.clause
 
 import shmp.language.Language
+import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.syntax.clause.translation.SentenceClauseConstructor
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.clause.translation.SentenceType
@@ -16,21 +17,23 @@ interface SentenceClause : UnfoldableClause {
 abstract class AbstractSentenceClause(override val type: SentenceType) : SentenceClause {
     override fun unfold(language: Language, random: Random) =
         SentenceClauseConstructor(language.sentenceChangeParadigm)
-            .applyNode(toNode(language, random), SyntaxRelation.Verb).second
+            .applyNode(toNode(language.sentenceChangeParadigm, random), SyntaxRelation.Verb).second
 }
 
 
 class TransitiveVerbMainSentence(
     private val verbClause: TransitiveVerbClause
 ) : AbstractSentenceClause(SentenceType.MainClause) {
-    override fun toNode(language: Language, random: Random): SentenceNode = verbClause.toNode(language, random)
-        .copy(orderer = RelationOrderer(language.sentenceChangeParadigm.wordOrder.sovOrder.getValue(type), random))
+    override fun toNode(sentenceChangeParadigm: SentenceChangeParadigm, random: Random): SentenceNode =
+        verbClause.toNode(sentenceChangeParadigm, random)
+            .copy(orderer = RelationOrderer(sentenceChangeParadigm.wordOrder.sovOrder.getValue(type), random))
 }
 
 
 class TransitiveVerbQuestion(
     private val verbClause: TransitiveVerbClause
 ) : AbstractSentenceClause(SentenceType.Question) {
-    override fun toNode(language: Language, random: Random): SentenceNode = verbClause.toNode(language, random)
-        .copy(orderer = RelationOrderer(language.sentenceChangeParadigm.wordOrder.sovOrder.getValue(type), random))
+    override fun toNode(sentenceChangeParadigm: SentenceChangeParadigm, random: Random): SentenceNode =
+        verbClause.toNode(sentenceChangeParadigm, random)
+            .copy(orderer = RelationOrderer(sentenceChangeParadigm.wordOrder.sovOrder.getValue(type), random))
 }

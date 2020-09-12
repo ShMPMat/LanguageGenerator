@@ -11,7 +11,7 @@ import shmp.language.syntax.clause.*
 import kotlin.random.Random
 
 
-data class Visualizer(val language: Language) {
+class Visualizer(val language: Language) {
     fun visualize() {
         printTestSentences()
         print("\n\n")

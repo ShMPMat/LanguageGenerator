@@ -4,6 +4,7 @@ import shmp.language.CategoryValue
 import shmp.language.Language
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
+import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.lexis.Word
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.SyntaxRelation
@@ -21,15 +22,15 @@ class NominalClause(
             throw LanguageException("$noun is not a noun")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(sentenceChangeParadigm: SentenceChangeParadigm, random: Random): SentenceNode {
         val node = noun.wordToNode(
-            language,
-            RelationOrderer(language.sentenceChangeParadigm.wordOrder.nominalGroupOrder, random),
+            sentenceChangeParadigm,
+            RelationOrderer(sentenceChangeParadigm.wordOrder.nominalGroupOrder, random),
             additionalCategories
         )
 
         definitions
-            .map { it.toNode(language, random) }
+            .map { it.toNode(sentenceChangeParadigm, random) }
             .forEach {
                 it.setRelation(SyntaxRelation.Subject, node, false)
                 node.addChild(SyntaxRelation.Definition, it)

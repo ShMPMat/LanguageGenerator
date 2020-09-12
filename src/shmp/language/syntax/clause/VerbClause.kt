@@ -1,13 +1,13 @@
 package shmp.language.syntax.clause
 
-import shmp.language.Language
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.category.PersonValue
+import shmp.language.category.paradigm.SentenceChangeParadigm
 import shmp.language.lexis.Word
-import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.orderer.UndefinedOrderer
 import kotlin.random.Random
 
@@ -24,10 +24,10 @@ class TransitiveVerbClause(
             throw SyntaxException("$verb in the transitive clause is intransitive")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(language, UndefinedOrderer)
-        val obj = objectClause.toNode(language, random).addThirdPerson()
-        val subj = subjectClause.toNode(language, random).addThirdPerson()
+    override fun toNode(sentenceChangeParadigm: SentenceChangeParadigm, random: Random): SentenceNode {
+        val node = verb.wordToNode(sentenceChangeParadigm, UndefinedOrderer)
+        val obj = objectClause.toNode(sentenceChangeParadigm, random).addThirdPerson()
+        val subj = subjectClause.toNode(sentenceChangeParadigm, random).addThirdPerson()
 
         subj.setRelation(SyntaxRelation.Verb, node, false)
         obj.setRelation(SyntaxRelation.Verb, node, false)
