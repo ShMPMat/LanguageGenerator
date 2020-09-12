@@ -6,9 +6,7 @@ import kotlin.random.Random
 
 
 class SentenceClauseConstructor(
-    private val paradigm: SentenceChangeParadigm,
-    private val sentenceType: SentenceType,
-    private val random: Random
+    private val paradigm: SentenceChangeParadigm
 ) {
     internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
@@ -17,9 +15,8 @@ class SentenceClauseConstructor(
 
         val childrenClauses = sentenceNode.children
             .map { (r, n) -> applyNode(n, r) }
-            .toMutableList()
 
-        return relation to paradigm.wordOrder.uniteToClause(currentClause, childrenClauses, sentenceType, random)
+        return relation to sentenceNode.orderer.orderClauses(listOf(currentClause) + childrenClauses)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {

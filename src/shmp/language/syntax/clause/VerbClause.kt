@@ -8,6 +8,8 @@ import shmp.language.lexis.Word
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.orderer.UndefinedOrderer
+import kotlin.random.Random
 
 
 class TransitiveVerbClause(
@@ -22,10 +24,10 @@ class TransitiveVerbClause(
             throw SyntaxException("$verb in the transitive clause is intransitive")
     }
 
-    override fun toNode(language: Language): SentenceNode {
-        val node = verb.toNode(language)
-        val obj = objectClause.toNode(language).addThirdPerson()
-        val subj = subjectClause.toNode(language).addThirdPerson()
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val node = verb.wordToNode(language, UndefinedOrderer)
+        val obj = objectClause.toNode(language, random).addThirdPerson()
+        val subj = subjectClause.toNode(language, random).addThirdPerson()
 
         subj.setRelation(SyntaxRelation.Verb, node, false)
         obj.setRelation(SyntaxRelation.Verb, node, false)

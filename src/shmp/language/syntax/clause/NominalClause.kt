@@ -7,6 +7,8 @@ import shmp.language.SpeechPart
 import shmp.language.lexis.Word
 import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.orderer.RelationOrderer
+import kotlin.random.Random
 
 
 class NominalClause(
@@ -19,11 +21,15 @@ class NominalClause(
             throw LanguageException("$noun is not a noun")
     }
 
-    override fun toNode(language: Language): SentenceNode {
-        val node = noun.toNode(language, additionalCategories)
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val node = noun.wordToNode(
+            language,
+            RelationOrderer(language.sentenceChangeParadigm.wordOrder.nominalGroupOrder, random),
+            additionalCategories
+        )
 
         definitions
-            .map { it.toNode(language) }
+            .map { it.toNode(language, random) }
             .forEach {
                 it.setRelation(SyntaxRelation.Subject, node, false)
                 node.addChild(SyntaxRelation.Definition, it)

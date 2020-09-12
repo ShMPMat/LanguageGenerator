@@ -10,11 +10,12 @@ import shmp.language.syntax.SentenceNode
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.WordSequence
+import shmp.language.syntax.orderer.Orderer
 import kotlin.random.Random
 
 
 interface SyntaxClause {
-    fun toNode(language: Language): SentenceNode
+    fun toNode(language: Language, random: Random): SentenceNode
 }
 
 interface UnfoldableClause: SyntaxClause {
@@ -22,7 +23,11 @@ interface UnfoldableClause: SyntaxClause {
 }
 
 
-internal fun Word.toNode(language: Language, presetCategories: List<CategoryValue> = listOf()): SentenceNode {
+internal fun Word.wordToNode(
+    language: Language,
+    orderer: Orderer,
+    presetCategories: List<CategoryValue> = listOf()
+): SentenceNode {
     val classNames = presetCategories
         .map { it.parentClassName }
 
@@ -33,6 +38,7 @@ internal fun Word.toNode(language: Language, presetCategories: List<CategoryValu
             .filter { it.source == CategorySource.SelfStated }
             .map { it.categoryValue }
             .filter { it.parentClassName !in classNames }
-                + presetCategories
+                + presetCategories,
+        orderer
     )
 }

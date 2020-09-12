@@ -9,11 +9,13 @@ import shmp.language.category.PersonValue
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.syntax.clause.SyntaxClause
+import shmp.language.syntax.orderer.Orderer
 
 
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
+    val orderer: Orderer,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf()
 ) {

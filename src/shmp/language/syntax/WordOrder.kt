@@ -1,55 +1,23 @@
 package shmp.language.syntax
 
-import shmp.language.category.paradigm.ChangeException
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
 
-data class WordOrder(private val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
-    fun uniteToClause(
-        currentNonJoinedClause: NonJoinedClause,
-        childrenClauses: MutableList<NonJoinedClause>,
-        sentenceType: SentenceType,
-        random: Random
-    ): WordSequence {
-        if (childrenClauses.isEmpty())
-            return currentNonJoinedClause.second
-
-        val fullClauses = childrenClauses + listOf(currentNonJoinedClause)
-
-        return when (currentNonJoinedClause.first) {
-            SyntaxRelation.Verb -> orderWithRelation(fullClauses, sovOrder.getValue(sentenceType), random)
-            SyntaxRelation.Object -> orderWithRelation(fullClauses, nominalGroupOrder, random)
-            SyntaxRelation.Subject -> orderWithRelation(fullClauses, nominalGroupOrder, random)
-            else -> throw ChangeException("No ordering for a ${currentNonJoinedClause.first}")
-        }
-
-    }
-
-    private fun orderWithRelation(clauses: List<NonJoinedClause>, relationOrder: RelationOrder, random: Random): WordSequence {
-        val relation = relationOrder.referenceOrder(random)
-        val resultWords = clauses
-            .sortedBy { (r) ->
-                val i = relation.indexOf(r)
-                if (i == -1)
-                    throw ChangeException("No Relation $r in a relation order ${relationOrder.referenceOrder}")
-                i
-            }
-            .flatMap { it.second.words }
-
-        return WordSequence(resultWords)
-    }
-
+data class WordOrder(val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
     override fun toString() = "$sovOrder, $nominalGroupOrder"
 }
+
 
 interface RelationOrder {
     val referenceOrder: (Random) -> List<SyntaxRelation>
 }
 
+
 class SovOrder(override val referenceOrder: (Random) -> List<SyntaxRelation>, val name: String) : RelationOrder {
     override fun toString() = name
 }
+
 
 enum class BasicSovOrder(
     override val referenceOrder: (Random) -> List<SyntaxRelation>,
