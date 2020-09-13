@@ -6,8 +6,8 @@ import shmp.language.Language
 import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
-import shmp.language.syntax.*
-import shmp.language.syntax.clause.*
+import shmp.language.syntax.clause.description.*
+import shmp.language.syntax.clause.realization.*
 import kotlin.random.Random
 
 
@@ -21,37 +21,37 @@ class Visualizer(val language: Language) {
     }
 
     fun printTestSentences() {
-        val subj = NominalClause(
-            language.getWord("mother"),
+        val subj = NominalDescription(
+            "mother",
             listOf(
-                AdjectiveClause(language.getWord("new")),
-                AdjectiveClause(language.getWord("small"))
+                AdjectiveDescription("new"),
+                AdjectiveDescription("small")
             ),
             listOf(NumbersValue.Plural)
         )
-        val obj = NominalClause(
-            language.getWord("time"),
-            listOf(AdjectiveClause(language.getWord("small")))
+        val obj = NominalDescription(
+            "time",
+            listOf(AdjectiveDescription("small"))
         )
 
-        val verb = TransitiveVerbClause(
-            language.getWord("have"),
+        val verb = TransitiveVerbDescription(
+            "have",
             subj,
             obj
         )
 
-        val testSentenceMain = TransitiveVerbMainSentence(verb)
-        val testSentenceQuestion = TransitiveVerbQuestion(verb)
+        val testSentenceMain = TransitiveVerbMainClauseDescription(verb)
+        val testSentenceQuestion = TransitiveVerbQuestionDescription(verb)
         println("Main:")
         println(
             getClauseAndInfoStr(
-                testSentenceMain.unfold(language, Random(10))
+                testSentenceMain.toClause(language, Random(10)).unfold(language, Random(10))
             )
         )
         println("General question:")
         println(
             getClauseAndInfoStr(
-                testSentenceQuestion.unfold(language, Random(10))
+                testSentenceQuestion.toClause(language, Random(10)).unfold(language, Random(10))
             )
         )
     }

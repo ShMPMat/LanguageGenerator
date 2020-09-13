@@ -1,4 +1,4 @@
-package shmp.language.syntax.clause
+package shmp.language.syntax.clause.realization
 
 import shmp.language.LanguageException
 import shmp.language.SpeechPart

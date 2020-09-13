@@ -1,7 +1,6 @@
-package shmp.language.syntax.clause
+package shmp.language.syntax.clause.realization
 
 import shmp.language.CategoryValue
-import shmp.language.Language
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.category.paradigm.SentenceChangeParadigm

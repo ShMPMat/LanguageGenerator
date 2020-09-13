@@ -18,8 +18,12 @@ class Language(
     internal val derivationParadigm: DerivationParadigm,
     internal val sentenceChangeParadigm: SentenceChangeParadigm
 ) {
+    //TODO a lexicon class
     fun getWord(meaning: Meaning) = words
         .first { it.semanticsCore.hasMeaning(meaning) }
+
+    fun getWordOrNull(meaning: Meaning) = words
+        .firstOrNull { it.semanticsCore.hasMeaning(meaning) }
 
     override fun toString(): String {
         return """phonemes:
