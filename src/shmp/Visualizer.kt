@@ -33,7 +33,6 @@ class Visualizer(val language: Language) {
             "time",
             listOf(AdjectiveDescription("small"))
         )
-
         val verb = TransitiveVerbDescription(
             "have",
             subj,
@@ -45,13 +44,14 @@ class Visualizer(val language: Language) {
         println("Main:")
         println(
             getClauseAndInfoStr(
-                testSentenceMain.toClause(language, Random(10)).unfold(language, Random(10))
+                //TODO more adequate unfolding
+                testSentenceMain.unfold(language, Random(10))
             )
         )
         println("General question:")
         println(
             getClauseAndInfoStr(
-                testSentenceQuestion.toClause(language, Random(10)).unfold(language, Random(10))
+                testSentenceQuestion.unfold(language, Random(10))
             )
         )
     }
@@ -91,7 +91,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216) //216
+    val generator = LanguageGenerator("SupplementFiles", 216)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

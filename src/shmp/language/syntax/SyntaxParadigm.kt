@@ -1,9 +1,9 @@
-package shmp.language.category.paradigm
+package shmp.language.syntax
 
-import shmp.language.syntax.WordOrder
+import shmp.language.category.paradigm.WordChangeParadigm
 
 
-class SentenceChangeParadigm(
+class SyntaxParadigm(
     val wordOrder: WordOrder,
     val wordChangeParadigm: WordChangeParadigm
 ) {

@@ -70,10 +70,9 @@ book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       world&part:0.005
-
-
-
-
+river              Noun        0.9    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+                                      NNPlace@river_valley:0.01,bank(near_water):0.05,beach:0.005
+                                      NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
@@ -129,8 +128,13 @@ new                Adjective   1.0
 well               Adverb      0.99
 one                Numeral     1.0
 
+
 cat                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 dog                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+fish               Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+river_fish         Noun        0.1    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+water_animal       Noun        0.1    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+river_animal       Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -172,7 +176,9 @@ canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                
 landing            Noun        0.02   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 appearance         Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sea                Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
-river              Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+river_valley       Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+beach              Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+bank(near_water)   Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
 ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -398,7 +404,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /room
 /began
 /idea
-/fish
 /mountain
 /stop
 /once
@@ -777,7 +782,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /fell
 /fit
 /fair
-/bank
 /collect
 /save
 /control

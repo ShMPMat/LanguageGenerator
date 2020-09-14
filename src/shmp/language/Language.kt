@@ -2,7 +2,7 @@ package shmp.language
 
 import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
-import shmp.language.category.paradigm.SentenceChangeParadigm
+import shmp.language.syntax.SyntaxParadigm
 import shmp.language.derivation.DerivationParadigm
 import shmp.language.lexis.Meaning
 import shmp.language.lexis.Word
@@ -16,7 +16,7 @@ class Language(
     internal val numeralSystemBase: NumeralSystemBase,
     internal val restrictionsParadigm: RestrictionsParadigm,
     internal val derivationParadigm: DerivationParadigm,
-    internal val sentenceChangeParadigm: SentenceChangeParadigm
+    internal val syntaxParadigm: SyntaxParadigm
 ) {
     //TODO a lexicon class
     fun getWord(meaning: Meaning) = words
@@ -33,10 +33,10 @@ class Language(
          |Numeral system base: $numeralSystemBase
          |words:
          |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
-         |${words.joinToString { "${sentenceChangeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
+         |${words.joinToString { "${syntaxParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
          |
          |
-         |$sentenceChangeParadigm
+         |$syntaxParadigm
          |
          |
          |Change paradigms elaborated:

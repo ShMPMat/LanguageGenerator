@@ -5,7 +5,7 @@ import shmp.language.category.Category
 import shmp.language.category.CategoryRandomSupplements
 import shmp.language.category.definitenessName
 import shmp.language.category.paradigm.ParametrizedCategory
-import shmp.language.category.paradigm.SentenceChangeParadigm
+import shmp.language.syntax.SyntaxParadigm
 import shmp.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.language.category.paradigm.WordChangeParadigm
 import shmp.language.category.realization.WordCategoryApplicator
@@ -32,7 +32,7 @@ class ChangeParadigmGenerator(
 
     fun generateChangeParadigm(
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
-    ): SentenceChangeParadigm {
+    ): SyntaxParadigm {
         val categories = categoriesWithMappers.map { it.first }
         val speechPartChangesMap = SpeechPart.values().map { speechPart ->
             val speechPartCategoriesAndSupply = categoriesWithMappers
@@ -69,7 +69,7 @@ class ChangeParadigmGenerator(
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val wordOrder = generateWordOrder()
-        return SentenceChangeParadigm(wordOrder, wordChangeParadigm)
+        return SyntaxParadigm(wordOrder, wordChangeParadigm)
     }
 
     private fun generateWordOrder(): WordOrder {

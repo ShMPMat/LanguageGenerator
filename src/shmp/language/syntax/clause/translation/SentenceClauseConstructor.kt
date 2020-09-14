@@ -1,13 +1,13 @@
 package shmp.language.syntax.clause.translation
 
 import shmp.language.category.paradigm.ParametrizedCategoryValue
-import shmp.language.category.paradigm.SentenceChangeParadigm
+import shmp.language.syntax.SyntaxParadigm
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.WordSequence
 
 
 class SentenceClauseConstructor(
-    private val paradigm: SentenceChangeParadigm
+    private val paradigm: SyntaxParadigm
 ) {
     internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)

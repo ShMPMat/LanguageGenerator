@@ -2,7 +2,7 @@ package shmp.language.syntax.clause.realization
 
 import shmp.language.LanguageException
 import shmp.language.SpeechPart
-import shmp.language.category.paradigm.SentenceChangeParadigm
+import shmp.language.syntax.SyntaxParadigm
 import shmp.language.lexis.Word
 import shmp.language.syntax.orderer.PassingSingletonOrderer
 import kotlin.random.Random
@@ -16,9 +16,9 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
             throw LanguageException("$adjective is not an adjective")
     }
 
-    override fun toNode(sentenceChangeParadigm: SentenceChangeParadigm, random: Random) =
+    override fun toNode(syntaxParadigm: SyntaxParadigm, random: Random) =
         adjective.wordToNode(
-            sentenceChangeParadigm,
+            syntaxParadigm,
             PassingSingletonOrderer
         )
 }

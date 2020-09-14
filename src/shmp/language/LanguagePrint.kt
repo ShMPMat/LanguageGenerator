@@ -10,11 +10,11 @@ import shmp.utils.listCartesianProduct
 fun getParadigmPrinted(language: Language, word: Word): String {
     return "Base - $word\n" +
             listCartesianProduct(
-                language.sentenceChangeParadigm.wordChangeParadigm
+                language.syntaxParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
                     .map { it.actualParametrizedValues }
-            ).map { language.sentenceChangeParadigm.wordChangeParadigm.apply(word, it) to it }
+            ).map { language.syntaxParadigm.wordChangeParadigm.apply(word, it) to it }
                 .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
 }
 
