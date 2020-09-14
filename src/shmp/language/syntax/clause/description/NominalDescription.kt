@@ -14,7 +14,7 @@ class NominalDescription(
     val additionalCategories: List<CategoryValue> = listOf()
 ) : ClauseDescription {
     override fun toClause(language: Language, random: Random) =
-        language.getWordOrNull(noun)?.let { word ->
+        language.lexis.getWordOrNull(noun)?.let { word ->
             NominalClause(
                 word,
                 definitions.map { it.toClause(language, random) },

@@ -15,7 +15,7 @@ abstract class NounDefinerDescription : ClauseDescription {
 
 class AdjectiveDescription(val adjective: Meaning) : NounDefinerDescription() {
     override fun toClause(language: Language, random: Random) =
-        language.getWordOrNull(adjective)?.let { word ->
+        language.lexis.getWordOrNull(adjective)?.let { word ->
             AdjectiveClause(word)
         }
             ?: throw SyntaxException("No adjective '$adjective' in Language")

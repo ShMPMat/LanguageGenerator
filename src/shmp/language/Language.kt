@@ -4,13 +4,15 @@ import shmp.containers.PhonemeContainer
 import shmp.language.SpeechPart.*
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.derivation.DerivationParadigm
+import shmp.language.lexis.Lexis
 import shmp.language.lexis.Meaning
 import shmp.language.lexis.Word
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.StressType
 
+
 class Language(
-    internal val words: List<Word>,
+    internal val lexis: Lexis,
     internal val phonemeContainer: PhonemeContainer,
     internal val stressType: StressType,
     internal val numeralSystemBase: NumeralSystemBase,
@@ -18,23 +20,15 @@ class Language(
     internal val derivationParadigm: DerivationParadigm,
     internal val changeParadigm: ChangeParadigm
 ) {
-    //TODO a lexicon class
-    fun getWord(meaning: Meaning) = words
-        .first { it.semanticsCore.hasMeaning(meaning) }
-
-    fun getWordOrNull(meaning: Meaning) = words
-        .firstOrNull { it.semanticsCore.hasMeaning(meaning) }
-
     override fun toString(): String {
         return """phonemes:
          |${phonemeContainer}
-         |Syllable structure: ${words[0].syllableTemplate}
+         |Syllable structure: ${lexis.words[0].syllableTemplate}
          |Stress patern: $stressType
          |Numeral system base: $numeralSystemBase
+         |$lexis
          |words:
-         |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
-         |${words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
-         |
+         |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
          |
          |$changeParadigm
          |
@@ -42,13 +36,13 @@ class Language(
          |Change paradigms elaborated:
          |
          |Personal pronoun:
-         |${getParadigmPrinted(this, words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
          |
          |Noun:
-         |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Noun })}
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart == Noun })}
          |
          |Verb:
-         |${getParadigmPrinted(this, words.first { it.semanticsCore.speechPart == Verb })}
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart == Verb })}
          |
          |
          |$derivationParadigm

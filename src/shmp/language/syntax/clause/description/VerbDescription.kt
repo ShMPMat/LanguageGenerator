@@ -13,7 +13,7 @@ class TransitiveVerbDescription(
     val objectDescription: NominalDescription
 ): ClauseDescription {
     override fun toClause(language: Language, random: Random) =
-        language.getWordOrNull(verb)?.let { word ->
+        language.lexis.getWordOrNull(verb)?.let { word ->
             TransitiveVerbClause(
                 word,
                 subjectDescription.toClause(language, random),

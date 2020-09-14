@@ -4,10 +4,7 @@ import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
 import shmp.language.category.CategoryPool
-import shmp.language.lexis.MeaningCluster
-import shmp.language.lexis.SemanticsCore
-import shmp.language.lexis.Word
-import shmp.language.lexis.getMeaningDistance
+import shmp.language.lexis.*
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
@@ -51,10 +48,10 @@ class LexisGenerator(
 
     private val syllableTests = 10
 
-    internal fun generateWords(
+    internal fun generateLexis(
         wordAmount: Int,
         categoryPool: CategoryPool
-    ): List<Word> {
+    ): Lexis {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         for (core in cores) {
             if (!isWordNeeded(core))
@@ -69,7 +66,7 @@ class LexisGenerator(
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
 
-        return words
+        return Lexis(words)
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {

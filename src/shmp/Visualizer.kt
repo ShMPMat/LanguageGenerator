@@ -57,7 +57,7 @@ class Visualizer(val language: Language) {
     }
 
     fun printAdditionalLexisInfo() {
-        val synonyms = language.words
+        val synonyms = language.lexis.words
             .groupBy { it.semanticsCore.toString() }
             .map { it.value }
             .filter { it.size > 1 }
@@ -67,17 +67,17 @@ class Visualizer(val language: Language) {
         |Synonyms:
         |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore}" }}
         |
-        |Lexis size - ${language.words.size} words
+        |Lexis size - ${language.lexis.size} words
         |
         |Derivations:
-        |${language.words
+        |${language.lexis.words
                 .filter { it.semanticsCore.changeHistory != null }
                 .sortedBy { it.semanticsCore.changeDepth }
                 .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
         |Collapsed meanings:
-        |${language.words
+        |${language.lexis.words
                 .filter { it.semanticsCore.meaningCluster.size > 1 }
                 .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
