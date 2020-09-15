@@ -40,7 +40,7 @@ class TransitiveVerbClause(
 }
 
 
-private fun SentenceNode.addThirdPerson() =
+internal fun SentenceNode.addThirdPerson() =
     if (this.categoryValues.none { it.parentClassName == "Person" })
         this.withCategoryValue(PersonValue.Third)
     else this.copy()

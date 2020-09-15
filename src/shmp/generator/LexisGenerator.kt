@@ -9,8 +9,8 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
 import shmp.language.phonology.prosody.generateStress
-import shmp.language.syntax.CopulaType
 import shmp.language.syntax.SyntaxParadigm
+import shmp.language.syntax.features.CopulaType
 import shmp.random.*
 import kotlin.math.abs
 import kotlin.math.pow
@@ -74,9 +74,10 @@ class LexisGenerator(
     }
 
     private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula = when(syntaxParadigm.copulaPresence.copulaType) {
-            CopulaType.Verb -> words.first { it.semanticsCore.hasMeaning("be") }
-        }
+        val copula =
+            if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
+                words.first { it.semanticsCore.hasMeaning("be") }
+            else null
 
         return Lexis(words, copula)
     }
