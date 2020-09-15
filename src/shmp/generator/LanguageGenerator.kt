@@ -72,7 +72,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
             changeGenerator,
             categories
         )
-        val lexis = lexisGenerator.generateLexis(wordAmount, categories)
+        val lexis = lexisGenerator.generateLexis(wordAmount, categories, changeParadigm.syntaxParadigm)
 
         return Language(
             lexis,

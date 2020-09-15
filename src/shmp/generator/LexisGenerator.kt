@@ -9,10 +9,13 @@ import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.Syllable
 import shmp.language.phonology.prosody.StressType
 import shmp.language.phonology.prosody.generateStress
+import shmp.language.syntax.CopulaType
+import shmp.language.syntax.SyntaxParadigm
 import shmp.random.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.random.Random
+
 
 class LexisGenerator(
     supplementPath: String,
@@ -50,7 +53,8 @@ class LexisGenerator(
 
     internal fun generateLexis(
         wordAmount: Int,
-        categoryPool: CategoryPool
+        categoryPool: CategoryPool,
+        syntaxParadigm: SyntaxParadigm
     ): Lexis {
         val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
         for (core in cores) {
@@ -66,7 +70,15 @@ class LexisGenerator(
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
 
-        return Lexis(words)
+        return wrapWithWords(syntaxParadigm)
+    }
+
+    private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
+        val copula = when(syntaxParadigm.copulaPresence.copulaType) {
+            CopulaType.Verb -> words.first { it.semanticsCore.hasMeaning("be") }
+        }
+
+        return Lexis(words, copula)
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {

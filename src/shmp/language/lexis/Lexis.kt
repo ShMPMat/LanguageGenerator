@@ -3,7 +3,7 @@ package shmp.language.lexis
 import shmp.language.LanguageException
 
 
-class Lexis(val words: List<Word>) {
+class Lexis(val words: List<Word>, val copula: Word?) {
     val size: Int
         get() = words.size
 
@@ -16,5 +16,6 @@ class Lexis(val words: List<Word>) {
     override fun toString() = """
         |word roots:
         |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
+        |copula: $copula
     """.trimMargin()
 }
