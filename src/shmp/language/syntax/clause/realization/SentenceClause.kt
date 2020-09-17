@@ -10,14 +10,12 @@ import shmp.language.syntax.orderer.RelationOrderer
 import kotlin.random.Random
 
 
-interface SentenceClause : UnfoldableClause {
-    val type: SentenceType
-}
+interface SentenceClause : UnfoldableClause
 
 
 class TransitiveVerbSentenceClause(
     private val verbClause: TransitiveVerbClause,
-    override val type: SentenceType
+    val type: SentenceType
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
         verbClause.toNode(changeParadigm, random)
@@ -26,4 +24,17 @@ class TransitiveVerbSentenceClause(
     override fun unfold(language: Language, random: Random) =
         SentenceClauseConstructor(language.changeParadigm)
             .applyNode(toNode(language.changeParadigm, random), SyntaxRelation.Verb).second
+}
+
+class CopulaSentenceClause(
+    private val copulaClause: CopulaClause,
+    val type: SentenceType
+) : SentenceClause {
+    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
+        copulaClause.toNode(changeParadigm, random)
+            .copy(orderer = RelationOrderer(changeParadigm.wordOrder.sovOrder.getValue(type), random))
+
+    override fun unfold(language: Language, random: Random) =
+        SentenceClauseConstructor(language.changeParadigm)
+            .applyNode(toNode(language.changeParadigm, random), copulaClause.topType).second
 }

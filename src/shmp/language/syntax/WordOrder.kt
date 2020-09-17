@@ -1,5 +1,6 @@
 package shmp.language.syntax
 
+import shmp.language.syntax.SyntaxRelation.*
 import shmp.language.syntax.clause.translation.SentenceType
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
@@ -24,12 +25,12 @@ enum class BasicSovOrder(
     override val referenceOrder: (Random) -> List<SyntaxRelation>,
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
-    SOV({ listOf(SyntaxRelation.Subject, SyntaxRelation.Object, SyntaxRelation.Verb) }, 565.0),
-    SVO({ listOf(SyntaxRelation.Subject, SyntaxRelation.Verb, SyntaxRelation.Object) }, 488.0),
-    VSO({ listOf(SyntaxRelation.Verb, SyntaxRelation.Subject, SyntaxRelation.Object) }, 95.0),
-    VOS({ listOf(SyntaxRelation.Verb, SyntaxRelation.Object, SyntaxRelation.Subject) }, 25.0),
-    OVS({ listOf(SyntaxRelation.Object, SyntaxRelation.Verb, SyntaxRelation.Subject) }, 11.0),
-    OSV({ listOf(SyntaxRelation.Object, SyntaxRelation.Subject, SyntaxRelation.Verb) }, 4.0),
+    SOV({ listOf(Subject, Object, SubjectCompliment, Verb) }, 565.0),
+    SVO({ listOf(Subject, Verb, Object, SubjectCompliment) }, 488.0),
+    VSO({ listOf(Verb, Subject, Object, SubjectCompliment) }, 95.0),
+    VOS({ listOf(Verb, Object, SubjectCompliment, Subject) }, 25.0),
+    OVS({ listOf(Object, SubjectCompliment, Verb, Subject) }, 11.0),
+    OSV({ listOf(Object, SubjectCompliment, Subject, Verb) }, 4.0),
     Two({ throw shmp.generator.GeneratorException("Proper SOV order wasn't generated") }, 67.0),
     None({ SOV.referenceOrder(it).shuffled(it) }, 122.0)
 }
@@ -39,7 +40,7 @@ enum class NominalGroupOrder(
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
     //TODO no data on that
-    DN({ listOf(SyntaxRelation.Definition, SyntaxRelation.Subject, SyntaxRelation.Object) }, 100.0),
-    ND({ listOf(SyntaxRelation.Subject, SyntaxRelation.Object, SyntaxRelation.Definition) }, 100.0),
+    DN({ listOf(Definition, Subject, Object, SubjectCompliment) }, 100.0),
+    ND({ listOf(Subject, Object, SubjectCompliment, Definition) }, 100.0),
     None({ DN.referenceOrder(it).shuffled(it) }, 100.0)
 }

@@ -7,6 +7,7 @@ import shmp.language.category.CategorySource
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.clause.translation.SentenceType.*
 import shmp.language.syntax.orderer.Orderer
 
 
@@ -48,15 +49,23 @@ data class SentenceNode(
 
 
 enum class SentenceType {
-    MainClause,
-    SubordinateClause,
-    Question
+    MainVerbClause,
+    SubordinateVerbClause,
+    QuestionVerbClause,
+
+    MainCopulaClause,
+    SubordinateCopulaClause,
+    QuestionCopulaClause
 }
 
 fun differentWordOrderProbability(sentenceType: SentenceType) = when (sentenceType) {
-    SentenceType.MainClause -> 0.0
-    SentenceType.SubordinateClause -> 0.03
-    SentenceType.Question -> 0.1
+    MainVerbClause -> 0.0
+    SubordinateVerbClause -> 0.03
+    QuestionVerbClause -> 0.1
+    //TODO no idea about these probabilities here
+    MainCopulaClause -> 0.02
+    SubordinateCopulaClause -> 0.02
+    QuestionCopulaClause -> 0.02
 }
 
 

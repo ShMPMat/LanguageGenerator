@@ -41,10 +41,11 @@ class Visualizer(val language: Language) {
 
         val testSentenceMain = TransitiveVerbMainClauseDescription(verb)
         val testSentenceQuestion = TransitiveVerbQuestionDescription(verb)
+        val testSentenceCopula = CopulaMainClauseDescription(CopulaDescription(subj, obj))
+        val testSentenceCopulaQuestion = CopulaQuestionDescription(CopulaDescription(subj, obj))
         println("Main:")
         println(
             getClauseAndInfoStr(
-                //TODO more adequate unfolding
                 testSentenceMain.unfold(language, Random(10))
             )
         )
@@ -52,6 +53,18 @@ class Visualizer(val language: Language) {
         println(
             getClauseAndInfoStr(
                 testSentenceQuestion.unfold(language, Random(10))
+            )
+        )
+        println("Copula:")
+        println(
+            getClauseAndInfoStr(
+                testSentenceCopula.unfold(language, Random(10))
+            )
+        )
+        println("Copula question:")
+        println(
+            getClauseAndInfoStr(
+                testSentenceCopulaQuestion.unfold(language, Random(10))
             )
         )
     }

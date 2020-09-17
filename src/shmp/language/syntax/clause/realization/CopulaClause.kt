@@ -10,13 +10,16 @@ import shmp.language.syntax.orderer.UndefinedOrderer
 import kotlin.random.Random
 
 
+abstract class CopulaClause(val topType: SyntaxRelation): SyntaxClause
+
+
 class VerbalCopulaClause(
     val copula: Word,
     val subject: NominalClause,
     val complement: NominalClause
-) : SyntaxClause {
+) : CopulaClause(SyntaxRelation.Verb) {
     init {
-        if (copula.semanticsCore.speechPart != SpeechPart.Noun)
+        if (copula.semanticsCore.speechPart != SpeechPart.Verb)
             throw LanguageException("$copula is not a verb")
     }
 
@@ -39,7 +42,7 @@ class VerbalCopulaClause(
 class NullCopulaClause(
     val subject: NominalClause,
     val complement: NominalClause
-) : SyntaxClause {
+) : CopulaClause(SyntaxRelation.Subject) {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
         val obj = complement.toNode(changeParadigm, random).addThirdPerson()
         val subj = subject.toNode(changeParadigm, random).addThirdPerson()

@@ -22,9 +22,9 @@ class WordOrderGenerator(val random: Random) {
 
     private fun generateSovOrder(): Map<SentenceType, SovOrder> {
         val mainOrder = generateSimpleSovOrder()
-        val resultMap = mutableMapOf(SentenceType.MainClause to mainOrder)
+        val resultMap = mutableMapOf(SentenceType.MainVerbClause to mainOrder)
 
-        for (sentenceType in SentenceType.values().filter { it != SentenceType.MainClause }) {
+        for (sentenceType in SentenceType.values().filter { it != SentenceType.MainVerbClause }) {
             resultMap[sentenceType] =
                 if (testProbability(differentWordOrderProbability(sentenceType), random))
                     generateSimpleSovOrder()
