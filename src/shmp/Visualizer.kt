@@ -7,7 +7,6 @@ import shmp.language.category.NumbersValue
 import shmp.language.getClauseAndInfoStr
 import shmp.language.lexis.Word
 import shmp.language.syntax.clause.description.*
-import shmp.language.syntax.clause.realization.*
 import kotlin.random.Random
 
 
@@ -33,38 +32,24 @@ class Visualizer(val language: Language) {
             "time",
             listOf(AdjectiveDescription("small"))
         )
-        val verb = TransitiveVerbDescription(
-            "have",
-            subj,
-            obj
-        )
+        val verb = TransitiveVerbDescription("have", subj, obj)
 
         val testSentenceMain = TransitiveVerbMainClauseDescription(verb)
         val testSentenceQuestion = TransitiveVerbQuestionDescription(verb)
         val testSentenceCopula = CopulaMainClauseDescription(CopulaDescription(subj, obj))
         val testSentenceCopulaQuestion = CopulaQuestionDescription(CopulaDescription(subj, obj))
-        println("Main:")
+
+        printSampleClause(testSentenceMain, "Main")
+        printSampleClause(testSentenceQuestion, "General question")
+        printSampleClause(testSentenceCopula, "Copula")
+        printSampleClause(testSentenceCopulaQuestion, "Copula question")
+    }
+
+    fun printSampleClause(clause: UnfoldableClauseDescription, comment: String) {
+        println("$comment:")
         println(
             getClauseAndInfoStr(
-                testSentenceMain.unfold(language, Random(10))
-            )
-        )
-        println("General question:")
-        println(
-            getClauseAndInfoStr(
-                testSentenceQuestion.unfold(language, Random(10))
-            )
-        )
-        println("Copula:")
-        println(
-            getClauseAndInfoStr(
-                testSentenceCopula.unfold(language, Random(10))
-            )
-        )
-        println("Copula question:")
-        println(
-            getClauseAndInfoStr(
-                testSentenceCopulaQuestion.unfold(language, Random(10))
+                clause.unfold(language, Random(10))
             )
         )
     }
