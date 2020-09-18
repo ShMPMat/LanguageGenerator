@@ -27,7 +27,7 @@ class WordOrderGenerator(val random: Random) {
         fun writeSentenceType(sentenceType: SentenceType, order: SovOrder) {
             resultMap[sentenceType] = order
 
-            sentenseOrderPropagation[sentenceType]?.forEach {
+            sentenceOrderPropagation[sentenceType]?.forEach {
                 writeSentenceType(it, order)
             }
         }
@@ -68,6 +68,7 @@ class WordOrderGenerator(val random: Random) {
     }
 }
 
-private val sentenseOrderPropagation = mapOf<SentenceType, List<SentenceType>>(
-    SentenceType.QuestionVerbClause to listOf(SentenceType.QuestionCopulaClause)
+private val sentenceOrderPropagation = mapOf<SentenceType, List<SentenceType>>(
+    SentenceType.QuestionVerbClause to listOf(SentenceType.QuestionCopulaClause),
+    SentenceType.MainCopulaClause to listOf(SentenceType.QuestionCopulaClause)
 )
