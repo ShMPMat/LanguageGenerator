@@ -1,12 +1,12 @@
 package shmp.language.syntax.clause.realization
 
 import shmp.language.CategoryValue
-import shmp.language.LanguageException
 import shmp.language.SpeechPart
-import shmp.language.syntax.ChangeParadigm
 import shmp.language.lexis.Word
-import shmp.language.syntax.clause.translation.SentenceNode
+import shmp.language.syntax.ChangeParadigm
+import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.orderer.RelationOrderer
 import kotlin.random.Random
 
@@ -18,7 +18,7 @@ class NominalClause(
 ) : SyntaxClause {
     init {
         if (noun.semanticsCore.speechPart != SpeechPart.Noun)
-            throw LanguageException("$noun is not a noun")
+            throw SyntaxException("$noun is not a noun")
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {

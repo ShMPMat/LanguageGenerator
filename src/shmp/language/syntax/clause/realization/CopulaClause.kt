@@ -1,9 +1,9 @@
 package shmp.language.syntax.clause.realization
 
-import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.lexis.Word
 import shmp.language.syntax.ChangeParadigm
+import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.orderer.UndefinedOrderer
@@ -20,7 +20,7 @@ class VerbalCopulaClause(
 ) : CopulaClause(SyntaxRelation.Verb) {
     init {
         if (copula.semanticsCore.speechPart != SpeechPart.Verb)
-            throw LanguageException("$copula is not a verb")
+            throw SyntaxException("$copula is not a verb")
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {

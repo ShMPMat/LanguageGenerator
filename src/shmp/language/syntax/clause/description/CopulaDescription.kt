@@ -2,10 +2,7 @@ package shmp.language.syntax.clause.description
 
 import shmp.language.Language
 import shmp.language.LanguageException
-import shmp.language.lexis.Meaning
-import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.clause.realization.NullCopulaClause
-import shmp.language.syntax.clause.realization.TransitiveVerbClause
 import shmp.language.syntax.clause.realization.VerbalCopulaClause
 import shmp.language.syntax.features.CopulaType
 import shmp.random.randomUnwrappedElement

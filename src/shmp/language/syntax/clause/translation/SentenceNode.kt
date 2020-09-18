@@ -1,11 +1,11 @@
 package shmp.language.syntax.clause.translation
 
 import shmp.language.CategoryValue
-import shmp.language.LanguageException
-import shmp.language.lexis.Word
 import shmp.language.category.CategorySource
 import shmp.language.category.paradigm.ParametrizedCategory
 import shmp.language.category.paradigm.ParametrizedCategoryValue
+import shmp.language.lexis.Word
+import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceType.*
 import shmp.language.syntax.orderer.Orderer
@@ -49,7 +49,7 @@ data class SentenceNode(
                 is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
-                ?: throw LanguageException("No value for ${category.outType} and source $source")
+                ?: throw SyntaxException("No value for ${category.outType} and source $source")
             ParametrizedCategoryValue(res, source)
         }
 }

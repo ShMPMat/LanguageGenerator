@@ -1,12 +1,12 @@
 package shmp.language.syntax.orderer
 
-import shmp.language.LanguageException
-import shmp.language.syntax.clause.translation.NonJoinedClause
+import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.WordSequence
+import shmp.language.syntax.clause.translation.NonJoinedClause
 
 
 object UndefinedOrderer : Orderer {
     override fun orderClauses(clauses: List<NonJoinedClause>): WordSequence {
-        throw LanguageException("The order is undefined")
+        throw SyntaxException("The order is undefined")
     }
 }

@@ -1,9 +1,8 @@
 package shmp.language.syntax.orderer
 
-import shmp.language.LanguageException
-import shmp.language.syntax.clause.translation.NonJoinedClause
+import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.WordSequence
-
+import shmp.language.syntax.clause.translation.NonJoinedClause
 
 
 object PassingOrderer: Orderer {
@@ -16,7 +15,7 @@ object PassingOrderer: Orderer {
 object PassingSingletonOrderer: Orderer {
     override fun orderClauses(clauses: List<NonJoinedClause>): WordSequence {
         if (clauses.size != 1)
-            throw LanguageException("PassingSingletonOrderer got a non-singleton list of size ${clauses.size}")
+            throw SyntaxException("PassingSingletonOrderer got a non-singleton list of size ${clauses.size}")
 
         return clauses[0].second
     }

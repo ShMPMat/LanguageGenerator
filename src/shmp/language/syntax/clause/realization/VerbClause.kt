@@ -1,10 +1,9 @@
 package shmp.language.syntax.clause.realization
 
-import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.category.PersonValue
-import shmp.language.syntax.ChangeParadigm
 import shmp.language.lexis.Word
+import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
@@ -19,7 +18,7 @@ class TransitiveVerbClause(
 ): SyntaxClause {
     init {
         if (verb.semanticsCore.speechPart != SpeechPart.Verb)
-            throw LanguageException("$verb is not a verb")
+            throw SyntaxException("$verb is not a verb")
         if (verb.semanticsCore.tags.any { it.name == "intrans" })
             throw SyntaxException("$verb in the transitive clause is intransitive")
     }
