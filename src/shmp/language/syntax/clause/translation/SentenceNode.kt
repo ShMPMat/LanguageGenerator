@@ -15,6 +15,7 @@ data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
     val orderer: Orderer,
+    val typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf()
 ) {
@@ -25,15 +26,21 @@ data class SentenceNode(
         categoryValues = categoryValues + listOf(value)
     )
 
-    fun setRelation(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode, isChild: Boolean) {
+    fun setRelationChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
         _relation[syntaxRelation] = sentenceNode
 
-        if (isChild)
-            addChild(syntaxRelation, sentenceNode)
+        addStrayChild(syntaxRelation, sentenceNode)
     }
 
-    fun addChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) =
+    fun addStrayChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
         _children.add(syntaxRelation to sentenceNode)
+
+        sentenceNode.setBackLink(this)
+    }
+
+    private fun setBackLink(sentenceNode: SentenceNode) {
+        _relation[sentenceNode.typeForChildren] = sentenceNode
+    }
 
     fun extractValues(references: List<ParametrizedCategory>) =
         references.map { (category, source) ->

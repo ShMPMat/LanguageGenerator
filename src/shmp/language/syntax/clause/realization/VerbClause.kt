@@ -25,15 +25,12 @@ class TransitiveVerbClause(
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val node = verb.wordToNode(changeParadigm, UndefinedOrderer)
+        val node = verb.wordToNode(changeParadigm, UndefinedOrderer, SyntaxRelation.Verb)
         val obj = objectClause.toNode(changeParadigm, random).addThirdPerson()
         val subj = subjectClause.toNode(changeParadigm, random).addThirdPerson()
 
-        subj.setRelation(SyntaxRelation.Verb, node, false)
-        obj.setRelation(SyntaxRelation.Verb, node, false)
-
-        node.setRelation(SyntaxRelation.Subject, subj, true)
-        node.setRelation(SyntaxRelation.Object, obj, true)
+        node.setRelationChild(SyntaxRelation.Subject, subj)
+        node.setRelationChild(SyntaxRelation.Object, obj)
 
         return node
     }

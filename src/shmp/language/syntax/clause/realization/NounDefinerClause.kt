@@ -4,6 +4,7 @@ import shmp.language.LanguageException
 import shmp.language.SpeechPart
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.lexis.Word
+import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.orderer.PassingSingletonOrderer
 import kotlin.random.Random
 
@@ -19,6 +20,7 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random) =
         adjective.wordToNode(
             changeParadigm,
-            PassingSingletonOrderer
+            PassingSingletonOrderer,
+            SyntaxRelation.Definition
         )
 }

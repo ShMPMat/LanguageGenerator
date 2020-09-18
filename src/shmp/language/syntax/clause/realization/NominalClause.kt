@@ -25,14 +25,14 @@ class NominalClause(
         val node = noun.wordToNode(
             changeParadigm,
             RelationOrderer(changeParadigm.wordOrder.nominalGroupOrder, random),
+            SyntaxRelation.Subject,
             additionalCategories
         )
 
         definitions
             .map { it.toNode(changeParadigm, random) }
             .forEach {
-                it.setRelation(SyntaxRelation.Subject, node, false)
-                node.addChild(SyntaxRelation.Definition, it)
+                node.addStrayChild(SyntaxRelation.Definition, it)
             }
 
         return node

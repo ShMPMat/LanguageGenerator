@@ -40,7 +40,7 @@ enum class NominalGroupOrder(
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
     //TODO no data on that
-    DN({ listOf(Definition, Subject, Object, SubjectCompliment) }, 100.0),
-    ND({ listOf(Subject, Object, SubjectCompliment, Definition) }, 100.0),
+    DN({ listOf(Definition, Subject) }, 100.0),
+    ND({ listOf(Subject, Definition) }, 100.0),
     None({ DN.referenceOrder(it).shuffled(it) }, 100.0)
 }

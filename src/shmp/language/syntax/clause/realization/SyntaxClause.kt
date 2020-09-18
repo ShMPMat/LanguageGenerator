@@ -5,6 +5,7 @@ import shmp.language.Language
 import shmp.language.category.CategorySource
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.lexis.Word
+import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.WordSequence
 import shmp.language.syntax.orderer.Orderer
@@ -23,6 +24,7 @@ interface UnfoldableClause: SyntaxClause {
 internal fun Word.wordToNode(
     changeParadigm: ChangeParadigm,
     orderer: Orderer,
+    generalType: SyntaxRelation,
     presetCategories: List<CategoryValue> = listOf()
 ): SentenceNode {
     val classNames = presetCategories
@@ -36,6 +38,7 @@ internal fun Word.wordToNode(
             .map { it.categoryValue }
             .filter { it.parentClassName !in classNames }
                 + presetCategories,
-        orderer
+        orderer,
+        generalType
     )
 }

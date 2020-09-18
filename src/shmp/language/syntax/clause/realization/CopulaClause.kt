@@ -24,15 +24,12 @@ class VerbalCopulaClause(
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val node = copula.wordToNode(changeParadigm, UndefinedOrderer)
+        val node = copula.wordToNode(changeParadigm, UndefinedOrderer, SyntaxRelation.Verb)
         val obj = complement.toNode(changeParadigm, random).addThirdPerson()
         val subj = subject.toNode(changeParadigm, random).addThirdPerson()
 
-        subj.setRelation(SyntaxRelation.Verb, node, false)
-        obj.setRelation(SyntaxRelation.Verb, node, false)
-
-        node.setRelation(SyntaxRelation.Subject, subj, true)
-        node.setRelation(SyntaxRelation.SubjectCompliment, obj, true)
+        node.setRelationChild(SyntaxRelation.Subject, subj)
+        node.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 
         return node
     }
@@ -47,8 +44,8 @@ class NullCopulaClause(
         val obj = complement.toNode(changeParadigm, random).addThirdPerson()
         val subj = subject.toNode(changeParadigm, random).addThirdPerson()
 
-        obj.setRelation(SyntaxRelation.Subject, subj, true)
-        subj.setRelation(SyntaxRelation.SubjectCompliment, obj, true)
+        obj.setRelationChild(SyntaxRelation.Subject, subj)
+        subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 
         return subj
     }
