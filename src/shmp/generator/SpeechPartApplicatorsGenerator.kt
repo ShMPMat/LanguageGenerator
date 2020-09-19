@@ -122,10 +122,10 @@ class SpeechPartApplicatorsGenerator(
         phoneticRestrictions: PhoneticRestrictions,
         semanticsCore: SemanticsCore
     ): CategoryApplicator = when (realizationType) {
-        CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.randomWord(
+        CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.generateWord(
             semanticsCore
         ))
-        CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(lexisGenerator.randomWord(
+        CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(lexisGenerator.generateWord(
             semanticsCore
         ))
         CategoryRealization.Prefix -> {
@@ -144,7 +144,7 @@ class SpeechPartApplicatorsGenerator(
         }
         CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
         CategoryRealization.Passing -> PassingCategoryApplicator()
-        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.randomWord(semanticsCore))
+        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.generateWord(semanticsCore))
     }
 
     fun randomApplicatorsOrder(

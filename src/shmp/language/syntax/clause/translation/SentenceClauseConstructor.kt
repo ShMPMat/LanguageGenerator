@@ -12,7 +12,8 @@ class SentenceClauseConstructor(
     internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
-        val currentClause = sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
+        val currentClause =
+            sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
 
         val childrenClauses = sentenceNode.children
             .map { (r, n) -> applyNode(n, r) }

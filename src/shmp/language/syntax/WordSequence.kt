@@ -8,5 +8,7 @@ class WordSequence(val words: List<Word>) {
 
     operator fun get(position: Int): Word = words[position]
 
+    operator fun plus(that: WordSequence) = WordSequence(this.words + that.words)
+
     override fun toString() = words.joinToString(" ")
 }

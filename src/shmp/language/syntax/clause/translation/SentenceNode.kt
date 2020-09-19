@@ -7,7 +7,8 @@ import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.lexis.Word
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
-import shmp.language.syntax.clause.translation.SentenceType.*
+import shmp.language.syntax.clause.translation.CopulaSentenceType.*
+import shmp.language.syntax.clause.translation.VerbSentenceType.*
 import shmp.language.syntax.orderer.Orderer
 
 
@@ -54,21 +55,28 @@ data class SentenceNode(
         }
 }
 
+interface SentenceType
 
-enum class SentenceType {
+enum class VerbSentenceType: SentenceType {
     MainVerbClause,
     SubordinateVerbClause,
-    QuestionVerbClause,
+    QuestionVerbClause
+}
 
+enum class CopulaSentenceType: SentenceType {
     MainCopulaClause,
     SubordinateCopulaClause,
     QuestionCopulaClause
 }
 
-fun differentWordOrderProbability(sentenceType: SentenceType) = when (sentenceType) {
+
+fun differentWordOrderProbability(sentenceType: VerbSentenceType) = when (sentenceType) {
     MainVerbClause -> 0.0
     SubordinateVerbClause -> 0.03
     QuestionVerbClause -> 0.1
+}
+
+fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when (sentenceType) {
     //TODO no idea about these probabilities here
     MainCopulaClause -> 0.02
     SubordinateCopulaClause -> 0.02

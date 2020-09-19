@@ -12,7 +12,6 @@ import shmp.language.category.realization.WordCategoryApplicator
 import shmp.language.phonology.RestrictionsParadigm
 import shmp.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.language.phonology.prosody.StressType
-import shmp.language.syntax.*
 import kotlin.random.Random
 
 
@@ -64,9 +63,9 @@ class ChangeParadigmGenerator(
                 )
         }
 
-        val wordOrder = wordOrderGenerator.generateWordOrder()
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm()
+        val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
 
         return ChangeParadigm(
             wordOrder,

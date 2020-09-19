@@ -1,11 +1,11 @@
 package shmp.generator
 
-import shmp.language.syntax.BasicSovOrder
-import shmp.language.syntax.NominalGroupOrder
-import shmp.language.syntax.SovOrder
-import shmp.language.syntax.WordOrder
-import shmp.language.syntax.clause.translation.SentenceType
-import shmp.language.syntax.clause.translation.differentWordOrderProbability
+import shmp.language.syntax.*
+import shmp.language.syntax.clause.translation.*
+import shmp.language.syntax.features.CopulaType
+import shmp.language.syntax.orderer.Orderer
+import shmp.language.syntax.orderer.RelationOrderer
+import shmp.language.syntax.orderer.UndefinedOrderer
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import shmp.random.testProbability
@@ -13,26 +13,57 @@ import kotlin.random.Random
 
 
 class WordOrderGenerator(val random: Random) {
-    internal fun generateWordOrder(): WordOrder {
+    internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
         val sovOrder = generateSovOrder()
+        val copulaOrder = generateCopulaOrder(syntaxParadigm, sovOrder)
         val nominalGroupOrder = randomElement(NominalGroupOrder.values(), random)
 
-        return WordOrder(sovOrder, nominalGroupOrder)
+        return WordOrder(sovOrder, copulaOrder, nominalGroupOrder)
     }
 
-    private fun generateSovOrder(): Map<SentenceType, SovOrder> {
-        val mainOrder = generateSimpleSovOrder()
-        val resultMap = mutableMapOf(SentenceType.MainVerbClause to mainOrder)
+    private fun generateCopulaOrder(
+        syntaxParadigm: SyntaxParadigm,
+        sovOrder: Map<VerbSentenceType, SovOrder>
+    ): Map<CopulaSentenceType, Orderer> {
+        val result = mutableMapOf<CopulaSentenceType, Orderer>()
 
-        fun writeSentenceType(sentenceType: SentenceType, order: SovOrder) {
-            resultMap[sentenceType] = order
-
-            sentenceOrderPropagation[sentenceType]?.forEach {
-                writeSentenceType(it, order)
-            }
+        CopulaSentenceType.values().forEach {
+            result[it] = UndefinedOrderer
         }
 
-        for (sentenceType in SentenceType.values().filter { it != SentenceType.MainVerbClause }) {
+        when {
+            syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb } -> {
+                CopulaSentenceType.values().forEach {
+                    result[it] =
+                        if (testProbability(differentCopulaWordOrderProbability(it), random))
+                            RelationOrderer(generateSimpleSovOrder(), Random(random.nextLong()))
+                        else RelationOrderer(sovOrder.getValue(VerbSentenceType.MainVerbClause), Random(random.nextLong()))
+                }
+            }
+            syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle } -> {
+                TODO()
+            }
+            else -> throw GeneratorException("Unknown copula type configuration")
+        }
+
+        return result
+    }
+
+    private fun generateSovOrder(): Map<VerbSentenceType, SovOrder> {
+        val mainOrder = generateSimpleSovOrder()
+        val resultMap = mutableMapOf(VerbSentenceType.MainVerbClause to mainOrder)
+
+        fun writeSentenceType(sentenceType: VerbSentenceType, order: SovOrder) {
+            resultMap[sentenceType] = order
+
+            sentenceOrderPropagation[sentenceType]
+                ?.filterIsInstance<VerbSentenceType>()
+                ?.forEach {
+                    writeSentenceType(it, order)
+                }
+        }
+
+        for (sentenceType in VerbSentenceType.values().filter { it != VerbSentenceType.MainVerbClause }) {
             val order =
                 if (testProbability(differentWordOrderProbability(sentenceType), random))
                     generateSimpleSovOrder()
@@ -69,6 +100,6 @@ class WordOrderGenerator(val random: Random) {
 }
 
 private val sentenceOrderPropagation = mapOf<SentenceType, List<SentenceType>>(
-    SentenceType.QuestionVerbClause to listOf(SentenceType.QuestionCopulaClause),
-    SentenceType.MainCopulaClause to listOf(SentenceType.QuestionCopulaClause)
+    VerbSentenceType.QuestionVerbClause to listOf(CopulaSentenceType.QuestionCopulaClause),
+    CopulaSentenceType.MainCopulaClause to listOf(CopulaSentenceType.QuestionCopulaClause)
 )

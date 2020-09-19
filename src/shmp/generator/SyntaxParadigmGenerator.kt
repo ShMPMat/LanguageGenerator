@@ -10,15 +10,15 @@ import kotlin.random.Random
 
 class SyntaxParadigmGenerator(val random: Random) {
     internal fun generateSyntaxParadigm(): SyntaxParadigm {
-        val copulaType = randomElement(CopulaType.values(), random)
-        val noneProbability = random.nextDouble(copulaType.probability)
+        val mainCopulaType = randomElement(CopulaType.values(), random)
+        val noneProbability = random.nextDouble(mainCopulaType.probability)
             .let {
-                if (it <= copulaType.probability / 5) 0.0
+                if (it <= mainCopulaType.probability / 5) 0.0
                 else it
             }
         val copulaPresence = CopulaPresence(
             listOf(
-                copulaType.parametrize(copulaType.probability),
+                mainCopulaType.parametrize(mainCopulaType.probability),
                 CopulaType.None.parametrize(noneProbability)
             )
         )

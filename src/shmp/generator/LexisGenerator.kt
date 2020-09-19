@@ -3,6 +3,7 @@ package shmp.generator
 import shmp.containers.*
 import shmp.language.CategoryValue
 import shmp.language.PhonemeType
+import shmp.language.SpeechPart
 import shmp.language.category.CategoryPool
 import shmp.language.lexis.*
 import shmp.language.phonology.RestrictionsParadigm
@@ -56,14 +57,22 @@ class LexisGenerator(
         categoryPool: CategoryPool,
         syntaxParadigm: SyntaxParadigm
     ): Lexis {
-        val cores = randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1).toMutableList()
+        val cores = randomSublist(
+            wordBase.baseWords,
+            random,
+            wordAmount,
+            wordAmount + 1
+        ).toMutableList()
+
         for (core in cores) {
             if (!isWordNeeded(core))
                 continue
+
             val staticCategories = makeStaticCategories(core, categoryPool)
             val mainCore = core.toSemanticsCore(staticCategories, random)
             val extendedCore = extendCore(mainCore)
-            val newWords = mutableListOf(randomWord(extendedCore))
+            val newWords = mutableListOf(generateWord(extendedCore))
+
             derivationGenerator.makeDerivations(newWords)
             words.addAll(newWords)
         }
@@ -77,7 +86,19 @@ class LexisGenerator(
         val copula =
             if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
                 words.first { it.semanticsCore.hasMeaning("be") }
-            else null
+            else if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
+                val particle = generateWord(
+                    SemanticsCore(
+                        MeaningCluster("copula_particle"),
+                        SpeechPart.Particle,
+                        setOf()
+                    )
+                )
+
+                words.add(particle)
+
+                particle
+            } else null
 
         return Lexis(words, copula)
     }
@@ -133,7 +154,7 @@ class LexisGenerator(
         return resultCategories
     }
 
-    internal fun randomWord(core: SemanticsCore): Word {
+    internal fun generateWord(core: SemanticsCore): Word {
         val syllables = mutableListOf<Syllable>()
         val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
         val length = randomElement(1..10, { 1 / (1 + abs(it - avgWordLength).pow(2)) }, random)

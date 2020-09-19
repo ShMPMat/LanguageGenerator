@@ -2,10 +2,10 @@ package shmp.language.syntax.clause.description
 
 import shmp.language.Language
 import shmp.language.syntax.clause.realization.CopulaSentenceClause
-import shmp.language.syntax.clause.realization.SyntaxClause
 import shmp.language.syntax.clause.realization.TransitiveVerbSentenceClause
 import shmp.language.syntax.clause.realization.UnfoldableClause
-import shmp.language.syntax.clause.translation.SentenceType
+import shmp.language.syntax.clause.translation.CopulaSentenceType
+import shmp.language.syntax.clause.translation.VerbSentenceType
 import kotlin.random.Random
 
 
@@ -22,7 +22,7 @@ class TransitiveVerbMainClauseDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, random: Random) = TransitiveVerbSentenceClause(
         verbClause.toClause(language, random),
-        SentenceType.MainVerbClause
+        VerbSentenceType.MainVerbClause
     )
 }
 
@@ -31,7 +31,7 @@ class TransitiveVerbQuestionDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, random: Random) = TransitiveVerbSentenceClause(
         verbClause.toClause(language, random),
-        SentenceType.QuestionVerbClause
+        VerbSentenceType.QuestionVerbClause
     )
 }
 
@@ -41,7 +41,7 @@ class CopulaMainClauseDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, random: Random) = CopulaSentenceClause(
         copulaClause.toClause(language, random),
-        SentenceType.MainCopulaClause
+        CopulaSentenceType.MainCopulaClause
     )
 }
 
@@ -50,6 +50,6 @@ class CopulaQuestionDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, random: Random) = CopulaSentenceClause(
         copulaClause.toClause(language, random),
-        SentenceType.QuestionCopulaClause
+        CopulaSentenceType.QuestionCopulaClause
     )
 }

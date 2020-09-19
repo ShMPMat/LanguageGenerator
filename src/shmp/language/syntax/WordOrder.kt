@@ -1,13 +1,19 @@
 package shmp.language.syntax
 
 import shmp.language.syntax.SyntaxRelation.*
-import shmp.language.syntax.clause.translation.SentenceType
+import shmp.language.syntax.clause.translation.CopulaSentenceType
+import shmp.language.syntax.clause.translation.VerbSentenceType
+import shmp.language.syntax.orderer.Orderer
 import shmp.random.SampleSpaceObject
 import kotlin.random.Random
 
 
-data class WordOrder(val sovOrder: Map<SentenceType, SovOrder>, val nominalGroupOrder: NominalGroupOrder) {
-    override fun toString() = "$sovOrder, $nominalGroupOrder"
+data class WordOrder(
+    val sovOrder: Map<VerbSentenceType, SovOrder>,
+    val copulaOrder: Map<CopulaSentenceType, Orderer>,
+    val nominalGroupOrder: NominalGroupOrder
+) {
+    override fun toString() = "$sovOrder, $copulaOrder, $nominalGroupOrder"
 }
 
 
