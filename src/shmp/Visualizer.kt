@@ -68,16 +68,18 @@ class Visualizer(val language: Language) {
         |Lexis size - ${language.lexis.size} words
         |
         |Derivations:
-        |${language.lexis.words
-                .filter { it.semanticsCore.changeHistory != null }
-                .sortedBy { it.semanticsCore.changeDepth }
-                .joinToString("\n\n") { printDerivationStory(it) }
+        |${
+                language.lexis.words
+                    .filter { it.semanticsCore.changeHistory != null }
+                    .sortedBy { it.semanticsCore.changeDepth }
+                    .joinToString("\n\n") { printDerivationStory(it) }
             }
         |
         |Collapsed meanings:
-        |${language.lexis.words
-                .filter { it.semanticsCore.meaningCluster.size > 1 }
-                .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
+        |${
+                language.lexis.words
+                    .filter { it.semanticsCore.meaningCluster.size > 1 }
+                    .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
         |
     """.trimMargin()

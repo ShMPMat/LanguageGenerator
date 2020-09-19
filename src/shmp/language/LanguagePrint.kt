@@ -1,7 +1,6 @@
 package shmp.language
 
 import shmp.generator.GeneratorException
-import shmp.language.lexis.SemanticsCore
 import shmp.language.lexis.Word
 import shmp.language.syntax.WordSequence
 import shmp.utils.listCartesianProduct
@@ -39,13 +38,15 @@ fun lineUp(ss: List<String>): List<String> {
 
 fun lineUp(vararg ss: String) = lineUp(ss.toList())
 
-fun getClauseInfoPrinted(wordSequence: WordSequence) = wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
+fun getClauseInfoPrinted(wordSequence: WordSequence) =
+    wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
 
-fun getWordInfoPrinted(word: Word) = getSemanticsCorePrinted(word.semanticsCore) +
+fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
         word.categoryValues
             .joinToString("") { "-$it" }
             .replace(" ", ".")
 
-private fun getSemanticsCorePrinted(semanticsCore: SemanticsCore) =
-    if (semanticsCore.speechPart in listOf(SpeechPart.Particle, SpeechPart.Article)) ""
-    else semanticsCore.toString()
+private fun getSemanticsPrinted(word: Word) =
+    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
+        word.syntaxRole?.short ?: word.semanticsCore.toString()
+    else ""

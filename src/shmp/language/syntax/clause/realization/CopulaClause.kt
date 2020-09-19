@@ -6,6 +6,7 @@ import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
+import shmp.language.syntax.features.WordSyntaxRole
 import shmp.language.syntax.orderer.UndefinedOrderer
 import kotlin.random.Random
 
@@ -24,7 +25,8 @@ class VerbalCopulaClause(
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val node = copula.wordToNode(changeParadigm, UndefinedOrderer, SyntaxRelation.Verb)
+        val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
+            .wordToNode(changeParadigm, UndefinedOrderer, SyntaxRelation.Verb)
         val obj = complement.toNode(changeParadigm, random).addThirdPerson()
         val subj = subject.toNode(changeParadigm, random).addThirdPerson()
 
