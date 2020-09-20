@@ -7,7 +7,7 @@ import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
-import shmp.language.syntax.orderer.UndefinedOrderer
+import shmp.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
 
@@ -24,7 +24,7 @@ class TransitiveVerbClause(
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val node = verb.wordToNode(changeParadigm, UndefinedOrderer, SyntaxRelation.Verb)
+        val node = verb.wordToNode(changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
         val obj = objectClause.toNode(changeParadigm, random).addThirdPerson()
         val subj = subjectClause.toNode(changeParadigm, random).addThirdPerson()
 

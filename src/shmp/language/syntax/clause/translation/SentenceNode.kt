@@ -9,13 +9,13 @@ import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.CopulaSentenceType.*
 import shmp.language.syntax.clause.translation.VerbSentenceType.*
-import shmp.language.syntax.orderer.Orderer
+import shmp.language.syntax.arranger.Arranger
 
 
 data class SentenceNode(
     val word: Word,
     val categoryValues: List<CategoryValue>,
-    val orderer: Orderer,
+    val arranger: Arranger,
     val typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf()

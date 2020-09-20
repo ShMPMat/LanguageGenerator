@@ -7,7 +7,7 @@ import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
-import shmp.language.syntax.orderer.RelationOrderer
+import shmp.language.syntax.arranger.RelationArranger
 import kotlin.random.Random
 
 
@@ -24,7 +24,7 @@ class NominalClause(
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
         val node = noun.wordToNode(
             changeParadigm,
-            RelationOrderer(changeParadigm.wordOrder.nominalGroupOrder, random),
+            RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
             SyntaxRelation.Subject,
             additionalCategories
         )

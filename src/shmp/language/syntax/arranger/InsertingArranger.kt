@@ -1,12 +1,13 @@
-package shmp.language.syntax.orderer
+package shmp.language.syntax.arranger
 
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.WordSequence
 import shmp.language.syntax.clause.translation.NonJoinedClause
+import kotlin.random.Random
 
 
-abstract class InsertingOrderer: Orderer {
-    override fun orderClauses(clauses: List<NonJoinedClause>): WordSequence {
+abstract class InsertingArranger: Arranger {
+    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
         if (clauses.size != 2)
             throw SyntaxException("Got clause list of size ${clauses.size}, expected size 2")
 
@@ -17,12 +18,12 @@ abstract class InsertingOrderer: Orderer {
 }
 
 
-object InsertLast: InsertingOrderer() {
+object InsertLast: InsertingArranger() {
     override fun insert(toInsert: NonJoinedClause, target: NonJoinedClause) =
         target.second + toInsert.second
 }
 
-object InsertFirst: InsertingOrderer() {
+object InsertFirst: InsertingArranger() {
     override fun insert(toInsert: NonJoinedClause, target: NonJoinedClause) =
         toInsert.second + target.second
 }

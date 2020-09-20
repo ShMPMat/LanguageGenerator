@@ -2,12 +2,13 @@ package shmp.language.syntax.clause.realization
 
 import shmp.language.Language
 import shmp.language.syntax.ChangeParadigm
+import shmp.language.syntax.CopulaWordOrder
 import shmp.language.syntax.clause.translation.SentenceClauseConstructor
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.clause.translation.VerbSentenceType
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.CopulaSentenceType
-import shmp.language.syntax.orderer.RelationOrderer
+import shmp.language.syntax.arranger.RelationArranger
 import kotlin.random.Random
 
 
@@ -20,11 +21,11 @@ class TransitiveVerbSentenceClause(
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
         verbClause.toNode(changeParadigm, random)
-            .copy(orderer = RelationOrderer(changeParadigm.wordOrder.sovOrder.getValue(type), random))
+            .copy(arranger = RelationArranger(changeParadigm.wordOrder.sovOrder.getValue(type)))
 
     override fun unfold(language: Language, random: Random) =
         SentenceClauseConstructor(language.changeParadigm)
-            .applyNode(toNode(language.changeParadigm, random), SyntaxRelation.Verb).second
+            .applyNode(toNode(language.changeParadigm, random), SyntaxRelation.Verb, random).second
 }
 
 class CopulaSentenceClause(
@@ -33,9 +34,9 @@ class CopulaSentenceClause(
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
         copulaClause.toNode(changeParadigm, random)
-            .copy(orderer = changeParadigm.wordOrder.copulaOrder.getValue(type))
+            .copy(arranger = changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType)))
 
     override fun unfold(language: Language, random: Random) =
         SentenceClauseConstructor(language.changeParadigm)
-            .applyNode(toNode(language.changeParadigm, random), copulaClause.topType).second
+            .applyNode(toNode(language.changeParadigm, random), copulaClause.topType, random).second
 }

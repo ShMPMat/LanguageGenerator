@@ -4,21 +4,22 @@ import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.WordSequence
+import kotlin.random.Random
 
 
 class SentenceClauseConstructor(
     private val paradigm: ChangeParadigm
 ) {
-    internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation): NonJoinedClause {
+    internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation, random: Random): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause =
             sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
 
         val childrenClauses = sentenceNode.children
-            .map { (r, n) -> applyNode(n, r) }
+            .map { (r, n) -> applyNode(n, r, random) }
 
-        return relation to sentenceNode.orderer.orderClauses(listOf(currentClause) + childrenClauses)
+        return relation to sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {

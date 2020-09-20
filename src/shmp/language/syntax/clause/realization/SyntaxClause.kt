@@ -8,7 +8,7 @@ import shmp.language.lexis.Word
 import shmp.language.syntax.SyntaxRelation
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.WordSequence
-import shmp.language.syntax.orderer.Orderer
+import shmp.language.syntax.arranger.Arranger
 import kotlin.random.Random
 
 
@@ -23,7 +23,7 @@ interface UnfoldableClause: SyntaxClause {
 
 internal fun Word.wordToNode(
     changeParadigm: ChangeParadigm,
-    orderer: Orderer,
+    arranger: Arranger,
     generalType: SyntaxRelation,
     presetCategories: List<CategoryValue> = listOf()
 ): SentenceNode {
@@ -38,7 +38,7 @@ internal fun Word.wordToNode(
             .map { it.categoryValue }
             .filter { it.parentClassName !in classNames }
                 + presetCategories,
-        orderer,
+        arranger,
         generalType
     )
 }
