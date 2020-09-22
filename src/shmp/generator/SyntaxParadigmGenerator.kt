@@ -19,7 +19,7 @@ class SyntaxParadigmGenerator(val random: Random) {
         val copulaPresence = CopulaPresence(
             listOf(mainCopulaType.parametrize(mainCopulaType.probability)) +
                     if (noneProbability != 0.0)
-                        listOf(CopulaType.None.parametrize(/*noneProbability*/1000.0))
+                        listOf(CopulaType.None.parametrize(noneProbability))
                     else listOf()
         )
 

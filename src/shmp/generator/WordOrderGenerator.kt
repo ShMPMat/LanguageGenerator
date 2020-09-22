@@ -31,39 +31,48 @@ class WordOrderGenerator(val random: Random) {
     ): Map<CopulaWordOrder, Arranger> {
         val result = mutableMapOf<CopulaWordOrder, Arranger>()
 
-        for (type in syntaxParadigm.copulaPresence.copulaType.map { it.feature })
-            when (type) {
+        for (copulaType in syntaxParadigm.copulaPresence.copulaType.map { it.feature })
+            when (copulaType) {
                 CopulaType.Verb -> {
-                    CopulaSentenceType.values().forEach {
-                        val newOrderer =
-                            if (testProbability(differentCopulaWordOrderProbability(it), random))
-                                RelationArranger(generateSimpleSovOrder())
-                            else RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
-
-                        result[CopulaWordOrder(it, CopulaType.Verb)] =
-                            RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst -> lst.map { r ->
-                                if (r == SyntaxRelation.Object)
-                                    SyntaxRelation.SubjectCompliment
-                                else r
-                            } })
+                    for (type in CopulaSentenceType.values()) {
+                        result[CopulaWordOrder(type, CopulaType.Verb)] = generateCopulaVerbOrderer(type, sovOrder)
                     }
                 }
                 CopulaType.Particle -> {
                     TODO()
                 }
                 CopulaType.None -> {
-                    TODO()
-//                    CopulaSentenceType.values().forEach {
-//                        result[it] = RelationsOrderer(listOf(
-//                            nominalGroupOrder to SyntaxRelation.Subject,
-//                            result[it]. to SyntaxRelation.Subject
-//                        ))
-//                    }
+                    for (type in CopulaSentenceType.values()) {
+                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
+                        result[CopulaWordOrder(type, CopulaType.None)] =
+                            RelationArranger(SubstitutingOrder(externalOrder.relationOrder) { lst, random ->
+                                lst.takeWhile { it != SyntaxRelation.Subject } +
+                                        nominalGroupOrder.referenceOrder(random) +
+                                        lst.takeLastWhile { it != SyntaxRelation.Subject }
+                            })
+                    }
                 }
             }
 
-
         return result
+    }
+
+    private fun generateCopulaVerbOrderer(
+        type: CopulaSentenceType,
+        sovOrder: Map<VerbSentenceType, SovOrder>
+    ): RelationArranger {
+        val newOrderer =
+            if (testProbability(differentCopulaWordOrderProbability(type), random))
+                RelationArranger(generateSimpleSovOrder())
+            else RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
+
+        return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst, _ ->
+            lst.map { r ->
+                if (r == SyntaxRelation.Object)
+                    SyntaxRelation.SubjectCompliment
+                else r
+            }
+        })
     }
 
     private fun generateSovOrder(): Map<VerbSentenceType, SovOrder> {

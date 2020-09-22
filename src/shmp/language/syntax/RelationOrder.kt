@@ -14,13 +14,13 @@ interface RelationOrder {
 
 class SubstitutingOrder(
     val relationOrder: RelationOrder,
-    val substituteFun: (List<SyntaxRelation>) -> List<SyntaxRelation>
+    val substituteFun: (List<SyntaxRelation>, Random) -> List<SyntaxRelation>
 ): RelationOrder {
     override val referenceOrder: (Random) -> List<SyntaxRelation>
         get() = { random ->
             val result = relationOrder.referenceOrder(random)
 
-            substituteFun(result)
+            substituteFun(result, random)
         }
 }
 
