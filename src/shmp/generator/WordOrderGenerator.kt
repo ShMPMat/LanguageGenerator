@@ -10,7 +10,6 @@ import shmp.random.randomSublist
 import shmp.random.testProbability
 import kotlin.random.Random
 
-
 class WordOrderGenerator(val random: Random) {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
         val sovOrder = generateSovOrder()
@@ -46,9 +45,11 @@ class WordOrderGenerator(val random: Random) {
                         val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
                         result[CopulaWordOrder(type, CopulaType.None)] =
                             RelationArranger(SubstitutingOrder(externalOrder.relationOrder) { lst, random ->
-                                lst.takeWhile { it != SyntaxRelation.Subject } +
+                                val noVerbList = lst.filter { it != SyntaxRelation.Verb }
+
+                                noVerbList.takeWhile { it != SyntaxRelation.Subject } +
                                         nominalGroupOrder.referenceOrder(random) +
-                                        lst.takeLastWhile { it != SyntaxRelation.Subject }
+                                        noVerbList.takeLastWhile { it != SyntaxRelation.Subject }
                             })
                     }
                 }

@@ -12,6 +12,7 @@ import shmp.language.phonology.ValencyPlace
 import shmp.language.phonology.prosody.StressType
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.singleton.RandomSingleton
 import java.io.File
 import java.text.ParseException
 import java.util.*
@@ -22,6 +23,10 @@ import kotlin.random.Random
 
 class LanguageGenerator(val supplementPath: String, seed: Long) {
     private val random = Random(seed)
+
+    init {
+        RandomSingleton.safeRandom = random
+    }
 
     private val phonemeBase = PhonemeBase(supplementPath)
     private val vowelAmount = randomElement(VowelQualityAmount.values(), random).amount

@@ -6,6 +6,8 @@ enum class SyntaxRelation {
     SubjectCompliment,
     Verb,
 
+    CopulaParticle,
+
     Nominal,
     Definition
 }

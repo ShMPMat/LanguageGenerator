@@ -95,7 +95,7 @@ class SpeechPartApplicatorsGenerator(
         val data = mutableListOf<List<RealizationMapper>>()
 
         while (l < shuffledCategories.size) {
-            val r = randomElement(l + 1..shuffledCategories.size, { 1.0 / it }, random)
+            val r = randomElement((l + 1..shuffledCategories.size).toList(), { 1.0 / it }, random)
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
             val cluster = ExponenceCluster(

@@ -157,7 +157,7 @@ class LexisGenerator(
     internal fun generateWord(core: SemanticsCore): Word {
         val syllables = mutableListOf<Syllable>()
         val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
-        val length = randomElement(1..10, { 1 / (1 + abs(it - avgWordLength).pow(2)) }, random)
+        val length = randomElement((1..10).toList(), { 1 / (1 + abs(it - avgWordLength).pow(2)) }, random)
 
         fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
             var syllable = Syllable(listOf())
