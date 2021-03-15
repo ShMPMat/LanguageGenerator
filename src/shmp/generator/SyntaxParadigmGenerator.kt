@@ -5,13 +5,15 @@ import shmp.language.syntax.features.CopulaPresence
 import shmp.language.syntax.features.CopulaType
 import shmp.language.syntax.features.parametrize
 import shmp.random.randomElement
+import shmp.random.singleton.RandomSingleton
+import shmp.random.singleton.randomElement
 import kotlin.random.Random
 
 
-class SyntaxParadigmGenerator(val random: Random) {
+class SyntaxParadigmGenerator() {
     internal fun generateSyntaxParadigm(): SyntaxParadigm {
-        val mainCopulaType = randomElement(CopulaType.values(), random)
-        val noneProbability = random.nextDouble(mainCopulaType.probability)
+        val mainCopulaType = CopulaType.values().randomElement()
+        val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
             .let {
                 if (it <= mainCopulaType.probability / 5) 0.0
                 else it

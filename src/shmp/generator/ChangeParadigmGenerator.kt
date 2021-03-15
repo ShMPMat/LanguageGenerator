@@ -24,7 +24,7 @@ class ChangeParadigmGenerator(
 ) {
     val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator, random)
     val wordOrderGenerator = WordOrderGenerator(random)
-    val syntaxParadigmGenerator = SyntaxParadigmGenerator(random)
+    val syntaxParadigmGenerator = SyntaxParadigmGenerator()
 
     internal fun generateChangeParadigm(
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>

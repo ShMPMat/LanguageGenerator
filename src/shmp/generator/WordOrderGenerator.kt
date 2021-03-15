@@ -1,19 +1,19 @@
 package shmp.generator
 
 import shmp.language.syntax.*
-import shmp.language.syntax.clause.translation.*
-import shmp.language.syntax.features.CopulaType
 import shmp.language.syntax.arranger.Arranger
 import shmp.language.syntax.arranger.RelationArranger
-import shmp.random.randomElement
+import shmp.language.syntax.clause.translation.*
+import shmp.language.syntax.features.CopulaType
 import shmp.random.randomSublist
+import shmp.random.singleton.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
 
 class WordOrderGenerator(val random: Random) {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
         val sovOrder = generateSovOrder()
-        val nominalGroupOrder = randomElement(NominalGroupOrder.values(), random)
+        val nominalGroupOrder = NominalGroupOrder.values().randomElement()
         val copulaOrder = generateCopulaOrder(
             syntaxParadigm,
             sovOrder,
@@ -103,7 +103,7 @@ class WordOrderGenerator(val random: Random) {
     }
 
     private fun generateSimpleSovOrder(): SovOrder {
-        val basicTemplate = randomElement(BasicSovOrder.values(), random)
+        val basicTemplate = BasicSovOrder.values().randomElement()
 
         val (references, name) = when (basicTemplate) {
             BasicSovOrder.Two -> {
