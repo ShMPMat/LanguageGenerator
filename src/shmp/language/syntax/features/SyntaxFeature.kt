@@ -10,10 +10,12 @@ interface SyntaxFeature: SampleSpaceObject
 class ParametrizedSyntaxFeature<E: SyntaxFeature>(
     val feature: E,
     override val probability: Double
-): UnwrappableSSO<E>(feature)
+): UnwrappableSSO<E>(feature) {
+    override fun toString() = "$feature with chance $probability"
+}
 
 fun <E: SyntaxFeature> E.parametrize(probability: Double) =
     ParametrizedSyntaxFeature(this, probability)
 
 
-typealias ParametrizedSyntaxFeatureList<E> = List<ParametrizedSyntaxFeature<E>>
+typealias ParametrizedSyntaxFeatures<E> = List<ParametrizedSyntaxFeature<E>>

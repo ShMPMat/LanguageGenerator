@@ -11,6 +11,8 @@ class ChangeParadigm(
     override fun toString() = """
         |Word order: $wordOrder
         |
+        |$syntaxParadigm
+        |
         |$wordChangeParadigm
     """.trimMargin()
 }

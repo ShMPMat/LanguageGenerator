@@ -7,6 +7,7 @@ import shmp.language.syntax.clause.realization.ParticleCopulaClause
 import shmp.language.syntax.clause.realization.VerbalCopulaClause
 import shmp.language.syntax.features.CopulaType
 import shmp.random.randomUnwrappedElement
+import shmp.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
 
@@ -16,7 +17,7 @@ class CopulaDescription(
 ): ClauseDescription {
     override fun toClause(language: Language, random: Random) =
         language.changeParadigm.syntaxParadigm.copulaPresence.copulaType.let { copulaType ->
-            when (randomUnwrappedElement(copulaType, random)) {
+            when (copulaType.randomUnwrappedElement()) {
                 CopulaType.Verb -> VerbalCopulaClause(
                     language.lexis.copula ?: throw LanguageException("No copula in Language with verbal copula"),
                     subject.toClause(language, random),
