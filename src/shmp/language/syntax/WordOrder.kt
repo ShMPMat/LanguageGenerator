@@ -9,5 +9,12 @@ data class WordOrder(
     val copulaOrder: Map<CopulaWordOrder, Arranger>,
     val nominalGroupOrder: NominalGroupOrder
 ) {
-    override fun toString() = "$sovOrder, $copulaOrder, $nominalGroupOrder"
+    override fun toString() = """
+        |$sovOrder
+        |
+        |$copulaOrder
+        |
+        |$nominalGroupOrder
+        |
+    """.trimMargin()
 }

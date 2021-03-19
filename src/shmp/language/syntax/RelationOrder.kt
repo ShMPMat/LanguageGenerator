@@ -25,11 +25,43 @@ class SubstitutingOrder(
 }
 
 
+class NestedOrder(
+    val outerOrder: RelationOrder,
+    val innerOrder: RelationOrder,
+    val nestedRelation: SyntaxRelation
+
+): RelationOrder {
+    override val referenceOrder: (Random) -> List<SyntaxRelation>
+        get() = { random ->
+            val constructedInnerOrder = innerOrder.referenceOrder(random)
+            val constructedOuterOrder = outerOrder.referenceOrder(random)
+
+            constructedOuterOrder.takeWhile { it != nestedRelation } +
+                    constructedInnerOrder +
+                    constructedOuterOrder.takeLastWhile { it != nestedRelation }
+        }
+
+    override fun toString() = "Order by $innerOrder as $nestedRelation and then order by $outerOrder"
+}
+
+class StaticOrder(
+    val order: List<SyntaxRelation>
+): RelationOrder {
+    override val referenceOrder: (Random) -> List<SyntaxRelation>
+        get() = {
+            order
+        }
+
+    override fun toString() = "Order of " + order.joinToString(", ")
+}
+
 class SovOrder(override val referenceOrder: (Random) -> List<SyntaxRelation>, val name: String) : RelationOrder {
     override fun toString() = name
 }
 
-data class CopulaWordOrder(val copulaSentenceType: CopulaSentenceType, val copulaType: CopulaType)
+data class CopulaWordOrder(val copulaSentenceType: CopulaSentenceType, val copulaType: CopulaType) {
+    override fun toString() = "$copulaSentenceType, $copulaType"
+}
 
 
 enum class BasicSovOrder(

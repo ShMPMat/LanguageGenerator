@@ -6,6 +6,7 @@ import shmp.language.syntax.arranger.RelationArranger
 import shmp.language.syntax.clause.translation.*
 import shmp.language.syntax.features.CopulaType
 import shmp.random.randomSublist
+import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
@@ -38,19 +39,37 @@ class WordOrderGenerator(val random: Random) {
                     }
                 }
                 CopulaType.Particle -> {
-                    TODO()
+                    for (type in CopulaSentenceType.values()) {
+                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
+                            .relationOrder
+                            .referenceOrder(random)
+                            .map {
+                                when (it) {
+                                    SyntaxRelation.Verb -> SyntaxRelation.CopulaParticle
+                                    SyntaxRelation.Object -> SyntaxRelation.SubjectCompliment
+                                    else -> it
+                                }
+                            }
+                        result[CopulaWordOrder(type, CopulaType.Particle)] =
+                            RelationArranger(NestedOrder(
+                                StaticOrder(externalOrder),
+                                nominalGroupOrder,
+                                SyntaxRelation.Subject
+                            ))
+                    }
                 }
                 CopulaType.None -> {
                     for (type in CopulaSentenceType.values()) {
                         val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
+                            .relationOrder
+                            .referenceOrder(random)
+                            .filter { it != SyntaxRelation.Verb }
                         result[CopulaWordOrder(type, CopulaType.None)] =
-                            RelationArranger(SubstitutingOrder(externalOrder.relationOrder) { lst, random ->
-                                val noVerbList = lst.filter { it != SyntaxRelation.Verb }
-
-                                noVerbList.takeWhile { it != SyntaxRelation.Subject } +
-                                        nominalGroupOrder.referenceOrder(random) +
-                                        noVerbList.takeLastWhile { it != SyntaxRelation.Subject }
-                            })
+                            RelationArranger(NestedOrder(
+                                StaticOrder(externalOrder),
+                                nominalGroupOrder,
+                                SyntaxRelation.Subject
+                            ))
                     }
                 }
             }
@@ -62,10 +81,9 @@ class WordOrderGenerator(val random: Random) {
         type: CopulaSentenceType,
         sovOrder: Map<VerbSentenceType, SovOrder>
     ): RelationArranger {
-        val newOrderer =
-            if (testProbability(differentCopulaWordOrderProbability(type), random))
-                RelationArranger(generateSimpleSovOrder())
-            else RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
+        val newOrderer = differentCopulaWordOrderProbability(type).chanceOf<RelationArranger> {
+            RelationArranger(generateSimpleSovOrder())
+        } ?: RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
 
         return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst, _ ->
             lst.map { r ->

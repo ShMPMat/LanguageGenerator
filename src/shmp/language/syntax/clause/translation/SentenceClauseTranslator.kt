@@ -7,9 +7,7 @@ import shmp.language.syntax.WordSequence
 import kotlin.random.Random
 
 
-class SentenceClauseConstructor(
-    private val paradigm: ChangeParadigm
-) {
+class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
     internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation, random: Random): NonJoinedClause {
         val categoryValues = computeValues(sentenceNode)
 

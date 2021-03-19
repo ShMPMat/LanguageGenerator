@@ -5,6 +5,7 @@ import shmp.language.lexis.Word
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.SyntaxException
 import shmp.language.syntax.SyntaxRelation
+import shmp.language.syntax.arranger.PassingSingletonArranger
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.features.CopulaType
 import shmp.language.syntax.features.WordSyntaxRole
@@ -43,26 +44,25 @@ class ParticleCopulaClause(
     val copula: Word,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(TODO(), CopulaType.Particle) {
+) : CopulaClause(SyntaxRelation.Subject, CopulaType.Particle) {
     init {
         if (copula.semanticsCore.speechPart != SpeechPart.Particle)
             throw SyntaxException("$copula is not a particle")
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        TODO()
-//        val node = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
-//            changeParadigm,
-//            changeParadigm.wordOrder.optionalOrders.getValue(),
-//            SyntaxRelation.Verb
-//        )
-//        val obj = complement.toNode(changeParadigm, random).addThirdPerson()
-//        val subj = subject.toNode(changeParadigm, random).addThirdPerson()
-//
-//        node.setRelationChild(SyntaxRelation.Subject, subj)
-//        node.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
-//
-//        return node
+        val obj = complement.toNode(changeParadigm, random).addThirdPerson()
+        val subj = subject.toNode(changeParadigm, random).addThirdPerson()
+        val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
+            changeParadigm,
+            PassingSingletonArranger,
+            SyntaxRelation.CopulaParticle
+        )
+
+        subj.setRelationChild(SyntaxRelation.CopulaParticle, particle)
+        subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
+
+        return subj
     }
 }
 

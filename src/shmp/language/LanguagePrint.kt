@@ -1,6 +1,8 @@
 package shmp.language
 
 import shmp.generator.GeneratorException
+import shmp.language.category.CategorySource
+import shmp.language.category.paradigm.ParametrizedCategoryValue
 import shmp.language.lexis.Word
 import shmp.language.syntax.WordSequence
 import shmp.utils.listCartesianProduct
@@ -43,10 +45,18 @@ fun getClauseInfoPrinted(wordSequence: WordSequence) =
 
 fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
         word.categoryValues
-            .joinToString("") { "-$it" }
+            .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
             .replace(" ", ".")
 
 private fun getSemanticsPrinted(word: Word) =
-    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
+//    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
         word.syntaxRole?.short ?: word.semanticsCore.toString()
-    else ""
+//    else ""
+
+fun ParametrizedCategoryValue.smartPrint(allValues: List<ParametrizedCategoryValue>): String {
+    val allSources = allValues.groupBy { it.source }
+
+    return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.SelfStated))
+        "$categoryValue"
+    else "$this"
+}

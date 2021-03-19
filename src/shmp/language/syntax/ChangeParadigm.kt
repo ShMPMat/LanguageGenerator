@@ -9,7 +9,8 @@ class ChangeParadigm(
     val syntaxParadigm: SyntaxParadigm
 ) {
     override fun toString() = """
-        |Word order: $wordOrder
+        |Word order: 
+        |$wordOrder
         |
         |$syntaxParadigm
         |

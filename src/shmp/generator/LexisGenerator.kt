@@ -83,22 +83,23 @@ class LexisGenerator(
     }
 
     private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula =
-            if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-                words.first { it.semanticsCore.hasMeaning("be") }
-            else if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
-                val particle = generateWord(
-                    SemanticsCore(
-                        MeaningCluster("copula_particle"),
-                        SpeechPart.Particle,
-                        setOf()
-                    )
+        val copula = mutableMapOf<CopulaType, Word>()
+
+        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
+            copula[CopulaType.Verb] = words.first { it.semanticsCore.hasMeaning("be") }
+        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
+            val particle = generateWord(
+                SemanticsCore(
+                    MeaningCluster("copula_particle"),
+                    SpeechPart.Particle,
+                    setOf()
                 )
+            )
 
-                words.add(particle)
+            words.add(particle)
 
-                particle
-            } else null
+            copula[CopulaType.Particle] = particle
+        }
 
         return Lexis(words, copula)
     }

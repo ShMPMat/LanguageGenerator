@@ -3,7 +3,7 @@ package shmp.language.syntax.clause.realization
 import shmp.language.Language
 import shmp.language.syntax.ChangeParadigm
 import shmp.language.syntax.CopulaWordOrder
-import shmp.language.syntax.clause.translation.SentenceClauseConstructor
+import shmp.language.syntax.clause.translation.SentenceClauseTranslator
 import shmp.language.syntax.clause.translation.SentenceNode
 import shmp.language.syntax.clause.translation.VerbSentenceType
 import shmp.language.syntax.SyntaxRelation
@@ -24,7 +24,7 @@ class TransitiveVerbSentenceClause(
             .copy(arranger = RelationArranger(changeParadigm.wordOrder.sovOrder.getValue(type)))
 
     override fun unfold(language: Language, random: Random) =
-        SentenceClauseConstructor(language.changeParadigm)
+        SentenceClauseTranslator(language.changeParadigm)
             .applyNode(toNode(language.changeParadigm, random), SyntaxRelation.Verb, random).second
 }
 
@@ -37,6 +37,6 @@ class CopulaSentenceClause(
             .copy(arranger = changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType)))
 
     override fun unfold(language: Language, random: Random) =
-        SentenceClauseConstructor(language.changeParadigm)
+        SentenceClauseTranslator(language.changeParadigm)
             .applyNode(toNode(language.changeParadigm, random), copulaClause.topType, random).second
 }

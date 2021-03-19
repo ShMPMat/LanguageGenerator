@@ -23,20 +23,20 @@ data class SentenceNode(
     val children: List<SentenceNodeChild>
         get() = _children
 
-    fun withCategoryValue(value: CategoryValue) = this.copy(
+    fun withCategoryValue(value: CategoryValue) = copy(
         categoryValues = categoryValues + listOf(value)
     )
 
-    fun setRelationChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
-        _relation[syntaxRelation] = sentenceNode
+    fun setRelationChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
+        _relation[syntaxRelation] = child
 
-        addStrayChild(syntaxRelation, sentenceNode)
+        addStrayChild(syntaxRelation, child)
     }
 
-    fun addStrayChild(syntaxRelation: SyntaxRelation, sentenceNode: SentenceNode) {
-        _children.add(syntaxRelation to sentenceNode)
+    fun addStrayChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
+        _children.add(syntaxRelation to child)
 
-        sentenceNode.setBackLink(this)
+        child.setBackLink(this)
     }
 
     private fun setBackLink(sentenceNode: SentenceNode) {
@@ -54,6 +54,7 @@ data class SentenceNode(
             ParametrizedCategoryValue(res, source)
         }
 }
+
 
 interface SentenceType
 
