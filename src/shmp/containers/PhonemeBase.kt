@@ -12,7 +12,7 @@ class PhonemeBase(supplementPath: String) : PhonemeContainer {
 
     init {
         File("$supplementPath/Phonemes").forEachLine {
-            if (!it.isBlank()) {
+            if (!it.isBlank() && it[0] != '-') {
                 val tags = it.drop(1).split(" +".toRegex())
                 phonemes.add(Phoneme(
                     tags[0],

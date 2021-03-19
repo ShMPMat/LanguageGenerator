@@ -48,10 +48,10 @@ fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
             .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
             .replace(" ", ".")
 
-private fun getSemanticsPrinted(word: Word) =
-//    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
-        word.syntaxRole?.short ?: word.semanticsCore.toString()
-//    else ""
+private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
+    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
+        word.semanticsCore.toString()
+    else ""
 
 fun ParametrizedCategoryValue.smartPrint(allValues: List<ParametrizedCategoryValue>): String {
     val allSources = allValues.groupBy { it.source }

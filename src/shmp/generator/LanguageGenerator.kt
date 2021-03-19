@@ -29,23 +29,8 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     }
 
     private val phonemeBase = PhonemeBase(supplementPath)
-    private val vowelAmount = randomElement(VowelQualityAmount.values(), random).amount
-    private val consonantAmount = random.nextInt(6, 16)
-    private val phonemeContainer = PhonemeImmutableContainer(
-        randomSublist(
-            phonemeBase.getPhonemesByType(PhonemeType.Vowel),
-            random,
-            vowelAmount,
-            vowelAmount + 1
-        ).union(
-            randomSublist(
-                phonemeBase.getPhonemesByType(PhonemeType.Consonant),
-                random,
-                consonantAmount,
-                consonantAmount + 1
-            )
-        ).toList()
-    )
+    private val phonemeGenerator = PhonemeGenerator(phonemeBase)
+    private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm()
