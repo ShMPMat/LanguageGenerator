@@ -1,6 +1,7 @@
 package shmp.containers
 
 import shmp.generator.DataConsistencyException
+import shmp.generator.GeneratorException
 import shmp.language.SpeechPart
 import shmp.language.category.animosityName
 import shmp.language.category.genderName
@@ -43,6 +44,10 @@ class WordBase(private val supplementPath: String) {
                 DerivationClusterTemplate(),
                 realizationProbability
             )
+
+            if (wordsAndDataMap[core.word] != null)
+                throw GeneratorException("Word ${core.word} already exists")
+
             wordsAndDataMap[core.word] = UnparsedLinksTemplate(core, derivations, compounds)
         }
 
@@ -70,7 +75,7 @@ class WordBase(private val supplementPath: String) {
             .readLines()
             .filter { !it.isBlank() && it[0] != '/' }
 
-        val lines = mutableListOf(semiLines[0])
+        val lines = mutableListOf<String>()
 
         for (line in semiLines)
             lines.add(

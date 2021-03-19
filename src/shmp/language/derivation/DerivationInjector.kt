@@ -1,11 +1,10 @@
-package shmp.generator
+package shmp.language.derivation
 
 import shmp.containers.DerivationClusterTemplate
 import shmp.containers.SemanticsCoreTemplate
 import shmp.containers.SemanticsTagCluster
 import shmp.containers.SemanticsTagTemplate
 import shmp.language.SpeechPart
-import shmp.language.derivation.DerivationType
 import shmp.language.derivation.DerivationType.*
 import shmp.language.lexis.DerivationLink
 

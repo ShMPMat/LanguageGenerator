@@ -11,12 +11,12 @@ time               Noun        1.0    G|LongObject:100                          
                                       flow&thing:0.03
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
-                                      need&thing:0.2
+                                      need(noun)&thing:0.2
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05                                    NNPerson@aviator:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05,air:0.05                           NNPerson@aviator:0.1
-end                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
@@ -28,19 +28,19 @@ seaport            Noun        0.8
                                       sea&home:0.05
 territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
-change             Noun        1.0    G|LongObject:100                                    A|Inanimate:100
+change(noun)       Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                                                                           NNPerson@changer:0.2
                                       appearance&change:0.05
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sun:0.01
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
                                       part&thing:0.08
-need               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+need(noun)         Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@toilet:0.01                                 NNPerson@poor_person:0.1,one_in_need:0.1
                                       wish&thing:0.05
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
-picture            Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+picture(noun)      Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
 animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
                                       NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
@@ -56,7 +56,7 @@ father             Noun        1.0    G|Person:1000,Male:5000,Common:1000       
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@factory:0.1,workplace:0.1,workshop:0.1      NNPerson@worker:0.3
                                       work&thing:0.08
-part               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
+part(noun)         Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@valley:0.025
 place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@local_person:0.3
@@ -69,55 +69,79 @@ book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
-                                      world&part:0.005
+                                      world&part(noun):0.005 world&part:0.005
 river              Noun        0.9    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@river_valley:0.01,bank(near_water):0.05,beach:0.005
                                       NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
+                                      VNPerson@person:0.9,animal:0.9,living_thing:0.8
 have               Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@warehouse:0.3
+                                      VNPerson@owner:0.9
 do                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@workplace:0.3
+                                      VNPerson@worker:0.9,helper:0.3,one_who_does_smth_temporary:0.01
 say                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.3
+                                      VNPerson@speaker:0.9,writer:0.3,actor:0.3
 want               Verb        1.0    T|trans:100,intrans:1
+                                      VNPerson@one_who_wants_smth:0.8,one_in_need:0.3,poor_person:0.1
 play               Verb        0.99   T|trans:100,intrans:1
                                       VNPlace@playground:0.2
+                                      VNPerson@child:0.8,one_playing:0.3
 end                Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@end_(place):0.5,dead_end:0.2
+                                      VNPlace@end(noun):0.5,dead_end:0.2
+                                      VNPerson@dead(being):0.5,moribund(being):0.3,one_ending:0.3
 put                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@warehouse:0.1
+                                      VNPerson@one_putting:0.1,owner:0.1,keeper:0.1
 read               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@library:0.4
+                                      VNPerson@reader:0.9,smart(being):0.2
 add                Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
+                                      VNPerson@one_adding:0.1,owner:0.1,keeper:0.1
 land_on_earth      Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@landing:0.05
+                                      VNPerson@one_landing:0.5
 follow             Verb        0.99   T|trans:100,intrans:1
+                                      VNPerson@one_following:0.5,friend:0.5,relative:0.5
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
+                                      VNPerson@one_asking:0.5
 change             Verb        1.0    T|trans:100,intrans:1
+                                      VNPerson@changer:0.5
 need               Verb        1.0    T|trans:100,intrans:1
+                                      VNPerson@one_who_wants_smth:0.1,one_in_need:0.8,poor_person:0.1
 picture            Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@beautiful_place:0.05
-point              Verb        0.9    T|trans:100,intrans:1
+                                      VNPerson@artist:0.8
+point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@destination:0.4
+                                      VNPerson@one_pointing:0.8,traveller:0.05
 build              Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@building:0.6
+                                      VNPerson@builder:0.8
 work               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@workplace:0.6
+                                      VNPerson@worker:0.9,helper:0.3,one_who_does_smth_temporary:0.01
 part               Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@canyon:0.6
+                                      VNPerson@one_parting:0.8,traveller:0.2,adventurer:0.1
 take               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
+                                      VNPerson@one_taking:0.8,owner:0.2
 live               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@home:0.4,building:0.2
+                                      VNPerson@being:0.8,living_thing:0.7,animal:0.6,person:0.2
 flow               Verb        0.85   T|trans:0,intrans:1
                                       VNPlace@river:0.03 VNPlace@time:0.002
+                                      VNPerson@one_flowing:0.8,sailor:0.1
 return_home        Verb        0.1    T|trans:1,intrans:100
                                       VNPlace@home:0.01
+                                      VNPerson@one_returning:0.8
 
 hot                Adjective   1.0
 small              Adjective   1.0
@@ -129,6 +153,7 @@ well               Adverb      0.99
 one                Numeral     1.0
 
 
+living_thing       Noun        0.09   G|Plant:1,Fruit:0,Person:2                          A|Animate:100          species|species:1
 cat                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 dog                Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 fish               Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
@@ -164,7 +189,6 @@ library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 existence          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 warehouse          Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 forum_(place)      Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-end_(place)        Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 dead_end           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 playground         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 shop               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -192,6 +216,10 @@ sand               Noun        1.0    G|Plant:0,Fruit:0,Person:0                
 
 being              Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:100
 person             Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+child              Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+dead(being)        Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+moribund(being)    Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+smart(being)       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 speaker            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 aviator            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -211,11 +239,27 @@ worker             Noun        0.1    G|Person:1000,Female:1000,Common:5000     
 local_person       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 actor              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 countryman         Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+owner              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+keeper             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+reader             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+builder            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 
-person_who_finishes_smt       Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+person_who_finishes_smth      Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_does_smth_temporary   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_wants_smth            Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_playing                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_putting                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_adding                    Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_landing                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_following                 Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_asking                    Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_pointing                  Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_parting                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_taking                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_flowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_returning                 Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 
 
 /set                Verb               T|trans:1,intrans:0                                              set what?
@@ -225,19 +269,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 
 /other
 /some
-/as
-/that
-/for
-/on
-/with
-/at
-/this
-/from
-/by
-/but
-/what
-/or
-/of
 /to
 /and
 /in
@@ -422,7 +453,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /together
 /next
 /white
-/children
 /begin
 /got
 /walk
@@ -800,7 +830,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /loud
 /spring
 /observe
-/child
 /straight
 /consonant
 /nation
@@ -922,7 +951,6 @@ one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:
 /radio
 /spoke
 /atom
-/human
 /history
 /effect
 /electric
