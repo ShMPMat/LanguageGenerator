@@ -4,7 +4,6 @@ import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.morphem.change.*
 import shmp.lang.language.PhonemeType
-import shmp.language.morphem.change.*
 import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.lang.language.phonology.doesPhonemesCollide

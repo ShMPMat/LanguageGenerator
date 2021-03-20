@@ -1,7 +1,7 @@
 package shmp.lang.language.phonology
 
 import shmp.lang.language.PhonemeType
-import shmp.language.*
+
 
 class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
     val nucleusIndex: Int

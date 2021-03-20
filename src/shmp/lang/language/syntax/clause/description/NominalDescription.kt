@@ -5,6 +5,8 @@ import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
+import shmp.lang.language.syntax.clause.realization.SyntaxClause
+import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
 
 
@@ -13,11 +15,11 @@ class NominalDescription(
     val definitions: List<NounDefinerDescription>,
     val additionalCategories: List<CategoryValue> = listOf()
 ) : ClauseDescription {
-    override fun toClause(language: Language, random: Random) =
+    override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(noun)?.let { word ->
             NominalClause(
                 word,
-                definitions.map { it.toClause(language, random) },
+                definitions.map { it.toClause(language, context, random) },
                 additionalCategories
             )
         }

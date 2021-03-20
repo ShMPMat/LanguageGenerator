@@ -1,7 +1,6 @@
 package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
-import shmp.language.*
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.SpeechPart
@@ -15,6 +14,7 @@ import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
+
 
 private const val outName = "Person"
 

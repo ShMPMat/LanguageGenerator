@@ -1,6 +1,5 @@
 package shmp.lang.generator
 
-import shmp.containers.*
 import shmp.lang.containers.*
 import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.generator.util.SyllablePosition
@@ -11,7 +10,6 @@ import shmp.lang.language.PhonemeType
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.*
-import shmp.language.lexis.*
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.prosody.StressType

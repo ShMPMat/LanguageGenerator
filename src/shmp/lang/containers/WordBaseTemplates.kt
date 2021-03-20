@@ -5,7 +5,6 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.derivation.DerivationType
 import shmp.lang.language.lexis.*
-import shmp.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.UnwrappableSSO
 import shmp.random.randomUnwrappedElement

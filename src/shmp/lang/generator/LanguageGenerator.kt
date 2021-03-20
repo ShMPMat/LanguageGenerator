@@ -4,7 +4,6 @@ import shmp.lang.containers.PhonemeBase
 import shmp.lang.language.Language
 import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.SpeechPart
-import shmp.language.*
 import shmp.lang.language.SpeechPart.*
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.phonology.PhoneticRestrictions

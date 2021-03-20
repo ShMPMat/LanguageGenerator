@@ -1,55 +1,50 @@
 package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.Language
+import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.syntax.clause.realization.CopulaSentenceClause
+import shmp.lang.language.syntax.clause.realization.SyntaxClause
 import shmp.lang.language.syntax.clause.realization.TransitiveVerbSentenceClause
 import shmp.lang.language.syntax.clause.realization.UnfoldableClause
 import shmp.lang.language.syntax.clause.translation.CopulaSentenceType
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType
+import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
 
 
 abstract class SentenceDescription: UnfoldableClauseDescription {
-    abstract override fun toClause(language: Language, random: Random): UnfoldableClause
+    abstract override fun toClause(language: Language, context: Context, random: Random): UnfoldableClause
 
-    override fun unfold(language: Language, random: Random) =
-        toClause(language, random).unfold(language, random)
+    override fun unfold(language: Language, context: Context, random: Random): WordSequence =
+        toClause(language, context, random).unfold(language, random)
 }
 
 
 class TransitiveVerbMainClauseDescription(
     private val verbClause: TransitiveVerbDescription
 ) : SentenceDescription() {
-    override fun toClause(language: Language, random: Random) = TransitiveVerbSentenceClause(
-        verbClause.toClause(language, random),
-        VerbSentenceType.MainVerbClause
-    )
+    override fun toClause(language: Language, context: Context, random: Random) =
+        TransitiveVerbSentenceClause(verbClause.toClause(language, context, random), VerbSentenceType.MainVerbClause)
 }
 
 class TransitiveVerbQuestionDescription(
     private val verbClause: TransitiveVerbDescription
 ) : SentenceDescription() {
-    override fun toClause(language: Language, random: Random) = TransitiveVerbSentenceClause(
-        verbClause.toClause(language, random),
-        VerbSentenceType.QuestionVerbClause
-    )
+    override fun toClause(language: Language, context: Context, random: Random) =
+        TransitiveVerbSentenceClause(verbClause.toClause(language, context, random), VerbSentenceType.QuestionVerbClause)
 }
 
 
 class CopulaMainClauseDescription(
     private val copulaClause: CopulaDescription
 ) : SentenceDescription() {
-    override fun toClause(language: Language, random: Random) = CopulaSentenceClause(
-        copulaClause.toClause(language, random),
-        CopulaSentenceType.MainCopulaClause
-    )
+    override fun toClause(language: Language, context: Context, random: Random) =
+        CopulaSentenceClause(copulaClause.toClause(language, context, random), CopulaSentenceType.MainCopulaClause)
 }
 
 class CopulaQuestionDescription(
     private val copulaClause: CopulaDescription
 ) : SentenceDescription() {
-    override fun toClause(language: Language, random: Random) = CopulaSentenceClause(
-        copulaClause.toClause(language, random),
-        CopulaSentenceType.QuestionCopulaClause
-    )
+    override fun toClause(language: Language, context: Context, random: Random) =
+        CopulaSentenceClause(copulaClause.toClause(language, context, random), CopulaSentenceType.QuestionCopulaClause)
 }

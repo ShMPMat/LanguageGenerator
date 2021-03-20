@@ -2,7 +2,7 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.LanguageException
-import shmp.language.*
+
 
 abstract class AbstractChangeCategory(
     final override val actualValues: List<CategoryValue>,

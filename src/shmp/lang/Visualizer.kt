@@ -7,6 +7,7 @@ import shmp.lang.language.category.NumbersValue
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.clause.description.*
+import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
 
 
@@ -59,25 +60,25 @@ class Visualizer(val language: Language) {
             CopulaQuestionDescription(CopulaDescription(secondSubj, obj))
         )
 
-        printSampleClause(testSentencesMain, "Main")
-        printSampleClause(testSentencesQuestion, "General question")
-        printSampleClause(testSentencesCopula, "Copula")
-        printSampleClause(testSentencesCopulaQuestion, "Copula question")
+        printSampleClause(testSentencesMain, Context(), "Main")
+        printSampleClause(testSentencesQuestion, Context(), "General question")
+        printSampleClause(testSentencesCopula, Context(), "Copula")
+        printSampleClause(testSentencesCopulaQuestion, Context(), "Copula question")
     }
 
-    fun printSampleClause(clauses: List<UnfoldableClauseDescription>, comment: String) {
+    fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
         println("$comment:")
 
         for (it in clauses)
-            printSampleClause(it)
+            printSampleClause(it, context)
 
         println()
     }
 
-    fun printSampleClause(clause: UnfoldableClauseDescription) {
+    fun printSampleClause(clause: UnfoldableClauseDescription, context: Context) {
         println(
             getClauseAndInfoStr(
-                clause.unfold(language, Random(10))
+                clause.unfold(language, context, Random(10))
             )
         )
     }

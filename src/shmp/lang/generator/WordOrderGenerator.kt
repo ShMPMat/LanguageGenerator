@@ -1,17 +1,16 @@
 package shmp.lang.generator
 
 import shmp.lang.language.syntax.*
-import shmp.language.syntax.*
 import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.arranger.RelationArranger
 import shmp.lang.language.syntax.clause.translation.*
-import shmp.language.syntax.clause.translation.*
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.random.randomSublist
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
+
 
 class WordOrderGenerator(val random: Random) {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {

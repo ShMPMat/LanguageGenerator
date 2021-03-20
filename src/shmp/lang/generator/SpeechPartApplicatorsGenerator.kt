@@ -5,16 +5,12 @@ import shmp.lang.language.SpeechPart
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.realization.*
 import shmp.lang.language.morphem.Suffix
-import shmp.language.*
-import shmp.language.category.*
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
 import shmp.lang.language.category.paradigm.ParametrizedCategory
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
 import shmp.lang.language.morphem.Prefix
-import shmp.language.category.realization.*
 import shmp.lang.language.lexis.SemanticsCore
-import shmp.language.morphem.*
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
@@ -24,6 +20,7 @@ import shmp.random.testProbability
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
+
 
 class SpeechPartApplicatorsGenerator(
     private val lexisGenerator: LexisGenerator,

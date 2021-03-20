@@ -4,7 +4,6 @@ import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.SpeechPart
-import shmp.language.category.*
 import shmp.random.testProbability
 import kotlin.random.Random
 

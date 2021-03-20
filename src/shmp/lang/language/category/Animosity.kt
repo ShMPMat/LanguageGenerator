@@ -3,7 +3,6 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.SpeechPart
-import shmp.language.*
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
@@ -11,6 +10,7 @@ import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import kotlin.random.Random
+
 
 const val animosityName = "Animosity"
 
