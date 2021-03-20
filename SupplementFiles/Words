@@ -9,6 +9,7 @@ word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
                                       flow&thing:0.03
+                                      day&night:0.3
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
                                       need(noun)&thing:0.2
@@ -51,6 +52,7 @@ mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000     
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
                                       world&existence:0.07     existence&thing:0.05
+                                      day&night:0.02
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
                                       NNPlace@home:0.01,motherland:0.01
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -70,9 +72,15 @@ book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       world&part(noun):0.005 world&part:0.005
-river              Noun        0.9    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+river              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@river_valley:0.01,bank(near_water):0.05,beach:0.005
                                       NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
+day                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+                                      NNPlace@world:0.6
+                                      NNPerson@worker:0.2
+night              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+                                      NNPlace@existence:0.1
+                                      NNPerson@foe:0.1
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
@@ -109,6 +117,9 @@ add                Verb        0.9    T|trans:100,intrans:1
 land_on_earth      Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@landing:0.05
                                       VNPerson@one_landing:0.5
+help               Verb        0.8    T|trans:100,intrans:1
+                                      VNPlace@workplace:0.05
+                                      VNPerson@helper:0.95,friend:0.3,worker:0.1
 follow             Verb        0.99   T|trans:100,intrans:1
                                       VNPerson@one_following:0.5,friend:0.5,relative:0.5
 ask                Verb        1.0    T|trans:100,intrans:1
@@ -153,6 +164,10 @@ high               Adjective   1.0
 near               Adjective   1.0
 new                Adjective   1.0
 old                Adjective   1.0
+far                Adjective   1.0
+close              Adjective   1.0
+bad                Adjective   1.0
+good               Adjective   1.0
 well               Adverb      0.99
 one                Numeral     1.0
 
@@ -230,6 +245,7 @@ aviator            Noun        0.1    G|Person:1000,Female:1000,Common:5000     
 relative           Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 helper             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 friend             Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+foe                Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 sailor             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 changer            Noun        0.05   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 poor_person        Noun        0.03   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -271,23 +287,13 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /three              Numeral                                                                             make adequate numerals ok ga?
 //spell              Verb        0.9    T|trans:100,intrans:1
 
-/how
-/each
-/also
-/even
-/here
-/must
-/such
+
+
 /act
-/why
-/off
 /try
 /again
 
 /get
-/where
-/after
-/back
 /little
 /only
 /round
@@ -295,18 +301,15 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /year
 /came
 /show
-/good
 /give
 /under
 /name
-/very
 /through
 /just
 /form
 /sentence
 /great
 /think
-/help
 /low
 /line
 /differ
@@ -314,23 +317,18 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /cause
 /much
 /mean
-/before
 /move
 /right
 /boy
 /up
 /use
-/your
 /way
 /like
 /so
-/these
 /long
 /make
 /see
-/him
 /look
-/day
 /go
 /come
 /number
@@ -358,7 +356,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /plant
 /cover
 /food
-/four
 /between
 /state
 /keep
@@ -374,17 +371,12 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /start
 /might
 /story
-/saw
-/far
 /draw
 /left
 /late
 /run
-/don’t
 /while
 /press
-/close
-/night
 /real
 /life
 /few
@@ -587,8 +579,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /better
 /true
 /during
-/hundred
-/five
 /remember
 /step
 /early
@@ -751,7 +741,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /lady
 /yard
 /rise
-/bad
 /blow
 /oil
 /blood

@@ -20,8 +20,9 @@ class TransitiveVerbSentenceClause(
     val type: VerbSentenceType
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
-        verbClause.toNode(changeParadigm, random)
-            .copy(arranger = RelationArranger(changeParadigm.wordOrder.sovOrder.getValue(type)))
+        verbClause.toNode(changeParadigm, random).apply {
+            arranger = RelationArranger(changeParadigm.wordOrder.sovOrder.getValue(type))
+        }
 
     override fun unfold(language: Language, random: Random) =
         SentenceClauseTranslator(language.changeParadigm)
@@ -33,8 +34,9 @@ class CopulaSentenceClause(
     val type: CopulaSentenceType
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
-        copulaClause.toNode(changeParadigm, random)
-            .copy(arranger = changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType)))
+        copulaClause.toNode(changeParadigm, random).apply {
+            arranger = changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
+        }
 
     override fun unfold(language: Language, random: Random) =
         SentenceClauseTranslator(language.changeParadigm)

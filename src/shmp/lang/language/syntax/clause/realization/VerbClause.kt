@@ -37,5 +37,5 @@ class TransitiveVerbClause(
 
 internal fun SentenceNode.addThirdPerson() =
     if (this.categoryValues.none { it.parentClassName == "Person" })
-        this.withCategoryValue(shmp.lang.language.category.PersonValue.Third)
-    else this.copy()
+        this.apply { insertCategoryValue(shmp.lang.language.category.PersonValue.Third) }
+    else this
