@@ -11,6 +11,7 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.SyllableValenceTemplate
 import shmp.lang.language.phonology.ValencyPlace
 import shmp.lang.language.phonology.prosody.StressType
+import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.toPhonemeType
 import shmp.random.randomElement
 import shmp.random.singleton.RandomSingleton

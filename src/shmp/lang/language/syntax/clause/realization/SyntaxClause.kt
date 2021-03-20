@@ -25,7 +25,7 @@ internal fun Word.wordToNode(
     changeParadigm: ChangeParadigm,
     arranger: Arranger,
     generalType: SyntaxRelation,
-    presetCategories: List<CategoryValue> = listOf()
+    presetCategories: List<CategoryValue> = this.categoryValues.map { it.categoryValue }
 ): SentenceNode {
     val classNames = presetCategories
         .map { it.parentClassName }

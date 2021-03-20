@@ -17,7 +17,7 @@ class TransitiveVerbDescription(
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
             TransitiveVerbClause(
-                word,
+                word.copyWithValues(language.changeParadigm.syntaxLogic.resolveVerbForm(language, context)),
                 subjectDescription.toClause(language, context, random),
                 objectDescription.toClause(language, context, random)
             )

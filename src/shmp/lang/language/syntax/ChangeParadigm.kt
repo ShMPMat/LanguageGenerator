@@ -6,7 +6,8 @@ import shmp.lang.language.category.paradigm.WordChangeParadigm
 class ChangeParadigm(
     val wordOrder: WordOrder,
     val wordChangeParadigm: WordChangeParadigm,
-    val syntaxParadigm: SyntaxParadigm
+    val syntaxParadigm: SyntaxParadigm,
+    val syntaxLogic: SyntaxLogic
 ) {
     override fun toString() = """
         |Word order: 
@@ -15,5 +16,7 @@ class ChangeParadigm(
         |$syntaxParadigm
         |
         |$wordChangeParadigm
+        |
+        |$syntaxLogic
     """.trimMargin()
 }

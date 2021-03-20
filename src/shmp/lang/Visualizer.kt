@@ -8,6 +8,11 @@ import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.clause.description.*
 import shmp.lang.language.syntax.context.Context
+import shmp.lang.language.syntax.context.ContextValue
+import shmp.lang.language.syntax.context.ContextValue.TimeContext
+import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
+import shmp.lang.language.syntax.context.Priority
+import shmp.lang.language.syntax.context.Priority.*
 import kotlin.random.Random
 
 
@@ -60,10 +65,13 @@ class Visualizer(val language: Language) {
             CopulaQuestionDescription(CopulaDescription(secondSubj, obj))
         )
 
-        printSampleClause(testSentencesMain, Context(), "Main")
-        printSampleClause(testSentencesQuestion, Context(), "General question")
-        printSampleClause(testSentencesCopula, Context(), "Copula")
-        printSampleClause(testSentencesCopulaQuestion, Context(), "Copula question")
+        val firstContext = Context(LongGonePast to Implicit)
+        val secondContext = Context(FarFuture to Implicit)
+
+        printSampleClause(testSentencesMain, firstContext, "Main")
+        printSampleClause(testSentencesQuestion, secondContext, "General question")
+        printSampleClause(testSentencesCopula, firstContext, "Copula")
+        printSampleClause(testSentencesCopulaQuestion, firstContext, "Copula question")
     }
 
     fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {

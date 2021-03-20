@@ -12,6 +12,7 @@ import shmp.lang.language.category.realization.WordCategoryApplicator
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
+import shmp.lang.language.syntax.SyntaxLogic
 import kotlin.random.Random
 
 
@@ -70,7 +71,8 @@ class ChangeParadigmGenerator(
         return ChangeParadigm(
             wordOrder,
             wordChangeParadigm,
-            syntaxParadigm
+            syntaxParadigm,
+            SyntaxLogic()
         )
     }
 
