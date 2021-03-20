@@ -86,6 +86,9 @@ do                 Verb        1.0    T|trans:1,intrans:0
 say                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.3
                                       VNPerson@speaker:0.9,writer:0.3,actor:0.3
+write              Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@library:0.4,school:0.5
+                                      VNPerson@speaker:0.1,writer:0.9,actor:0.1
 want               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.8,one_in_need:0.3,poor_person:0.1
 play               Verb        0.99   T|trans:100,intrans:1
@@ -149,6 +152,7 @@ large              Adjective   1.0
 high               Adjective   1.0
 near               Adjective   1.0
 new                Adjective   1.0
+old                Adjective   1.0
 well               Adverb      0.99
 one                Numeral     1.0
 
@@ -267,15 +271,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /three              Numeral                                                                             make adequate numerals ok ga?
 //spell              Verb        0.9    T|trans:100,intrans:1
 
-/other
-/some
-/to
-/and
-/in
-/out
-/which
-/if
-/will
 /how
 /each
 /also
@@ -288,8 +283,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /off
 /try
 /again
-/self
-/any
 
 /get
 /where
@@ -302,11 +295,8 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /year
 /came
 /show
-/every
 /good
-/me
 /give
-/our
 /under
 /name
 /very
@@ -328,65 +318,36 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /move
 /right
 /boy
-/old
-/too
-/same
-/she
-/all
-/there
-/when
 /up
 /use
 /your
 /way
-/about
-/many
-/then
-/them
-/write
-/would
 /like
 /so
 /these
-/her
 /long
 /make
-/thing
 /see
 /him
-/two
-/has
 /look
-/more
 /day
-/could
 /go
 /come
-/did
 /number
 /sound
 /no
-/most
 /people
-/my
-/over
 /know
 /water
-/than
 /call
-/first
-/who
 /may
 /down
 /side
-/been
 /now
 /find
 /head
 /stand
-/own
 /page
-/should
 /country
 /found
 /answer
@@ -605,7 +566,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /final
 /gave
 /green
-/oh
 /quick
 /develop
 /ocean
