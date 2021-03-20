@@ -33,7 +33,7 @@ class VerbalCopulaClause(
         val subj = subject.toNode(changeParadigm, random).addThirdPerson()
 
         node.setRelationChild(SyntaxRelation.Subject, subj)
-        node.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
+        node.setRelationChild(SyntaxRelation.Object, obj)
 
         return node
     }

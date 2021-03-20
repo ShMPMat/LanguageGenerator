@@ -81,6 +81,9 @@ day                Noun        1.0    G|Plant:0,Fruit:0,Person:0                
 night              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@existence:0.1
                                       NNPerson@foe:0.1
+food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+                                      NNPlace@warehouse:0.1
+                                      NNPerson@one_eating:0.3,cook(person):0.2
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
@@ -125,6 +128,9 @@ follow             Verb        0.99   T|trans:100,intrans:1
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
                                       VNPerson@one_asking:0.5
+know               Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@school:0.1
+                                      VNPerson@one_knowing:0.9,smart(being):0.5
 change             Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@changer:0.5
 need               Verb        1.0    T|trans:100,intrans:1
@@ -239,6 +245,7 @@ child              Noun        0.9    G|Person:1000,Female:1000,Common:5000     
 dead(being)        Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 moribund(being)    Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 smart(being)       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+cook(person)       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 speaker            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 writer             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 aviator            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -280,13 +287,13 @@ one_taking                    Noun      0.01   G|Person:1000,Female:1000,Common:
 one_flowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_returning                 Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_knowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 
 
 /set                Verb               T|trans:1,intrans:0                                              set what?
 /spell              Noun               G|Plant:1,Fruit:0,Person:1             A|Inanimate:100               spell what?
-/three              Numeral                                                                             make adequate numerals ok ga?
 //spell              Verb        0.9    T|trans:100,intrans:1
-
 
 
 /act
@@ -335,10 +342,8 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /sound
 /no
 /people
-/know
 /water
 /call
-/may
 /down
 /side
 /now
@@ -355,7 +360,6 @@ one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /learn
 /plant
 /cover
-/food
 /between
 /state
 /keep
