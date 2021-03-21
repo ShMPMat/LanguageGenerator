@@ -8,26 +8,33 @@ import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.arranger.RelationArranger
+import shmp.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
 class NominalClause(
-    val noun: Word,
+    val nominal: Word,
     val definitions: List<NounDefinerClause>,
     val additionalCategories: List<CategoryValue> = listOf()
 ) : SyntaxClause {
     init {
-        if (noun.semanticsCore.speechPart != SpeechPart.Noun)
-            throw SyntaxException("$noun is not a noun")
+        if (nominal.semanticsCore.speechPart !in listOf(SpeechPart.Noun, SpeechPart.Pronoun))
+            throw SyntaxException("$nominal is not a noun or pronoun")
     }
 
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val node = noun.wordToNode(
-            changeParadigm,
-            RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
-            SyntaxRelation.Subject,
-            additionalCategories
-        )
+        val node = nominal
+            .let {
+                if (nominal.semanticsCore.speechPart == SpeechPart.Pronoun)
+                    it.copy(syntaxRole = WordSyntaxRole.PersonalPronoun)
+                else it
+            }
+            .wordToNode(
+                changeParadigm,
+                RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
+                SyntaxRelation.Subject,
+                additionalCategories
+            )
 
         definitions
             .map { it.toNode(changeParadigm, random) }

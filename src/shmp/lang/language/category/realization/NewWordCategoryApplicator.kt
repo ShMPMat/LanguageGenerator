@@ -12,7 +12,7 @@ class NewWordCategoryApplicator(applicatorWord: Word) :
         WordSequence(
             wordSequence.words.mapIndexed { i, w ->
                 if (i == wordPosition)
-                    applicatorWord.copyWithValues(values)
+                    applicatorWord.copyWithValues(values + w.categoryValues)
                 else w
             }
         )

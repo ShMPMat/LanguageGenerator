@@ -23,5 +23,5 @@ class NominalDescription(
                 additionalCategories
             )
         }
-            ?: throw SyntaxException("No noun '$noun' in Language")
+            ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
 }

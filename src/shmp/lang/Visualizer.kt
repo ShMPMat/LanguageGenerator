@@ -3,15 +3,16 @@ package shmp.lang
 import shmp.lang.containers.WordBase
 import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
+import shmp.lang.language.category.GenderValue
 import shmp.lang.language.category.NumbersValue
+import shmp.lang.language.category.PersonValue
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.clause.description.*
 import shmp.lang.language.syntax.context.Context
-import shmp.lang.language.syntax.context.ContextValue
-import shmp.lang.language.syntax.context.ContextValue.TimeContext
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
-import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
+import shmp.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
+import shmp.lang.language.syntax.context.ContextValue.TypeContext.Simple
 import shmp.lang.language.syntax.context.Priority.Explicit
 import shmp.lang.language.syntax.context.Priority.Implicit
 import kotlin.random.Random
@@ -42,20 +43,28 @@ class Visualizer(val language: Language) {
                 AdjectiveDescription("high")
             )
         )
+        val thirdSubj = NominalDescription(
+            "_personal_pronoun",
+            listOf(),
+            listOf(PersonValue.First, NumbersValue.Singular, GenderValue.Female)
+        )
         val obj = NominalDescription(
             "time",
             listOf(AdjectiveDescription("small"))
         )
         val firstVerb = TransitiveVerbDescription("have", firstSubj, obj)
         val secondVerb = TransitiveVerbDescription("have", secondSubj, obj)
+        val thirdVerb = TransitiveVerbDescription("have", thirdSubj, obj)
 
         val testSentencesMain = listOf(
             TransitiveVerbMainClauseDescription(firstVerb),
-            TransitiveVerbMainClauseDescription(secondVerb)
+            TransitiveVerbMainClauseDescription(secondVerb),
+            TransitiveVerbMainClauseDescription(thirdVerb),
         )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(firstSubj, obj)),
-            CopulaMainClauseDescription(CopulaDescription(secondSubj, obj))
+            CopulaMainClauseDescription(CopulaDescription(secondSubj, obj)),
+            CopulaMainClauseDescription(CopulaDescription(thirdSubj, obj))
         )
 
         val firstContext = Context(LongGonePast to Implicit, Simple to Explicit)
@@ -123,7 +132,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 7)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 8)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

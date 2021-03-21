@@ -12,7 +12,10 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause =
-            sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(sentenceNode.word, categoryValues)
+            sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(
+                sentenceNode.word.copy(categoryValues = listOf()),
+                categoryValues
+            )
 
         val childrenClauses = sentenceNode.children
             .map { (r, n) -> applyNode(n, r, random) }

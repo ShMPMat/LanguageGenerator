@@ -43,6 +43,15 @@ class SpeechPartChangeParadigm(
                 currentWord = newClause[wordPosition]
             currentClause = newClause
         }
+
+        currentClause = WordSequence(
+            currentClause.words.mapIndexed { i, w ->
+                if (i == wordPosition)
+                    w.copy(syntaxRole = word.syntaxRole)
+                else w
+            }
+        )
+
         return applyProsodyParadigm(currentClause, wordPosition, word) to wordPosition
     }
 
