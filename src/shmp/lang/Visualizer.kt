@@ -11,6 +11,8 @@ import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TimeContext
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
+import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
+import shmp.lang.language.syntax.context.Priority.Explicit
 import shmp.lang.language.syntax.context.Priority.Implicit
 import kotlin.random.Random
 
@@ -51,27 +53,20 @@ class Visualizer(val language: Language) {
             TransitiveVerbMainClauseDescription(firstVerb),
             TransitiveVerbMainClauseDescription(secondVerb)
         )
-        val testSentencesQuestion = listOf(
-            TransitiveVerbQuestionDescription(firstVerb),
-            TransitiveVerbQuestionDescription(secondVerb)
-        )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(firstSubj, obj)),
             CopulaMainClauseDescription(CopulaDescription(secondSubj, obj))
         )
-        val testSentencesCopulaQuestion = listOf(
-            CopulaQuestionDescription(CopulaDescription(firstSubj, obj)),
-            CopulaQuestionDescription(CopulaDescription(secondSubj, obj))
-        )
 
-        val firstContext = Context(LongGonePast to Implicit)
-        val secondContext = Context(FarFuture to Implicit)
-        val thirdContext = Context(Regular to Implicit)
+        val firstContext = Context(LongGonePast to Implicit, Simple to Explicit)
+        val secondContext = Context(FarFuture to Implicit, GeneralQuestion to Explicit)
+        val thirdContext = Context(FarFuture to Implicit, Simple to Explicit)
+        val fourthContext = Context(Regular to Implicit, Simple to Explicit)
 
         printSampleClause(testSentencesMain, firstContext, "Main")
-        printSampleClause(testSentencesQuestion, thirdContext, "General question")
+        printSampleClause(testSentencesMain, secondContext, "General question")
         printSampleClause(testSentencesCopula, firstContext, "Copula")
-        printSampleClause(testSentencesCopulaQuestion, firstContext, "Copula question")
+        printSampleClause(testSentencesCopula, secondContext, "Copula question")
     }
 
     fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
@@ -128,7 +123,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 5)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 7)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

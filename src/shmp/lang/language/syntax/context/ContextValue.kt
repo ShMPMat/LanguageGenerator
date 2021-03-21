@@ -19,7 +19,12 @@ sealed class ContextValue {
 
         object Regular: TimeContext()
     }
-    
+
+    sealed class TypeContext {
+        object Simple: TypeContext()
+        object GeneralQuestion: TypeContext()
+    }
+
     override fun toString() = this::class.simpleName ?: ""
 }
 
