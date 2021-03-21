@@ -82,6 +82,12 @@ data class ParametrizedCategoryValue(val categoryValue: CategoryValue, val sourc
     override fun toString() = categoryValue.toString() + getSourceString(source)
 }
 
+typealias ParametrizedCategoryValues = List<ParametrizedCategoryValue>
+
+fun CategoryValue.parametrize(source: CategorySource) =
+    ParametrizedCategoryValue(this, source)
+
+
 private fun getSourceString(source: CategorySource) =
     if (source is CategorySource.RelationGranted)
         " from ${source.relation}"

@@ -11,8 +11,7 @@ import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TimeContext
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
-import shmp.lang.language.syntax.context.Priority
-import shmp.lang.language.syntax.context.Priority.*
+import shmp.lang.language.syntax.context.Priority.Implicit
 import kotlin.random.Random
 
 
@@ -67,9 +66,10 @@ class Visualizer(val language: Language) {
 
         val firstContext = Context(LongGonePast to Implicit)
         val secondContext = Context(FarFuture to Implicit)
+        val thirdContext = Context(Regular to Implicit)
 
         printSampleClause(testSentencesMain, firstContext, "Main")
-        printSampleClause(testSentencesQuestion, secondContext, "General question")
+        printSampleClause(testSentencesQuestion, thirdContext, "General question")
         printSampleClause(testSentencesCopula, firstContext, "Copula")
         printSampleClause(testSentencesCopulaQuestion, firstContext, "Copula question")
     }

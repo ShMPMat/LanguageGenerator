@@ -64,3 +64,5 @@ interface CategoryValue {
     val semanticsCore: SemanticsCore
     val parentClassName: String
 }
+
+typealias CategoryValues = List<CategoryValue>

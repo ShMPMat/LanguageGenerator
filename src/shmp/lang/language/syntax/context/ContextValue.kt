@@ -19,6 +19,8 @@ sealed class ContextValue {
 
         object Regular: TimeContext()
     }
+    
+    override fun toString() = this::class.simpleName ?: ""
 }
 
 

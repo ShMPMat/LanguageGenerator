@@ -1,9 +1,8 @@
 package shmp.lang.generator
 
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.SpeechPart
-import shmp.lang.language.category.Category
-import shmp.lang.language.category.CategoryRandomSupplements
-import shmp.lang.language.category.definitenessName
+import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.ParametrizedCategory
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -13,6 +12,7 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.SyntaxLogic
+import shmp.lang.language.syntax.context.ContextValue
 import kotlin.random.Random
 
 
@@ -67,13 +67,30 @@ class ChangeParadigmGenerator(
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm()
         val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
+        val syntaxLogic = generateSyntaxLogic(wordChangeParadigm)
 
         return ChangeParadigm(
             wordOrder,
             wordChangeParadigm,
             syntaxParadigm,
-            SyntaxLogic()
+            syntaxLogic
         )
+    }
+
+    private fun generateSyntaxLogic(changeParadigm: WordChangeParadigm): SyntaxLogic {
+        val verbFormSolver = mutableMapOf<ContextValue.TimeContext, CategoryValues>()
+
+        changeParadigm.getSpeechPartParadigm(SpeechPart.Verb).categories
+            .map { it.category }
+            .filterIsInstance<Tense>()
+            .firstOrNull()
+            ?.actualValues
+            ?.firstOrNull { it as TenseValue == TenseValue.Present }
+            ?.let {
+                verbFormSolver[ContextValue.TimeContext.Regular] = listOf(it)
+            }
+
+        return SyntaxLogic(verbFormSolver)
     }
 
     private fun articlePresent(

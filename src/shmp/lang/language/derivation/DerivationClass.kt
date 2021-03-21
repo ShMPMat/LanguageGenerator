@@ -29,7 +29,7 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
 
     VNPlace(Verb, Noun),
     VNPerson(Verb, Noun)
-}
+}//TODO VNAbstract NNAbstract
 
 data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
 
