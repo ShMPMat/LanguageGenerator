@@ -107,7 +107,10 @@ play               Verb        0.99   T|trans:100,intrans:1
                                       VNPerson@child:0.8,one_playing:0.3
 end                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@end(noun):0.5,dead_end:0.2
-                                      VNPerson@dead(being):0.5,moribund(being):0.3,one_ending:0.3
+                                      VNPerson@dead(being):0.5,moribund(being):0.3,one_ending:0.9
+start              Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@start(noun):0.5
+                                      VNPerson@born(being):0.5,one_being_born_soon:0.05,one_starting:0.9
 put                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@warehouse:0.1
                                       VNPerson@one_putting:0.1,owner:0.1,keeper:0.1
@@ -187,6 +190,7 @@ water_animal       Noun        0.1    G|Plant:1,Fruit:0,Person:1                
 river_animal       Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+start(noun)        Noun        0.7    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sky                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 cemetery           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -243,6 +247,7 @@ being              Noun        0.8    G|Person:1000,Female:1000,Common:5000     
 person             Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 child              Noun        0.9    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 dead(being)        Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+born(being)        Noun        0.8    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 moribund(being)    Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 smart(being)       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 cook(person)       Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -287,8 +292,10 @@ one_taking                    Noun      0.01   G|Person:1000,Female:1000,Common:
 one_flowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_returning                 Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_starting                  Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_knowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
+one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 
 
 /set                Verb               T|trans:1,intrans:0                                              set what?
@@ -322,7 +329,6 @@ one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /differ
 /turn
 /cause
-/much
 /mean
 /move
 /right
@@ -340,9 +346,6 @@ one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /come
 /number
 /sound
-/no
-/people
-/water
 /call
 /down
 /side
@@ -372,7 +375,6 @@ one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /cross
 /farm
 /hard
-/start
 /might
 /story
 /draw
@@ -393,8 +395,6 @@ one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:
 /began
 /idea
 /mountain
-/stop
-/once
 /base
 /hear
 /horse

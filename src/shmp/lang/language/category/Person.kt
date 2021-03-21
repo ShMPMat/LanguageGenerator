@@ -64,6 +64,11 @@ object PersonRandomSupplements : CategoryRandomSupplements {
                 noValue(1.0),
                 RealizationBox(NewWord, 2.0)
             )
+            Verb -> setOf(
+                noValue(10.0),
+                RealizationBox(PrefixSeparateWord, 2.0),
+                RealizationBox(SuffixSeparateWord, 2.0)
+            )
             else -> emptyRealization
         }
     }
