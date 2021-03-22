@@ -21,6 +21,7 @@ class TransitiveVerbSentenceClause(
 ) : SentenceClause {
     override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode =
         verbClause.toNode(changeParadigm, random).apply {
+
             arranger = RelationArranger(changeParadigm.wordOrder.sovOrder.getValue(type))
         }
 

@@ -16,6 +16,7 @@ import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.phonology.prosody.generateStress
 import shmp.lang.language.syntax.SyntaxParadigm
 import shmp.lang.language.syntax.features.CopulaType
+import shmp.lang.language.syntax.features.QuestionMarker
 import shmp.random.*
 import kotlin.math.abs
 import kotlin.math.pow
@@ -105,7 +106,22 @@ class LexisGenerator(
             copula[CopulaType.Particle] = particle
         }
 
-        return Lexis(words, copula)
+        val questionMarker = mutableMapOf<QuestionMarker, Word>()
+        if (syntaxParadigm.questionMarkerPresence.questionMarker != null) {
+            val particle = generateWord(
+                SemanticsCore(
+                    MeaningCluster("question_marker"),
+                    SpeechPart.Particle,
+                    setOf()
+                )
+            )
+
+            words.add(particle)
+
+            questionMarker[QuestionMarker] = particle
+        }
+
+        return Lexis(words, copula, questionMarker)
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {

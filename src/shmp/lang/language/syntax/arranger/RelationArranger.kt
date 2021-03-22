@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 class RelationArranger(val relationOrder: RelationOrder) : Arranger {
     override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
-        val relation = relationOrder.referenceOrder(random)
+        val relation = relationOrder.chooseReferenceOrder
 
         return order(clauses, relation)
     }
@@ -23,7 +23,7 @@ class RelationArranger(val relationOrder: RelationOrder) : Arranger {
 class RelationsArranger(val relationOrders: List<Pair<RelationOrder, SyntaxRelation>>) : Arranger {
     override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
         val relations = relationOrders
-            .map { (o, r) -> o.referenceOrder(random) to r }
+            .map { (o, r) -> o.chooseReferenceOrder to r }
 
         var relation = relations[0].first
 

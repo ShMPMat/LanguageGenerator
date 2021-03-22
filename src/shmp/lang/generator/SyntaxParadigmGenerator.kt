@@ -1,14 +1,14 @@
 package shmp.lang.generator
 
 import shmp.lang.language.syntax.SyntaxParadigm
-import shmp.lang.language.syntax.features.CopulaPresence
-import shmp.lang.language.syntax.features.CopulaType
-import shmp.lang.language.syntax.features.parametrize
+import shmp.lang.language.syntax.features.*
 import shmp.random.singleton.RandomSingleton
+import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
-class SyntaxParadigmGenerator() {
+class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(): SyntaxParadigm {
         val mainCopulaType = CopulaType.values().randomElement()
         val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
@@ -23,8 +23,11 @@ class SyntaxParadigmGenerator() {
                     else listOf()
         )
 
+        val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
+
         return SyntaxParadigm(
-            copulaPresence
+            copulaPresence,
+            questionMarkerPresence
         )
     }
 }

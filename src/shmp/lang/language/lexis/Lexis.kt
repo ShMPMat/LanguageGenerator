@@ -2,9 +2,14 @@ package shmp.lang.language.lexis
 
 import shmp.lang.language.LanguageException
 import shmp.lang.language.syntax.features.CopulaType
+import shmp.lang.language.syntax.features.QuestionMarker
 
 
-class Lexis(val words: List<Word>, private val copula: Map<CopulaType, Word>) {
+class Lexis(
+    val words: List<Word>,
+    private val copula: WordMap<CopulaType>,
+    private val questionMarker: WordMap<QuestionMarker>
+) {
     val size: Int
         get() = words.size
 
@@ -21,5 +26,8 @@ class Lexis(val words: List<Word>, private val copula: Map<CopulaType, Word>) {
         |word roots:
         |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
         |copula: $copula
+        |question marker: $questionMarker
     """.trimMargin()
 }
+
+typealias WordMap<E> = Map<E, Word>

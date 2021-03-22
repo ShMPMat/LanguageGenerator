@@ -7,7 +7,10 @@ enum class SyntaxRelation {
     Verb,
 
     CopulaParticle,
+    QuestionMarker,
 
     Nominal,
     Definition
 }
+
+typealias SyntaxRelations = List<SyntaxRelation>

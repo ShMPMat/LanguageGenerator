@@ -8,13 +8,12 @@ import shmp.lang.language.syntax.features.CopulaType
 import shmp.random.randomSublist
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
-import shmp.random.testProbability
 import kotlin.random.Random
 
 
 class WordOrderGenerator(val random: Random) {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
-        val sovOrder = generateSovOrder()
+        val sovOrder = generateSovOrder(syntaxParadigm)
         val nominalGroupOrder = NominalGroupOrder.values().randomElement()
         val copulaOrder = generateCopulaOrder(
             syntaxParadigm,
@@ -36,14 +35,15 @@ class WordOrderGenerator(val random: Random) {
             when (copulaType) {
                 CopulaType.Verb -> {
                     for (type in CopulaSentenceType.values()) {
-                        result[CopulaWordOrder(type, CopulaType.Verb)] = generateCopulaVerbOrderer(type, sovOrder, false)
+                        result[CopulaWordOrder(type, CopulaType.Verb)] =
+                            generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm, false)
                     }
                 }
                 CopulaType.Particle -> {
                     for (type in CopulaSentenceType.values()) {
-                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
+                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm)
                             .relationOrder
-                            .referenceOrder(random)
+                            .chooseReferenceOrder
                             .map {
                                 when (it) {
                                     SyntaxRelation.Verb -> SyntaxRelation.CopulaParticle
@@ -61,9 +61,9 @@ class WordOrderGenerator(val random: Random) {
                 }
                 CopulaType.None -> {
                     for (type in CopulaSentenceType.values()) {
-                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder)
+                        val externalOrder = generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm)
                             .relationOrder
-                            .referenceOrder(random)
+                            .chooseReferenceOrder
                             .filter { it != SyntaxRelation.Verb }
                         result[CopulaWordOrder(type, CopulaType.None)] =
                             RelationArranger(NestedOrder(
@@ -81,13 +81,14 @@ class WordOrderGenerator(val random: Random) {
     private fun generateCopulaVerbOrderer(
         type: CopulaSentenceType,
         sovOrder: Map<VerbSentenceType, SovOrder>,
+        syntaxParadigm: SyntaxParadigm,
         swapObject: Boolean = true
     ): RelationArranger {
         val newOrderer = differentCopulaWordOrderProbability(type).chanceOf<RelationArranger> {
-            RelationArranger(generateSimpleSovOrder())
+            RelationArranger(generateSimpleSovOrder(syntaxParadigm))
         } ?: RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
 
-        return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst, _ ->
+        return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst ->
             if (swapObject)
             lst.map { r ->
                 if (r == SyntaxRelation.Object)
@@ -98,8 +99,8 @@ class WordOrderGenerator(val random: Random) {
         })
     }
 
-    private fun generateSovOrder(): Map<VerbSentenceType, SovOrder> {
-        val mainOrder = generateSimpleSovOrder()
+    private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): Map<VerbSentenceType, SovOrder> {
+        val mainOrder = generateSimpleSovOrder(syntaxParadigm)
         val resultMap = mutableMapOf(VerbSentenceType.MainVerbClause to mainOrder)
 
         fun writeSentenceType(sentenceType: VerbSentenceType, order: SovOrder) {
@@ -113,10 +114,9 @@ class WordOrderGenerator(val random: Random) {
         }
 
         for (sentenceType in VerbSentenceType.values().filter { it != VerbSentenceType.MainVerbClause }) {
-            val order =
-                if (testProbability(differentWordOrderProbability(sentenceType), random))
-                    generateSimpleSovOrder()
-                else mainOrder
+            val order = differentWordOrderProbability(sentenceType).chanceOf<SovOrder> {
+                generateSimpleSovOrder(syntaxParadigm)
+            } ?: mainOrder
 
             writeSentenceType(sentenceType, order)
         }
@@ -124,7 +124,7 @@ class WordOrderGenerator(val random: Random) {
         return resultMap
     }
 
-    private fun generateSimpleSovOrder(): SovOrder {
+    private fun generateSimpleSovOrder(syntaxParadigm: SyntaxParadigm): SovOrder {
         val basicTemplate = BasicSovOrder.values().randomElement()
 
         val (references, name) = when (basicTemplate) {
@@ -136,12 +136,10 @@ class WordOrderGenerator(val random: Random) {
                     2,
                     3
                 )
-                val referenceOrder = ({ r: Random ->
-                    (if (r.nextBoolean()) t1 else t2).referenceOrder(r)
-                })
-                referenceOrder to "$t1 or $t2"
+                val references = t1.references + t2.references
+                references to "$t1 or $t2"
             }
-            else -> basicTemplate.referenceOrder to basicTemplate.name
+            else -> basicTemplate.references to basicTemplate.name
         }
 
         return SovOrder(references, name)
