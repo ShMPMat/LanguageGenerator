@@ -1,5 +1,6 @@
 package shmp.lang.language.syntax.clause.realization
 
+import shmp.lang.language.Language
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.ChangeParadigm
@@ -26,11 +27,11 @@ class VerbalCopulaClause(
             throw SyntaxException("$copula is not a verb")
     }
 
-    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .wordToNode(changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
-        val obj = complement.toNode(changeParadigm, random).addThirdPerson()
-        val subj = subject.toNode(changeParadigm, random).addThirdPerson()
+            .wordToNode(language.changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
+        val obj = complement.toNode(language, random).addThirdPerson()
+        val subj = subject.toNode(language, random).addThirdPerson()
 
         node.setRelationChild(SyntaxRelation.Subject, subj)
         node.setRelationChild(SyntaxRelation.Object, obj)
@@ -50,11 +51,11 @@ class ParticleCopulaClause(
             throw SyntaxException("$copula is not a particle")
     }
 
-    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val obj = complement.toNode(changeParadigm, random).addThirdPerson()
-        val subj = subject.toNode(changeParadigm, random).addThirdPerson()
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val obj = complement.toNode(language, random).addThirdPerson()
+        val subj = subject.toNode(language, random).addThirdPerson()
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
-            changeParadigm,
+            language.changeParadigm,
             PassingSingletonArranger,
             SyntaxRelation.CopulaParticle
         )
@@ -71,9 +72,9 @@ class NullCopulaClause(
     val subject: NominalClause,
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Subject, CopulaType.None) {
-    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
-        val obj = complement.toNode(changeParadigm, random).addThirdPerson()
-        val subj = subject.toNode(changeParadigm, random).addThirdPerson()
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val obj = complement.toNode(language, random).addThirdPerson()
+        val subj = subject.toNode(language, random).addThirdPerson()
 
         subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 

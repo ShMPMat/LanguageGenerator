@@ -5,9 +5,13 @@ import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.arranger.RelationArranger
 import shmp.lang.language.syntax.clause.translation.*
 import shmp.lang.language.syntax.features.CopulaType
+import shmp.lang.language.syntax.features.QuestionMarker
+import shmp.random.GenericSSO
 import shmp.random.randomSublist
+import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
+import shmp.random.toSampleSpaceObject
 import kotlin.random.Random
 
 
@@ -142,7 +146,24 @@ class WordOrderGenerator(val random: Random) {
             else -> basicTemplate.references to basicTemplate.name
         }
 
-        return SovOrder(references, name)
+
+
+        return SovOrder(injectQuestionMarker(references, syntaxParadigm), name)
+    }
+
+    fun injectQuestionMarker(
+        references: List<GenericSSO<SyntaxRelations>>,
+        syntaxParadigm: SyntaxParadigm
+    ): List<GenericSSO<SyntaxRelations>> {
+        syntaxParadigm.questionMarkerPresence.questionMarker
+            ?: return references
+
+        val position = RandomSingleton.random.nextInt(references.size + 1)
+
+        return references.map {
+            (it.value.take(position) + listOf(SyntaxRelation.QuestionMarker) + it.value.drop(position))
+                .toSampleSpaceObject(it.probability)
+        }
     }
 }
 

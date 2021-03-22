@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 
 interface SyntaxClause {
-    fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode
+    fun toNode(language: Language, random: Random): SentenceNode
 }
 
 interface UnfoldableClause: SyntaxClause {

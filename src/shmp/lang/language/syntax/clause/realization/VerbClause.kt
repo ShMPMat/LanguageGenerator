@@ -1,5 +1,6 @@
 package shmp.lang.language.syntax.clause.realization
 
+import shmp.lang.language.Language
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.ChangeParadigm
@@ -22,10 +23,12 @@ class TransitiveVerbClause(
             throw SyntaxException("$verb in the transitive clause is intransitive")
     }
 
-    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val changeParadigm = language.changeParadigm
+
         val node = verb.wordToNode(changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
-        val obj = objectClause.toNode(changeParadigm, random).addThirdPerson()
-        val subj = subjectClause.toNode(changeParadigm, random).addThirdPerson()
+        val obj = objectClause.toNode(language, random).addThirdPerson()
+        val subj = subjectClause.toNode(language, random).addThirdPerson()
 
         node.setRelationChild(SyntaxRelation.Subject, subj)
         node.setRelationChild(SyntaxRelation.Object, obj)

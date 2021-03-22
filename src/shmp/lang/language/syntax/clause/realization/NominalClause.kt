@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.Language
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.ChangeParadigm
@@ -22,7 +23,9 @@ class NominalClause(
             throw SyntaxException("$nominal is not a noun or pronoun")
     }
 
-    override fun toNode(changeParadigm: ChangeParadigm, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val changeParadigm = language.changeParadigm
+
         val node = nominal
             .let {
                 if (nominal.semanticsCore.speechPart == SpeechPart.Pronoun)
@@ -37,7 +40,7 @@ class NominalClause(
             )
 
         definitions
-            .map { it.toNode(changeParadigm, random) }
+            .map { it.toNode(language, random) }
             .forEach {
                 node.addStrayChild(SyntaxRelation.Definition, it)
             }
