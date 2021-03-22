@@ -29,9 +29,8 @@ class SyntaxLogic(
 
         if (priority == Priority.Explicit) {
             TODO()
-        } else {
+        } else
             return chooseClosestTense(language, timeValue)
-        }
     }
 
     private fun chooseClosestTense(language: Language, timeContext: TimeContext): ParametrizedCategoryValues {

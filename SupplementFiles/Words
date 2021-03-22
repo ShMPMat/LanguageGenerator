@@ -8,8 +8,7 @@ word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       say&thing:0.2
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
-                                      flow&thing:0.03
-                                      day&night:0.3
+                                      flow&thing:0.03   day&night:0.3   sun&moon:0.05
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
                                       need(noun)&thing:0.2
@@ -84,6 +83,15 @@ night              Noun        1.0    G|Plant:0,Fruit:0,Person:0                
 food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@warehouse:0.1
                                       NNPerson@one_eating:0.3,cook(person):0.2
+                                      one_eating&thing:0.003
+water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
+                                      NNPlace@sea:0.2,ocean:0.3,bank(near_water):0.05,beach:0.005
+                                      NNPerson@fish:0.05,water_animal:0.0005
+                                      sea&ocean:0.005  sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
+ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      NNPlace@ice_land:0.4,glacier:0.5
+                                      NNPerson@ice_land_animal:0.03
+                                      sea&cold:0.005  cold&ocean:0.005 cold&water:0.005
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.7
@@ -167,6 +175,7 @@ return_home        Verb        0.1    T|trans:1,intrans:100
                                       VNPerson@one_returning:0.8
 
 hot                Adjective   1.0
+cold               Adjective   1.0
 small              Adjective   1.0
 large              Adjective   1.0
 high               Adjective   1.0
@@ -188,6 +197,7 @@ fish               Noun        0.9    G|Plant:1,Fruit:0,Person:1                
 river_fish         Noun        0.1    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 water_animal       Noun        0.1    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 river_animal       Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
+ice_land_animal    Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 start(noun)        Noun        0.7    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -211,6 +221,8 @@ factory            Noun        0.2    G|Plant:0,Fruit:0,Person:0                
 workplace          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 workshop           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+ice_land           Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+glacier            Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -229,12 +241,11 @@ canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                
 landing            Noun        0.02   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 appearance         Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sea                Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+ocean              Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
 river_valley       Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 beach              Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 bank(near_water)   Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
-water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
-ice                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 stone              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 fire               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 ashes              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -578,7 +589,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /fact
 /space
 /heard
-/best
 /hour
 /better
 /true
@@ -595,7 +605,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /verb
 /sing
 /listen
-/six
 /table
 /travel
 /less
@@ -621,7 +630,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /rule
 /govern
 /pull
-/cold
 /notice
 /voice
 /energy
