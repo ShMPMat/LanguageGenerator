@@ -7,6 +7,7 @@ import shmp.lang.language.SpeechPart
 import shmp.random.testProbability
 import kotlin.random.Random
 
+
 class CategoryGenerator(
     private val random: Random
 ) {

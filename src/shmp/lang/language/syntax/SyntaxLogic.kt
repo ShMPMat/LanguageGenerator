@@ -1,10 +1,7 @@
 package shmp.lang.language.syntax
 
 import shmp.lang.language.*
-import shmp.lang.language.category.CategorySource
-import shmp.lang.language.category.NumbersValue
-import shmp.lang.language.category.Tense
-import shmp.lang.language.category.TenseValue
+import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
 import shmp.lang.language.category.paradigm.parametrize
 import shmp.lang.language.syntax.context.Context
@@ -16,14 +13,17 @@ import kotlin.math.abs
 
 class SyntaxLogic(
     val verbFormSolver: Map<TimeContext, CategoryValues>,
-    val numberCategorySolver: Map<NumbersValue, IntRange>?
+    val numberCategorySolver: Map<NumbersValue, IntRange>?,
+    val genderCategorySolver: Map<GenderValue, GenderValue>?
 ) {
     fun resolvePronounCategories(language: Language, actorValue: ContextValue.ActorValue): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount) = actorValue
 
         resultCategories.add(person)
-        resultCategories.add(gender)
+
+        if (genderCategorySolver != null)
+            resultCategories.add(genderCategorySolver.getValue(gender))
 
         if (numberCategorySolver != null) {
             val number = numberCategorySolver.entries
@@ -80,7 +80,11 @@ class SyntaxLogic(
     }}
         |
         |${numberCategorySolver?.entries?.joinToString("\n") { (number, range) ->
-        "$number is used for amounts $range" 
+        "$number is used for amounts $range"
+    } ?: ""} 
+        |
+        |${genderCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
+        "$g1 is seen as $g2"
     } ?: ""} 
         |
         |

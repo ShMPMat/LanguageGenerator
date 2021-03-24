@@ -20,9 +20,8 @@ class ExponenceCluster(
             val neededValues = categoryValues.filter { v ->
                 categories.any { it.containsParametrizedValue(v) }
             }
-            possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) } ?: kotlin.run {
-                null
-            }
+            possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) }
+                ?: throw LanguageException("No exponence cluster for $ $neededValues")
         } catch (e: LanguageException) {
             null
         }

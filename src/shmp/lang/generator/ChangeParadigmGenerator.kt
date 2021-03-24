@@ -3,6 +3,7 @@ package shmp.lang.generator
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.category.*
+import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.ParametrizedCategory
 import shmp.lang.language.syntax.ChangeParadigm
@@ -15,6 +16,7 @@ import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.random.singleton.chanceOf
+import shmp.random.singleton.randomElement
 import kotlin.random.Random
 
 
@@ -95,6 +97,7 @@ class ChangeParadigmGenerator(
         val numberCategorySolver = changeParadigm.categories
             .filterIsInstance<Numbers>()
             .firstOrNull()
+            ?.takeIf { it.actualValues.isNotEmpty() }
             ?.let { numbersCategory ->
                 val numberCategorySolver = numbersCategory.actualValues.map {
                     it as NumbersValue
@@ -115,7 +118,39 @@ class ChangeParadigmGenerator(
                 numberCategorySolver
             }
 
-        return SyntaxLogic(verbFormSolver, numberCategorySolver)
+        val genderCategorySolver = changeParadigm.categories
+            .filterIsInstance<Gender>()
+            .firstOrNull()
+            ?.takeIf { it.actualValues.isNotEmpty() }
+            ?.let { genderCategory ->
+                val genderCategorySolver = genderCategory.actualValues.map {
+                    it as GenderValue
+                    it to it
+                }.toMap().toMutableMap()
+
+                val absentGenders = genderCategory.allPossibleValues
+                    .filter { it !in genderCategory.actualValues }
+                    .map { it as GenderValue }
+
+                for (gender in absentGenders) genderCategorySolver[gender] = when(gender) {
+                    Female -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
+                    Male -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
+                    Neutral -> listOf(Female, Male).randomElement()
+                    Common -> Neutral.takeIf { it in genderCategory.actualValues }
+                        ?: listOf(Female, Male).randomElement()
+                    GenderValue.Person -> listOf(Common, Neutral).first { it in genderCategory.actualValues }
+                    Plant -> Neutral.takeIf { it in genderCategory.actualValues }
+                        ?: listOf(Female, Male).randomElement()
+                    Fruit -> Neutral.takeIf { it in genderCategory.actualValues }
+                        ?: listOf(Female, Male).randomElement()
+                    LongObject -> Neutral.takeIf { it in genderCategory.actualValues }
+                        ?: listOf(Female, Male).randomElement()
+                }
+
+                genderCategorySolver
+            }
+
+        return SyntaxLogic(verbFormSolver, numberCategorySolver, genderCategorySolver)
     }
 
     private fun articlePresent(
