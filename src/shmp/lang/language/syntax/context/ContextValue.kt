@@ -1,5 +1,9 @@
 package shmp.lang.language.syntax.context
 
+import shmp.lang.language.category.GenderValue
+import shmp.lang.language.category.NumbersValue
+import shmp.lang.language.category.PersonValue
+
 
 sealed class ContextValue {
     sealed class TimeContext : ContextValue() {
@@ -20,13 +24,22 @@ sealed class ContextValue {
         object Regular: TimeContext()
     }
 
-    sealed class TypeContext {
+    sealed class TypeContext : ContextValue() {
         object Simple: TypeContext()
         object GeneralQuestion: TypeContext()
     }
 
+    data class ActorValue(val person: PersonValue, val gender: GenderValue, val number: AmountValue) : ContextValue()
+
+    data class AmountValue(val amount: Int): ContextValue()
+
     override fun toString() = this::class.simpleName ?: ""
 }
 
+
+enum class ActorType {
+    Agent,
+    Patient
+}
 
 typealias ContextValues = Set<ContextValue>

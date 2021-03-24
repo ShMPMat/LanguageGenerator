@@ -9,7 +9,9 @@ import shmp.lang.language.category.PersonValue
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.clause.description.*
+import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
+import shmp.lang.language.syntax.context.ContextValue.*
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
 import shmp.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
 import shmp.lang.language.syntax.context.ContextValue.TypeContext.Simple
@@ -43,10 +45,9 @@ class Visualizer(val language: Language) {
                 AdjectiveDescription("high")
             )
         )
-        val thirdSubj = NominalDescription(
-            "_personal_pronoun",
+        val thirdSubj = PersonalPronounDescription(
             listOf(),
-            listOf(PersonValue.First, NumbersValue.Singular, GenderValue.Female)
+            ActorType.Agent
         )
         val obj = NominalDescription(
             "time",
@@ -67,10 +68,21 @@ class Visualizer(val language: Language) {
             CopulaMainClauseDescription(CopulaDescription(thirdSubj, obj))
         )
 
-        val firstContext = Context(LongGonePast to Implicit, Simple to Explicit)
-        val secondContext = Context(FarFuture to Implicit, GeneralQuestion to Explicit)
-        val thirdContext = Context(FarFuture to Implicit, Simple to Explicit)
-        val fourthContext = Context(Regular to Implicit, Simple to Explicit)
+        val firstContext = Context(
+            LongGonePast to Implicit,
+            Simple to Explicit,
+            mapOf(ActorType.Agent to ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1)))
+        )
+        val secondContext = Context(
+            FarFuture to Implicit,
+            GeneralQuestion to Explicit,
+            mapOf(ActorType.Agent to ActorValue(PersonValue.Second, GenderValue.Male, AmountValue(2)))
+        )
+        val fourthContext = Context(
+            Regular to Implicit,
+            Simple to Explicit,
+            mapOf(ActorType.Agent to ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1)))
+        )
 
         printSampleClause(testSentencesMain, firstContext, "Main")
         printSampleClause(testSentencesMain, secondContext, "General question")
@@ -132,7 +144,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 9)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 8)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

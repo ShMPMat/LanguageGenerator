@@ -20,7 +20,9 @@ class ExponenceCluster(
             val neededValues = categoryValues.filter { v ->
                 categories.any { it.containsParametrizedValue(v) }
             }
-            possibleValues.first { it.categoryValues.containsAll(neededValues) }
+            possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) } ?: kotlin.run {
+                null
+            }
         } catch (e: LanguageException) {
             null
         }

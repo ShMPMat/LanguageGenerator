@@ -14,6 +14,4 @@ class Suffix(override val templateChange: TemplateSequenceChange) : Affix {
     override fun toString(): String {
         return "Suffixes: $templateChange"
     }
-
-
 }

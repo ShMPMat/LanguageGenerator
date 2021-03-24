@@ -3,6 +3,7 @@ package shmp.lang.generator
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.category.*
+import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.ParametrizedCategory
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -13,6 +14,7 @@ import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.syntax.context.ContextValue
+import shmp.random.singleton.chanceOf
 import kotlin.random.Random
 
 
@@ -90,7 +92,30 @@ class ChangeParadigmGenerator(
                 verbFormSolver[ContextValue.TimeContext.Regular] = listOf(it)
             }
 
-        return SyntaxLogic(verbFormSolver)
+        val numberCategorySolver = changeParadigm.categories
+            .filterIsInstance<Numbers>()
+            .firstOrNull()
+            ?.let { numbersCategory ->
+                val numberCategorySolver = numbersCategory.actualValues.map {
+                    it as NumbersValue
+                    it to when(it) {
+                        Singular -> 1..1
+                        Dual -> 2..2
+                        Plural -> 2..Int.MAX_VALUE
+                    }
+                }.toMap().toMutableMap()
+
+                if (Dual in numbersCategory.actualValues)
+                    numberCategorySolver[Plural] = 3..Int.MAX_VALUE
+                else 0.05.chanceOf {
+                    numberCategorySolver[Plural] = 3..Int.MAX_VALUE
+                    numberCategorySolver[Singular] = 1..2
+                }
+
+                numberCategorySolver
+            }
+
+        return SyntaxLogic(verbFormSolver, numberCategorySolver)
     }
 
     private fun articlePresent(

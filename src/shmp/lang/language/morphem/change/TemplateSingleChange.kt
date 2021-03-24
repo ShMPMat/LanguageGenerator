@@ -39,7 +39,11 @@ class TemplateSingleChange(
     }
 
     override fun change(word: Word): Word {
-        fun Word.takeProsody(i: Int) = this.syllables.getOrNull(i)?.prosodicEnums?.toList() ?: listOf()
+        fun Word.takeProsody(i: Int) = this.syllables
+            .getOrNull(i)
+            ?.prosodicEnums
+            ?.toList()
+            ?: listOf()
 
         val testResult = findGoodIndex(word)
         if (testResult != null) {

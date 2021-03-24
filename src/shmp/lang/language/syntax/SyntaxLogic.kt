@@ -1,22 +1,43 @@
 package shmp.lang.language.syntax
 
-import shmp.lang.language.CategoryValues
-import shmp.lang.language.Language
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.*
 import shmp.lang.language.category.CategorySource
+import shmp.lang.language.category.NumbersValue
 import shmp.lang.language.category.Tense
 import shmp.lang.language.category.TenseValue
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
 import shmp.lang.language.category.paradigm.parametrize
 import shmp.lang.language.syntax.context.Context
+import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TimeContext
 import shmp.lang.language.syntax.context.Priority
 import kotlin.math.abs
 
 
 class SyntaxLogic(
-    val verbFormSolver: Map<TimeContext, CategoryValues>
+    val verbFormSolver: Map<TimeContext, CategoryValues>,
+    val numberCategorySolver: Map<NumbersValue, IntRange>?
 ) {
+    fun resolvePronounCategories(language: Language, actorValue: ContextValue.ActorValue): CategoryValues {
+        val resultCategories = mutableListOf<CategoryValue>()
+        val (person, gender, amount) = actorValue
+
+        resultCategories.add(person)
+        resultCategories.add(gender)
+
+        if (numberCategorySolver != null) {
+            val number = numberCategorySolver.entries
+                .firstOrNull { it.value.contains(amount.amount) }
+                ?.key
+                ?: throw LanguageException("No handler for amount ${amount.amount}")
+
+            resultCategories.add(number)
+        }
+
+        return resultCategories
+    }
+
+
     fun resolveVerbForm(
         language: Language,
         context: Context
@@ -57,6 +78,10 @@ class SyntaxLogic(
         |${verbFormSolver.entries.joinToString("\n") { (context, categoties) ->
         "For $context the following form is used: " + categoties.joinToString(", ")
     }}
+        |
+        |${numberCategorySolver?.entries?.joinToString("\n") { (number, range) ->
+        "$number is used for amounts $range" 
+    } ?: ""} 
         |
         |
     """.trimMargin()

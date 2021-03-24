@@ -2,15 +2,17 @@ package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
+import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
 import shmp.lang.language.syntax.clause.realization.SyntaxClause
+import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
 
 
-class NominalDescription(
+open class NominalDescription(
     val noun: Meaning,
     val definitions: List<NounDefinerDescription>,
     val additionalCategories: List<CategoryValue> = listOf()
@@ -24,4 +26,19 @@ class NominalDescription(
             )
         }
             ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
+}
+
+class PersonalPronounDescription(
+    definitions: List<NounDefinerDescription>,
+    private val actorType: ActorType
+): NominalDescription("_personal_pronoun", definitions) {
+    override fun toClause(language: Language, context: Context, random: Random): NominalClause {
+        val clause = super.toClause(language, context, random)
+
+        return NominalClause(
+            clause.nominal,
+            clause.definitions,
+            language.changeParadigm.syntaxLogic.resolvePronounCategories(language, context.actors.getValue(actorType))
+        )
+    }
 }
