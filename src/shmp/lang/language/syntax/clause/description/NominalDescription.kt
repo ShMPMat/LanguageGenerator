@@ -20,7 +20,8 @@ open class NominalDescription(
             NominalClause(
                 word,
                 definitions.map { it.toClause(language, context, random) },
-                additionalCategories
+                additionalCategories,
+                null
             )
         }
             ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
@@ -36,7 +37,8 @@ class PersonalPronounDescription(
         return NominalClause(
             clause.nominal,
             clause.definitions,
-            language.changeParadigm.syntaxLogic.resolvePronounCategories(context.actors.getValue(actorType))
+            language.changeParadigm.syntaxLogic.resolvePronounCategories(context.actors.getValue(actorType)),
+            actorType
         )
     }
 }

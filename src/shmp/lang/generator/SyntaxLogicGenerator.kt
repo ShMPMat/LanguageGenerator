@@ -1,27 +1,31 @@
 package shmp.lang.generator
 
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.category.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.syntax.PersonalPronounDropSolver
 import shmp.lang.language.syntax.SyntaxLogic
+import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.context.ActorType
+import shmp.lang.language.syntax.context.ActorType.*
 import shmp.lang.language.syntax.context.ContextValue
+import shmp.lang.utils.listCartesianProduct
 import shmp.random.singleton.chanceOf
+import shmp.random.singleton.otherwise
 import shmp.random.singleton.randomElement
 
 
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
-    fun generateSyntaxLogic(): SyntaxLogic {
-        val verbFormSolver = generateVerbFormSolver()
-
-        val numberCategorySolver = generateNumberCategorySolver()
-
-        val genderCategorySolver = generateGenderCategorySolver()
-
-        return SyntaxLogic(verbFormSolver, numberCategorySolver, genderCategorySolver)
-    }
+    fun generateSyntaxLogic() = SyntaxLogic(
+        generateVerbFormSolver(),
+        generateNumberCategorySolver(),
+        generateGenderCategorySolver(),
+        generatePersonalPronounDropSolver()
+    )
 
     private fun generateVerbFormSolver(): MutableMap<ContextValue.TimeContext, List<CategoryValue>> {
         val verbFormSolver: MutableMap<ContextValue.TimeContext, List<CategoryValue>> = mutableMapOf()
@@ -83,7 +87,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
                 Neutral -> listOf(Female, Male).randomElement()
                 Common -> Neutral.takeIf { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).randomElement()
-                GenderValue.Person -> listOf(Common, Neutral).first { it in genderCategory.actualValues }
+                GenderValue.Person -> listOf(Common, Neutral).firstOrNull() { it in genderCategory.actualValues }
+                    ?: listOf(Female, Male).randomElement()
                 Plant -> Neutral.takeIf { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).randomElement()
                 Fruit -> Neutral.takeIf { it in genderCategory.actualValues }
@@ -94,4 +99,32 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
 
             genderCategorySolver
         }
+
+    private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
+        val verbalCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.Verb).categories
+        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.Pronoun).categories
+
+        val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
+
+        for (actor in ActorType.values()) {
+            val source = when (actor) {
+                Agent -> CategorySource.RelationGranted(SyntaxRelation.Subject)
+                Patient -> CategorySource.RelationGranted(SyntaxRelation.Object)
+            }
+
+            val relevantCategories = verbalCategories.filter { it.source == source }
+
+            if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
+                listCartesianProduct(pronounCategories.map { it.category.actualValues })
+                    .forEach { personalPronounDropSolver.add(actor to it) }
+
+            } else if (relevantCategories.isNotEmpty()) 0.5.chanceOf {
+                listCartesianProduct(pronounCategories.map { it.category.actualValues })
+                    .randomElement()
+                    .let { personalPronounDropSolver.add(actor to it) }
+            }
+        }
+
+        return personalPronounDropSolver
+    }
 }

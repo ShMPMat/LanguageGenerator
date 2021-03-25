@@ -4,6 +4,7 @@ import shmp.lang.language.*
 import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
 import shmp.lang.language.category.paradigm.parametrize
+import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TimeContext
@@ -14,7 +15,8 @@ import kotlin.math.abs
 class SyntaxLogic(
     val verbFormSolver: Map<TimeContext, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
-    val genderCategorySolver: Map<GenderValue, GenderValue>?
+    val genderCategorySolver: Map<GenderValue, GenderValue>?,
+    private val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
     fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -36,6 +38,13 @@ class SyntaxLogic(
 
         return resultCategories
     }
+
+    fun resolvePersonalPronounDrop(categories: List<CategoryValue>, actorType: ActorType): Boolean = personalPronounDropSolver
+        .any { (a, cs) ->
+            a == actorType
+                    && categories.all { it in cs }
+                    && cs.size == categories.size
+        }
 
 
     fun resolveVerbForm(
@@ -75,24 +84,36 @@ class SyntaxLogic(
     override fun toString() = """
         |Syntax:
         |
-        |${verbFormSolver.entries.joinToString("\n") { (context, categoties) ->
-        "For $context the following form is used: " + categoties.joinToString(", ")
-    }}
+        |${
+        verbFormSolver.entries.joinToString("\n") { (context, categoties) ->
+            "For $context the following form is used: " + categoties.joinToString(", ")
+        }
+    }
         |
-        |${numberCategorySolver?.entries?.joinToString("\n") { (number, range) ->
-        "$number is used for amounts $range"
-    } ?: ""} 
+        |${
+        numberCategorySolver?.entries?.joinToString("\n") { (number, range) ->
+            "$number is used for amounts $range"
+        } ?: ""
+    } 
         |
-        |${genderCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
-        "$g1 is seen as $g2"
-    } ?: ""} 
+        |${
+        genderCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
+            "$g1 is seen as $g2"
+        } ?: ""
+    } 
         |
+        |Dropped pronouns:
+        |${
+        personalPronounDropSolver.joinToString("\n") { (g1, g2) ->
+            "$g1 with categories ${g2.joinToString(".") { it.shortName }}"
+        }
+    } 
         |
     """.trimMargin()
 }
 
 
-private fun TenseValue.toNumber() = when(this) {
+private fun TenseValue.toNumber() = when (this) {
     TenseValue.Present -> 0
     TenseValue.Future -> 10
     TenseValue.Past -> -100
@@ -102,7 +123,7 @@ private fun TenseValue.toNumber() = when(this) {
     TenseValue.YearPast -> -90
 }
 
-private fun TimeContext.toNumber() = when(this) {
+private fun TimeContext.toNumber() = when (this) {
     TimeContext.Present -> 0.0
     TimeContext.ImmediateFuture -> 7.0
     TimeContext.ImmediatePast -> -97.0
@@ -116,3 +137,5 @@ private fun TimeContext.toNumber() = when(this) {
     TimeContext.LongGonePast -> -1000.0
     TimeContext.Regular -> Double.NaN
 }
+
+typealias PersonalPronounDropSolver = List<Pair<ActorType, CategoryValues>>

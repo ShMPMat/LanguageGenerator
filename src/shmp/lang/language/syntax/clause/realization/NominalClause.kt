@@ -4,11 +4,11 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
 import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Word
-import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.arranger.RelationArranger
+import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
@@ -16,7 +16,8 @@ import kotlin.random.Random
 class NominalClause(
     val nominal: Word,
     val definitions: List<NounDefinerClause>,
-    val additionalCategories: List<CategoryValue> = listOf()
+    val additionalCategories: List<CategoryValue> = listOf(),
+    private val actorType: ActorType?
 ) : SyntaxClause {
     init {
         if (nominal.semanticsCore.speechPart !in listOf(SpeechPart.Noun, SpeechPart.Pronoun))
@@ -28,7 +29,7 @@ class NominalClause(
 
         val node = nominal
             .let {
-                if (nominal.semanticsCore.speechPart == SpeechPart.Pronoun)
+                if (nominal.semanticsCore.hasMeaning("_personal_pronoun"))
                     it.copy(syntaxRole = WordSyntaxRole.PersonalPronoun)
                 else it
             }
@@ -44,6 +45,10 @@ class NominalClause(
             .forEach {
                 node.addStrayChild(SyntaxRelation.Definition, it)
             }
+
+        if (nominal.semanticsCore.hasMeaning("_personal_pronoun")) {
+            node.isDropped = language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType!!)
+        }
 
         return node
     }
