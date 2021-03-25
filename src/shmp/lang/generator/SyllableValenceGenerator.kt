@@ -1,5 +1,6 @@
 package shmp.lang.generator
 
+import shmp.lang.containers.PhonemeContainer
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.PhonemeType
@@ -7,6 +8,7 @@ import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.SyllableValenceTemplate
 import shmp.lang.language.phonology.ValencyPlace
+import shmp.lang.utils.cartesianProduct
 import shmp.random.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
@@ -15,6 +17,8 @@ import kotlin.random.Random
 class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private val ADD_TESTS = 10
 
+//    private val syllableMapper = mutableMapOf<PhonemeContainer, List<Syllable>>()
+
     fun generateSyllable(
         restrictions: SyllableRestrictions,
         random: Random
@@ -22,7 +26,11 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         for (i in 0 until ADD_TESTS) {
             val syllable = generateOneSyllable(restrictions, random)
             if (syllable.size != 1 || restrictions.prefix.isEmpty() || syllable != restrictions.prefix.last())
-                if (!restrictions.shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
+                if ((!restrictions.shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
+                    && restrictions.prefix
+                        .lastOrNull()
+                        ?.let { it.phonemeSequence.last().type != syllable.phonemeSequence[0].type } != false
+                )
                 //if (!shouldHaveFinal)
                     return syllable
         }
@@ -129,4 +137,35 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
             return false
         return true
     }
+
+//    private fun fillSyllables(phonemeContainer: PhonemeContainer) {
+//        val allSyllables = mutableListOf<Syllable>()
+//        val nuclei = phonemeContainer.getPhonemesByType(PhonemeType.Vowel)
+//            .map { listOf(it) }
+//
+//        val maxOnsetSize = template.valencies
+//            .takeWhile { it.phonemeType != PhonemeType.Vowel }
+//            .size
+//        val maxOffsetSize = template.valencies
+//            .takeLastWhile { it.phonemeType != PhonemeType.Vowel }
+//            .size
+//
+//        val maxOnsets = makeAllSequences(phonemeContainer, maxOnsetSize)
+//            .filter {
+//                for (i in it.indices.drop(1)) {
+//                    val c = it[i]
+//                    val p = it[i - 1]
+//                    if (c == p || c.articulationManner.sonorityLevel < p.articulationManner.sonorityLevel)
+//                }
+//                return@filter true
+//            }
+//
+//
+//        syllableMapper[phonemeContainer] = allSyllables
+//    }
+//
+//    private fun makeAllSequences(phonemeContainer: PhonemeContainer, size: Int): List<List<Phoneme>> =
+//        (1..size)
+//            .map { phonemeContainer.getPhonemesByType(PhonemeType.Consonant) }
+//            .cartesianProduct()
 }
