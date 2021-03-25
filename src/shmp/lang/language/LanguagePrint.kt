@@ -57,6 +57,6 @@ fun ParametrizedCategoryValue.smartPrint(allValues: List<ParametrizedCategoryVal
     val allSources = allValues.groupBy { it.source }
 
     return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.SelfStated))
-        "$categoryValue"
+        categoryValue.shortName
     else "$this"
 }

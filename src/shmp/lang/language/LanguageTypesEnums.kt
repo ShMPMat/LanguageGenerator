@@ -63,6 +63,7 @@ enum class CategoryRealization {
 interface CategoryValue {
     val semanticsCore: SemanticsCore
     val parentClassName: String
+    val shortName: String
 }
 
 typealias CategoryValues = List<CategoryValue>

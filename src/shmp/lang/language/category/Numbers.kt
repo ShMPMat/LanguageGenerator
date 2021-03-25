@@ -94,10 +94,10 @@ enum class NumbersPresence(
     Dual(20.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Plural))
 }
 
-enum class NumbersValue(override val semanticsCore: SemanticsCore) : CategoryValue {
-    Singular(SemanticsCore(MeaningCluster("(singular number indicator)"), Particle, setOf())),//TODO more diversity
-    Dual(SemanticsCore(MeaningCluster("(dual number indicator)"), Particle, setOf())),
-    Plural(SemanticsCore(MeaningCluster("(plural number indicator)"), Particle, setOf()));
+enum class NumbersValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+    Singular(SemanticsCore(MeaningCluster("(singular number indicator)"), Particle, setOf()), "SN"),//TODO more diversity
+    Dual(SemanticsCore(MeaningCluster("(dual number indicator)"), Particle, setOf()), "DL"),
+    Plural(SemanticsCore(MeaningCluster("(plural number indicator)"), Particle, setOf()), "PL");
 
     override val parentClassName = outName
 }

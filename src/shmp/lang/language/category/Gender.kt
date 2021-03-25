@@ -89,29 +89,32 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
     NonGendered(28.0, GenderValue.values().toList())
 }
 
-enum class GenderValue(override val semanticsCore: SemanticsCore) : CategoryValue {
+enum class GenderValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
     Female(
         SemanticsCore(
             MeaningCluster("(female gender indicator)"),
             SpeechPart.Particle,
             setOf()
-        )
+        ),
+        "FEM"
     ),
-    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle, setOf())),
+    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle, setOf()), "MALE"),
     Neutral(
         SemanticsCore(
             MeaningCluster("(neutral gender indicator)"),
             SpeechPart.Particle,
             setOf()
-        )
+        ),
+        "NEUT"
     ),
     Common(
         SemanticsCore(
             MeaningCluster("(common gender indicator)"),
             SpeechPart.Particle,
             setOf()
-        )
+        ),
+        "COMM"
     ),
 
     Person(
@@ -119,16 +122,18 @@ enum class GenderValue(override val semanticsCore: SemanticsCore) : CategoryValu
             MeaningCluster("(person class indicator)"),
             SpeechPart.Particle,
             setOf()
-        )
+        ),
+        "PERS"
     ),
-    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle, setOf())),
-    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle, setOf())),
+    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle, setOf()), "PLANT"),
+    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle, setOf()), "FRUIT"),
     LongObject(
         SemanticsCore(
             MeaningCluster("(long object class indicator)"),
             SpeechPart.Particle,
             setOf()
-        )
+        ),
+        "LONG.OBJ"
     );
 
     override val parentClassName = genderName
