@@ -16,7 +16,7 @@ class SyntaxLogic(
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?
 ) {
-    fun resolvePronounCategories(language: Language, actorValue: ContextValue.ActorValue): CategoryValues {
+    fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount) = actorValue
 

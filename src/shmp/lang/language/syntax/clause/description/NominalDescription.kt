@@ -2,11 +2,9 @@ package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
-import shmp.lang.language.SpeechPart
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
-import shmp.lang.language.syntax.clause.realization.SyntaxClause
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
@@ -38,7 +36,7 @@ class PersonalPronounDescription(
         return NominalClause(
             clause.nominal,
             clause.definitions,
-            language.changeParadigm.syntaxLogic.resolvePronounCategories(language, context.actors.getValue(actorType))
+            language.changeParadigm.syntaxLogic.resolvePronounCategories(context.actors.getValue(actorType))
         )
     }
 }
