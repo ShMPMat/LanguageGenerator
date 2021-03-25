@@ -18,6 +18,7 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
             )
 
         val childrenClauses = sentenceNode.children
+            .filter { !it.second.isDropped }
             .map { (r, n) -> applyNode(n, r, random) }
 
         return relation to sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)

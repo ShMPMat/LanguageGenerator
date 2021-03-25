@@ -18,7 +18,8 @@ class SentenceNode(
     var arranger: Arranger,
     val typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
-    private val _children: MutableList<SentenceNodeChild> = mutableListOf()
+    private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
+    var isDropped: Boolean = false
 ) {
     private val _categoryValues = categoryValues.toMutableList()
     val categoryValues: List<CategoryValue>
