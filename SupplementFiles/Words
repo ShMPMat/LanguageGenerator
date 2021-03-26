@@ -5,13 +5,13 @@
 _personal_pronoun  Pronoun     1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
-                                      say&thing:0.2
+                                      say&thing:0.2 think&thing:0.1
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
                                       flow&thing:0.03   day&night:0.3   sun&moon:0.05
 wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                                                                           NNPerson@one_who_wants_smth:0.1
-                                      need(noun)&thing:0.2 want&thing:0.2 want&see:0.2 wish&see:0.1
+                                      think&thing:0.05 need(noun)&thing:0.2 want&thing:0.2 want&see:0.2 wish&see:0.1 wish&think:0.01
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@sky:0.05                                    NNPerson@aviator:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -70,7 +70,7 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       theater&place:0.02
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
-                                      word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05
+                                      word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05  think&thing:0.05
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       world&part(noun):0.005 world&part:0.005
@@ -109,9 +109,12 @@ say                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.3
                                       VNPerson@speaker:0.9,writer:0.3,actor:0.3
                                       hear&thing:0.3
-write              Verb        1.0    T|trans:100,intrans:1
+write              Verb        0.7    T|trans:100,intrans:1
                                       VNPlace@library:0.4,school:0.5
                                       VNPerson@speaker:0.1,writer:0.9,actor:0.1
+think              Verb        1.0    T|trans:100,intrans:1
+                                      VNPlace@library:0.3,school:0.6
+                                      VNPerson@speaker:0.01,writer:0.1,actor:0.01,thinker:0.8
 want               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.8,one_in_need:0.3,poor_person:0.1
 play               Verb        0.99   T|trans:100,intrans:1
@@ -143,7 +146,7 @@ follow             Verb        0.99   T|trans:100,intrans:1
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
                                       VNPerson@one_asking:0.5
-                                      hear&need:0.1
+                                      hear&need:0.1 think&help:0.05
 eat                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@canteen:0.2,market:0.08
                                       VNPerson@one_eating:0.5
@@ -159,6 +162,7 @@ need               Verb        1.0    T|trans:100,intrans:1
 picture            Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@beautiful_place:0.05
                                       VNPerson@artist:0.8
+                                      think&see:0.05
 point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@destination:0.4
                                       VNPerson@one_pointing:0.8,traveller:0.05
@@ -304,6 +308,7 @@ countryman         Noun        0.1    G|Person:1000,Female:1000,Common:5000     
 owner              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 keeper             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 reader             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
+thinker            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 builder            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 master             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 ruler              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
@@ -357,7 +362,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /form
 /sentence
 /great
-/think
 /low
 /line
 /differ
