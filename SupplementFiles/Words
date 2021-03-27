@@ -3,7 +3,7 @@
 /   Default no compound   probability - 1.0
 /
 _personal_pronoun  PersonalPronoun     1.0
-_deixis_pronoun  DeixisPronoun       1.0
+_deixis_pronoun    DeixisPronoun       1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
                                       say&thing:0.2 think&thing:0.1
