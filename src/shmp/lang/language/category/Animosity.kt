@@ -8,8 +8,7 @@ import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 
 const val animosityName = "Animosity"
@@ -47,7 +46,8 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         SpeechPart.Adverb -> listOf()
         SpeechPart.Numeral -> listOf()
         SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
-        SpeechPart.Pronoun -> listOf(SourceTemplate(SelfStated, 10.0))
+        SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
+        SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         SpeechPart.Particle -> listOf()
     }
 
@@ -64,17 +64,14 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random) = randomElement(
-        AnimosityPresence.values(),
-        random
-    ).presentAnimosity
+    override fun randomRealization() = AnimosityPresence.values().randomElement().possibilities
 
-    override fun randomStaticSpeechParts(random: Random) = setOf(SpeechPart.Noun)
+    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
 }
 
 enum class AnimosityPresence(
     override val probability: Double,
-    val presentAnimosity: List<AnimosityValue>
+    val possibilities: List<AnimosityValue>
 ) : SampleSpaceObject {
     NoAnimosity(100.0, listOf()),
     SimpleAnimosity(10.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))

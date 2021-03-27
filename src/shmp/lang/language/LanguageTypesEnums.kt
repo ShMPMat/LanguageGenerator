@@ -47,7 +47,8 @@ enum class SpeechPart {
     Numeral,
     Article,
     Particle,
-    Pronoun
+    PersonalPronoun,
+    DeixisPronoun
 }
 
 enum class CategoryRealization {

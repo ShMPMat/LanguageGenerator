@@ -11,7 +11,6 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.SyllableValenceTemplate
 import shmp.lang.language.phonology.ValencyPlace
 import shmp.lang.language.phonology.prosody.StressType
-import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.toPhonemeType
 import shmp.random.randomElement
 import shmp.random.singleton.RandomSingleton
@@ -93,7 +92,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
 
         for (speechPart in values()) {
             val actualAvgWordLength =
-                if (speechPart in listOf(Article, Particle, Pronoun))
+                if (speechPart in listOf(Article, Particle, PersonalPronoun))
                     2
                 else generalAvgWordLength
 

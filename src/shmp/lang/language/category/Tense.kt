@@ -9,8 +9,7 @@ import shmp.lang.language.category.TenseValue.*
 import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 private const val outName = "Tense"
 
@@ -44,7 +43,8 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
-        Pronoun -> listOf()
+        PersonalPronoun -> listOf()
+        DeixisPronoun -> listOf()
         Particle -> listOf()
     }
 
@@ -61,10 +61,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random) = randomElement(
-        TensePresence.values(),
-        random
-    ).possibilities
+    override fun randomRealization() = TensePresence.values().randomElement().possibilities
 }
 
 enum class TensePresence(override val probability: Double, val possibilities: List<TenseValue>) : SampleSpaceObject {

@@ -9,8 +9,7 @@ import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 
 const val definitenessName = "Definiteness"
@@ -45,7 +44,8 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         SpeechPart.Adverb -> listOf()
         SpeechPart.Numeral -> listOf()
         SpeechPart.Article -> listOf()
-        SpeechPart.Pronoun -> listOf()
+        SpeechPart.PersonalPronoun -> listOf()
+        SpeechPart.DeixisPronoun -> listOf()
         SpeechPart.Particle -> listOf()
     }
 
@@ -59,15 +59,12 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random) = randomElement(
-        DefinitenessPresence.values(),
-        random
-    ).presentDefiniteness
+    override fun randomRealization() = DefinitenessPresence.values().randomElement().possibilities
 }
 
 enum class DefinitenessPresence(
     override val probability: Double,
-    val presentDefiniteness: List<DefinitenessValue>
+    val possibilities: List<DefinitenessValue>
 ) : SampleSpaceObject {
     NoDefiniteness(198.0, listOf()),
     OnlyDefinite(98.0, listOf(None, Definite)),

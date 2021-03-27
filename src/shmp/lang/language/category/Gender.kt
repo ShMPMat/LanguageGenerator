@@ -9,9 +9,9 @@ import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
 import shmp.random.randomSublist
-import kotlin.random.Random
+import shmp.random.singleton.RandomSingleton
+import shmp.random.singleton.randomElement
 
 
 const val genderName = "Gender"
@@ -49,7 +49,8 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         SpeechPart.Adverb -> listOf()
         SpeechPart.Numeral -> listOf()
         SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
-        SpeechPart.Pronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
         SpeechPart.Particle -> listOf()
     }
 
@@ -58,7 +59,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
-            SpeechPart.Pronoun -> setOf(//TODO no actual data
+            SpeechPart.PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
                 RealizationBox(CategoryRealization.NewWord, 2.0)
             )
@@ -66,18 +67,16 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random): List<GenderValue> {
-        val type = randomElement(
-            GenderPresence.values(),
-            random
-        )
+    override fun randomRealization(): List<GenderValue> {
+        val type = GenderPresence.values().randomElement()
+
         return if (type == GenderPresence.NonGendered)
-            randomSublist(type.possibilities, random, min = 2)
+            randomSublist(type.possibilities, RandomSingleton.random, min = 2)
         else
             type.possibilities
     }
 
-    override fun randomStaticSpeechParts(random: Random) = setOf(SpeechPart.Noun)
+    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {

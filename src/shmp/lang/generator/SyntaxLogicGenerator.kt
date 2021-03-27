@@ -15,7 +15,6 @@ import shmp.lang.language.syntax.context.ActorType.*
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.utils.listCartesianProduct
 import shmp.random.singleton.chanceOf
-import shmp.random.singleton.otherwise
 import shmp.random.singleton.randomElement
 
 
@@ -102,7 +101,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
         val verbalCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.Verb).categories
-        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.Pronoun).categories
+        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun).categories
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 

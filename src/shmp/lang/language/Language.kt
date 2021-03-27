@@ -37,6 +37,9 @@ class Language(
          |Personal pronoun:
          |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
          |
+         |Deixis pronoun:
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
+         |
          |Noun:
          |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart == Noun })}
          |

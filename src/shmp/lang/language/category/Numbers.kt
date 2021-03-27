@@ -11,8 +11,7 @@ import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 
 private const val outName = "Numbers"
@@ -50,7 +49,8 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 10.0))
-        Pronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
         Particle -> listOf()
     }
 
@@ -63,14 +63,14 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
                 RealizationBox(Passing, 1.0)
             )
             Plural -> when (speechPart) {
-                in setOf(Noun, Pronoun) -> setOf(
+                in setOf(Noun, PersonalPronoun) -> setOf(
                     noValue(1.0),
                     RealizationBox(Reduplication, 1.0)
                 )
                 else -> emptyRealization
             }
             else -> when (speechPart) {
-                Pronoun -> setOf(//TODO no actual data
+                PersonalPronoun -> setOf(//TODO no actual data
                     noValue(1.0),
                     RealizationBox(NewWord, 1.3)
                 )
@@ -79,10 +79,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random) = randomElement(
-        NumbersPresence.values(),
-        random
-    ).possibilities
+    override fun randomRealization() = NumbersPresence.values().randomElement().possibilities
 }
 
 enum class NumbersPresence(

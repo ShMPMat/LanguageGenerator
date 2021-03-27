@@ -22,8 +22,8 @@ interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): List<SourceTemplate>
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
-    fun randomRealization(random: Random): List<CategoryValue>
-    fun randomStaticSpeechParts(random: Random): Set<SpeechPart> = emptySet()
+    fun randomRealization(): List<CategoryValue>
+    fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
 }
 
 data class RealizationBox(

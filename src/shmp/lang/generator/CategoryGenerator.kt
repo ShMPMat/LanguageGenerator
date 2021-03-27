@@ -17,17 +17,18 @@ class CategoryGenerator(
         randomCategory({ l: List<GenderValue>, s, ss -> Gender(l, s, ss) }, GenderRandomSupplements),
         randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
         randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
-        randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements)
+        randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
+        randomCategory({ l: List<DeixisValue>, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)
     )
 
     private fun <E: CategoryValue> randomCategory(
         constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,
         supplements: CategoryRandomSupplements
     ): Pair<Category, CategoryRandomSupplements> {
-        val presentElements = supplements.randomRealization(random)
+        val presentElements = supplements.randomRealization()
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
         val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.speechPart }
-        val staticSpeechParts = supplements.randomStaticSpeechParts(random)
+        val staticSpeechParts = supplements.randomStaticSpeechParts()
             .filter { it in affectedSpeechParts }
             .toSet()
         return try {

@@ -20,7 +20,7 @@ class NominalClause(
     private val actorType: ActorType?
 ) : SyntaxClause {
     init {
-        if (nominal.semanticsCore.speechPart !in listOf(SpeechPart.Noun, SpeechPart.Pronoun))
+        if (nominal.semanticsCore.speechPart !in listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun))
             throw SyntaxException("$nominal is not a noun or pronoun")
     }
 

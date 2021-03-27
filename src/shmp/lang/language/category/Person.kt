@@ -12,8 +12,7 @@ import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 
 private const val outName = "Person"
@@ -51,7 +50,8 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
-        Pronoun -> listOf(SourceTemplate(SelfStated, 200.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 200.0))
+        DeixisPronoun -> listOf()
         Particle -> listOf()
     }
 
@@ -60,7 +60,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
-            Pronoun -> setOf(//TODO no actual data
+            PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
                 RealizationBox(NewWord, 2.0)
             )
@@ -73,10 +73,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(random: Random) = randomElement(
-        PersonPresence.values(),
-        random
-    ).possibilities
+    override fun randomRealization() = PersonPresence.values().randomElement().possibilities
 }
 
 enum class PersonPresence(override val probability: Double, val possibilities: List<PersonValue>) : SampleSpaceObject {
