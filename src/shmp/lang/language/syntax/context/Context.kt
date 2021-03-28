@@ -6,7 +6,7 @@ import shmp.lang.language.syntax.context.ContextValue.*
 data class Context(
     val time: PrioritizedValue<TimeContext>,
     val type: PrioritizedValue<TypeContext>,
-    val actors: Map<ActorType, ActorValue>
+    val actors: MutableMap<ActorType, ActorValue> = mutableMapOf()
 )
 
 typealias PrioritizedValue<E> = Pair<E, Priority>

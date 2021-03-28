@@ -1,26 +1,26 @@
 package shmp.lang.language.syntax.clause.description
 
-import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
+import shmp.lang.language.syntax.context.ContextValue
 import kotlin.random.Random
 
 
 open class NominalDescription(
     val noun: Meaning,
     val definitions: List<NounDefinerDescription>,
-    val additionalCategories: List<CategoryValue> = listOf()
+    val actorCompliment: ContextValue.ActorComplimentValue
 ) : ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(noun)?.let { word ->
             NominalClause(
                 word,
                 definitions.map { it.toClause(language, context, random) },
-                additionalCategories,
+                language.changeParadigm.syntaxLogic.resolveComplimentCategories(actorCompliment),
                 null
             )
         }
@@ -29,15 +29,18 @@ open class NominalDescription(
 
 class PersonalPronounDescription(
     definitions: List<NounDefinerDescription>,
-    private val actorType: ActorType
-): NominalDescription("_personal_pronoun", definitions) {
+    private val actorType: ActorType,
+    private val actor: ContextValue.ActorValue
+): NominalDescription("_personal_pronoun", definitions, ContextValue.ActorComplimentValue(actor.number, actor.deixis)) {
     override fun toClause(language: Language, context: Context, random: Random): NominalClause {
         val clause = super.toClause(language, context, random)
+
+        context.actors[actorType] = actor
 
         return NominalClause(
             clause.nominal,
             clause.definitions,
-            language.changeParadigm.syntaxLogic.resolvePronounCategories(context.actors.getValue(actorType)),
+            language.changeParadigm.syntaxLogic.resolvePronounCategories(actor),
             actorType
         )
     }

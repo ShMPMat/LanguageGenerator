@@ -3,6 +3,7 @@ package shmp.lang
 import shmp.lang.containers.WordBase
 import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
+import shmp.lang.language.category.DeixisValue
 import shmp.lang.language.category.GenderValue
 import shmp.lang.language.category.NumbersValue
 import shmp.lang.language.category.PersonValue
@@ -36,22 +37,25 @@ class Visualizer(val language: Language) {
                 AdjectiveDescription("new"),
                 AdjectiveDescription("high")
             ),
-            listOf(NumbersValue.Plural)
+            ActorComplimentValue(AmountValue(4), DeixisValue.Proximal)
         )
         val secondSubj = NominalDescription(
             "father",
             listOf(
                 AdjectiveDescription("new"),
                 AdjectiveDescription("high")
-            )
+            ),
+            ActorComplimentValue(AmountValue(2), DeixisValue.Undefined)
         )
         val thirdSubj = PersonalPronounDescription(
             listOf(),
-            ActorType.Agent
+            ActorType.Agent,
+            ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1), DeixisValue.Proximal)
         )
         val obj = NominalDescription(
             "time",
-            listOf(AdjectiveDescription("small"))
+            listOf(AdjectiveDescription("small")),
+            ActorComplimentValue(AmountValue(1), DeixisValue.Medial)
         )
         val firstVerb = TransitiveVerbDescription("have", firstSubj, obj)
         val secondVerb = TransitiveVerbDescription("have", secondSubj, obj)
@@ -70,18 +74,16 @@ class Visualizer(val language: Language) {
 
         val firstContext = Context(
             LongGonePast to Implicit,
-            Simple to Explicit,
-            mapOf(ActorType.Agent to ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1)))
+            Simple to Explicit
         )
         val secondContext = Context(
             FarFuture to Implicit,
-            GeneralQuestion to Explicit,
-            mapOf(ActorType.Agent to ActorValue(PersonValue.Second, GenderValue.Male, AmountValue(2)))
+            GeneralQuestion to Explicit
+//            mutableMapOf(ActorType.Agent to ActorValue(PersonValue.Second, GenderValue.Male, AmountValue(2)))
         )
         val fourthContext = Context(
             Regular to Implicit,
-            Simple to Explicit,
-            mapOf(ActorType.Agent to ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1)))
+            Simple to Explicit
         )
 
         printSampleClause(testSentencesMain, firstContext, "Main")
@@ -144,7 +146,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 14)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 15)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

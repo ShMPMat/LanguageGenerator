@@ -1,7 +1,7 @@
 package shmp.lang.language.syntax.context
 
+import shmp.lang.language.category.DeixisValue
 import shmp.lang.language.category.GenderValue
-import shmp.lang.language.category.NumbersValue
 import shmp.lang.language.category.PersonValue
 
 
@@ -29,7 +29,14 @@ sealed class ContextValue {
         object GeneralQuestion: TypeContext()
     }
 
-    data class ActorValue(val person: PersonValue, val gender: GenderValue, val number: AmountValue) : ContextValue()
+    data class ActorComplimentValue(val number: AmountValue, val deixis: DeixisValue)
+
+    data class ActorValue(
+        val person: PersonValue,
+        val gender: GenderValue,
+        val number: AmountValue,
+        val deixis: DeixisValue
+    ) : ContextValue()
 
     data class AmountValue(val amount: Int): ContextValue()
 

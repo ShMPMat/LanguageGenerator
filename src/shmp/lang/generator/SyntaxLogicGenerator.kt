@@ -16,6 +16,7 @@ import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.utils.listCartesianProduct
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.randomElementOrNull
 
 
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
@@ -23,6 +24,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
         generateVerbFormSolver(),
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
+        generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver()
     )
 
@@ -83,20 +85,62 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
             for (gender in absentGenders) genderCategorySolver[gender] = when (gender) {
                 Female -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
                 Male -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
-                Neutral -> listOf(Female, Male).randomElement()
+                Neutral -> listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 Common -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).randomElement()
+                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 GenderValue.Person -> listOf(Common, Neutral).firstOrNull() { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).randomElement()
+                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 Plant -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).randomElement()
+                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 Fruit -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).randomElement()
+                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 LongObject -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).randomElement()
+                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
             }
 
             genderCategorySolver
+        }
+
+    private fun generateDeixisCategorySolver(): Map<DeixisValue, List<CategoryValue>> = changeParadigm.categories
+        .filterIsInstance<Deixis>()
+        .first()
+        .let { deixisCategory ->
+            val definitenessCategory = changeParadigm.categories
+                .filterIsInstance<Definiteness>()
+                .firstOrNull()
+            val indefiniteArticleWrapped = definitenessCategory?.actualValues
+                ?.firstOrNull { it == DefinitenessValue.Indefinite }
+                ?.let { listOf(it) }
+            val definiteArticleWrapped = definitenessCategory?.actualValues
+                ?.firstOrNull { it == DefinitenessValue.Definite }
+                ?.let { listOf(it) }
+
+            val deixisCategorySolver = deixisCategory.actualValues.map {
+                it as DeixisValue
+                it to listOf(it)
+            }.toMap().toMutableMap<DeixisValue, List<CategoryValue>>()
+
+            val absentDeixis = deixisCategory.allPossibleValues
+                .filter { it !in deixisCategory.actualValues }
+                .map { it as DeixisValue }
+
+            for (deixis in absentDeixis) deixisCategorySolver[deixis] = when(deixis) {
+                DeixisValue.Undefined -> indefiniteArticleWrapped
+                    ?: listOf(DeixisValue.Distant)
+                DeixisValue.Proximal -> definiteArticleWrapped
+                    ?: listOf(DeixisValue.Undefined)
+                DeixisValue.Medial -> listOf(listOf(DeixisValue.Proximal), listOf(DeixisValue.Distant))
+                    .filter { it[0] in deixisCategory.actualValues }.randomElementOrNull()
+                    ?: definiteArticleWrapped
+                    ?: listOf(DeixisValue.Undefined)
+                DeixisValue.Distant -> definiteArticleWrapped ?: listOf(DeixisValue.Undefined)
+                DeixisValue.ProximalAddressee -> listOf(listOf(DeixisValue.Proximal), listOf(DeixisValue.Distant))
+                    .filter { it[0] in deixisCategory.actualValues }.randomElementOrNull()
+                    ?: definiteArticleWrapped
+                    ?: listOf(DeixisValue.Undefined)
+            }
+
+            deixisCategorySolver
         }
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {

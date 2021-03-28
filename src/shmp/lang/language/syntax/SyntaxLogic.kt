@@ -16,35 +16,51 @@ class SyntaxLogic(
     val verbFormSolver: Map<TimeContext, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
+    val deixisCategorySolver: Map<DeixisValue, CategoryValues>,
     private val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
     fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
-        val (person, gender, amount) = actorValue
+        val (person, gender, amount, deixis) = actorValue
 
         resultCategories.add(person)
+        resultCategories.addAll(deixisCategorySolver.getValue(deixis))
+        resultCategories.addNumber(amount)
 
         if (genderCategorySolver != null)
             resultCategories.add(genderCategorySolver.getValue(gender))
 
+        return resultCategories
+    }
+
+    fun resolveComplimentCategories(actorCompliment: ContextValue.ActorComplimentValue): CategoryValues {
+        val resultCategories = mutableListOf<CategoryValue>()
+        val (amount, deixis) = actorCompliment
+
+        resultCategories.addAll(deixisCategorySolver.getValue(deixis))
+        resultCategories.addNumber(amount)
+
+        return resultCategories
+    }
+
+    private fun MutableList<CategoryValue>.addNumber(amount: ContextValue.AmountValue) {
         if (numberCategorySolver != null) {
             val number = numberCategorySolver.entries
                 .firstOrNull { it.value.contains(amount.amount) }
                 ?.key
                 ?: throw LanguageException("No handler for amount ${amount.amount}")
 
-            resultCategories.add(number)
+            add(number)
         }
-
-        return resultCategories
     }
 
-    fun resolvePersonalPronounDrop(categories: List<CategoryValue>, actorType: ActorType): Boolean = personalPronounDropSolver
-        .any { (a, cs) ->
-            a == actorType
-                    && categories.all { it in cs }
-                    && cs.size == categories.size
-        }
+    fun resolvePersonalPronounDrop(categories: List<CategoryValue>, actorType: ActorType): Boolean =
+        personalPronounDropSolver
+            .any { (a, cs) ->
+                a == actorType
+                        && categories.all { it in cs }
+                        && cs.size == categories.size
+            }
 
 
     fun resolveVerbForm(
@@ -101,12 +117,17 @@ class SyntaxLogic(
             "$g1 is seen as $g2"
         } ?: ""
     } 
+        |${
+        deixisCategorySolver.entries.joinToString("\n") { (g1, g2) ->
+            "$g1 is expressed as $g2"
+        } ?: ""
+    } 
         |
         |Dropped pronouns:
         |${
         personalPronounDropSolver.joinToString("\n") { (g1, g2) ->
             "$g1 with categories ${g2.joinToString(".") { it.shortName }}"
-        }
+        } + if (personalPronounDropSolver.isEmpty()) "none" else ""
     } 
         |
     """.trimMargin()
