@@ -5,7 +5,6 @@ import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
 import shmp.lang.language.category.DeixisValue
 import shmp.lang.language.category.GenderValue
-import shmp.lang.language.category.NumbersValue
 import shmp.lang.language.category.PersonValue
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
@@ -47,29 +46,38 @@ class Visualizer(val language: Language) {
             ),
             ActorComplimentValue(AmountValue(2), DeixisValue.Undefined)
         )
-        val thirdSubj = PersonalPronounDescription(
+        val thirdSubj = PronounDescription(
+            "_personal_pronoun",
             listOf(),
             ActorType.Agent,
             ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1), DeixisValue.Proximal)
         )
-        val obj = NominalDescription(
+        val firstObj = NominalDescription(
             "time",
             listOf(AdjectiveDescription("small")),
             ActorComplimentValue(AmountValue(1), DeixisValue.Medial)
         )
-        val firstVerb = TransitiveVerbDescription("have", firstSubj, obj)
-        val secondVerb = TransitiveVerbDescription("have", secondSubj, obj)
-        val thirdVerb = TransitiveVerbDescription("have", thirdSubj, obj)
+        val secondObj = PronounDescription(
+            "_deixis_pronoun",
+            listOf(),
+            ActorType.Patient,
+            ActorValue(PersonValue.Third, GenderValue.Neutral, AmountValue(10), DeixisValue.ProximalAddressee)
+        )
+        val firstVerb = TransitiveVerbDescription("have", firstSubj, firstObj)
+        val secondVerb = TransitiveVerbDescription("have", secondSubj, firstObj)
+        val thirdVerb = TransitiveVerbDescription("have", thirdSubj, firstObj)
+        val fourthVerb = TransitiveVerbDescription("have", thirdSubj, secondObj)
 
         val testSentencesMain = listOf(
             TransitiveVerbMainClauseDescription(firstVerb),
             TransitiveVerbMainClauseDescription(secondVerb),
             TransitiveVerbMainClauseDescription(thirdVerb),
+            TransitiveVerbMainClauseDescription(fourthVerb)
         )
         val testSentencesCopula = listOf(
-            CopulaMainClauseDescription(CopulaDescription(firstSubj, obj)),
-            CopulaMainClauseDescription(CopulaDescription(secondSubj, obj)),
-            CopulaMainClauseDescription(CopulaDescription(thirdSubj, obj))
+            CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
+            CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
+            CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj))
         )
 
         val firstContext = Context(

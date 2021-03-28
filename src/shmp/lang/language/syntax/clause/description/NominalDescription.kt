@@ -27,11 +27,12 @@ open class NominalDescription(
             ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
 }
 
-class PersonalPronounDescription(
+class PronounDescription(
+    type: String,
     definitions: List<NounDefinerDescription>,
     private val actorType: ActorType,
     private val actor: ContextValue.ActorValue
-): NominalDescription("_personal_pronoun", definitions, ContextValue.ActorComplimentValue(actor.number, actor.deixis)) {
+): NominalDescription(type, definitions, ContextValue.ActorComplimentValue(actor.number, actor.deixis)) {
     override fun toClause(language: Language, context: Context, random: Random): NominalClause {
         val clause = super.toClause(language, context, random)
 

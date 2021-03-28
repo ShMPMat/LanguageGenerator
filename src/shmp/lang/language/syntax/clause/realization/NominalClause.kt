@@ -20,7 +20,8 @@ class NominalClause(
     private val actorType: ActorType?
 ) : SyntaxClause {
     init {
-        if (nominal.semanticsCore.speechPart !in listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun))
+        val validNominals = listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun, SpeechPart.DeixisPronoun)
+        if (nominal.semanticsCore.speechPart !in validNominals)
             throw SyntaxException("$nominal is not a noun or pronoun")
     }
 
@@ -29,9 +30,13 @@ class NominalClause(
 
         val node = nominal
             .let {
-                if (nominal.semanticsCore.hasMeaning("_personal_pronoun"))
-                    it.copy(syntaxRole = WordSyntaxRole.PersonalPronoun)
-                else it
+                when {
+                    nominal.semanticsCore.hasMeaning("_personal_pronoun") ->
+                        it.copy(syntaxRole = WordSyntaxRole.PersonalPronoun)
+                    nominal.semanticsCore.hasMeaning("_deixis_pronoun") ->
+                        it.copy(syntaxRole = WordSyntaxRole.Demonstrative)
+                    else -> it
+                }
             }
             .wordToNode(
                 changeParadigm,
@@ -47,7 +52,8 @@ class NominalClause(
             }
 
         if (nominal.semanticsCore.hasMeaning("_personal_pronoun")) {
-            node.isDropped = language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType!!)
+            node.isDropped =
+                language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType!!)
         }
 
         return node

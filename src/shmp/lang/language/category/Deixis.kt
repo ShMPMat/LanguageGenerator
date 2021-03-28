@@ -55,9 +55,11 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
             else -> when (speechPart) {
-                PersonalPronoun -> setOf(//TODO no actual data
-                    noValue(1.0),
-                    RealizationBox(NewWord, 1.3)
+                DeixisPronoun -> setOf(//TODO no actual data
+                    noValue(0.1),
+                    RealizationBox(NewWord, 100.0),
+                    RealizationBox(Suffix, 50.0),
+                    RealizationBox(Prefix, 50.0)
                 )
                 else -> emptyRealization
             }

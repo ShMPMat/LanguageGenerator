@@ -74,6 +74,11 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
                     noValue(1.0),
                     RealizationBox(NewWord, 1.3)
                 )
+                DeixisPronoun -> setOf(//TODO no actual data
+                    noValue(1.0),
+                    RealizationBox(Suffix, 1.5),
+                    RealizationBox(Prefix, 1.5)
+                )
                 else -> emptyRealization
             }
         }
