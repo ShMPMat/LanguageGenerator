@@ -14,6 +14,7 @@ import shmp.lang.language.phonology.PhonemeSequence
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.singleton.chanceOf
 import shmp.random.testProbability
 import kotlin.random.Random
 
@@ -49,7 +50,7 @@ class DerivationGenerator(
     }
 
     private fun generateDerivations(changeGenerator: ChangeGenerator, categoryPool: CategoryPool) =
-        randomSublist(DerivationClass.values().toList(), random, 0, DerivationClass.values().size + 1)
+        randomSublist(DerivationClass.values().toList(), random, 2, DerivationClass.values().size + 1)
             .map { derivationClass ->
                 val affix = if (random.nextBoolean()) {
                     Prefix(
@@ -104,8 +105,11 @@ class DerivationGenerator(
             compounds.add(compound)
         }
 
-        if (testProbability(0.5, random))
+        0.5.chanceOf {
+            val changer = PassingCategoryChanger(random.nextInt(2))
+            val prosodyRule = generateCompoundProsodyRule()
             compounds.add(Compound(SpeechPart.Noun, PhonemeSequence(), changer, prosodyRule))
+        }
 
         return compounds
     }
