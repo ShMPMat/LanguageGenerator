@@ -237,6 +237,7 @@ high               Adjective   1.0
 near               Adjective   1.0
 new                Adjective   1.0
 old                Adjective   1.0
+young              Adjective   1.0
 far                Adjective   1.0
 close              Adjective   1.0
 bad                Adjective   1.0
@@ -460,19 +461,16 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /page
 /country
 /found
-/answer
 /grow
 /study
 /still
 /learn
 /plant
 /cover
-/between
 /state
 /keep
 /eye
 /let
-/thought
 /tree
 /cross
 /farm
@@ -483,17 +481,13 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /left
 /late
 /run
-/while
 /press
 /real
-/life
-/few
 /north
 /carry
 /took
 /science
 /room
-/began
 /idea
 /mountain
 /base
@@ -528,7 +522,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /plain
 /girl
 /usual
-/young
 /ready
 /above
 /ever
@@ -552,7 +545,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /black
 /short
 /numeral
-/class
 /question
 /happen
 /complete
@@ -565,7 +557,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /south
 /problem
 /piece
-/told
 /knew
 /pass
 /since
@@ -601,9 +592,7 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /laugh
 /thousand
 /ago
-/ran
 /check
-/game
 /shape
 /equate
 /miss
@@ -617,7 +606,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /fill
 /east
 /paint
-/language
 /among
 /unit
 /power
@@ -699,7 +687,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /pattern
 /slow
 /center
-/love
 /money
 /serve
 /appear
@@ -852,10 +839,7 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /fair
 /collect
 /save
-/control
 /ear
-/else
-/quite
 /broke
 /case
 /middle
@@ -986,9 +970,7 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /period
 /indicate
 /radio
-/spoke
 /atom
-/history
 /effect
 /electric
 /expect
@@ -1009,7 +991,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /neighbor
 /wash
 /bat
-/rather
 /crowd
 /corn
 /compare
