@@ -24,10 +24,10 @@ data class SemanticsCore(
         if (speechPart == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
             throw LanguageException("Verb $meaningCluster doesn't have transitivity")
 
-        derivationCluster.typeToCore.keys
-            .firstOrNull { it.fromSpeechPart != speechPart }
+        derivationCluster.typeToCore.entries
+            .firstOrNull { it.key.fromSpeechPart != speechPart }
             ?.let {
-                throw LanguageException("$speechPart has a derivation for ${it.fromSpeechPart}")
+                throw LanguageException("$speechPart has a derivation for ${it.key.fromSpeechPart} ${it.key.name}")
             }
     }
 
@@ -49,7 +49,7 @@ data class DerivationCluster(val typeToCore: Map<DerivationType, List<Derivation
 
             existingTemplates.firstOrNull { it.speechPart != type.toSpeechPart }?.let {
                 throw GeneratorException(
-                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart}"
+                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart} ${it.word}"
                 )
             }
         }
