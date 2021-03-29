@@ -24,13 +24,16 @@ class TransitiveVerbSentenceClause(
 ) : SentenceClause {
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
-            if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
+            if (type == VerbSentenceType.QuestionVerbClause) {
+                language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker
+                    ?: return@apply
                 setRelationChild(
                     SyntaxRelation.QuestionMarker,
                     language.lexis.getQuestionMarkerWord(QuestionMarker)
                         .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                         .wordToNode(language.changeParadigm, PassingArranger, SyntaxRelation.QuestionMarker)
                 )
+            }
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
 
@@ -45,14 +48,18 @@ class CopulaSentenceClause(
 ) : SentenceClause {
     override fun toNode(language: Language, random: Random): SentenceNode =
         copulaClause.toNode(language, random).apply {
-            if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
+            if (type == CopulaSentenceType.QuestionCopulaClause) {
+                language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker
+                    ?: return@apply
                 setRelationChild(
                     SyntaxRelation.QuestionMarker,
                     language.lexis.getQuestionMarkerWord(QuestionMarker)
                         .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                         .wordToNode(language.changeParadigm, PassingArranger, SyntaxRelation.QuestionMarker)
                 )
-            arranger = language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
+            }
+            arranger =
+                language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
         }
 
     override fun unfold(language: Language, random: Random) =
