@@ -29,10 +29,10 @@ class Deixis(
 object DeixisRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        PrefixSeparateWord -> 100.0
-        SuffixSeparateWord -> 100.0
-        Prefix -> 10.0
-        Suffix -> 10.0
+        PrefixSeparateWord -> 542.0
+        SuffixSeparateWord -> 562.0
+        Prefix -> 9.0
+        Suffix -> 28.0
         Reduplication -> 0.0
         Passing -> 0.0
         NewWord -> 0.0
