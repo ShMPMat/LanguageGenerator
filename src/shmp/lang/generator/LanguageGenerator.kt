@@ -92,7 +92,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
 
         for (speechPart in values()) {
             val actualAvgWordLength =
-                if (speechPart in listOf(Article, Particle, PersonalPronoun))
+                if (speechPart in listOf(Article, Particle, PersonalPronoun, DeixisPronoun))
                     2
                 else generalAvgWordLength
 

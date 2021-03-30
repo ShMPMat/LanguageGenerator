@@ -101,7 +101,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
             genderCategorySolver
         }
 
-    private fun generateDeixisCategorySolver(): Map<DeixisValue, List<CategoryValue>> = changeParadigm.categories
+    private fun generateDeixisCategorySolver(): Map<DeixisValue?, List<CategoryValue>> = changeParadigm.categories
         .filterIsInstance<Deixis>()
         .first()
         .let { deixisCategory ->
@@ -118,7 +118,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
             val deixisCategorySolver = deixisCategory.actualValues.map {
                 it as DeixisValue
                 it to listOf(it)
-            }.toMap().toMutableMap<DeixisValue, List<CategoryValue>>()
+            }.toMap().toMutableMap<DeixisValue?, List<CategoryValue>>()
+
+            deixisCategorySolver[null] = listOf()
 
             val absentDeixis = deixisCategory.allPossibleValues
                 .filter { it !in deixisCategory.actualValues }
@@ -126,7 +128,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
 
             for (deixis in absentDeixis) deixisCategorySolver[deixis] = when(deixis) {
                 DeixisValue.Undefined -> indefiniteArticleWrapped
-                    ?: listOf(DeixisValue.Distant)
+                    ?: listOf()
                 DeixisValue.Proximal -> definiteArticleWrapped
                     ?: listOf(DeixisValue.Undefined)
                 DeixisValue.Medial -> listOf(listOf(DeixisValue.Proximal), listOf(DeixisValue.Distant))

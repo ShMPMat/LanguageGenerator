@@ -15,8 +15,11 @@ fun getParadigmPrinted(language: Language, word: Word): String {
                     .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
                     .map { it.actualParametrizedValues }
-            ).map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
-                .joinToString("\n") { "${it.first} - " + it.second.joinToString() }
+            )
+                .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
+                .map { "${it.first} - " + it.second.joinToString() }
+                .sorted()
+                .joinToString("\n")
 }
 
 fun getClauseAndInfoStr(wordSequence: WordSequence): String {
@@ -49,7 +52,7 @@ fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
             .replace(" ", ".")
 
 private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
-    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article))
+    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article, SpeechPart.DeixisPronoun))
         word.semanticsCore.toString()
     else ""
 

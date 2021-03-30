@@ -29,7 +29,7 @@ sealed class ContextValue {
         object GeneralQuestion: TypeContext()
     }
 
-    data class ActorComplimentValue(val number: AmountValue, val deixis: DeixisValue)
+    data class ActorComplimentValue(val number: AmountValue, val deixis: DeixisValue?)
 
     data class ActorValue(
         val person: PersonValue,

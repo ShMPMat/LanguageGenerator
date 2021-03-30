@@ -16,7 +16,7 @@ class SyntaxLogic(
     val verbFormSolver: Map<TimeContext, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
-    val deixisCategorySolver: Map<DeixisValue, CategoryValues>,
+    val deixisCategorySolver: Map<DeixisValue?, CategoryValues>,
     private val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
     fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {

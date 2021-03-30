@@ -50,10 +50,16 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+        if (speechPart == SpeechPart.Adjective)
+            return setOf(
+                RealizationBox(CategoryRealization.Prefix, 1.0),
+                RealizationBox(CategoryRealization.Suffix, 1.0)
+            )
+
         val acceptableValues = values.filter { it.parentClassName == definitenessName }
         if (acceptableValues.size != 1) return emptyRealization
-        val value = values.first()
-        return when(value) {
+
+        return when(values.first()) {
             None -> setOf(RealizationBox(CategoryRealization.Passing, 1.0))
             else -> emptyRealization
         }
