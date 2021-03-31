@@ -2,8 +2,8 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.SpeechPart
-import shmp.lang.language.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.TenseValue.*
 import shmp.lang.language.lexis.MeaningCluster

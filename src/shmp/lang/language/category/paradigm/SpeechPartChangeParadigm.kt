@@ -1,6 +1,6 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm

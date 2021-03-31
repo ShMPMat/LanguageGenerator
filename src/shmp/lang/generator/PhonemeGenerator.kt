@@ -3,7 +3,7 @@ package shmp.lang.generator
 import shmp.lang.containers.PhonemeBase
 import shmp.lang.containers.PhonemeContainer
 import shmp.lang.containers.PhonemeImmutableContainer
-import shmp.lang.language.PhonemeType
+import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.VowelQualityAmount
 import shmp.lang.language.phonology.Phoneme
 import shmp.random.randomSublist

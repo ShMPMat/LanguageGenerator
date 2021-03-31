@@ -1,14 +1,12 @@
 package shmp.lang.generator
 
-import shmp.lang.containers.PhonemeContainer
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
-import shmp.lang.language.PhonemeType
+import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.SyllableValenceTemplate
 import shmp.lang.language.phonology.ValencyPlace
-import shmp.lang.utils.cartesianProduct
 import shmp.random.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random

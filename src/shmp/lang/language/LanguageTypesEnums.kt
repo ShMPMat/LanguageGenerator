@@ -2,16 +2,7 @@ package shmp.lang.language
 
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.random.SampleSpaceObject
-import java.text.ParseException
 
-
-enum class PhonemeType(val char: Char) {
-    Consonant('C'),
-    Vowel('V')
-}
-
-fun Char.toPhonemeType() = PhonemeType.values().find { it.char == this }
-    ?: throw ParseException("No phoneme type exist for Char $this", 0)
 
 enum class VowelQualityAmount(val amount: Int, override val probability: Double) : SampleSpaceObject {
     Two(2, 4.0),
@@ -37,18 +28,6 @@ enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObje
     Restricted3(6.0),
     Restricted5(6.0),
     Restricted20(6.0)
-}
-
-enum class SpeechPart {
-    Noun,
-    Verb,
-    Adjective,
-    Adverb,
-    Numeral,
-    Article,
-    Particle,
-    PersonalPronoun,
-    DeixisPronoun
 }
 
 enum class CategoryRealization {

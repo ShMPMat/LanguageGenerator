@@ -6,8 +6,8 @@ import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.generator.util.readWordClusters
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.PhonemeType
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.phonology.PhonemeType
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.*
 import shmp.lang.language.phonology.RestrictionsParadigm

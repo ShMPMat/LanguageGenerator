@@ -2,7 +2,7 @@ package shmp.lang.containers
 
 import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.generator.util.GeneratorException
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.animosityName
 import shmp.lang.language.category.genderName
 import shmp.lang.language.derivation.DerivationType

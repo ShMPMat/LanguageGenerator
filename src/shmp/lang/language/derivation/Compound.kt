@@ -2,7 +2,7 @@ package shmp.lang.language.derivation
 
 import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.containers.toSemanticsCore
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.CompoundLink
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.lexis.getMeaningDistance

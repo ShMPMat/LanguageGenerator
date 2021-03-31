@@ -4,7 +4,6 @@ import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.LanguageException
-import shmp.lang.language.SpeechPart
 import shmp.lang.language.derivation.Derivation
 import shmp.lang.language.derivation.ChangeHistory
 import shmp.lang.language.derivation.DerivationType

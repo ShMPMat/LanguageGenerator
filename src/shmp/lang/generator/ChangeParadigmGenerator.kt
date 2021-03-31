@@ -1,6 +1,6 @@
 package shmp.lang.generator
 
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.definitenessName

@@ -1,7 +1,5 @@
 package shmp.lang.language.phonology
 
-import shmp.lang.language.PhonemeType
-
 
 data class Phoneme(
     val sound : String,

@@ -4,6 +4,7 @@ import shmp.lang.language.*
 import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
 import shmp.lang.language.category.paradigm.parametrize
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue

@@ -4,7 +4,7 @@ import shmp.lang.containers.DerivationClusterTemplate
 import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.containers.SemanticsTagCluster
 import shmp.lang.containers.SemanticsTagTemplate
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.derivation.DerivationType.*
 import shmp.lang.language.lexis.DerivationLink
 

@@ -1,13 +1,11 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
-import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.arranger.PassingSingletonArranger
-import shmp.lang.language.syntax.clause.translation.SentenceNode
 import kotlin.random.Random
 
 

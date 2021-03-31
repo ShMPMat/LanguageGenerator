@@ -2,11 +2,10 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.UnwrappableSSO
-import kotlin.random.Random
 
 
 interface Category {

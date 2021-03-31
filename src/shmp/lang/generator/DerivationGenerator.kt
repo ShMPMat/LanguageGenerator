@@ -4,7 +4,7 @@ import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.derivation.*
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.morphem.Prefix

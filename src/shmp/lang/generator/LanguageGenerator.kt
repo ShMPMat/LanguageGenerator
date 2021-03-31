@@ -3,17 +3,13 @@ package shmp.lang.generator
 import shmp.lang.containers.PhonemeBase
 import shmp.lang.language.Language
 import shmp.lang.language.NumeralSystemBase
-import shmp.lang.language.SpeechPart
-import shmp.lang.language.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategoryPool
-import shmp.lang.language.phonology.PhoneticRestrictions
-import shmp.lang.language.phonology.RestrictionsParadigm
-import shmp.lang.language.phonology.SyllableValenceTemplate
-import shmp.lang.language.phonology.ValencyPlace
+import shmp.lang.language.phonology.*
 import shmp.lang.language.phonology.prosody.StressType
-import shmp.lang.language.toPhonemeType
-import shmp.random.randomElement
 import shmp.random.singleton.RandomSingleton
+import shmp.random.singleton.randomElement
 import java.io.File
 import java.text.ParseException
 import java.util.*
@@ -35,7 +31,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm()
-    private val stressPattern = randomElement(StressType.values(), random)
+    private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(
         supplementPath,
         syllableGenerator,
@@ -55,7 +51,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     )
 
     fun generateLanguage(wordAmount: Int): Language {
-        val numeralSystemBase = randomElement(NumeralSystemBase.values(), random)
+        val numeralSystemBase = NumeralSystemBase.values().randomElement()
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = CategoryPool(categoriesWithMappers.map { it.first })
         val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
@@ -134,11 +130,9 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         }
 
         return SyllableValenceGenerator(
-            randomElement(
-                syllableTemplates.keys.sortedBy { it.toString() },
-                { syllableTemplates[it] ?: 0.0 },
-                random
-            )
+            syllableTemplates.keys
+                .sortedBy { it.toString() }
+                .randomElement { syllableTemplates[it] ?: 0.0 }
         )
     }
 }

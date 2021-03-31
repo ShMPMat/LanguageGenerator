@@ -1,7 +1,6 @@
 package shmp.lang.language.lexis
 
 import shmp.lang.containers.SemanticsCoreTemplate
-import shmp.lang.language.SpeechPart
 
 sealed class SemanticsCoreMatcher {
     abstract fun match(core: SemanticsCoreTemplate): Boolean

@@ -1,7 +1,7 @@
 package shmp.lang.language.morphem.change
 
 import shmp.lang.language.LanguageException
-import shmp.lang.language.PhonemeType
+import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.PhonemeSequence

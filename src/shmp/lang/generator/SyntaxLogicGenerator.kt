@@ -2,7 +2,7 @@ package shmp.lang.generator
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.category.NumbersValue.*

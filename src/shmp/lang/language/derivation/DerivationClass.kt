@@ -1,8 +1,8 @@
 package shmp.lang.language.derivation
 
-import shmp.lang.language.SpeechPart
-import shmp.lang.language.SpeechPart.Noun
-import shmp.lang.language.SpeechPart.Verb
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.SpeechPart.Noun
+import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.derivation.DerivationType.*
 import shmp.random.UnwrappableSSO
 

@@ -1,6 +1,6 @@
 package shmp.lang.language.phonology
 
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 
 class RestrictionsParadigm(val restrictionsMapper: Map<SpeechPart, PhoneticRestrictions>)
 

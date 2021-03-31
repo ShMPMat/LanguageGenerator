@@ -2,7 +2,7 @@ package shmp.lang.containers
 
 import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.derivation.DerivationType
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject

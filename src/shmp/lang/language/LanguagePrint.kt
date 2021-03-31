@@ -3,6 +3,7 @@ package shmp.lang.language
 import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.WordSequence
 import shmp.lang.utils.listCartesianProduct

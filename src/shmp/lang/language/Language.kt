@@ -1,13 +1,12 @@
 package shmp.lang.language
 
 import shmp.lang.containers.PhonemeContainer
-import shmp.lang.language.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.derivation.DerivationParadigm
 import shmp.lang.language.lexis.Lexis
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.StressType
-import shmp.lang.language.syntax.SyntaxLogic
 
 
 class Language(

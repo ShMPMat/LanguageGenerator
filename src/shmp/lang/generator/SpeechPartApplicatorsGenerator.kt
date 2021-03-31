@@ -1,7 +1,7 @@
 package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.realization.*
 import shmp.lang.language.morphem.Suffix

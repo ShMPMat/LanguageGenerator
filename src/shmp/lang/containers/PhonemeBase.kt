@@ -1,10 +1,6 @@
 package shmp.lang.containers
 
-import shmp.lang.language.phonology.Phoneme
-import shmp.lang.language.PhonemeType
-import shmp.lang.language.phonology.ArticulationManner
-import shmp.lang.language.phonology.ArticulationPlace
-import shmp.lang.language.toPhonemeType
+import shmp.lang.language.phonology.*
 import java.io.File
 
 class PhonemeBase(supplementPath: String) : PhonemeContainer {

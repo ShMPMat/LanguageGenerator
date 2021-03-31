@@ -1,6 +1,5 @@
 package shmp.lang.language.phonology
 
-import shmp.lang.language.PhonemeType
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.lexis.Word
 

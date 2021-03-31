@@ -1,6 +1,6 @@
 package shmp.lang.language.category
 
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 
 
 data class CategoryPool(val categories: List<Category>) {

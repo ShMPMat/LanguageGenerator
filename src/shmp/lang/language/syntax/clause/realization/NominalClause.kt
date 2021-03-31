@@ -2,7 +2,7 @@ package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation

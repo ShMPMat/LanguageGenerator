@@ -1,7 +1,7 @@
 package shmp.lang.language.derivation
 
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.SpeechPart
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SemanticsCore
 
 
