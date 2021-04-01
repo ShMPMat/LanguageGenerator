@@ -7,18 +7,18 @@ import shmp.lang.language.category.CategorySource
 
 
 class ExponenceCluster(
-    val categories: List<ParametrizedCategory>,
-    possibleValuesSets: Set<List<ParametrizedCategoryValue>>
+    val categories: List<SourcedCategory>,
+    possibleValuesSets: Set<List<SourcedCategoryValue>>
 ) {
     val possibleValues: List<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
 
     fun contains(exponenceValue: ExponenceValue) = possibleValues.contains(exponenceValue)
 
-    fun filterExponenceUnion(categoryValues: Set<ParametrizedCategoryValue>): ExponenceValue? =
+    fun filterExponenceUnion(categoryValues: Set<SourcedCategoryValue>): ExponenceValue? =
         try {
             val neededValues = categoryValues.filter { v ->
-                categories.any { it.containsParametrizedValue(v) }
+                categories.any { it.containsValue(v) }
             }
             possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) }
                 ?: throw LanguageException("No exponence cluster for $neededValues")
@@ -29,7 +29,7 @@ class ExponenceCluster(
     override fun toString() = categories.joinToString("\n")
 }
 
-class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val parentCluster: ExponenceCluster) {
+class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentCluster: ExponenceCluster) {
     init {
         val valueTypesAmount = categoryValues.groupBy { it.categoryValue.parentClassName to it.source }.size
 
@@ -41,8 +41,8 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
 
         var currentCategoryIndex = 0
         for (value in categoryValues)
-            if (!parentCluster.categories[currentCategoryIndex].containsParametrizedValue(value))
-                if (parentCluster.categories[currentCategoryIndex + 1].containsParametrizedValue(value))
+            if (!parentCluster.categories[currentCategoryIndex].containsValue(value))
+                if (parentCluster.categories[currentCategoryIndex + 1].containsValue(value))
                     currentCategoryIndex++
                 else throw LanguageException(
                     "Category Values in Exponence Value are ordered not in the same as  Categories in Exponence Cluster"
@@ -70,23 +70,23 @@ class ExponenceValue(val categoryValues: List<ParametrizedCategoryValue>, val pa
     }
 }
 
-data class ParametrizedCategory(val category: Category, val source: CategorySource) {
-    val allPossibleParametrizedValues = category.allPossibleValues.map { ParametrizedCategoryValue(it, source) }
-    val actualParametrizedValues = category.actualValues.map { ParametrizedCategoryValue(it, source) }
+data class SourcedCategory(val category: Category, val source: CategorySource) {
+    val allPossibleSourcedValues = category.allPossibleValues.map { SourcedCategoryValue(it, source) }
+    val actualSourcedValues = category.actualValues.map { SourcedCategoryValue(it, source) }
 
-    fun containsParametrizedValue(value: ParametrizedCategoryValue) = allPossibleParametrizedValues.contains(value)
+    fun containsValue(value: SourcedCategoryValue) = allPossibleSourcedValues.contains(value)
 
     override fun toString() = category.toString() + getSourceString(source)
 }
 
-data class ParametrizedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
+data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
     override fun toString() = categoryValue.toString() + getSourceString(source)
 }
 
-typealias ParametrizedCategoryValues = List<ParametrizedCategoryValue>
+typealias SourcedCategoryValues = List<SourcedCategoryValue>
 
-fun CategoryValue.parametrize(source: CategorySource) =
-    ParametrizedCategoryValue(this, source)
+fun CategoryValue.withSource(source: CategorySource) =
+    SourcedCategoryValue(this, source)
 
 
 private fun getSourceString(source: CategorySource) =

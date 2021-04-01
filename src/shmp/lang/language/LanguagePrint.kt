@@ -2,7 +2,7 @@ package shmp.lang.language
 
 import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.category.CategorySource
-import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
+import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.WordSequence
@@ -15,7 +15,7 @@ fun getParadigmPrinted(language: Language, word: Word): String {
                 language.changeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
                     .flatMap { it.categories }
-                    .map { it.actualParametrizedValues }
+                    .map { it.actualSourcedValues }
             )
                 .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
                 .map { "${it.first} - " + it.second.joinToString() }
@@ -57,7 +57,7 @@ private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
         word.semanticsCore.toString()
     else ""
 
-fun ParametrizedCategoryValue.smartPrint(allValues: List<ParametrizedCategoryValue>): String {
+fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): String {
     val allSources = allValues.groupBy { it.source }
 
     return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.SelfStated))

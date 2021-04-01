@@ -13,7 +13,7 @@ class WordChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)): WordSequence {
+    fun apply(word: Word, categoryValues: List<SourcedCategoryValue> = getDefaultState(word)): WordSequence {
         val (startClause, _) = innerApply(word, categoryValues)
 
         return startClause
@@ -21,7 +21,7 @@ class WordChangeParadigm(
 
     private fun innerApply(
         word: Word,
-        categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)
+        categoryValues: List<SourcedCategoryValue> = getDefaultState(word)
     ): Pair<WordSequence, Int> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, categoryValues.toSet())
@@ -43,7 +43,7 @@ class WordChangeParadigm(
                 apply(
                     w,
                     ws[i].categoryValues.map {
-                        ParametrizedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Subject))
+                        SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Subject))
                     }
                 ).words
             }
@@ -52,15 +52,15 @@ class WordChangeParadigm(
         return WordSequence(newWs) to i
     }
 
-    fun getDefaultState(word: Word): List<ParametrizedCategoryValue> =
+    fun getDefaultState(word: Word): List<SourcedCategoryValue> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
-            ?.filter { it.actualParametrizedValues.isNotEmpty() }
-            ?.map { it.actualParametrizedValues[0] }//TODO another method for static categories swap
+            ?.filter { it.actualSourcedValues.isNotEmpty() }
+            ?.map { it.actualSourcedValues[0] }//TODO another method for static categories swap
             ?.filter { v ->
                 word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }
             }
-            ?.union(word.semanticsCore.staticCategories.map { ParametrizedCategoryValue(it, SelfStated) })
+            ?.union(word.semanticsCore.staticCategories.map { SourcedCategoryValue(it, SelfStated) })
             ?.toList()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 

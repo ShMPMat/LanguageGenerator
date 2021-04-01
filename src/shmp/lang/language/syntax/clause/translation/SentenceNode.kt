@@ -2,8 +2,8 @@ package shmp.lang.language.syntax.clause.translation
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource
-import shmp.lang.language.category.paradigm.ParametrizedCategory
-import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
@@ -48,7 +48,7 @@ class SentenceNode(
         _relation[sentenceNode.typeForChildren] = sentenceNode
     }
 
-    fun extractValues(references: List<ParametrizedCategory>) =
+    fun extractValues(references: List<SourcedCategory>) =
         references.map { (category, source) ->
             val res = when (source) {
                 is CategorySource.SelfStated -> categoryValues
@@ -56,7 +56,7 @@ class SentenceNode(
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: throw SyntaxException("No value for ${category.outType} and source $source")
-            ParametrizedCategoryValue(res, source)
+            SourcedCategoryValue(res, source)
         }
 }
 

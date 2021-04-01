@@ -1,7 +1,7 @@
 package shmp.lang.language.syntax.features
 
 
-data class CopulaPresence(val copulaType: ParametrizedSyntaxFeatures<CopulaType>) {
+data class CopulaPresence(val copulaType: SsoSyntaxFeatures<CopulaType>) {
     override fun toString() = copulaType.joinToString(", ")
 }
 

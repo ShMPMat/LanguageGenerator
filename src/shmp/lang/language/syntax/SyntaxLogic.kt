@@ -2,9 +2,8 @@ package shmp.lang.language.syntax
 
 import shmp.lang.language.*
 import shmp.lang.language.category.*
-import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
-import shmp.lang.language.category.paradigm.parametrize
-import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.category.paradigm.SourcedCategoryValues
+import shmp.lang.language.category.paradigm.withSource
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
@@ -69,11 +68,11 @@ class SyntaxLogic(
         language: Language,
         verbType: TypedSpeechPart,
         context: Context
-    ): ParametrizedCategoryValues {
+    ): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
         verbFormSolver[verbType to timeValue]?.let { categories ->
-            return categories.map { it.parametrize(CategorySource.SelfStated) }
+            return categories.map { it.withSource(CategorySource.SelfStated) }
         }
 
         if (priority == Priority.Explicit) {
@@ -82,14 +81,14 @@ class SyntaxLogic(
             return chooseClosestTense(language, verbType, timeValue)
     }
 
-    private fun chooseClosestTense(language: Language, verbType: TypedSpeechPart, timeContext: TimeContext): ParametrizedCategoryValues {
+    private fun chooseClosestTense(language: Language, verbType: TypedSpeechPart, timeContext: TimeContext): SourcedCategoryValues {
         val timeValueNumber = timeContext.toNumber()
 
         val tense = language.changeParadigm.wordChangeParadigm
             .getSpeechPartParadigm(verbType)
             .categories
             .firstOrNull { it.category is Tense }
-            ?.actualParametrizedValues
+            ?.actualSourcedValues
             ?.minByOrNull {
                 val tenseNumber = (it.categoryValue as TenseValue).toNumber()
 

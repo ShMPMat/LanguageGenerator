@@ -1,6 +1,6 @@
 package shmp.lang.language.syntax.clause.translation
 
-import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
+import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
@@ -25,7 +25,7 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
         return relation to sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
     }
 
-    private fun computeValues(sentenceNode: SentenceNode): List<ParametrizedCategoryValue> {
+    private fun computeValues(sentenceNode: SentenceNode): List<SourcedCategoryValue> {
         val speechPart = sentenceNode.word.semanticsCore.speechPart
         val references = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart).categories
 

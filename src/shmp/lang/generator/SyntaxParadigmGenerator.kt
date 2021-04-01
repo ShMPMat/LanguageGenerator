@@ -3,7 +3,6 @@ package shmp.lang.generator
 import shmp.lang.language.syntax.SyntaxParadigm
 import shmp.lang.language.syntax.features.*
 import shmp.random.singleton.RandomSingleton
-import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
@@ -17,9 +16,9 @@ class SyntaxParadigmGenerator {
                 else it
             }
         val copulaPresence = CopulaPresence(
-            listOf(mainCopulaType.parametrize(mainCopulaType.probability)) +
+            listOf(mainCopulaType.toSso(mainCopulaType.probability)) +
                     if (noneProbability != 0.0)
-                        listOf(CopulaType.None.parametrize(noneProbability))
+                        listOf(CopulaType.None.toSso(noneProbability))
                     else listOf()
         )
 

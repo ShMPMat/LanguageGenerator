@@ -7,15 +7,15 @@ import shmp.random.UnwrappableSSO
 interface SyntaxFeature: SampleSpaceObject
 
 
-class ParametrizedSyntaxFeature<E: SyntaxFeature>(
+class SsoSyntaxFeature<E: SyntaxFeature>(
     val feature: E,
     override val probability: Double
 ): UnwrappableSSO<E>(feature) {
     override fun toString() = "$feature with chance $probability"
 }
 
-fun <E: SyntaxFeature> E.parametrize(probability: Double) =
-    ParametrizedSyntaxFeature(this, probability)
+fun <E: SyntaxFeature> E.toSso(probability: Double) =
+    SsoSyntaxFeature(this, probability)
 
 
-typealias ParametrizedSyntaxFeatures<E> = List<ParametrizedSyntaxFeature<E>>
+typealias SsoSyntaxFeatures<E> = List<SsoSyntaxFeature<E>>

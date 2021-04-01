@@ -4,7 +4,7 @@ import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.definitenessName
-import shmp.lang.language.category.paradigm.ParametrizedCategory
+import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.category.realization.WordCategoryApplicator
@@ -41,7 +41,7 @@ class ChangeParadigmGenerator(
                     .flatMap { (c, s) ->
                         c.affected
                             .filter { it.speechPart == speechPart.type }
-                            .map { ParametrizedCategory(c, it.source) to s }
+                            .map { SourcedCategory(c, it.source) to s }
                     }
                 val applicators = speechPartApplicatorsGenerator
                     .randomApplicatorsForSpeechPart(

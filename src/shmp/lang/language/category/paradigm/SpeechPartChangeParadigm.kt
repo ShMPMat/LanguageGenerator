@@ -1,6 +1,5 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.lexis.TypedSpeechPart
@@ -15,7 +14,7 @@ class SpeechPartChangeParadigm(
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
-    fun apply(word: Word, categoryValues: Set<ParametrizedCategoryValue>): Pair<WordSequence, Int> {
+    fun apply(word: Word, categoryValues: Set<SourcedCategoryValue>): Pair<WordSequence, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
@@ -61,7 +60,7 @@ class SpeechPartChangeParadigm(
         wordPosition: Int,
         exponenceCluster: ExponenceCluster,
         exponenceValue: ExponenceValue,
-        actualValues: List<ParametrizedCategoryValue>
+        actualValues: List<SourcedCategoryValue>
     ): WordSequence {
         val word = wordSequence[wordPosition]
         return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
@@ -76,7 +75,7 @@ class SpeechPartChangeParadigm(
     }
 
     private fun getExponenceUnion(
-        categoryValues: Set<ParametrizedCategoryValue>,
+        categoryValues: Set<SourcedCategoryValue>,
         exponenceCluster: ExponenceCluster
     ): ExponenceValue? {
         return exponenceCluster.filterExponenceUnion(categoryValues)
