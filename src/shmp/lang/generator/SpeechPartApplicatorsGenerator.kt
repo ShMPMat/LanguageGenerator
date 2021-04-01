@@ -11,11 +11,14 @@ import shmp.lang.language.category.paradigm.ParametrizedCategory
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValue
 import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
 import shmp.random.randomElement
 import shmp.random.randomUnwrappedElement
+import shmp.random.singleton.randomElement
+import shmp.random.singleton.randomUnwrappedElement
 import shmp.random.testProbability
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -30,7 +33,7 @@ class SpeechPartApplicatorsGenerator(
     private val categoryCollapseProbability = 0.5
 
     internal fun randomApplicatorsForSpeechPart(
-        speechPart: SpeechPart,
+        speechPart: TypedSpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
         categoriesAndSupply: List<Pair<ParametrizedCategory, CategoryRandomSupplements>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
@@ -79,13 +82,13 @@ class SpeechPartApplicatorsGenerator(
         categoryRealization: CategoryRealization,
         value: ExponenceValue,
         supplements: List<CategoryRandomSupplements>,
-        speechPart: SpeechPart
+        speechPart: TypedSpeechPart
     ): CategoryRealization {
         val variants = supplements
-            .map { s -> s.specialRealization(value.categoryValues.map { it.categoryValue }, speechPart) }
+            .map { s -> s.specialRealization(value.categoryValues.map { it.categoryValue }, speechPart.type) }
         val finalVariants = uniteMutualProbabilities(variants) { this.copy(probability = it) }
 
-        return randomUnwrappedElement(finalVariants, random)
+        return finalVariants.randomUnwrappedElement()
             ?: categoryRealization
     }
 
@@ -98,7 +101,7 @@ class SpeechPartApplicatorsGenerator(
         val data = mutableListOf<List<RealizationMapper>>()
 
         while (l < shuffledCategories.size) {
-            val r = randomElement((l + 1..shuffledCategories.size).toList(), { 1.0 / it }, random)
+            val r = (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
             val cluster = ExponenceCluster(

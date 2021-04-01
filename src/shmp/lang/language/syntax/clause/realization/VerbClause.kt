@@ -3,6 +3,7 @@ package shmp.lang.language.syntax.clause.realization
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
@@ -16,7 +17,7 @@ class TransitiveVerbClause(
     val objectClause: NominalClause
 ): SyntaxClause {
     init {
-        if (verb.semanticsCore.speechPart != SpeechPart.Verb)
+        if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$verb is not a verb")
         if (verb.semanticsCore.tags.any { it.name == "intrans" })
             throw SyntaxException("$verb in the transitive clause is intransitive")

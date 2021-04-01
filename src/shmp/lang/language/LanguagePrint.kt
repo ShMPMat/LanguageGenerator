@@ -53,7 +53,7 @@ fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
             .replace(" ", ".")
 
 private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
-    if (word.semanticsCore.speechPart !in listOf(SpeechPart.Particle, SpeechPart.Article, SpeechPart.DeixisPronoun))
+    if (word.semanticsCore.speechPart.type !in listOf(SpeechPart.Particle, SpeechPart.Article, SpeechPart.DeixisPronoun))
         word.semanticsCore.toString()
     else ""
 

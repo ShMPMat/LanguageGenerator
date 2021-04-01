@@ -22,7 +22,7 @@ data class SemanticsCoreTemplate(
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) =
     SemanticsCore(
         MeaningCluster(word),
-        this.speechPart,
+        this.speechPart.toUnspecified(),
         this.tagClusters
             .filter { it.shouldBeInstantiated }
             .map {
@@ -34,7 +34,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
     )
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
-    if (this.speechPart != core.speechPart)
+    if (this.speechPart != core.speechPart.type)
         throw GeneratorException("Core merge error: $core and ${this.word} has different speech parts")
 
     return SemanticsCore(

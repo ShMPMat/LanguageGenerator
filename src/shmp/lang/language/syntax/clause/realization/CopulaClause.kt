@@ -22,7 +22,7 @@ class VerbalCopulaClause(
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Verb, CopulaType.Verb) {
     init {
-        if (copula.semanticsCore.speechPart != SpeechPart.Verb)
+        if (copula.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$copula is not a verb")
     }
 
@@ -46,7 +46,7 @@ class ParticleCopulaClause(
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Subject, CopulaType.Particle) {
     init {
-        if (copula.semanticsCore.speechPart != SpeechPart.Particle)
+        if (copula.semanticsCore.speechPart.type != SpeechPart.Particle)
             throw SyntaxException("$copula is not a particle")
     }
 

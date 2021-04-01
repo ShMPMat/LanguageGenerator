@@ -2,6 +2,7 @@ package shmp.lang.language.derivation
 
 import shmp.lang.containers.toSemanticsCore
 import shmp.lang.language.lexis.SemanticsTag
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.lexis.noDerivationLink
 import shmp.lang.language.morphem.Affix
@@ -12,6 +13,7 @@ import kotlin.random.Random
 class Derivation(
     private val affix: Affix,
     val dClass: DerivationClass,
+    val resultSpeechPart: TypedSpeechPart,
     private val categoriesChanger: CategoryChanger
 ) {
     fun derive(word: Word, random: Random): Word? {
@@ -33,7 +35,7 @@ class Derivation(
         val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(word.semanticsCore),
-            dClass.toSpeechPart
+            resultSpeechPart
         ) ?: return null
         val newCore = chosenSemantics.toSemanticsCore(newStaticCategories, random).let {
             it.copy(

@@ -42,7 +42,7 @@ class CategoryGenerator(
         val max = SpeechPart.values()
             .flatMap { supplements.speechPartProbabilities(it) }
             .map { it.probability }
-            .max()
+            .maxOrNull()
             ?: throw DataConsistencyException("No SpeechPart exists")
 
         return SpeechPart.values().flatMap { speechPart ->

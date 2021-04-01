@@ -3,10 +3,11 @@ package shmp.lang.language.derivation
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.TypedSpeechPart
 
 
 interface CategoryChanger {
-    fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart): Set<CategoryValue>?
+    fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: TypedSpeechPart): Set<CategoryValue>?
 
     val defaultToString: String
 }
@@ -17,7 +18,7 @@ abstract class AbstractCategoryChanger : CategoryChanger {
 
 
 class PassingCategoryChanger(private val index: Int) : AbstractCategoryChanger() {
-    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart) =
+    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: TypedSpeechPart) =
         semanticsCores.getOrNull(index)?.let {
             if (it.speechPart == speechPart)
                 it.staticCategories
@@ -29,9 +30,9 @@ class PassingCategoryChanger(private val index: Int) : AbstractCategoryChanger()
 
 class ConstantCategoryChanger(
     val categories: Set<CategoryValue>,
-    val targetSpeechPart: SpeechPart
+    val targetSpeechPart: TypedSpeechPart
 ) : AbstractCategoryChanger() {
-    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: SpeechPart) =
+    override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: TypedSpeechPart) =
         if (targetSpeechPart == speechPart) categories
         else null
 

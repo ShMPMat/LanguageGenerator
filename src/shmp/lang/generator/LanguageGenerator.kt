@@ -6,6 +6,8 @@ import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategoryPool
+import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.phonology.*
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.random.singleton.RandomSingleton
@@ -30,7 +32,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
-    private val restrictionsParadigm = generateRestrictionParadigm()
+    private val restrictionsParadigm = generateRestrictionParadigm(SpeechPart.values().map { it.toUnspecified() })
     private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(
         supplementPath,
@@ -72,10 +74,10 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         )
     }
 
-    private fun generateRestrictionParadigm(): RestrictionsParadigm {//TODO make smth meaningful
+    private fun generateRestrictionParadigm(speechParts: List<TypedSpeechPart>): RestrictionsParadigm {//TODO make smth meaningful
         val generalAvgWordLength = 5
 
-        val map = EnumMap<SpeechPart, PhoneticRestrictions>(SpeechPart::class.java)
+        val map = mutableMapOf<TypedSpeechPart, PhoneticRestrictions>()
         val allInitial = syllableGenerator.template.initialPhonemeTypes
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .toSet()
@@ -86,9 +88,9 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
             .flatMap { phonemeContainer.getPhonemesByType(it) }
             .toSet()
 
-        for (speechPart in values()) {
+        for (speechPart in speechParts) {
             val actualAvgWordLength =
-                if (speechPart in listOf(Article, Particle, PersonalPronoun, DeixisPronoun))
+                if (speechPart.type in listOf(Article, Particle, PersonalPronoun, DeixisPronoun))
                     2
                 else generalAvgWordLength
 

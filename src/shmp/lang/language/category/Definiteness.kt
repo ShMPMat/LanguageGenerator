@@ -7,6 +7,7 @@ import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.DefinitenessValue.*
 import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -80,9 +81,9 @@ enum class DefinitenessPresence(
 
 enum class DefinitenessValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
-    None(SemanticsCore(MeaningCluster(""), SpeechPart.Article, setOf()), "NONE"),
-    Definite(SemanticsCore(MeaningCluster("the"), SpeechPart.Article, setOf()), "DEF"),
-    Indefinite(SemanticsCore(MeaningCluster("a"), SpeechPart.Article, setOf()), "INDEF");
+    None(SemanticsCore(MeaningCluster(""), SpeechPart.Article.toUnspecified(), setOf()), "NONE"),
+    Definite(SemanticsCore(MeaningCluster("the"), SpeechPart.Article.toUnspecified(), setOf()), "DEF"),
+    Indefinite(SemanticsCore(MeaningCluster("a"), SpeechPart.Article.toUnspecified(), setOf()), "INDEF");
 
     override val parentClassName = definitenessName
 }

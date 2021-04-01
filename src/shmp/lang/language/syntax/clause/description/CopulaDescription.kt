@@ -21,8 +21,15 @@ class CopulaDescription(
             .let { copulaType ->
                 when (copulaType) {
                     CopulaType.Verb -> VerbalCopulaClause(
-                        language.lexis.getCopulaWord(CopulaType.Verb)
-                            .copyWithValues(language.changeParadigm.syntaxLogic.resolveVerbForm(language, context)),
+                        language.lexis.getCopulaWord(CopulaType.Verb).let {
+                            it.copyWithValues(
+                                language.changeParadigm.syntaxLogic.resolveVerbForm(
+                                    language,
+                                    it.semanticsCore.speechPart,
+                                    context
+                                )
+                            )
+                        },
                         subjectClause,
                         complementClause
                     )

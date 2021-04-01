@@ -7,6 +7,7 @@ import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomSublist
@@ -98,16 +99,16 @@ enum class GenderValue(override val semanticsCore: SemanticsCore, override val s
     Female(
         SemanticsCore(
             MeaningCluster("(female gender indicator)"),
-            SpeechPart.Particle,
+            SpeechPart.Particle.toUnspecified(),
             setOf()
         ),
         "FEM"
     ),
-    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle, setOf()), "MALE"),
+    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "MALE"),
     Neutral(
         SemanticsCore(
             MeaningCluster("(neutral gender indicator)"),
-            SpeechPart.Particle,
+            SpeechPart.Particle.toUnspecified(),
             setOf()
         ),
         "NEUT"
@@ -115,7 +116,7 @@ enum class GenderValue(override val semanticsCore: SemanticsCore, override val s
     Common(
         SemanticsCore(
             MeaningCluster("(common gender indicator)"),
-            SpeechPart.Particle,
+            SpeechPart.Particle.toUnspecified(),
             setOf()
         ),
         "COMM"
@@ -124,17 +125,17 @@ enum class GenderValue(override val semanticsCore: SemanticsCore, override val s
     Person(
         SemanticsCore(
             MeaningCluster("(person class indicator)"),
-            SpeechPart.Particle,
+            SpeechPart.Particle.toUnspecified(),
             setOf()
         ),
         "PERS"
     ),
-    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle, setOf()), "PLANT"),
-    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle, setOf()), "FRUIT"),
+    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "PLANT"),
+    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "FRUIT"),
     LongObject(
         SemanticsCore(
             MeaningCluster("(long object class indicator)"),
-            SpeechPart.Particle,
+            SpeechPart.Particle.toUnspecified(),
             setOf()
         ),
         "LONG.OBJ"

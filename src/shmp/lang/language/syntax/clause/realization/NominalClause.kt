@@ -21,7 +21,7 @@ class NominalClause(
 ) : SyntaxClause {
     init {
         val validNominals = listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun, SpeechPart.DeixisPronoun)
-        if (nominal.semanticsCore.speechPart !in validNominals)
+        if (nominal.semanticsCore.speechPart.type !in validNominals)
             throw SyntaxException("$nominal is not a noun or pronoun")
     }
 

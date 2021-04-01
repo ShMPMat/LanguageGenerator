@@ -12,7 +12,7 @@ import shmp.random.UnwrappableSSO
 
 data class SemanticsCore(
     val meaningCluster: MeaningCluster,
-    val speechPart: SpeechPart,
+    val speechPart: TypedSpeechPart,
     val tags: Set<SemanticsTag>,
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
     val staticCategories: Set<CategoryValue> = setOf(),
@@ -20,11 +20,11 @@ data class SemanticsCore(
     val changeHistory: ChangeHistory? = null
 ) {
     init {
-        if (speechPart == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
+        if (speechPart.type == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
             throw LanguageException("Verb $meaningCluster doesn't have transitivity")
 
         derivationCluster.typeToCore.entries
-            .firstOrNull { it.key.fromSpeechPart != speechPart }
+            .firstOrNull { it.key.fromSpeechPart != speechPart.type }
             ?.let {
                 throw LanguageException("$speechPart has a derivation for ${it.key.fromSpeechPart} ${it.key.name}")
             }

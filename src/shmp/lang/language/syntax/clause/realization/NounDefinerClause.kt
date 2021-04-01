@@ -13,7 +13,7 @@ abstract class NounDefinerClause : SyntaxClause
 
 class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
     init {
-        if (adjective.semanticsCore.speechPart != SpeechPart.Adjective)
+        if (adjective.semanticsCore.speechPart.type != SpeechPart.Adjective)
             throw SyntaxException("$adjective is not an adjective")
     }
 

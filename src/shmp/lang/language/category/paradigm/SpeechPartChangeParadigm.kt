@@ -3,11 +3,12 @@ package shmp.lang.language.category.paradigm
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.realization.CategoryApplicator
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.syntax.WordSequence
 
 class SpeechPartChangeParadigm(
-    val speechPart: SpeechPart,
+    val speechPart: TypedSpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
     val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
     val prosodyChangeParadigm: ProsodyChangeParadigm

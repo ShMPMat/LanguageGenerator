@@ -5,6 +5,7 @@ import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.ParametrizedCategoryValues
 import shmp.lang.language.category.paradigm.parametrize
 import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
@@ -14,7 +15,7 @@ import kotlin.math.abs
 
 
 class SyntaxLogic(
-    val verbFormSolver: Map<TimeContext, CategoryValues>,
+    val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
     val deixisCategorySolver: Map<DeixisValue?, CategoryValues>,
@@ -66,25 +67,26 @@ class SyntaxLogic(
 
     fun resolveVerbForm(
         language: Language,
+        verbType: TypedSpeechPart,
         context: Context
     ): ParametrizedCategoryValues {
         val (timeValue, priority) = context.time
 
-        verbFormSolver[timeValue]?.let { categories ->
+        verbFormSolver[verbType to timeValue]?.let { categories ->
             return categories.map { it.parametrize(CategorySource.SelfStated) }
         }
 
         if (priority == Priority.Explicit) {
             TODO()
         } else
-            return chooseClosestTense(language, timeValue)
+            return chooseClosestTense(language, verbType, timeValue)
     }
 
-    private fun chooseClosestTense(language: Language, timeContext: TimeContext): ParametrizedCategoryValues {
+    private fun chooseClosestTense(language: Language, verbType: TypedSpeechPart, timeContext: TimeContext): ParametrizedCategoryValues {
         val timeValueNumber = timeContext.toNumber()
 
         val tense = language.changeParadigm.wordChangeParadigm
-            .getSpeechPartParadigm(SpeechPart.Verb)
+            .getSpeechPartParadigm(verbType)
             .categories
             .firstOrNull { it.category is Tense }
             ?.actualParametrizedValues
@@ -121,7 +123,7 @@ class SyntaxLogic(
         |${
         deixisCategorySolver.entries.joinToString("\n") { (g1, g2) ->
             "$g1 is expressed as $g2"
-        } ?: ""
+        }
     } 
         |
         |Dropped pronouns:
@@ -161,3 +163,5 @@ private fun TimeContext.toNumber() = when (this) {
 }
 
 typealias PersonalPronounDropSolver = List<Pair<ActorType, CategoryValues>>
+
+typealias VerbContextInfo = Pair<TypedSpeechPart, TimeContext>

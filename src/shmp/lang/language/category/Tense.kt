@@ -8,6 +8,7 @@ import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.TenseValue.*
 import shmp.lang.language.lexis.MeaningCluster
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.toUnspecified
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 
@@ -88,20 +89,20 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Present(SemanticsCore(MeaningCluster("(present tense indicator)"), Particle, setOf()), "PRES"),
-    Future(SemanticsCore(MeaningCluster("(future tense indicator)"), Particle, setOf()), "FUT"),
-    Past(SemanticsCore(MeaningCluster("(past tense indicator)"), Particle, setOf()), "PST"),
-    DayPast(SemanticsCore(MeaningCluster("(day past tense indicator)"), Particle, setOf()), "DAY.PST"),
+    Present(SemanticsCore(MeaningCluster("(present tense indicator)"), Particle.toUnspecified(), setOf()), "PRES"),
+    Future(SemanticsCore(MeaningCluster("(future tense indicator)"), Particle.toUnspecified(), setOf()), "FUT"),
+    Past(SemanticsCore(MeaningCluster("(past tense indicator)"), Particle.toUnspecified(), setOf()), "PST"),
+    DayPast(SemanticsCore(MeaningCluster("(day past tense indicator)"), Particle.toUnspecified(), setOf()), "DAY.PST"),
     SomeDaysPast(
         SemanticsCore(
             MeaningCluster("(some days past tense indicator)"),
-            Particle,
+            Particle.toUnspecified(),
             setOf()
         ),
         "FEW.DAY.PST"
     ),
-    MonthPast(SemanticsCore(MeaningCluster("(month past tense indicator)"), Particle, setOf()), "MTH.PST"),
-    YearPast(SemanticsCore(MeaningCluster("(year past tense indicator)"), Particle, setOf()), "YR.PST");
+    MonthPast(SemanticsCore(MeaningCluster("(month past tense indicator)"), Particle.toUnspecified(), setOf()), "MTH.PST"),
+    YearPast(SemanticsCore(MeaningCluster("(year past tense indicator)"), Particle.toUnspecified(), setOf()), "YR.PST");
 
     override val parentClassName = outName
 }

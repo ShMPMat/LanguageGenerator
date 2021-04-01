@@ -40,10 +40,10 @@ class Language(
          |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
          |
          |Noun:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart == Noun })}
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
          |
          |Verb:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart == Verb })}
+         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
          |
          |
          |$derivationParadigm

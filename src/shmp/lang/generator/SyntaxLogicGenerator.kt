@@ -7,9 +7,11 @@ import shmp.lang.language.category.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.PersonalPronounDropSolver
 import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.VerbContextInfo
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.ActorType.*
 import shmp.lang.language.syntax.context.ContextValue
@@ -28,18 +30,21 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
         generatePersonalPronounDropSolver()
     )
 
-    private fun generateVerbFormSolver(): MutableMap<ContextValue.TimeContext, List<CategoryValue>> {
-        val verbFormSolver: MutableMap<ContextValue.TimeContext, List<CategoryValue>> = mutableMapOf()
+    private fun generateVerbFormSolver(): MutableMap<VerbContextInfo, List<CategoryValue>> {
+        val verbFormSolver: MutableMap<VerbContextInfo, List<CategoryValue>> = mutableMapOf()
 
-        changeParadigm.getSpeechPartParadigm(SpeechPart.Verb).categories
-            .map { it.category }
-            .filterIsInstance<Tense>()
-            .firstOrNull()
-            ?.actualValues
-            ?.firstOrNull { it as TenseValue == TenseValue.Present }
-            ?.let {
-                verbFormSolver[ContextValue.TimeContext.Regular] = listOf(it)
-            }
+        val verbalSpeechParts = changeParadigm.getSpeechParts(SpeechPart.Verb)
+
+        for (speechPart in verbalSpeechParts)
+            changeParadigm.getSpeechPartParadigm(speechPart).categories
+                .map { it.category }
+                .filterIsInstance<Tense>()
+                .firstOrNull()
+                ?.actualValues
+                ?.firstOrNull { it as TenseValue == TenseValue.Present }
+                ?.let {
+                    verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(it)
+                }
 
         return verbFormSolver
     }
@@ -126,7 +131,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
                 .filter { it !in deixisCategory.actualValues }
                 .map { it as DeixisValue }
 
-            for (deixis in absentDeixis) deixisCategorySolver[deixis] = when(deixis) {
+            for (deixis in absentDeixis) deixisCategorySolver[deixis] = when (deixis) {
                 DeixisValue.Undefined -> indefiniteArticleWrapped
                     ?: listOf()
                 DeixisValue.Proximal -> definiteArticleWrapped
@@ -146,8 +151,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
         }
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
-        val verbalCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.Verb).categories
-        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun).categories
+        val verbalCategories = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb).first().categories//TODO bullshit decision
+        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).categories
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 

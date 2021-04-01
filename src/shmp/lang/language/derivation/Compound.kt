@@ -2,40 +2,41 @@ package shmp.lang.language.derivation
 
 import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.containers.toSemanticsCore
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.CompoundLink
-import shmp.lang.language.lexis.Word
-import shmp.lang.language.lexis.getMeaningDistance
-import shmp.lang.language.lexis.noCompoundLink
+import shmp.lang.language.lexis.*
 import shmp.lang.language.phonology.PhonemeSequence
 import shmp.lang.language.phonology.Syllable
 import shmp.random.*
 import shmp.lang.utils.joinToList
+import shmp.random.singleton.chanceOfNot
+import shmp.random.singleton.randomElement
+import shmp.random.singleton.randomElementOrNull
+import shmp.random.singleton.testProbability
 import kotlin.random.Random
 
 
-class Compound(
-    private val speechPart: SpeechPart,
+data class Compound(
+    private val speechPart: TypedSpeechPart,
     val infix: PhonemeSequence,
     private val categoriesChanger: CategoryChanger,
     private val prosodyRule: CompoundProsodyRule
 ) {
     fun compose(words: List<Word>, resultCore: SemanticsCoreTemplate, random: Random): Word? {
-        if (resultCore.speechPart != speechPart)
+        if (resultCore.speechPart != speechPart.type)
             return null
 
         val existingDoubles = words
             .map { getMeaningDistance(it.semanticsCore.meaningCluster, resultCore.word) }
             .foldRight(0.0, Double::plus)
-        if (!testProbability(1.0 / (existingDoubles + 1), random))
+        (1.0 / (existingDoubles + 1)).chanceOfNot {
             return null
+        }
 
-        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds, random)
+        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds)
 
-        val chosenCompound = randomElementOrNull(options, random)?.options
+        val chosenCompound = options.randomElementOrNull()?.options
             ?: return null
 
-        val chosenWords = chosenCompound.map { randomElement(it, random) }
+        val chosenWords = chosenCompound.map { it.randomElement() }
 
         val newPhonemeList = chosenWords
             .map { w -> w.syllables.flatMap { it.phonemeSequence.phonemes } }
@@ -59,19 +60,18 @@ class Compound(
         )
     }
 
-    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>, random: Random): List<CompoundOptions> =
-        templates.mapNotNull { pickOptionWords(words, it, random) } +
+    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>): List<CompoundOptions> =
+        templates.mapNotNull { pickOptionWords(words, it) } +
                 CompoundOptions(null, noCompoundLink.probability)
 
     private fun pickOptionWords(
         words: List<Word>,
-        template: CompoundLink,
-        random: Random
+        template: CompoundLink
     ): CompoundOptions? = template.templates
         ?.map { t ->
             words.filter {//TODO generate probability test
-                testProbability(1 / (it.semanticsCore.changeDepth.toDouble() + 1), random) &&
-                        it.semanticsCore.meaningCluster.contains(t.word)
+                (1 / (it.semanticsCore.changeDepth + 1.0)).testProbability()
+                        && it.semanticsCore.meaningCluster.contains(t.word)
             }
         }
         ?.takeIf { o -> o.all { it.isNotEmpty() } }

@@ -6,6 +6,7 @@ import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.derivation.*
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryPool
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.morphem.Suffix
@@ -15,6 +16,7 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.random.randomElement
 import shmp.random.randomSublist
 import shmp.random.singleton.chanceOf
+import shmp.random.singleton.randomElement
 import shmp.random.testProbability
 import kotlin.random.Random
 
@@ -51,29 +53,37 @@ class DerivationGenerator(
 
     private fun generateDerivations(changeGenerator: ChangeGenerator, categoryPool: CategoryPool) =
         randomSublist(DerivationClass.values().toList(), random, 2, DerivationClass.values().size + 1)
-            .map { derivationClass ->
-                val affix = if (random.nextBoolean()) {
-                    Prefix(
-                        changeGenerator.generateChanges(
-                            Position.Beginning,
-                            restrictionsParadigm.restrictionsMapper.getValue(derivationClass.toSpeechPart)
-                        )
-                    )
-                } else {
-                    Suffix(
-                        changeGenerator.generateChanges(
-                            Position.End,
-                            restrictionsParadigm.restrictionsMapper.getValue(derivationClass.toSpeechPart)
-                        )
-                    )
-                }
+            .flatMap { derivationClass ->
+                val affectedSpeechParts = restrictionsParadigm.getSpeechParts(derivationClass.toSpeechPart)
 
-                Derivation(
-                    affix,
-                    derivationClass,
-                    generateCategoryMaker(categoryPool, derivationClass)
-                )
+                affectedSpeechParts.map { generateDerivation(derivationClass, it, changeGenerator, categoryPool) }
             }
+
+    private fun generateDerivation(
+        derivationClass: DerivationClass,
+        speechPart: TypedSpeechPart,
+        changeGenerator: ChangeGenerator,
+        categoryPool: CategoryPool
+    ): Derivation {
+        val affix = if (random.nextBoolean()) Prefix(
+            changeGenerator.generateChanges(
+                Position.Beginning,
+                restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+            )
+        ) else Suffix(
+            changeGenerator.generateChanges(
+                Position.End,
+                restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+            )
+        )
+
+        return Derivation(
+            affix,
+            derivationClass,
+            speechPart,
+            generateCategoryMaker(categoryPool, derivationClass, speechPart)
+        )
+    }
 
     private fun generateCompounds(changeGenerator: ChangeGenerator, categoryPool: CategoryPool): List<Compound> {
         val compounds = mutableListOf<Compound>()
@@ -82,35 +92,37 @@ class DerivationGenerator(
         val prosodyRule = generateCompoundProsodyRule()
 
         val infixCompoundsAmount = random.nextInt(1, 5)
-        for (i in 1..infixCompoundsAmount) {
-            val speechPart = SpeechPart.Noun
-            val compound = Compound(
-                speechPart,
-                changeGenerator.lexisGenerator.syllableGenerator.generateSyllable(
-                    SyllableRestrictions(
-                        changeGenerator.lexisGenerator.phonemeContainer,
-                        changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
-                            .copy(avgWordLength = 1),
-                        SyllablePosition.Middle
-                    ),
-                    random
-                ).phonemeSequence,
-                changer,
-                prosodyRule
-            )
 
-            if (compound in compounds)
-                continue
+        val speechParts = changeGenerator.lexisGenerator.restrictionsParadigm.getSpeechParts(SpeechPart.Noun)
+        for (speechPart in speechParts) {
+            for (i in 1..infixCompoundsAmount) {
+                val compound = Compound(
+                    speechPart,
+                    changeGenerator.lexisGenerator.syllableGenerator.generateSyllable(
+                        SyllableRestrictions(
+                            changeGenerator.lexisGenerator.phonemeContainer,
+                            changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+                                .copy(avgWordLength = 1),
+                            SyllablePosition.Middle
+                        ),
+                        random
+                    ).phonemeSequence,
+                    changer,
+                    prosodyRule
+                )
 
-            compounds.add(compound)
+                if (compound in compounds)
+                    continue
+
+                compounds.add(compound)
+            }
+
+            0.5.chanceOf {
+                val changer = PassingCategoryChanger(random.nextInt(2))
+                val prosodyRule = generateCompoundProsodyRule()
+                compounds.add(Compound(speechPart, PhonemeSequence(), changer, prosodyRule))
+            }
         }
-
-        0.5.chanceOf {
-            val changer = PassingCategoryChanger(random.nextInt(2))
-            val prosodyRule = generateCompoundProsodyRule()
-            compounds.add(Compound(SpeechPart.Noun, PhonemeSequence(), changer, prosodyRule))
-        }
-
         return compounds
     }
 
@@ -122,13 +134,14 @@ class DerivationGenerator(
 
     private fun generateCategoryMaker(
         categoryPool: CategoryPool,
-        derivationClass: DerivationClass
+        derivationClass: DerivationClass,
+        speechPart: TypedSpeechPart
     ): CategoryChanger {
         val possibleCategoryMakers = mutableListOf<CategoryChanger>(ConstantCategoryChanger(
             categoryPool.getStaticFor(derivationClass.toSpeechPart)
-                .map { randomElement(it.actualValues, random) }
+                .map { it.actualValues.randomElement() }
                 .toSet(),
-            derivationClass.toSpeechPart
+            speechPart
         ))
 
         if (derivationClass.fromSpeechPart == derivationClass.toSpeechPart)

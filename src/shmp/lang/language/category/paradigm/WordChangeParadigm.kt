@@ -4,23 +4,18 @@ import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource.*
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
 
+
 class WordChangeParadigm(
     val categories: List<Category>,
-    private val speechPartChangeParadigms: Map<SpeechPart, SpeechPartChangeParadigm>
+    private val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
 ) {
     fun apply(word: Word, categoryValues: List<ParametrizedCategoryValue> = getDefaultState(word)): WordSequence {
-        if (word.semanticsCore.speechPart == SpeechPart.DeixisPronoun) {
-            val k = 0
-        }
-        val (startClause, wordPosition) = innerApply(word, categoryValues)
-//        val allWords = startClause.words.mapIndexed { i, w ->
-//            if (i == wordPosition || w == startClause[i]) listOf(w)
-//            else apply(w, categoryValues).words
-//        }.flatten()
-//        return WordSequence(allWords)
+        val (startClause, _) = innerApply(word, categoryValues)
+
         return startClause
     }
 
@@ -33,20 +28,27 @@ class WordChangeParadigm(
             ?.handleNewWsWords()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
+    var cnt = 0
     private fun Pair<WordSequence, Int>.handleNewWsWords(): Pair<WordSequence, Int> {
         val (ws, i) = this
 
         val newWs = ws.words.flatMapIndexed { j, w ->
-            if (i == j || w.semanticsCore.speechPart == SpeechPart.Particle)
+            if (i == j || w.semanticsCore.speechPart.type == SpeechPart.Particle)
                 listOf(w)
-            else apply(
-                w,
-                ws[i].categoryValues.map {
-                    ParametrizedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Subject))
+            else {
+                if (cnt > 5) {
+                    val n = 0
                 }
-            ).words
+                cnt++
+                apply(
+                    w,
+                    ws[i].categoryValues.map {
+                        ParametrizedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Subject))
+                    }
+                ).words
+            }
         }
-
+        cnt = 0
         return WordSequence(newWs) to i
     }
 
@@ -62,7 +64,15 @@ class WordChangeParadigm(
             ?.toList()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
-    fun getSpeechPartParadigm(speechPart: SpeechPart) = speechPartChangeParadigms.getValue(speechPart)
+    fun getSpeechPartParadigm(speechPart: TypedSpeechPart) = speechPartChangeParadigms.getValue(speechPart)
+    fun getSpeechPartParadigms(speechPart: SpeechPart) = speechPartChangeParadigms
+        .entries.filter { it.key.type == speechPart }
+        .map { it.value }
+
+    fun getSpeechParts(speechPart: SpeechPart) = speechPartChangeParadigms
+        .keys.filter { it.type == speechPart }
+
+    val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
 
     override fun toString() = categories.joinToString("\n") + "\n\n" +
             speechPartChangeParadigms
