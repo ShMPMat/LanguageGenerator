@@ -2,24 +2,21 @@ package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.category.CategoryRandomSupplements
-import shmp.lang.language.category.realization.*
-import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
-import shmp.lang.language.morphem.Prefix
+import shmp.lang.language.category.realization.*
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.morphem.Prefix
+import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.randomUnwrappedElement
-import shmp.random.testProbability
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import shmp.random.singleton.testProbability
 import kotlin.random.Random
 
 
@@ -36,22 +33,21 @@ class SpeechPartApplicatorsGenerator(
         categoriesAndSupply: List<Pair<SourcedCategory, CategoryRandomSupplements>>
     ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply)
-        exponenceTemplates.forEach { map[it.exponenceCluster] = HashMap() }
 
-        val realizationTypes = exponenceTemplates.zip(exponenceTemplates.indices)
-            .map {
-                it.first to randomElement(
-                    CategoryRealization.values(),
-                    { c -> it.first.mapper(it.second, c) },
-                    random
-                )
-            }
-        realizationTypes.forEach { (cluster, realization) ->
-            cluster.exponenceCluster.possibleValues.forEach {
-                val categoryEnums = it.categoryValues
+        val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply)
+        exponenceTemplates.forEach { map[it.exponenceCluster] = mutableMapOf() }
+
+        val realizationTypes = exponenceTemplates
+            .mapIndexed { i, t -> t to CategoryRealization.values().randomElement { c -> t.mapper(i, c) } }
+
+        for ((cluster, realization) in realizationTypes) {
+            cluster.exponenceCluster.possibleValues.forEach { exponenceValue ->
+                val categoryEnums = exponenceValue.categoryValues
                 var semanticsCore = categoryEnums[0].categoryValue.semanticsCore
-                for (core in categoryEnums.subList(1, it.categoryValues.size).map { semanticsCore }) {
+                val chosenEnums = categoryEnums.subList(1, exponenceValue.categoryValues.size)
+                    .map { semanticsCore }
+
+                for (core in chosenEnums) {
                     semanticsCore = SemanticsCore(
                         semanticsCore.meaningCluster + core.meaningCluster,
                         semanticsCore.speechPart,
@@ -60,17 +56,16 @@ class SpeechPartApplicatorsGenerator(
                         semanticsCore.staticCategories.union(core.staticCategories)
                     )
                 }
-                map.getValue(cluster.exponenceCluster)[it] = randomCategoryApplicator(
+                map.getValue(cluster.exponenceCluster)[exponenceValue] = randomCategoryApplicator(
                     decideRealizationType(
                         realization,
-                        it,
+                        exponenceValue,
                         cluster.supplements,
                         speechPart
                     ),
                     phoneticRestrictions,
                     semanticsCore
                 )
-
             }
         }
         return map
@@ -92,9 +87,9 @@ class SpeechPartApplicatorsGenerator(
 
     private fun splitCategoriesOnClusters(
         categories: List<Pair<SourcedCategory, CategoryRandomSupplements>>
-    ): List<ExponenceTemlate> {
+    ): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(random)
-        val clusters = ArrayList<ExponenceTemlate>()
+        val clusters = ArrayList<ExponenceTemplate>()
         var l = 0
         val data = mutableListOf<List<RealizationMapper>>()
 
@@ -102,15 +97,14 @@ class SpeechPartApplicatorsGenerator(
             val r = (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
-            val cluster = ExponenceCluster(
-                currentCategories,
-                constructExponenceUnionSets(currentCategories)
-            )
+
+            val cluster = ExponenceCluster(currentCategories, constructExponenceUnionSets(currentCategories))
+
             data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
                 data[i].map { it(c) }.foldRight(0.0, Double::plus)
             }
-            clusters.add(ExponenceTemlate(
+            clusters.add(ExponenceTemplate(
                 cluster,
                 mapper,
                 currentCategoriesWithSupplement.map { it.second }
@@ -169,7 +163,7 @@ class SpeechPartApplicatorsGenerator(
         category: SourcedCategory,
         neighbourCategories: BoxedInt
     ): Set<List<SourcedCategoryValue>> =
-        if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random)) {
+        if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability()) {
             neighbourCategories.value--
             setOf(category.actualSourcedValues)
         } else
@@ -181,7 +175,7 @@ class SpeechPartApplicatorsGenerator(
     ): Set<List<SourcedCategoryValue>> {
         val currentCategory = categories.last()
 
-        return if (neighbourCategories.value > 1 && testProbability(categoryCollapseProbability, random))
+        return if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability())
             makeCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
         else
             makeNonCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
@@ -205,9 +199,6 @@ class SpeechPartApplicatorsGenerator(
         neighbourCategories: BoxedInt
     ): Set<List<SourcedCategoryValue>> {
         val lists = mutableSetOf<List<SourcedCategoryValue>>()
-        if (categories.size == 4) {
-            val k = 0
-        }
 
         for (new in currentCategory.actualSourcedValues) {
             val recSets = constructExponenceUnionSets(
@@ -225,7 +216,7 @@ private data class BoxedInt(var value: Int)
 
 typealias RealizationMapper = (CategoryRealization) -> Double
 
-data class ExponenceTemlate(
+data class ExponenceTemplate(
     val exponenceCluster: ExponenceCluster,
     val mapper: (Int, CategoryRealization) -> Double,
     val supplements: List<CategoryRandomSupplements>

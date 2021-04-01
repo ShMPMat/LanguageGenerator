@@ -61,7 +61,17 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
                 RealizationBox(CategoryRealization.Passing, 1.0),
                 noValue(1.0)
             )
-            else -> emptyRealization
+            else -> return when(speechPart) {
+                SpeechPart.PersonalPronoun -> setOf(//TODO no actual data
+                    noValue(1.0),
+                    RealizationBox(CategoryRealization.NewWord, 2.0)
+                )
+                SpeechPart.DeixisPronoun -> setOf(//TODO no actual data
+                    RealizationBox(CategoryRealization.Suffix, 1.5),
+                    RealizationBox(CategoryRealization.Prefix, 1.5)
+                )
+                else -> emptyRealization
+            }
         }
     }
 
