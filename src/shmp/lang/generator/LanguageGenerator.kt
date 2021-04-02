@@ -7,6 +7,7 @@ import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.lexis.toAdnominal
 import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.phonology.*
 import shmp.lang.language.phonology.prosody.StressType
@@ -32,7 +33,9 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
-    private val restrictionsParadigm = generateRestrictionParadigm(SpeechPart.values().map { it.toUnspecified() })
+    private val restrictionsParadigm = generateRestrictionParadigm(
+        SpeechPart.values().map { it.toUnspecified() } + listOf(DeixisPronoun.toAdnominal())
+    )
     private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(
         supplementPath,

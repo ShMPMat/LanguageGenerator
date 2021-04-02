@@ -8,7 +8,9 @@ import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.category.realization.*
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.lexis.Word
 import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
@@ -31,8 +33,9 @@ class SpeechPartApplicatorsGenerator(
         speechPart: TypedSpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
         categoriesAndSupply: List<Pair<SourcedCategory, CategoryRandomSupplements>>
-    ): Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
+    ): Result {
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
+        val words = mutableListOf<Word>()
 
         val exponenceTemplates = splitCategoriesOnClusters(categoriesAndSupply)
         exponenceTemplates.forEach { map[it.exponenceCluster] = mutableMapOf() }
@@ -42,21 +45,11 @@ class SpeechPartApplicatorsGenerator(
 
         for ((cluster, realization) in realizationTypes) {
             cluster.exponenceCluster.possibleValues.forEach { exponenceValue ->
-                val categoryEnums = exponenceValue.categoryValues
-                var semanticsCore = categoryEnums[0].categoryValue.semanticsCore
-                val chosenEnums = categoryEnums.subList(1, exponenceValue.categoryValues.size)
-                    .map { semanticsCore }
+                val cores = exponenceValue.categoryValues
+                    .map { it.categoryValue.semanticsCore }
+                val semanticsCore = combineSemanticCores(cores)
 
-                for (core in chosenEnums) {
-                    semanticsCore = SemanticsCore(
-                        semanticsCore.meaningCluster + core.meaningCluster,
-                        semanticsCore.speechPart,
-                        semanticsCore.tags.union(core.tags),
-                        semanticsCore.derivationCluster,
-                        semanticsCore.staticCategories.union(core.staticCategories)
-                    )
-                }
-                map.getValue(cluster.exponenceCluster)[exponenceValue] = randomCategoryApplicator(
+                val (applicator, word) = randomCategoryApplicator(
                     decideRealizationType(
                         realization,
                         exponenceValue,
@@ -66,9 +59,26 @@ class SpeechPartApplicatorsGenerator(
                     phoneticRestrictions,
                     semanticsCore
                 )
+                map.getValue(cluster.exponenceCluster)[exponenceValue] = applicator
+                word?.let {
+                    words.add(it)
+                }
             }
         }
-        return map
+        return Result(words, map)
+    }
+
+    private fun combineSemanticCores(semanticsCores: List<SemanticsCore>): SemanticsCore {
+        var semanticsCore = semanticsCores[0]
+        for (core in semanticsCores.drop(1))
+            semanticsCore = SemanticsCore(
+                semanticsCore.meaningCluster + core.meaningCluster,
+                if (core.speechPart.type != SpeechPart.Particle) core.speechPart else semanticsCore.speechPart,
+                semanticsCore.tags.union(core.tags),
+                semanticsCore.derivationCluster,
+                semanticsCore.staticCategories.union(core.staticCategories)
+            )
+        return semanticsCore
     }
 
     private fun decideRealizationType(
@@ -119,30 +129,35 @@ class SpeechPartApplicatorsGenerator(
         realizationType: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
         semanticsCore: SemanticsCore
-    ): CategoryApplicator = when (realizationType) {
-        CategoryRealization.PrefixSeparateWord -> PrefixWordCategoryApplicator(lexisGenerator.generateWord(
-            semanticsCore
-        ))
-        CategoryRealization.SuffixSeparateWord -> SuffixWordCategoryApplicator(lexisGenerator.generateWord(
-            semanticsCore
-        ))
+    ): Pair<CategoryApplicator, Word?> = when (realizationType) {
+        CategoryRealization.PrefixSeparateWord -> {
+            val word = lexisGenerator.generateWord(semanticsCore)
+            PrefixWordCategoryApplicator(word) to word
+        }
+        CategoryRealization.SuffixSeparateWord -> {
+            val word = lexisGenerator.generateWord(semanticsCore)
+            SuffixWordCategoryApplicator(word) to word
+        }
         CategoryRealization.Prefix -> {
             val changes = changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)
             AffixCategoryApplicator(
                 Prefix(changes),
                 CategoryRealization.Prefix
-            )
+            ) to null
         }
         CategoryRealization.Suffix -> {
             val change = changeGenerator.generateChanges(Position.End, phoneticRestrictions)
             AffixCategoryApplicator(
                 Suffix(change),
                 CategoryRealization.Suffix
-            )
+            ) to null
         }
-        CategoryRealization.Reduplication -> ReduplicationCategoryApplicator()
-        CategoryRealization.Passing -> PassingCategoryApplicator()
-        CategoryRealization.NewWord -> NewWordCategoryApplicator(lexisGenerator.generateWord(semanticsCore))
+        CategoryRealization.Reduplication -> ReduplicationCategoryApplicator() to null
+        CategoryRealization.Passing -> PassingCategoryApplicator() to null
+        CategoryRealization.NewWord -> {
+            val word = lexisGenerator.generateWord(semanticsCore)
+            NewWordCategoryApplicator(word) to word
+        }
     }
 
     fun randomApplicatorsOrder(
@@ -215,6 +230,8 @@ class SpeechPartApplicatorsGenerator(
 private data class BoxedInt(var value: Int)
 
 typealias RealizationMapper = (CategoryRealization) -> Double
+
+data class Result(val words: List<Word>, val solver: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>)
 
 data class ExponenceTemplate(
     val exponenceCluster: ExponenceCluster,

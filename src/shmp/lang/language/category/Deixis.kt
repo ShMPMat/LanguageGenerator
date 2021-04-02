@@ -3,13 +3,10 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.SelfStated
 import shmp.lang.language.category.DeixisValue.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 
@@ -81,12 +78,12 @@ enum class DeixisPresence(
 }
 
 enum class DeixisValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Undefined(SemanticsCore(MeaningCluster("(undefined deixis ind)"), DeixisPronoun.toUnspecified(), setOf()), "UNDEF"),
-    Proximal(SemanticsCore(MeaningCluster("this"), DeixisPronoun.toUnspecified(), setOf()), "PROX"),
-    Medial(SemanticsCore(MeaningCluster("(medial deixis ind)"), DeixisPronoun.toUnspecified(), setOf()), "MED"),
-    Distant(SemanticsCore(MeaningCluster("that"), DeixisPronoun.toUnspecified(), setOf()), "DIST"),
+    Undefined(SemanticsCore(MeaningCluster("(undefined deixis ind)"), DeixisPronoun.toAdnominal(), setOf()), "UNDEF"),
+    Proximal(SemanticsCore(MeaningCluster("this"), DeixisPronoun.toAdnominal(), setOf()), "PROX"),
+    Medial(SemanticsCore(MeaningCluster("(medial deixis ind)"), DeixisPronoun.toAdnominal(), setOf()), "MED"),
+    Distant(SemanticsCore(MeaningCluster("that"), DeixisPronoun.toAdnominal(), setOf()), "DIST"),
     ProximalAddressee(
-        SemanticsCore(MeaningCluster("this.addr"), DeixisPronoun.toUnspecified(), setOf()),
+        SemanticsCore(MeaningCluster("this.addr"), DeixisPronoun.toAdnominal(), setOf()),
         "PROX.ADDR"
     );
     //TODO more values

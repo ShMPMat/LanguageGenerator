@@ -91,5 +91,5 @@ fun CategoryValue.withSource(source: CategorySource) =
 
 private fun getSourceString(source: CategorySource) =
     if (source is CategorySource.RelationGranted)
-        " from ${source.relation}"
+        " ${source.relation}"
     else ""

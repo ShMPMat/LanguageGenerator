@@ -32,9 +32,16 @@ class ChangeParadigmGenerator(
         categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
     ): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
-        val speechPartChangesMap = SpeechPart.values()
-            .map { it.toUnspecified() }
-            .map { speechPart ->
+
+        val oldSpeechParts = mutableListOf<TypedSpeechPart>()
+        val speechParts = SpeechPart.values().map { it.toUnspecified() }.toMutableList()
+        val newSpeechParts = mutableSetOf<TypedSpeechPart>()
+
+        val speechPartChangesMap = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
+
+        while (speechParts.isNotEmpty()) {
+            oldSpeechParts.addAll(speechParts)
+            speechParts.map { speechPart ->
                 val speechPartCategoriesAndSupply = categoriesWithMappers
                     .filter { it.first.speechParts.contains(speechPart.type) }
                     .filter { it.first.actualValues.isNotEmpty() }
@@ -43,20 +50,30 @@ class ChangeParadigmGenerator(
                             .filter { it.speechPart == speechPart.type }
                             .map { SourcedCategory(c, it.source) to s }
                     }
-                val applicators = speechPartApplicatorsGenerator
+                val (words, applicators) = speechPartApplicatorsGenerator
                     .randomApplicatorsForSpeechPart(
                         speechPart,
                         restrictionsParadigm.restrictionsMapper.getValue(speechPart),
                         speechPartCategoriesAndSupply
                     )
+                words.forEach {
+                    if (it.semanticsCore.speechPart !in oldSpeechParts)
+                        newSpeechParts.add(it.semanticsCore.speechPart)
+                }
+
                 val orderedApplicators = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
-                speechPart to SpeechPartChangeParadigm(
+                speechPartChangesMap[speechPart] = SpeechPartChangeParadigm(
                     speechPart,
                     orderedApplicators,
                     applicators,
                     ProsodyChangeParadigm(stressPattern)
                 )
-            }.toMap().toMutableMap()
+            }
+            println(newSpeechParts)
+            speechParts.clear()
+            speechParts.addAll(newSpeechParts)
+            newSpeechParts.clear()
+        }
 
         if (!articlePresent(categories, speechPartChangesMap)) {
             speechPartChangesMap[SpeechPart.Article.toUnspecified()] =

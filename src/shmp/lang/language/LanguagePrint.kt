@@ -37,7 +37,7 @@ fun getClauseAndInfoStr(wordSequence: WordSequence): String {
 fun lineUp(ss: List<String>): List<String> {
     val max = ss
         .map { it.length }
-        .max()
+        .maxOrNull()
         ?: throw GeneratorException("Cannot line up list of strings, because it's empty")
     return ss.map { it + " ".repeat(max - it.length) }
 }
