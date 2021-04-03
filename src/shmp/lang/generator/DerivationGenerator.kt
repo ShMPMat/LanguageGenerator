@@ -104,8 +104,7 @@ class DerivationGenerator(
                             changeGenerator.lexisGenerator.restrictionsParadigm.restrictionsMapper.getValue(speechPart)
                                 .copy(avgWordLength = 1),
                             SyllablePosition.Middle
-                        ),
-                        random
+                        )
                     ).phonemeSequence,
                     changer,
                     prosodyRule

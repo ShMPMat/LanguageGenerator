@@ -189,8 +189,7 @@ class LexisGenerator(
                         restrictionsParadigm.restrictionsMapper.getValue(core.speechPart),
                         syllablePosition,
                         prefix = syllables
-                    ),
-                    random
+                    )
                 )
                 if (checkSyllable(syllable, syllables))
                     break

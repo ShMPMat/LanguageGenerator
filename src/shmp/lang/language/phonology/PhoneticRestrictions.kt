@@ -3,7 +3,7 @@ package shmp.lang.language.phonology
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.TypedSpeechPart
 
-class RestrictionsParadigm(val restrictionsMapper: Map<TypedSpeechPart, PhoneticRestrictions>) {
+class RestrictionsParadigm(val restrictionsMapper: MutableMap<TypedSpeechPart, PhoneticRestrictions>) {
     fun getSpeechParts(speechPart: SpeechPart) = restrictionsMapper
         .keys.filter { it.type == speechPart }
 }

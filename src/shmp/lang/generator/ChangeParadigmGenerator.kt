@@ -1,6 +1,5 @@
 package shmp.lang.generator
 
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.definitenessName
@@ -8,12 +7,14 @@ import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.category.realization.WordCategoryApplicator
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
+import kotlin.math.max
 import kotlin.random.Random
 
 
@@ -42,6 +43,7 @@ class ChangeParadigmGenerator(
         while (speechParts.isNotEmpty()) {
             oldSpeechParts.addAll(speechParts)
             speechParts.map { speechPart ->
+                val restrictions = restrictionsParadigm.restrictionsMapper.getValue(speechPart)
                 val speechPartCategoriesAndSupply = categoriesWithMappers
                     .filter { it.first.speechParts.contains(speechPart.type) }
                     .filter { it.first.actualValues.isNotEmpty() }
@@ -53,7 +55,7 @@ class ChangeParadigmGenerator(
                 val (words, applicators) = speechPartApplicatorsGenerator
                     .randomApplicatorsForSpeechPart(
                         speechPart,
-                        restrictionsParadigm.restrictionsMapper.getValue(speechPart),
+                        restrictions,
                         speechPartCategoriesAndSupply
                     )
                 words.forEach {
@@ -62,11 +64,16 @@ class ChangeParadigmGenerator(
                 }
 
                 val orderedApplicators = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
-                speechPartChangesMap[speechPart] = SpeechPartChangeParadigm(
+                val changeParadigm = SpeechPartChangeParadigm(
                     speechPart,
                     orderedApplicators,
                     applicators,
                     ProsodyChangeParadigm(stressPattern)
+                )
+                speechPartChangesMap[speechPart] = changeParadigm
+
+                restrictionsParadigm.restrictionsMapper[speechPart] = restrictions.copy(
+                    avgWordLength = max(2, restrictions.avgWordLength - changeParadigm.exponenceClusters.size)
                 )
             }
             println(newSpeechParts)

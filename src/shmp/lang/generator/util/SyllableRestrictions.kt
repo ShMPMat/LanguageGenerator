@@ -9,8 +9,8 @@ data class SyllableRestrictions(
     val phoneticRestrictions: PhoneticRestrictions,
     val position: SyllablePosition,
     val prefix: List<Syllable> = listOf(),
-    var shouldHaveInitial: Boolean = false,
-    var shouldHaveFinal: Boolean = false
+    var hasInitial: Boolean? = null,
+    var hasFinal: Boolean? = null
     )
 
 enum class SyllablePosition{

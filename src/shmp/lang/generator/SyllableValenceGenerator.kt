@@ -7,9 +7,8 @@ import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.SyllableValenceTemplate
 import shmp.lang.language.phonology.ValencyPlace
-import shmp.random.randomElement
-import shmp.random.testProbability
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
@@ -17,32 +16,23 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
 
 //    private val syllableMapper = mutableMapOf<PhonemeContainer, List<Syllable>>()
 
-    fun generateSyllable(
-        restrictions: SyllableRestrictions,
-        random: Random
-    ): Syllable {
+    fun generateSyllable(restrictions: SyllableRestrictions): Syllable {
         for (i in 0 until ADD_TESTS) {
-            val syllable = generateOneSyllable(restrictions, random)
+            val syllable = generateOneSyllable(restrictions)
             if (syllable.size != 1 || restrictions.prefix.isEmpty() || syllable != restrictions.prefix.last())
-                if ((!restrictions.shouldHaveInitial || syllable[0].type == PhonemeType.Consonant)
-                    && restrictions.prefix
-                        .lastOrNull()
+                if (restrictions.prefix.lastOrNull()
                         ?.let { it.phonemeSequence.last().type != syllable.phonemeSequence[0].type } != false
                 )
-                //if (!shouldHaveFinal)
                     return syllable
         }
-        return generateOneSyllable(restrictions, random)
+        return generateOneSyllable(restrictions)
     }
 
-    private fun generateOneSyllable(
-        restrictions: SyllableRestrictions,
-        random: Random
-    ): Syllable {
+    private fun generateOneSyllable(restrictions: SyllableRestrictions): Syllable {
         var syllable = Syllable(listOf())
 
         for (i in 1..ADD_TESTS) {
-            val actualSyllable = chooseSyllableStructure(restrictions, random)
+            val actualSyllable = chooseSyllableStructure(restrictions)
 
             val onset = makeSyllablePart(
                 restrictions,
@@ -50,14 +40,12 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                     testPhoneme(lst, p) && (lst.isEmpty()
                             || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
                 },
-                actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel },
-                random
+                actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel }
             )
             val nucleus = makeSyllablePart(
                 restrictions,
                 this::testPhoneme,
-                listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel }),
-                random
+                listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel })
             )
             val coda = makeSyllablePart(
                 restrictions,
@@ -65,8 +53,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                     testPhoneme(lst, p) && (lst.isEmpty()
                             || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
                 },
-                actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel },
-                random
+                actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel }
             )
 
             syllable = Syllable(onset + nucleus + coda)
@@ -81,16 +68,13 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private fun makeSyllablePart(
         restrictions: SyllableRestrictions,
         checker: (List<Phoneme>, Phoneme) -> Boolean,
-        sequence: List<ValencyPlace>,
-        random: Random
+        sequence: List<ValencyPlace>
     ): List<Phoneme> {
         val phonemes = ArrayList<Phoneme>()
         for (valency in sequence) {
             for (i in 1..ADD_TESTS) {
-                val phoneme = randomElement(
-                    restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType),
-                    random
-                )
+                val phoneme = restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType)
+                    .randomElement()
                 if (i == ADD_TESTS)
                     phonemes.add(phoneme)
                 else if (checker(phonemes, phoneme)) {
@@ -102,26 +86,37 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         return phonemes
     }
 
-    private fun chooseSyllableStructure(
-        restrictions: SyllableRestrictions,
-        random: Random
-    ): List<ValencyPlace> {
-        val syllable = ArrayList<ValencyPlace>()
-        for (valency in template.valencies.take(template.nucleusIndex + 1).reversed())
-            if (testProbability(valency.realizationProbability, random))
-                syllable.add(valency)
-            else
-                break
+    private fun chooseSyllableStructure(restrictions: SyllableRestrictions): List<ValencyPlace> {
+        val syllable = mutableListOf(template.valencies[template.nucleusIndex])
+
+        val startValencies = if (restrictions.hasInitial == true) {
+            syllable.add(template.valencies[template.nucleusIndex - 1])
+
+            template.valencies.take(template.nucleusIndex - 1)
+        } else template.valencies.take(template.nucleusIndex)
+
+        if (restrictions.hasInitial != false)
+            for (valency in startValencies.reversed())
+                if (valency.realizationProbability.testProbability())
+                    syllable.add(valency)
+                else break
+
         syllable.reverse()
 
-        if (restrictions.position == SyllablePosition.End) {
+        val endValencies = if (restrictions.hasFinal == true) {
+            template.valencies.getOrNull(template.nucleusIndex + 1)?.let { syllable.add(it) }
+
+            template.valencies.drop(template.nucleusIndex + 2)
+        } else template.valencies.drop(template.nucleusIndex + 1)
+
+        if (restrictions.position == SyllablePosition.End && restrictions.hasFinal != false) {
             var shouldTest = true
             var lastType = template.valencies[template.nucleusIndex].phonemeType
-            for (valency in template.valencies.drop(template.nucleusIndex + 1)) {
+            for (valency in endValencies) {
                 shouldTest = shouldTest || lastType != valency.phonemeType
                 lastType = valency.phonemeType
                 if (shouldTest)
-                    if (testProbability(valency.realizationProbability, random))
+                    if (valency.realizationProbability.testProbability())
                         syllable.add(valency)
                     else
                         shouldTest = false

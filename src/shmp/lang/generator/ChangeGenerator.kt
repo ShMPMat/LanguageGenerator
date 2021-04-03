@@ -152,9 +152,8 @@ class ChangeGenerator(
             lexisGenerator.phonemeContainer,
             phoneticRestrictions,
             if (canHaveFinal) SyllablePosition.End else SyllablePosition.Middle,
-            shouldHaveInitial = shouldHaveFinal
-        ),
-        random
+            hasInitial = shouldHaveFinal
+        )
     ).phonemeSequence.phonemes
         .map { PhonemePositionSubstitution(it) }
 }
