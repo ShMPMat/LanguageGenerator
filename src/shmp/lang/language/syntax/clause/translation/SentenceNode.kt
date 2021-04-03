@@ -7,16 +7,16 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.clause.translation.CopulaSentenceType.*
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType.*
-import shmp.lang.language.syntax.arranger.Arranger
 
 
 class SentenceNode(
     val word: Word,
     categoryValues: List<CategoryValue>,
     var arranger: Arranger,
-    val typeForChildren: SyntaxRelation,
+    var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false

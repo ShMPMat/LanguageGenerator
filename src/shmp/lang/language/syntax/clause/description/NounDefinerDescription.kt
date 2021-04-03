@@ -5,6 +5,7 @@ import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.AdjectiveClause
 import shmp.lang.language.syntax.clause.realization.NounDefinerClause
+import shmp.lang.language.syntax.clause.realization.PossessorClause
 import shmp.lang.language.syntax.clause.realization.SyntaxClause
 import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
@@ -21,4 +22,9 @@ class AdjectiveDescription(val adjective: Meaning) : NounDefinerDescription() {
             AdjectiveClause(word)
         }
             ?: throw SyntaxException("No adjective '$adjective' in Language")
+}
+
+class PossessorDescription(val nominalDescription: NominalDescription) : NounDefinerDescription() {
+    override fun toClause(language: Language, context: Context, random: Random) =
+        PossessorClause(nominalDescription.toClause(language, context, random))
 }

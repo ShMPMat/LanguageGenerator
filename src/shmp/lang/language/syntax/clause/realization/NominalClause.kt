@@ -46,9 +46,9 @@ class NominalClause(
             )
 
         definitions
-            .map { it.toNode(language, random) }
+            .map { it.relationFromNoun to it.toNode(language, random) }
             .forEach {
-                node.addStrayChild(SyntaxRelation.Definition, it)
+                node.addStrayChild(it.first, it.second)
             }
 
         if (nominal.semanticsCore.hasMeaning("_personal_pronoun")) {

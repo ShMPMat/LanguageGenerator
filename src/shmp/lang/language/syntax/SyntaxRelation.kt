@@ -10,7 +10,10 @@ enum class SyntaxRelation {
     QuestionMarker,
 
     Nominal,
-    Definition
+    Definition,
+
+    Possessed,
+    Possessor
 }
 
 typealias SyntaxRelations = List<SyntaxRelation>

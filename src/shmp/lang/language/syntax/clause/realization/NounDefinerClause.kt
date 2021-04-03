@@ -9,7 +9,9 @@ import shmp.lang.language.syntax.arranger.PassingSingletonArranger
 import kotlin.random.Random
 
 
-abstract class NounDefinerClause : SyntaxClause
+abstract class NounDefinerClause : SyntaxClause {
+    abstract val relationFromNoun: SyntaxRelation
+}
 
 class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
     init {
@@ -17,10 +19,24 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
             throw SyntaxException("$adjective is not an adjective")
     }
 
+    override val relationFromNoun = SyntaxRelation.Definition
+
     override fun toNode(language: Language, random: Random) =
         adjective.wordToNode(
             language.changeParadigm,
             PassingSingletonArranger,
             SyntaxRelation.Definition
         )
+}
+
+class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause() {
+    override val relationFromNoun = SyntaxRelation.Possessor
+
+    override fun toNode(language: Language, random: Random) =
+        nominalClause.toNode(language, random).apply {
+            typeForChildren = SyntaxRelation.Possessed
+
+            if (word.semanticsCore.speechPart.type == SpeechPart.PersonalPronoun)
+                isDropped = true
+        }
 }

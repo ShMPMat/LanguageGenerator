@@ -34,7 +34,7 @@ class Visualizer(val language: Language) {
             "mother",
             listOf(
                 AdjectiveDescription("new"),
-                AdjectiveDescription("high")
+                PossessorDescription(NominalDescription("light", listOf(), ActorComplimentValue(AmountValue(1), null)))
             ),
             ActorComplimentValue(AmountValue(4), DeixisValue.Proximal)
         )
