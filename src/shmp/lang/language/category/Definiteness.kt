@@ -45,6 +45,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         SpeechPart.PersonalPronoun -> listOf()
         SpeechPart.DeixisPronoun -> listOf()
         SpeechPart.Particle -> listOf()
+        SpeechPart.Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

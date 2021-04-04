@@ -44,6 +44,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> listOf()
         DeixisPronoun -> listOf()
         Particle -> listOf()
+        Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

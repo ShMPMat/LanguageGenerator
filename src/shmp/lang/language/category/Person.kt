@@ -8,6 +8,7 @@ import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.PersonValue.*
 import shmp.lang.language.lexis.*
+import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -51,6 +52,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 200.0))
         DeixisPronoun -> listOf()
         Particle -> listOf()
+        Adposition -> listOf(SourceTemplate(RelationGranted(Subject), 2.0))
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

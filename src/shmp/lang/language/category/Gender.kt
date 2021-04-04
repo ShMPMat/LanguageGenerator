@@ -5,6 +5,7 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomSublist
@@ -20,7 +21,7 @@ class Gender(
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    values().toSet(),
+    GenderValue.values().toSet(),
     affected,
     genderName
 )
@@ -38,18 +39,19 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 100.0))
-        SpeechPart.Verb -> listOf(
+        Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Verb -> listOf(
             SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0),
             SourceTemplate(RelationGranted(SyntaxRelation.Object), 5.0)
         )
-        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
-        SpeechPart.Adverb -> listOf()
-        SpeechPart.Numeral -> listOf()
-        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
-        SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
-        SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
-        SpeechPart.Particle -> listOf()
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
+        Particle -> listOf()
+        Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 2.0))
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
@@ -57,11 +59,11 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
-            SpeechPart.PersonalPronoun -> setOf(//TODO no actual data
+            PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
                 RealizationBox(CategoryRealization.NewWord, 2.0)
             )
-            SpeechPart.DeixisPronoun -> setOf(//TODO no actual data
+            DeixisPronoun -> setOf(//TODO no actual data
                 RealizationBox(CategoryRealization.Suffix, 1.5),
                 RealizationBox(CategoryRealization.Prefix, 1.5)
             )
@@ -78,7 +80,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
             type.possibilities
     }
 
-    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
+    override fun randomStaticSpeechParts() = setOf(Noun)
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
@@ -92,15 +94,15 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
 
 enum class GenderValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(SemanticsCore("(female gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "FEM"),
-    Male(SemanticsCore("(male gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "MALE"),
-    Neutral(SemanticsCore("(neutral gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "NEUT"),
-    Common(SemanticsCore("(common gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "COMM"),
+    Female(SemanticsCore("(female gender ind)".toCluster(), Particle.toUnspecified()), "FEM"),
+    Male(SemanticsCore("(male gender ind)".toCluster(), Particle.toUnspecified()), "MALE"),
+    Neutral(SemanticsCore("(neutral gender ind)".toCluster(), Particle.toUnspecified()), "NEUT"),
+    Common(SemanticsCore("(common gender ind)".toCluster(), Particle.toUnspecified()), "COMM"),
 
-    Person(SemanticsCore("(person class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "PERS"),
-    Plant(SemanticsCore("(plant class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "PLANT"),
-    Fruit(SemanticsCore("(fruit class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "FRUIT"),
-    LongObject(SemanticsCore("(long object class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "LONG.OBJ");
+    Person(SemanticsCore("(person class ind)".toCluster(), Particle.toUnspecified()), "PERS"),
+    Plant(SemanticsCore("(plant class ind)".toCluster(), Particle.toUnspecified()), "PLANT"),
+    Fruit(SemanticsCore("(fruit class ind)".toCluster(), Particle.toUnspecified()), "FRUIT"),
+    LongObject(SemanticsCore("(long object class ind)".toCluster(), Particle.toUnspecified()), "LONG.OBJ");
 
     override val parentClassName = genderName
 }

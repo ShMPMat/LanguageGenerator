@@ -46,6 +46,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> listOf()
         Particle -> listOf()
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

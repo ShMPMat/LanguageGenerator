@@ -47,6 +47,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         SpeechPart.Particle -> listOf()
+        SpeechPart.Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

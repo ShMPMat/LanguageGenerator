@@ -50,6 +50,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
         Particle -> listOf()
+        Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 2.0))
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
