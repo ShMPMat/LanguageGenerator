@@ -1,98 +1,100 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.category.CaseValue.*
+import shmp.lang.language.category.CategorySource.*
+import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.syntax.SyntaxRelation
+import shmp.random.SampleSpaceObject
+import shmp.random.singleton.randomElement
 
 
 private const val outName = "Case"
 
-//class Gender(
-//    categories: List<GenderValue>,
-//    affected: Set<PSpeechPart>,
-//    override val staticSpeechParts: Set<SpeechPart>
-//) : AbstractChangeCategory(
-//    categories,
-//    values().toSet(),
-//    affected,
-//    outName
-//)
-//
-//object GenderRandomSupplements : CategoryRandomSupplements {
-//    override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-//        when (categoryRealization) {//TODO not actual data
-//            CategoryRealization.PrefixSeparateWord -> 10.0
-//            CategoryRealization.SuffixSeparateWord -> 10.0
-//            CategoryRealization.Prefix -> 100.0
-//            CategoryRealization.Suffix -> 100.0
-//            CategoryRealization.Reduplication -> 0.0
-//            CategoryRealization.Passing -> 0.0
-//            CategoryRealization.NewWord -> 0.0
-//        }
-//
-//    override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-//        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 100.0))
-//        SpeechPart.Verb -> listOf(
-//            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0),
-//            SourceTemplate(RelationGranted(SyntaxRelation.Object), 5.0)
-//        )
-//        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
-//        SpeechPart.Adverb -> listOf()
-//        SpeechPart.Numeral -> listOf()
-//        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
-//        SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
-//        SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
-//        SpeechPart.Particle -> listOf()
-//    }
-//
-//    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-//        val acceptableValues = values.filter { it.parentClassName == genderName }
-//        if (acceptableValues.size != 1) return emptyRealization
-//        val value = values.first()
-//        return when(speechPart) {
-//            SpeechPart.PersonalPronoun -> setOf(//TODO no actual data
-//                noValue(1.0),
-//                RealizationBox(CategoryRealization.NewWord, 2.0)
-//            )
-//            SpeechPart.DeixisPronoun -> setOf(//TODO no actual data
-//                RealizationBox(CategoryRealization.Suffix, 1.5),
-//                RealizationBox(CategoryRealization.Prefix, 1.5)
-//            )
-//            else -> emptyRealization
-//        }
-//    }
-//
-//    override fun randomRealization(): List<GenderValue> {
-//        val type = GenderPresence.values().randomElement()
-//
-//        return if (type == GenderPresence.NonGendered)
-//            randomSublist(type.possibilities, RandomSingleton.random, min = 2)
-//        else
-//            type.possibilities
-//    }
-//
-//    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
-//}
+class Case(
+    categories: List<CaseValue>,
+    affected: Set<PSpeechPart>,
+    override val staticSpeechParts: Set<SpeechPart>
+) : AbstractChangeCategory(
+    categories,
+    CaseValue.values().toSet(),
+    affected,
+    outName
+)
 
-//enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
-//    None(145.0, listOf()),
-//    FmcnGendered(6.0, listOf(Common, Female, Male, Neutral)),
-//    FmnGendered(26.0, listOf(Female, Male, Neutral)),
-//    CnGendered(26.0, listOf(Common, Neutral)),
-//    FmGendered(26.0, listOf(Female, Male)),
-//    NonGendered(28.0, GenderValue.values().toList())
-//}
+object CaseRandomSupplements : CategoryRandomSupplements {
+    override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
+        when (categoryRealization) {//TODO not actual data
+            CategoryRealization.PrefixSeparateWord -> 20.0
+            CategoryRealization.SuffixSeparateWord -> 20.0
+            CategoryRealization.Prefix -> 100.0
+            CategoryRealization.Suffix -> 100.0
+            CategoryRealization.Reduplication -> 0.0
+            CategoryRealization.Passing -> 0.0
+            CategoryRealization.NewWord -> 0.0
+        }
 
-//enum class CaseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-//    Nominal(
-//        SemanticsCore(
-//            MeaningCluster("(nominal case ind)"),
-//            SpeechPart.Adposition.toUnspecified()
-//        ),
-//        "NOM"
-//    );
-//
-//    override val parentClassName = outName
-//}
+    override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> listOf(SourceTemplate(SelfStated, 95.0))
+        Verb -> listOf()
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 80.0))
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 1.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
+        Adposition -> listOf()
+        Particle -> listOf()
+    }
+
+    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == genderName }
+        if (acceptableValues.size != 1) return emptyRealization
+        val value = values.first()
+        return when(speechPart) {
+            PersonalPronoun -> setOf(//TODO no actual data
+                noValue(1.0),
+                RealizationBox(CategoryRealization.NewWord, 2.0)
+            )
+            DeixisPronoun -> setOf(//TODO no actual data
+                RealizationBox(CategoryRealization.Suffix, 1.5),
+                RealizationBox(CategoryRealization.Prefix, 1.5)
+            )
+            else -> emptyRealization
+        }
+    }
+
+    override fun randomRealization(): List<CaseValue> {
+        val coreCases = CoreCasePresence.values().randomElement().possibilities
+
+        return coreCases
+    }
+
+    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
+}
+
+enum class CoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
+    None(145.0, listOf()),
+    NA(145.0, listOf(Nominative, Accusative)),
+    NAEA(145.0, listOf(Nominative, Accusative, Ergative, Absolutive)),
+    NAE(145.0, listOf(Nominative, Accusative, Ergative)),
+    AE(0.5, listOf(Ergative, Absolutive)),
+}
+
+enum class CaseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+    Nominative(SemanticsCore("(nominative case ind)".toCluster(), Adposition.toUnspecified()), "NOM"),
+    Accusative(SemanticsCore("(accusative case ind)".toCluster(), Adposition.toUnspecified()), "ACC"),
+    Ergative(SemanticsCore("(ergative case ind)".toCluster(), Adposition.toUnspecified()), "ERG"),
+    Absolutive(SemanticsCore("(absolutive case ind)".toCluster(), Adposition.toUnspecified()), "ABS"),
+
+    Oblique(SemanticsCore("(oblique case ind)".toCluster(), Adposition.toUnspecified()), "OBL"),
+
+    Genitive(SemanticsCore("(genitive case ind)".toCluster(), Adposition.toUnspecified()), "GEN"),
+    Dative(SemanticsCore("(dative case ind)".toCluster(), Adposition.toUnspecified()), "DAT"),
+    Instrumental(SemanticsCore("(instrumental case ind)".toCluster(), Adposition.toUnspecified()), "INS"),
+    Locative(SemanticsCore("(locative case ind)".toCluster(), Adposition.toUnspecified()), "LOC");
+
+    override val parentClassName = outName
+}
