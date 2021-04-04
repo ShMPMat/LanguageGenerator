@@ -2,11 +2,8 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -89,8 +86,8 @@ enum class AnimosityPresence(
 }
 
 enum class AnimosityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Animate(SemanticsCore(MeaningCluster("animate indicator"), SpeechPart.Particle.toUnspecified(), setOf()), "ANIM"),
-    Inanimate(SemanticsCore(MeaningCluster("inanimate indicator"), SpeechPart.Particle.toUnspecified(), setOf()), "INANIM");
+    Animate(SemanticsCore("animate indicator".toCluster(), SpeechPart.Particle.toUnspecified()), "ANIM"),
+    Inanimate(SemanticsCore("inanimate indicator".toCluster(), SpeechPart.Particle.toUnspecified()), "INANIM");
 
     override val parentClassName = animosityName
 }

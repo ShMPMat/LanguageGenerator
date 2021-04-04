@@ -2,12 +2,9 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.GenderValue.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.randomSublist
@@ -95,50 +92,15 @@ enum class GenderPresence(override val probability: Double, val possibilities: L
 
 enum class GenderValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(
-        SemanticsCore(
-            MeaningCluster("(female gender indicator)"),
-            SpeechPart.Particle.toUnspecified(),
-            setOf()
-        ),
-        "FEM"
-    ),
-    Male(SemanticsCore(MeaningCluster("(male gender indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "MALE"),
-    Neutral(
-        SemanticsCore(
-            MeaningCluster("(neutral gender indicator)"),
-            SpeechPart.Particle.toUnspecified(),
-            setOf()
-        ),
-        "NEUT"
-    ),
-    Common(
-        SemanticsCore(
-            MeaningCluster("(common gender indicator)"),
-            SpeechPart.Particle.toUnspecified(),
-            setOf()
-        ),
-        "COMM"
-    ),
+    Female(SemanticsCore("(female gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "FEM"),
+    Male(SemanticsCore("(male gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "MALE"),
+    Neutral(SemanticsCore("(neutral gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "NEUT"),
+    Common(SemanticsCore("(common gender ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "COMM"),
 
-    Person(
-        SemanticsCore(
-            MeaningCluster("(person class indicator)"),
-            SpeechPart.Particle.toUnspecified(),
-            setOf()
-        ),
-        "PERS"
-    ),
-    Plant(SemanticsCore(MeaningCluster("(plant class indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "PLANT"),
-    Fruit(SemanticsCore(MeaningCluster("(fruit class indicator)"), SpeechPart.Particle.toUnspecified(), setOf()), "FRUIT"),
-    LongObject(
-        SemanticsCore(
-            MeaningCluster("(long object class indicator)"),
-            SpeechPart.Particle.toUnspecified(),
-            setOf()
-        ),
-        "LONG.OBJ"
-    );
+    Person(SemanticsCore("(person class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "PERS"),
+    Plant(SemanticsCore("(plant class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "PLANT"),
+    Fruit(SemanticsCore("(fruit class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "FRUIT"),
+    LongObject(SemanticsCore("(long object class ind)".toCluster(), SpeechPart.Particle.toUnspecified()), "LONG.OBJ");
 
     override val parentClassName = genderName
 }

@@ -9,6 +9,7 @@ enum class SpeechPart {
     Numeral,
     Article,
     Particle,
+//    Adposition,
     PersonalPronoun,
     DeixisPronoun
 }

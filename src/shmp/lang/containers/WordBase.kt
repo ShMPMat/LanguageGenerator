@@ -100,11 +100,9 @@ fun getType(string: String) = when (string) {
     "G" -> genderName
     "A" -> animosityName
     "T" -> "transitivity"
-    else ->
-        if (string.length > 1)
-            string
-        else
-            throw DataConsistencyException("Unknown SemanticsTag type alias $string")
+    else -> if (string.length <= 1)
+        throw DataConsistencyException("Unknown SemanticsTag type alias $string")
+    else string
 }
 
 fun getInstantiationType(string: String) = when (string) {

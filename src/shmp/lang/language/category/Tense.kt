@@ -2,13 +2,10 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.TenseValue.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 
@@ -77,32 +74,17 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
     FourPast(1.0, listOf(Present, Past, YearPast, SomeDaysPast, DayPast)),
     FourPastFuture(1.0, listOf(Present, Past, YearPast, SomeDaysPast, DayPast, Future)),
     FivePast(1.0, listOf(Present, Past, YearPast, MonthPast, SomeDaysPast, DayPast)),
-    FivePastFuture(1.0, listOf(
-            Present,
-            Past,
-            YearPast,
-            MonthPast,
-            SomeDaysPast,
-            DayPast,
-            Future
-        )),
+    FivePastFuture(1.0, listOf(Present, Past, YearPast, MonthPast, SomeDaysPast, DayPast, Future)),
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Present(SemanticsCore(MeaningCluster("(present tense indicator)"), Particle.toUnspecified(), setOf()), "PRES"),
-    Future(SemanticsCore(MeaningCluster("(future tense indicator)"), Particle.toUnspecified(), setOf()), "FUT"),
-    Past(SemanticsCore(MeaningCluster("(past tense indicator)"), Particle.toUnspecified(), setOf()), "PST"),
-    DayPast(SemanticsCore(MeaningCluster("(day past tense indicator)"), Particle.toUnspecified(), setOf()), "DAY.PST"),
-    SomeDaysPast(
-        SemanticsCore(
-            MeaningCluster("(some days past tense indicator)"),
-            Particle.toUnspecified(),
-            setOf()
-        ),
-        "FEW.DAY.PST"
-    ),
-    MonthPast(SemanticsCore(MeaningCluster("(month past tense indicator)"), Particle.toUnspecified(), setOf()), "MTH.PST"),
-    YearPast(SemanticsCore(MeaningCluster("(year past tense indicator)"), Particle.toUnspecified(), setOf()), "YR.PST");
+    Present(SemanticsCore("(present tense indicator)".toCluster(), Particle.toUnspecified()), "PRES"),
+    Future(SemanticsCore("(future tense indicator)".toCluster(), Particle.toUnspecified()), "FUT"),
+    Past(SemanticsCore("(past tense indicator)".toCluster(), Particle.toUnspecified()), "PST"),
+    DayPast(SemanticsCore("(day past tense indicator)".toCluster(), Particle.toUnspecified()), "DAY.PST"),
+    SomeDaysPast(SemanticsCore("(some days past tense indicator)".toCluster(), Particle.toUnspecified()), "FEW.DAY.PST"),
+    MonthPast(SemanticsCore("(month past tense ind)".toCluster(), Particle.toUnspecified()), "MTH.PST"),
+    YearPast(SemanticsCore("(year past tense ind)".toCluster(), Particle.toUnspecified()), "YR.PST");
 
     override val parentClassName = outName
 }

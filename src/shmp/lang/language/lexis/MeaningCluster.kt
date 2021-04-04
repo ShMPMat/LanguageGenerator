@@ -20,6 +20,8 @@ data class MeaningCluster(val meanings: List<Meaning>) {
     override fun toString() = meanings.joinToString()
 }
 
+fun Meaning.toCluster() = MeaningCluster(this)
+
 
 // A Double in 0.0..1.0 range, representing
 // how similar are two meaning clusters

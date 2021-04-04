@@ -3,14 +3,11 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.PersonValue.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -82,9 +79,9 @@ enum class PersonPresence(override val probability: Double, val possibilities: L
 }
 
 enum class PersonValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    First(SemanticsCore(MeaningCluster("(first person indicator)"), Particle.toUnspecified(), setOf()), "1"),
-    Second(SemanticsCore(MeaningCluster("(second person indicator)"), Particle.toUnspecified(), setOf()), "2"),
-    Third(SemanticsCore(MeaningCluster("(third person indicator)"), Particle.toUnspecified(), setOf()), "3");
+    First(SemanticsCore("(first person ind)".toCluster(), Particle.toUnspecified()), "1"),
+    Second(SemanticsCore("(second person ind)".toCluster(), Particle.toUnspecified()), "2"),
+    Third(SemanticsCore("(third person ind)".toCluster(), Particle.toUnspecified()), "3");
 
     override val parentClassName = outName
 }

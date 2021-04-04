@@ -78,14 +78,11 @@ enum class DeixisPresence(
 }
 
 enum class DeixisValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Undefined(SemanticsCore(MeaningCluster("(undefined deixis ind)"), DeixisPronoun.toAdnominal(), setOf()), "UNDEF"),
-    Proximal(SemanticsCore(MeaningCluster("this"), DeixisPronoun.toAdnominal(), setOf()), "PROX"),
-    Medial(SemanticsCore(MeaningCluster("(medial deixis ind)"), DeixisPronoun.toAdnominal(), setOf()), "MED"),
-    Distant(SemanticsCore(MeaningCluster("that"), DeixisPronoun.toAdnominal(), setOf()), "DIST"),
-    ProximalAddressee(
-        SemanticsCore(MeaningCluster("this.addr"), DeixisPronoun.toAdnominal(), setOf()),
-        "PROX.ADDR"
-    );
+    Undefined(SemanticsCore("(undefined deixis ind)".toCluster(), DeixisPronoun.toAdnominal()), "UNDEF"),
+    Proximal(SemanticsCore("this".toCluster(), DeixisPronoun.toAdnominal()), "PROX"),
+    Medial(SemanticsCore("(medial deixis ind)".toCluster(), DeixisPronoun.toAdnominal()), "MED"),
+    Distant(SemanticsCore("that".toCluster(), DeixisPronoun.toAdnominal()), "DIST"),
+    ProximalAddressee(SemanticsCore("this.addr".toCluster(), DeixisPronoun.toAdnominal()), "PROX.ADDR");
     //TODO more values
 
     override val parentClassName = outName

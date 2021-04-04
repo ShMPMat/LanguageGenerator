@@ -3,13 +3,10 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.NumbersValue.*
-import shmp.lang.language.lexis.MeaningCluster
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -97,9 +94,9 @@ enum class NumbersPresence(
 }
 
 enum class NumbersValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Singular(SemanticsCore(MeaningCluster("(singular number indicator)"), Particle.toUnspecified(), setOf()), "SN"),//TODO more diversity
-    Dual(SemanticsCore(MeaningCluster("(dual number indicator)"), Particle.toUnspecified(), setOf()), "DL"),
-    Plural(SemanticsCore(MeaningCluster("(plural number indicator)"), Particle.toUnspecified(), setOf()), "PL");
+    Singular(SemanticsCore("(singular number indicator)".toCluster(), Particle.toUnspecified()), "SN"),//TODO more diversity
+    Dual(SemanticsCore("(dual number indicator)".toCluster(), Particle.toUnspecified()), "DL"),
+    Plural(SemanticsCore("(plural number indicator)".toCluster(), Particle.toUnspecified()), "PL");
 
     override val parentClassName = outName
 }
