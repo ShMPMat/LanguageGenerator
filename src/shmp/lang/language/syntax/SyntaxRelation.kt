@@ -1,8 +1,9 @@
 package shmp.lang.language.syntax
 
 enum class SyntaxRelation {
-    Subject,
-    Object,
+    Agent,
+    Patient,
+    Argument,
     SubjectCompliment,
     Verb,
 

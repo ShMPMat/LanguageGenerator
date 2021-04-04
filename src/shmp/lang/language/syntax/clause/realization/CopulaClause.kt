@@ -32,8 +32,8 @@ class VerbalCopulaClause(
         val obj = complement.toNode(language, random).addThirdPerson()
         val subj = subject.toNode(language, random).addThirdPerson()
 
-        node.setRelationChild(SyntaxRelation.Subject, subj)
-        node.setRelationChild(SyntaxRelation.Object, obj)
+        node.setRelationChild(SyntaxRelation.Agent, subj)
+        node.setRelationChild(SyntaxRelation.Patient, obj)
 
         return node
     }
@@ -44,7 +44,7 @@ class ParticleCopulaClause(
     val copula: Word,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(SyntaxRelation.Subject, CopulaType.Particle) {
+) : CopulaClause(SyntaxRelation.Agent, CopulaType.Particle) {
     init {
         if (copula.semanticsCore.speechPart.type != SpeechPart.Particle)
             throw SyntaxException("$copula is not a particle")
@@ -70,7 +70,7 @@ class ParticleCopulaClause(
 class NullCopulaClause(
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(SyntaxRelation.Subject, CopulaType.None) {
+) : CopulaClause(SyntaxRelation.Agent, CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
         val obj = complement.toNode(language, random).addThirdPerson()
         val subj = subject.toNode(language, random).addThirdPerson()

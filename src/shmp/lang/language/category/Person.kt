@@ -8,7 +8,6 @@ import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.PersonValue.*
 import shmp.lang.language.lexis.*
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -42,17 +41,17 @@ object PersonRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
         Verb -> listOf(
-            SourceTemplate(RelationGranted(Subject), 20.0),
-            SourceTemplate(RelationGranted(Object), 1.0)
+            SourceTemplate(RelationGranted(Agent), 20.0),
+            SourceTemplate(RelationGranted(Patient), 1.0)
         )//TODO not an actual data
-        Adjective -> listOf(SourceTemplate(RelationGranted(Subject), 20.0))//TODO not an actual data
+        Adjective -> listOf(SourceTemplate(RelationGranted(Agent), 20.0))//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 200.0))
         DeixisPronoun -> listOf()
         Particle -> listOf()
-        Adposition -> listOf(SourceTemplate(RelationGranted(Subject), 2.0))
+        Adposition -> listOf(SourceTemplate(RelationGranted(Agent), 2.0))
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

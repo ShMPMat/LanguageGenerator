@@ -66,12 +66,12 @@ enum class BasicSovOrder(
     override val references: List<GenericSSO<SyntaxRelations>>,
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
-    SOV(listOf(listOf(Subject, Object, Verb).toSampleSpaceObject(1.0)), 565.0),
-    SVO(listOf(listOf(Subject, Verb, Object).toSampleSpaceObject(1.0)), 488.0),
-    VSO(listOf(listOf(Verb, Subject, Object).toSampleSpaceObject(1.0)), 95.0),
-    VOS(listOf(listOf(Verb, Object, Subject).toSampleSpaceObject(1.0)), 25.0),
-    OVS(listOf(listOf(Object, Verb, Subject).toSampleSpaceObject(1.0)), 11.0),
-    OSV(listOf(listOf(Object, Subject, Verb).toSampleSpaceObject(1.0)), 4.0),
+    SOV(listOf(listOf(Agent, Patient, Verb).toSampleSpaceObject(1.0)), 565.0),
+    SVO(listOf(listOf(Agent, Verb, Patient).toSampleSpaceObject(1.0)), 488.0),
+    VSO(listOf(listOf(Verb, Agent, Patient).toSampleSpaceObject(1.0)), 95.0),
+    VOS(listOf(listOf(Verb, Patient, Agent).toSampleSpaceObject(1.0)), 25.0),
+    OVS(listOf(listOf(Patient, Verb, Agent).toSampleSpaceObject(1.0)), 11.0),
+    OSV(listOf(listOf(Patient, Agent, Verb).toSampleSpaceObject(1.0)), 4.0),
     Two(listOf(), 67.0),
     None(listOf(SOV, SVO, VSO, VOS, OVS, OSV).flatMap { it.references }, 122.0)
 }
@@ -81,11 +81,11 @@ enum class NominalGroupOrder(
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
     //TODO no data on that
-    DNP(listOf(listOf(Definition, Subject, Possessor).toSampleSpaceObject(1.0)), 10.0),
-    NDP(listOf(listOf(Subject, Definition, Possessor).toSampleSpaceObject(1.0)), 100.0),
-    DPN(listOf(listOf(Definition, Possessor, Subject).toSampleSpaceObject(1.0)), 100.0),
-    NPD(listOf(listOf(Subject, Possessor, Definition).toSampleSpaceObject(1.0)), 100.0),
-    PDN(listOf(listOf(Possessor, Definition, Subject).toSampleSpaceObject(1.0)), 100.0),
-    PND(listOf(listOf(Possessor, Subject, Definition).toSampleSpaceObject(1.0)), 10.0),
+    DNP(listOf(listOf(Definition, Agent, Possessor).toSampleSpaceObject(1.0)), 10.0),
+    NDP(listOf(listOf(Agent, Definition, Possessor).toSampleSpaceObject(1.0)), 100.0),
+    DPN(listOf(listOf(Definition, Possessor, Agent).toSampleSpaceObject(1.0)), 100.0),
+    NPD(listOf(listOf(Agent, Possessor, Definition).toSampleSpaceObject(1.0)), 100.0),
+    PDN(listOf(listOf(Possessor, Definition, Agent).toSampleSpaceObject(1.0)), 100.0),
+    PND(listOf(listOf(Possessor, Agent, Definition).toSampleSpaceObject(1.0)), 10.0),
     None(listOf(DNP, NDP, DPN, NPD, PDN, PND).flatMap { it.references }, 10.0)
 }

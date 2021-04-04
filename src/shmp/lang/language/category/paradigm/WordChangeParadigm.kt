@@ -28,7 +28,6 @@ class WordChangeParadigm(
             ?.handleNewWsWords()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
-    var cnt = 0
     private fun Pair<WordSequence, Int>.handleNewWsWords(): Pair<WordSequence, Int> {
         val (ws, i) = this
 
@@ -36,19 +35,14 @@ class WordChangeParadigm(
             if (i == j || w.semanticsCore.speechPart.type == SpeechPart.Particle)
                 listOf(w)
             else {
-                if (cnt > 5) {
-                    val n = 0
-                }
-                cnt++
                 apply(
                     w,
                     ws[i].categoryValues.map {
-                        SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Subject))
+                        SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent))
                     }
                 ).words
             }
         }
-        cnt = 0
         return WordSequence(newWs) to i
     }
 

@@ -2,6 +2,7 @@ package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.Language
+import shmp.lang.language.category.CaseValue
 import shmp.lang.language.category.CategorySource
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.lexis.Word
@@ -30,14 +31,20 @@ internal fun Word.wordToNode(
     val classNames = presetCategories
         .map { it.parentClassName }
 
+    val selfStatedAbsentValues = changeParadigm.wordChangeParadigm
+        .getDefaultState(this)
+        .filter { it.source == CategorySource.SelfStated }
+        .map { it.categoryValue }
+        .filter { it.parentClassName !in classNames }//TODO a crutch; make categories compulsory and otherwise
+//        .filter { it !is CaseValue }
+
+    if (selfStatedAbsentValues.isNotEmpty()) {
+        val k = 0
+    }
+
     return SentenceNode(
         this,
-        changeParadigm.wordChangeParadigm
-            .getDefaultState(this)
-            .filter { it.source == CategorySource.SelfStated }
-            .map { it.categoryValue }
-            .filter { it.parentClassName !in classNames }
-                + presetCategories,
+        selfStatedAbsentValues + presetCategories,
         arranger,
         generalType
     )

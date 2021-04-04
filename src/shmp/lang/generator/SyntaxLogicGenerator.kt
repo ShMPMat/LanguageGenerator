@@ -7,6 +7,7 @@ import shmp.lang.language.category.*
 import shmp.lang.language.category.GenderValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.PersonalPronounDropSolver
 import shmp.lang.language.syntax.SyntaxLogic
@@ -24,6 +25,7 @@ import shmp.random.singleton.randomElementOrNull
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
     fun generateSyntaxLogic() = SyntaxLogic(
         generateVerbFormSolver(),
+        generateVerbCaseSolver(),
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
@@ -47,6 +49,40 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
                 }
 
         return verbFormSolver
+    }
+
+    private fun generateVerbCaseSolver(): Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation/*TODO depend on speech part too*/>, CategoryValues> {
+        val result: MutableMap<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mutableMapOf()
+        //TODO handle split
+        val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
+        val cases = changeParadigm.categories.filterIsInstance<Case>().first().actualValues
+
+
+        for (verbTypeParadigm in verbParadigms) {
+            val verbType = verbTypeParadigm.speechPart
+            val times = verbTypeParadigm.categories
+                .firstOrNull { it.category is Tense }
+                ?.category?.actualValues
+                ?.map { setOf(it) }
+                ?: listOf(setOf())
+
+            for (time in times)
+                if (CaseValue.Nominative in cases && CaseValue.Accusative in cases) {
+                    result[verbType to time to SyntaxRelation.Agent] = listOf(CaseValue.Nominative)
+                    result[verbType to time to SyntaxRelation.Argument] = listOf(CaseValue.Nominative)
+                    result[verbType to time to SyntaxRelation.Patient] = listOf(CaseValue.Accusative)
+                } else if (CaseValue.Ergative in cases && CaseValue.Absolutive in cases) {
+                    result[verbType to time to SyntaxRelation.Agent] = listOf(CaseValue.Ergative)
+                    result[verbType to time to SyntaxRelation.Argument] = listOf(CaseValue.Absolutive)
+                    result[verbType to time to SyntaxRelation.Patient] = listOf(CaseValue.Absolutive)
+                } else {
+                    result[verbType to time to SyntaxRelation.Agent] = listOf()
+                    result[verbType to time to SyntaxRelation.Argument] = listOf()
+                    result[verbType to time to SyntaxRelation.Patient] = listOf()
+                }
+        }
+
+        return result
     }
 
     private fun generateNumberCategorySolver() = changeParadigm.categories
@@ -151,15 +187,17 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
         }
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
-        val verbalCategories = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb).first().categories//TODO bullshit decision
-        val pronounCategories = changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).categories
+        val verbalCategories =
+            changeParadigm.getSpeechPartParadigms(SpeechPart.Verb).first().categories//TODO bullshit decision
+        val pronounCategories =
+            changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).categories
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 
         for (actor in ActorType.values()) {
             val source = when (actor) {
-                Agent -> CategorySource.RelationGranted(SyntaxRelation.Subject)
-                Patient -> CategorySource.RelationGranted(SyntaxRelation.Object)
+                Agent -> CategorySource.RelationGranted(SyntaxRelation.Agent)
+                Patient -> CategorySource.RelationGranted(SyntaxRelation.Patient)
             }
 
             val relevantCategories = verbalCategories.filter { it.source == source }

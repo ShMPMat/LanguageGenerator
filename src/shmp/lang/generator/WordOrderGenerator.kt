@@ -5,7 +5,6 @@ import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.arranger.RelationArranger
 import shmp.lang.language.syntax.clause.translation.*
 import shmp.lang.language.syntax.features.CopulaType
-import shmp.lang.language.syntax.features.QuestionMarker
 import shmp.random.GenericSSO
 import shmp.random.randomSublist
 import shmp.random.singleton.RandomSingleton
@@ -51,7 +50,7 @@ class WordOrderGenerator(val random: Random) {
                             .map {
                                 when (it) {
                                     SyntaxRelation.Verb -> SyntaxRelation.CopulaParticle
-                                    SyntaxRelation.Object -> SyntaxRelation.SubjectCompliment
+                                    SyntaxRelation.Patient -> SyntaxRelation.SubjectCompliment
                                     else -> it
                                 }
                             }
@@ -59,7 +58,7 @@ class WordOrderGenerator(val random: Random) {
                             RelationArranger(NestedOrder(
                                 StaticOrder(externalOrder),
                                 nominalGroupOrder,
-                                SyntaxRelation.Subject
+                                SyntaxRelation.Agent
                             ))
                     }
                 }
@@ -73,7 +72,7 @@ class WordOrderGenerator(val random: Random) {
                             RelationArranger(NestedOrder(
                                 StaticOrder(externalOrder),
                                 nominalGroupOrder,
-                                SyntaxRelation.Subject
+                                SyntaxRelation.Agent
                             ))
                     }
                 }
@@ -95,7 +94,7 @@ class WordOrderGenerator(val random: Random) {
         return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst ->
             if (swapObject)
             lst.map { r ->
-                if (r == SyntaxRelation.Object)
+                if (r == SyntaxRelation.Patient)
                     SyntaxRelation.SubjectCompliment
                 else r
             }

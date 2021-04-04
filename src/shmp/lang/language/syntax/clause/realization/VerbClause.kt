@@ -1,9 +1,10 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
+import shmp.lang.language.category.CaseValue
+import shmp.lang.language.category.TenseValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
-import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
@@ -27,11 +28,28 @@ class TransitiveVerbClause(
         val changeParadigm = language.changeParadigm
 
         val node = verb.wordToNode(changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
-        val obj = objectClause.toNode(language, random).addThirdPerson()
-        val subj = subjectClause.toNode(language, random).addThirdPerson()
+        val agent = subjectClause.toNode(language, random).addThirdPerson()
+        val patient = objectClause.toNode(language, random).addThirdPerson()
 
-        node.setRelationChild(SyntaxRelation.Subject, subj)
-        node.setRelationChild(SyntaxRelation.Object, obj)
+        val caseRelevantCategories = verb.categoryValues
+            .map { it.categoryValue }
+            .filterIsInstance<TenseValue>()
+            .toSet()
+        agent.categoryValues.removeIf { it is CaseValue }
+        agent.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
+            verb.semanticsCore.speechPart,
+            SyntaxRelation.Agent,
+            caseRelevantCategories
+        ))
+        patient.categoryValues.removeIf { it is CaseValue }
+        patient.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
+            verb.semanticsCore.speechPart,
+            SyntaxRelation.Patient,
+            caseRelevantCategories
+        ))
+
+        node.setRelationChild(SyntaxRelation.Agent, agent)
+        node.setRelationChild(SyntaxRelation.Patient, patient)
 
         return node
     }

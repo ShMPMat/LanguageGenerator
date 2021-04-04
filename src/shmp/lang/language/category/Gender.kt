@@ -41,17 +41,17 @@ object GenderRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 100.0))
         Verb -> listOf(
-            SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0),
-            SourceTemplate(RelationGranted(SyntaxRelation.Object), 5.0)
+            SourceTemplate(RelationGranted(SyntaxRelation.Agent), 95.0),
+            SourceTemplate(RelationGranted(SyntaxRelation.Patient), 5.0)
         )
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 95.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 95.0))
         Adverb -> listOf()
         Numeral -> listOf()
-        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 90.0))
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 90.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
         Particle -> listOf()
-        Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Subject), 2.0))
+        Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 2.0))
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {

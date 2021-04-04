@@ -15,6 +15,7 @@ import kotlin.math.abs
 
 class SyntaxLogic(
     val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
+    val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
     val deixisCategorySolver: Map<DeixisValue?, CategoryValues>,
@@ -63,12 +64,11 @@ class SyntaxLogic(
                         && cs.size == categories.size
             }
 
+    fun resolveVerbCase(verbType: TypedSpeechPart, syntaxRelation: SyntaxRelation, categories: Set<CategoryValue>) : CategoryValues {
+        return verbCasesSolver.getValue(verbType to categories to syntaxRelation)
+    }
 
-    fun resolveVerbForm(
-        language: Language,
-        verbType: TypedSpeechPart,
-        context: Context
-    ): SourcedCategoryValues {
+    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
         verbFormSolver[verbType to timeValue]?.let { categories ->
@@ -105,6 +105,12 @@ class SyntaxLogic(
         |${
         verbFormSolver.entries.joinToString("\n") { (context, categoties) ->
             "For $context the following form is used: " + categoties.joinToString(", ")
+        }
+    }
+        |
+        |${
+        verbCasesSolver.entries.joinToString("\n") { (context, categoties) ->
+            "For $context the following cases are used: " + categoties.joinToString(", ")
         }
     }
         |

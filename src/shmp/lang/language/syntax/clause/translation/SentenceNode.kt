@@ -22,7 +22,7 @@ class SentenceNode(
     var isDropped: Boolean = false
 ) {
     private val _categoryValues = categoryValues.toMutableList()
-    val categoryValues: List<CategoryValue>
+    val categoryValues: MutableList<CategoryValue>
         get() = _categoryValues
 
     val children: List<SentenceNodeChild>
