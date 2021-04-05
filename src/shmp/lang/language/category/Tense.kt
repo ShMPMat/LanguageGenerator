@@ -8,6 +8,7 @@ import shmp.lang.language.category.TenseValue.*
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 private const val outName = "Tense"
 
@@ -61,6 +62,12 @@ object TenseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization() = TensePresence.values().randomElement().possibilities
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Verb -> true
+        Adjective -> 0.5.testProbability()
+        else -> true
+    }
 }
 
 enum class TensePresence(override val probability: Double, val possibilities: List<TenseValue>) : SampleSpaceObject {

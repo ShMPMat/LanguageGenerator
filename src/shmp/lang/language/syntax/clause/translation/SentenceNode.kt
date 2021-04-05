@@ -49,13 +49,18 @@ class SentenceNode(
     }
 
     fun extractValues(references: List<SourcedCategory>) =
-        references.map { (category, source) ->
+        references.mapNotNull { (category, source, isCompulsory) ->
             val res = when (source) {
                 is CategorySource.SelfStated -> categoryValues
                 is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
-                ?: throw SyntaxException("No value for ${category.outType} and source $source")
+                ?: run {
+                    if (isCompulsory)
+                        throw SyntaxException("No value for compulsory category ${category.outType} and source $source")
+                    else
+                        return@mapNotNull null
+                }
             SourcedCategoryValue(res, source)
         }
 }
@@ -63,13 +68,13 @@ class SentenceNode(
 
 interface SentenceType
 
-enum class VerbSentenceType: SentenceType {
+enum class VerbSentenceType : SentenceType {
     MainVerbClause,
     SubordinateVerbClause,
     QuestionVerbClause
 }
 
-enum class CopulaSentenceType: SentenceType {
+enum class CopulaSentenceType : SentenceType {
     MainCopulaClause,
     SubordinateCopulaClause,
     QuestionCopulaClause

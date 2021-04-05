@@ -11,6 +11,7 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 private const val outName = "Person"
@@ -73,6 +74,14 @@ object PersonRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization() = PersonPresence.values().randomElement().possibilities
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Verb -> 0.95.testProbability()
+        Adjective -> 0.9.testProbability()
+        PersonalPronoun -> true
+        Adposition -> 0.7.testProbability()
+        else -> true
+    }
 }
 
 enum class PersonPresence(override val probability: Double, val possibilities: List<PersonValue>) : SampleSpaceObject {

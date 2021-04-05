@@ -10,6 +10,7 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 private const val outName = "Numbers"
@@ -83,6 +84,17 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization() = NumbersPresence.values().randomElement().possibilities
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> 0.95.testProbability()
+        Verb -> 0.95.testProbability()
+        Adjective -> 0.9.testProbability()
+        Article -> 0.9.testProbability()
+        PersonalPronoun -> 0.9.testProbability()
+        DeixisPronoun -> 0.9.testProbability()
+        Adposition -> 0.7.testProbability()
+        else -> true
+    }
 }
 
 enum class NumbersPresence(

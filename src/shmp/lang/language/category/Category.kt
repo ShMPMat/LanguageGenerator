@@ -23,6 +23,7 @@ interface CategoryRandomSupplements {
     fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
     fun randomRealization(): List<CategoryValue>
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
+    fun randomIsCompulsory(speechPart: SpeechPart): Boolean
 }
 
 data class RealizationBox(

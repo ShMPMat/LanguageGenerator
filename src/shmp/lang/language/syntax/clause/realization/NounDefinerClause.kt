@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
+import shmp.lang.language.category.Case
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
@@ -23,7 +24,6 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause() {
 
     override fun toNode(language: Language, random: Random) =
         adjective.wordToNode(
-            language.changeParadigm,
             PassingSingletonArranger,
             SyntaxRelation.Definition
         )
@@ -38,5 +38,13 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause() {
 
             if (word.semanticsCore.speechPart.type == SpeechPart.PersonalPronoun)
                 isDropped = true
+
+            language.changeParadigm.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).categories
+                .firstOrNull { it.category is Case }
+                ?.actualSourcedValues
+                ?.firstOrNull()
+                ?.let {
+                    categoryValues.add(it.categoryValue)
+                }
         }
 }

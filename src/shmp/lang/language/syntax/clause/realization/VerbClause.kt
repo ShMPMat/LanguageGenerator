@@ -27,7 +27,7 @@ class TransitiveVerbClause(
     override fun toNode(language: Language, random: Random): SentenceNode {
         val changeParadigm = language.changeParadigm
 
-        val node = verb.wordToNode(changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
+        val node = verb.wordToNode(UndefinedArranger, SyntaxRelation.Verb)
         val agent = subjectClause.toNode(language, random).addThirdPerson()
         val patient = objectClause.toNode(language, random).addThirdPerson()
 

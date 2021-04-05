@@ -4,9 +4,11 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 const val animosityName = "Animosity"
@@ -35,19 +37,19 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 200.0))//TODO no data at all
-        SpeechPart.Verb -> listOf(
+        Noun -> listOf(SourceTemplate(SelfStated, 200.0))//TODO no data at all
+        Verb -> listOf(
             SourceTemplate(RelationGranted(SyntaxRelation.Agent), 20.0),
             SourceTemplate(RelationGranted(SyntaxRelation.Patient), 1.0)
         )
-        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 20.0))
-        SpeechPart.Adverb -> listOf()
-        SpeechPart.Numeral -> listOf()
-        SpeechPart.Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 10.0))
-        SpeechPart.PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
-        SpeechPart.DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
-        SpeechPart.Particle -> listOf()
-        SpeechPart.Adposition -> listOf()
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 20.0))
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 10.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
+        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
+        Particle -> listOf()
+        Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
@@ -60,11 +62,11 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
                 noValue(1.0)
             )
             else -> return when(speechPart) {
-                SpeechPart.PersonalPronoun -> setOf(//TODO no actual data
+                PersonalPronoun -> setOf(//TODO no actual data
                     noValue(1.0),
                     RealizationBox(CategoryRealization.NewWord, 2.0)
                 )
-                SpeechPart.DeixisPronoun -> setOf(//TODO no actual data
+                DeixisPronoun -> setOf(//TODO no actual data
                     RealizationBox(CategoryRealization.Suffix, 1.5),
                     RealizationBox(CategoryRealization.Prefix, 1.5)
                 )
@@ -75,7 +77,17 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
 
     override fun randomRealization() = AnimosityPresence.values().randomElement().possibilities
 
-    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
+    override fun randomStaticSpeechParts() = setOf(Noun)
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> true
+        Verb -> 0.8.testProbability()
+        Adjective -> 0.8.testProbability()
+        Article -> 0.7.testProbability()
+        PersonalPronoun -> 0.4.testProbability()
+        DeixisPronoun -> 0.4.testProbability()
+        else -> true
+    }
 }
 
 enum class AnimosityPresence(
@@ -87,8 +99,8 @@ enum class AnimosityPresence(
 }
 
 enum class AnimosityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Animate(SemanticsCore("animate indicator".toCluster(), SpeechPart.Particle.toUnspecified()), "ANIM"),
-    Inanimate(SemanticsCore("inanimate indicator".toCluster(), SpeechPart.Particle.toUnspecified()), "INANIM");
+    Animate(SemanticsCore("animate indicator".toCluster(), Particle.toUnspecified()), "ANIM"),
+    Inanimate(SemanticsCore("inanimate indicator".toCluster(), Particle.toUnspecified()), "INANIM");
 
     override val parentClassName = animosityName
 }

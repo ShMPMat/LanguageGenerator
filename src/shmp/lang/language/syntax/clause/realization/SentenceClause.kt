@@ -1,7 +1,6 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
-import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.CopulaWordOrder
 import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
 import shmp.lang.language.syntax.clause.translation.SentenceNode
@@ -30,7 +29,7 @@ class TransitiveVerbSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(language.changeParadigm, PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
@@ -52,7 +51,7 @@ class CopulaSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(language.changeParadigm, PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
             arranger =
                 language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))

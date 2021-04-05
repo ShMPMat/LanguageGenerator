@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
+import shmp.lang.language.category.Case
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
@@ -28,9 +29,9 @@ class VerbalCopulaClause(
 
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .wordToNode(language.changeParadigm, UndefinedArranger, SyntaxRelation.Verb)
-        val obj = complement.toNode(language, random).addThirdPerson()
-        val subj = subject.toNode(language, random).addThirdPerson()
+            .wordToNode(UndefinedArranger, SyntaxRelation.Verb)
+        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
+        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
 
         node.setRelationChild(SyntaxRelation.Agent, subj)
         node.setRelationChild(SyntaxRelation.Patient, obj)
@@ -51,10 +52,9 @@ class ParticleCopulaClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val obj = complement.toNode(language, random).addThirdPerson()
-        val subj = subject.toNode(language, random).addThirdPerson()
+        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
+        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
-            language.changeParadigm,
             PassingSingletonArranger,
             SyntaxRelation.CopulaParticle
         )
@@ -72,11 +72,23 @@ class NullCopulaClause(
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Agent, CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val obj = complement.toNode(language, random).addThirdPerson()
-        val subj = subject.toNode(language, random).addThirdPerson()
+        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
+        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
 
         subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 
         return subj
     }
+}
+
+private fun SentenceNode.crutch(language: Language): SentenceNode {
+    language.changeParadigm.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).categories
+        .firstOrNull { it.category is Case }
+        ?.actualSourcedValues
+        ?.firstOrNull()
+        ?.let {
+            insertCategoryValue(it.categoryValue)
+        }
+
+    return this
 }

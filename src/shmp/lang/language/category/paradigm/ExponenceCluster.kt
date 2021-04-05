@@ -70,13 +70,13 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
     }
 }
 
-data class SourcedCategory(val category: Category, val source: CategorySource) {
+data class SourcedCategory(val category: Category, val source: CategorySource, val isCompulsory: Boolean) {
     val allPossibleSourcedValues = category.allPossibleValues.map { SourcedCategoryValue(it, source) }
     val actualSourcedValues = category.actualValues.map { SourcedCategoryValue(it, source) }
 
     fun containsValue(value: SourcedCategoryValue) = allPossibleSourcedValues.contains(value)
 
-    override fun toString() = category.toString() + getSourceString(source)
+    override fun toString() = (if (isCompulsory) "Compulsory " else "Optional ") + category.toString() + getSourceString(source)
 }
 
 data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {

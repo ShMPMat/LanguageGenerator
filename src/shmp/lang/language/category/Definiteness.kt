@@ -5,9 +5,11 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.DefinitenessValue.*
 import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 const val definitenessName = "Definiteness"
@@ -18,7 +20,7 @@ class Definiteness(
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    values().toSet(),
+    DefinitenessValue.values().toSet(),
     affected,
     definitenessName
 )
@@ -36,20 +38,20 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        SpeechPart.Noun -> listOf(SourceTemplate(SelfStated, 500.0))
-        SpeechPart.Verb -> listOf()
-        SpeechPart.Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 100.0))
-        SpeechPart.Adverb -> listOf()
-        SpeechPart.Numeral -> listOf()
-        SpeechPart.Article -> listOf()
-        SpeechPart.PersonalPronoun -> listOf()
-        SpeechPart.DeixisPronoun -> listOf()
-        SpeechPart.Particle -> listOf()
-        SpeechPart.Adposition -> listOf()
+        Noun -> listOf(SourceTemplate(SelfStated, 500.0))
+        Verb -> listOf()
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 100.0))
+        Adverb -> listOf()
+        Numeral -> listOf()
+        Article -> listOf()
+        PersonalPronoun -> listOf()
+        DeixisPronoun -> listOf()
+        Particle -> listOf()
+        Adposition -> listOf()
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        if (speechPart == SpeechPart.Adjective)
+        if (speechPart == Adjective)
             return setOf(
                 RealizationBox(CategoryRealization.Prefix, 1.0),
                 RealizationBox(CategoryRealization.Suffix, 1.0)
@@ -59,12 +61,17 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
 
         return when(values.first()) {
-            None -> setOf(RealizationBox(CategoryRealization.Passing, 1.0))
             else -> emptyRealization
         }
     }
 
     override fun randomRealization() = DefinitenessPresence.values().randomElement().possibilities
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> 0.8.testProbability()
+        Adjective -> 0.7.testProbability()
+        else -> true
+    }
 }
 
 enum class DefinitenessPresence(
@@ -72,16 +79,15 @@ enum class DefinitenessPresence(
     val possibilities: List<DefinitenessValue>
 ) : SampleSpaceObject {
     NoDefiniteness(198.0, listOf()),
-    OnlyDefinite(98.0, listOf(None, Definite)),
-    OnlyIndefinite(45.0, listOf(None, Indefinite)),
-    DefiniteAndIndefinite(209.0, listOf(None, Definite, Indefinite))
+    OnlyDefinite(98.0, listOf(Definite)),
+    OnlyIndefinite(45.0, listOf(Indefinite)),
+    DefiniteAndIndefinite(209.0, listOf(Definite, Indefinite))
 }
 
 enum class DefinitenessValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
-    None(SemanticsCore("".toCluster(), SpeechPart.Article.toUnspecified()), "NONE"),
-    Definite(SemanticsCore("the".toCluster(), SpeechPart.Article.toUnspecified()), "DEF"),
-    Indefinite(SemanticsCore("a".toCluster(), SpeechPart.Article.toUnspecified()), "INDEF");
+    Definite(SemanticsCore("the".toCluster(), Article.toUnspecified()), "DEF"),
+    Indefinite(SemanticsCore("a".toCluster(), Article.toUnspecified()), "INDEF");
 
     override val parentClassName = definitenessName
 }

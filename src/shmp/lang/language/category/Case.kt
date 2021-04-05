@@ -9,6 +9,7 @@ import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 private const val outName = "Case"
@@ -72,7 +73,16 @@ object CaseRandomSupplements : CategoryRandomSupplements {
         return coreCases
     }
 
-    override fun randomStaticSpeechParts() = setOf(SpeechPart.Noun)
+    override fun randomStaticSpeechParts() = setOf(Noun)
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> true
+        Adjective -> 0.95.testProbability()
+        Article -> 0.9.testProbability()
+        PersonalPronoun -> 0.8.testProbability()
+        DeixisPronoun -> 0.8.testProbability()
+        else -> true
+    }
 }
 
 enum class CoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {

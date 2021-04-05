@@ -50,7 +50,7 @@ class ChangeParadigmGenerator(
                     .flatMap { (c, s) ->
                         c.affected
                             .filter { it.speechPart == speechPart.type }
-                            .map { SourcedCategory(c, it.source) to s }
+                            .map { SourcedCategory(c, it.source, s.randomIsCompulsory(speechPart.type)) to s }
                     }
                 val (words, applicators) = speechPartApplicatorsGenerator
                     .randomApplicatorsForSpeechPart(

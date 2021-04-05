@@ -9,6 +9,7 @@ import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 private const val outName = "Deixis"
@@ -65,6 +66,12 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization() = DeixisPresence.values().randomElement().possibilities
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> false
+        DeixisPronoun -> true
+        else -> true
+    }
 }
 
 enum class DeixisPresence(

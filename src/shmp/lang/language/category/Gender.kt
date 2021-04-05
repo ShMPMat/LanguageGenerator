@@ -11,6 +11,7 @@ import shmp.random.SampleSpaceObject
 import shmp.random.randomSublist
 import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 const val genderName = "Gender"
@@ -81,6 +82,17 @@ object GenderRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomStaticSpeechParts() = setOf(Noun)
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
+        Noun -> true
+        Verb -> 0.95.testProbability()
+        Adjective -> 0.9.testProbability()
+        Article -> 0.9.testProbability()
+        PersonalPronoun -> 0.8.testProbability()
+        DeixisPronoun -> 0.8.testProbability()
+        Adposition -> 0.6.testProbability()
+        else -> true
+    }
 }
 
 enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
