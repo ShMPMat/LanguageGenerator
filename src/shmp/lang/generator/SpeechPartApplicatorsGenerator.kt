@@ -16,6 +16,7 @@ import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.random.SampleSpaceObject
+import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.randomUnwrappedElement
 import shmp.random.singleton.testProbability
@@ -98,13 +99,21 @@ class SpeechPartApplicatorsGenerator(
     private fun splitCategoriesOnClusters(
         categories: List<Pair<SourcedCategory, CategoryRandomSupplements>>
     ): List<ExponenceTemplate> {
-        val shuffledCategories = categories.shuffled(random)
+        val shuffledCategories = categories.shuffled(RandomSingleton.random)
+            .let {
+                val nonCompulsory = it.filter { (c) -> !c.isCompulsory }
+                val compulsory = it.filter { (c) -> c.isCompulsory }
+                nonCompulsory + compulsory
+            }
         val clusters = ArrayList<ExponenceTemplate>()
         var l = 0
         val data = mutableListOf<List<RealizationMapper>>()
 
         while (l < shuffledCategories.size) {
-            val r = (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
+            val r = if (shuffledCategories[l].first.isCompulsory)
+                (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
+            else 1
+
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
 
