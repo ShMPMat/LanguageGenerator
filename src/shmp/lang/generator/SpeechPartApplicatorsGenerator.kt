@@ -112,7 +112,7 @@ class SpeechPartApplicatorsGenerator(
         while (l < shuffledCategories.size) {
             val r = if (shuffledCategories[l].first.isCompulsory)
                 (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
-            else 1
+            else l + 1
 
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
             val currentCategories = currentCategoriesWithSupplement.map { it.first }

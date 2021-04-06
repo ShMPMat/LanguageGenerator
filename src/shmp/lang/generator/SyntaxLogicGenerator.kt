@@ -91,6 +91,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         val result: MutableMap<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> =
             mutableMapOf()
         //TODO handle split
+        //TODO handle different nominals
         val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
         val cases = changeParadigm.categories.filterIsInstance<Case>().first().actualValues
 
