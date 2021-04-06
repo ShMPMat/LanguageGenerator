@@ -30,8 +30,24 @@ class VerbalCopulaClause(
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
             .wordToNode(UndefinedArranger, SyntaxRelation.Verb)
-        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
-        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
+        val obj = complement.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.Verb,
+                    SyntaxRelation.Agent,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
+        val subj = subject.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.Verb,
+                    SyntaxRelation.SubjectCompliment,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
 
         node.setRelationChild(SyntaxRelation.Agent, subj)
         node.setRelationChild(SyntaxRelation.Patient, obj)
@@ -52,8 +68,24 @@ class ParticleCopulaClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
-        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
+        val obj = complement.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.Particle,
+                    SyntaxRelation.Agent,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
+        val subj = subject.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.Particle,
+                    SyntaxRelation.SubjectCompliment,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
             PassingSingletonArranger,
             SyntaxRelation.CopulaParticle
@@ -72,23 +104,27 @@ class NullCopulaClause(
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Agent, CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val obj = complement.toNode(language, random).addThirdPerson().crutch(language)
-        val subj = subject.toNode(language, random).addThirdPerson().crutch(language)
+        val obj = complement.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.None,
+                    SyntaxRelation.SubjectCompliment,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
+        val subj = subject.toNode(language, random).addThirdPerson().apply {
+            insertCategoryValues(
+                language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                    CopulaType.None,
+                    SyntaxRelation.Agent,
+                    word.semanticsCore.speechPart
+                )
+            )
+        }
 
         subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 
         return subj
     }
-}
-
-private fun SentenceNode.crutch(language: Language): SentenceNode {
-    language.changeParadigm.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).categories
-        .firstOrNull { it.category is Case }
-        ?.actualSourcedValues
-        ?.firstOrNull()
-        ?.let {
-            insertCategoryValue(it.categoryValue)
-        }
-
-    return this
 }

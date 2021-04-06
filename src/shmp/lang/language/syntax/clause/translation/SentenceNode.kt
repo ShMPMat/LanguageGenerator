@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.translation
 
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
@@ -29,7 +30,11 @@ class SentenceNode(
         get() = _children
 
     fun insertCategoryValue(value: CategoryValue) {
-        _categoryValues += listOf(value)
+        _categoryValues.add(value)
+    }
+
+    fun insertCategoryValues(values: CategoryValues) {
+        _categoryValues.addAll(values)
     }
 
     fun setRelationChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {

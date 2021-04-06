@@ -9,28 +9,64 @@ import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
-import shmp.lang.language.syntax.PersonalPronounDropSolver
-import shmp.lang.language.syntax.SyntaxLogic
-import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.VerbContextInfo
+import shmp.lang.language.syntax.*
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.ActorType.*
 import shmp.lang.language.syntax.context.ContextValue
+import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.utils.listCartesianProduct
-import shmp.random.singleton.chanceOf
-import shmp.random.singleton.randomElement
-import shmp.random.singleton.randomElementOrNull
+import shmp.random.singleton.*
+import shmp.random.toSampleSpaceObject
 
 
-class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
+class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxParadigm: SyntaxParadigm) {
     fun generateSyntaxLogic() = SyntaxLogic(
         generateVerbFormSolver(),
         generateVerbCaseSolver(),
+        generateCopulaCasesSolver(),
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver()
     )
+
+    private fun generateCopulaCasesSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
+        val copulaCasesSolver: MutableMap<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
+            mutableMapOf()
+
+        val copulas = syntaxParadigm.copulaPresence.copulaType.map { it.feature }
+        val nominals = changeParadigm.getSpeechPartParadigms(SpeechPart.Noun) +
+                changeParadigm.getSpeechPartParadigms(SpeechPart.PersonalPronoun) +
+                changeParadigm.getSpeechPartParadigms(SpeechPart.DeixisPronoun)
+
+        for (speechPartParadigm in nominals) {
+            for (copula in copulas) {
+                copulaCasesSolver[copula to SyntaxRelation.Agent to speechPartParadigm.speechPart] = listOf(
+                    CaseValue.Nominative.toSampleSpaceObject(0.9),
+                    CaseValue.Absolutive.toSampleSpaceObject(0.9),
+                    CaseValue.Ergative.toSampleSpaceObject(0.1),
+                    CaseValue.Accusative.toSampleSpaceObject(0.1)
+                )
+                    .filter { it.value in speechPartParadigm.getCategoryValues<Case>() }
+                    .randomUnwrappedElementOrNull()
+                    ?.let { listOf(it) }
+                    ?: emptyList()
+
+                copulaCasesSolver[copula to SyntaxRelation.SubjectCompliment to speechPartParadigm.speechPart] = listOf(
+                    CaseValue.Nominative.toSampleSpaceObject(0.5),
+                    CaseValue.Absolutive.toSampleSpaceObject(0.5),
+                    CaseValue.Ergative.toSampleSpaceObject(0.5),
+                    CaseValue.Accusative.toSampleSpaceObject(0.5)
+                )
+                    .filter { it.value in speechPartParadigm.getCategoryValues<Case>() }
+                    .randomUnwrappedElementOrNull()
+                    ?.let { listOf(it) }
+                    ?: emptyList()
+            }
+        }
+
+        return copulaCasesSolver
+    }
 
     private fun generateVerbFormSolver(): MutableMap<VerbContextInfo, List<CategoryValue>> {
         val verbFormSolver: MutableMap<VerbContextInfo, List<CategoryValue>> = mutableMapOf()
@@ -52,7 +88,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm) {
     }
 
     private fun generateVerbCaseSolver(): Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation/*TODO depend on speech part too*/>, CategoryValues> {
-        val result: MutableMap<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mutableMapOf()
+        val result: MutableMap<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> =
+            mutableMapOf()
         //TODO handle split
         val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
         val cases = changeParadigm.categories.filterIsInstance<Case>().first().actualValues

@@ -1,5 +1,7 @@
 package shmp.lang.language.category.paradigm
 
+import shmp.lang.language.category.Category
+import shmp.lang.language.category.Deixis
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.lexis.TypedSpeechPart
@@ -13,6 +15,15 @@ class SpeechPartChangeParadigm(
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
+
+    inline fun <reified E: Category> getCategory() = categories
+        .first { it.category is E }
+
+    inline fun <reified E: Category> getCategoryValues() = categories
+        .firstOrNull { it.category is E }
+        ?.category
+        ?.actualValues
+        ?: emptyList()
 
     fun apply(word: Word, categoryValues: Set<SourcedCategoryValue>): Pair<WordSequence, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(

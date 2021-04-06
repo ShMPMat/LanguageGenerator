@@ -10,16 +10,18 @@ import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TimeContext
 import shmp.lang.language.syntax.context.Priority
+import shmp.lang.language.syntax.features.CopulaType
 import kotlin.math.abs
 
 
 class SyntaxLogic(
     val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
     val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
+    val copulaCasesSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
     val deixisCategorySolver: Map<DeixisValue?, CategoryValues>,
-    private val personalPronounDropSolver: PersonalPronounDropSolver
+    val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
     fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -68,6 +70,10 @@ class SyntaxLogic(
         return verbCasesSolver.getValue(verbType to categories to syntaxRelation)
     }
 
+    fun resolveCopulaCase(copulaType: CopulaType, syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart) : CategoryValues {
+        return copulaCasesSolver.getValue(copulaType to syntaxRelation to speechPart)
+    }
+
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
@@ -103,14 +109,14 @@ class SyntaxLogic(
         |Syntax:
         |
         |${
-        verbFormSolver.entries.joinToString("\n") { (context, categoties) ->
-            "For $context the following form is used: " + categoties.joinToString(", ")
+        verbFormSolver.entries.joinToString("\n") { (context, categories) ->
+            "For $context the following form is used: " + categories.joinToString(", ")
         }
     }
         |
         |${
-        verbCasesSolver.entries.joinToString("\n") { (context, categoties) ->
-            "For $context the following cases are used: " + categoties.joinToString(", ")
+        verbCasesSolver.entries.joinToString("\n") { (context, categories) ->
+            "For $context the following cases are used: " + categories.joinToString(", ")
         }
     }
         |
@@ -138,6 +144,11 @@ class SyntaxLogic(
         } + if (personalPronounDropSolver.isEmpty()) "none" else ""
     } 
         |
+        |${
+        copulaCasesSolver.entries.joinToString("\n") { (context, categories) ->
+            "For $context the following cases are used: " + categories.joinToString(", ")
+        }
+    }
     """.trimMargin()
 }
 
