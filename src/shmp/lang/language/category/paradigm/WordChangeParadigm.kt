@@ -49,7 +49,7 @@ class WordChangeParadigm(
     fun getDefaultState(word: Word): List<SourcedCategoryValue> =
         speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
             ?.flatMap { it.categories }
-            ?.filter { it.actualSourcedValues.isNotEmpty() }
+            ?.filter { it.actualSourcedValues.isNotEmpty() && it.isCompulsory }
             ?.map { it.actualSourcedValues[0] }//TODO another method for static categories swap
             ?.filter { v ->
                 word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }

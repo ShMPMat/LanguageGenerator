@@ -15,16 +15,19 @@ class ExponenceCluster(
 
     fun contains(exponenceValue: ExponenceValue) = possibleValues.contains(exponenceValue)
 
-    fun filterExponenceUnion(categoryValues: Set<SourcedCategoryValue>): ExponenceValue? =
-        try {
-            val neededValues = categoryValues.filter { v ->
-                categories.any { it.containsValue(v) }
-            }
+    fun filterExponenceUnion(categoryValues: Set<SourcedCategoryValue>): ExponenceValue? {
+        return try {
+            if (categoryValues.isEmpty())
+                return null
+
+            val neededValues = categoryValues
+                .filter { v -> categories.any { it.containsValue(v) } }
             possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) }
                 ?: throw LanguageException("No exponence cluster for $neededValues")
         } catch (e: LanguageException) {
             null
         }
+    }
 
     override fun toString() = categories.joinToString("\n")
 }
@@ -76,7 +79,8 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
 
     fun containsValue(value: SourcedCategoryValue) = allPossibleSourcedValues.contains(value)
 
-    override fun toString() = (if (isCompulsory) "Compulsory " else "Optional ") + category.toString() + getSourceString(source)
+    override fun toString() =
+        (if (isCompulsory) "Compulsory " else "Optional ") + category.toString() + getSourceString(source)
 }
 
 data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
