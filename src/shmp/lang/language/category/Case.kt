@@ -79,7 +79,7 @@ object CaseRandomSupplements : CategoryRandomSupplements {
             NonCoreCasePresence.All.possibilities
         }
 
-        return coreCases
+        return coreCases + nonCoreCases
     }
 
     override fun randomStaticSpeechParts() = setOf(Noun)
