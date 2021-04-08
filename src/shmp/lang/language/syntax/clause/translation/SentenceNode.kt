@@ -56,8 +56,8 @@ class SentenceNode(
     fun extractValues(references: List<SourcedCategory>) =
         references.mapNotNull { (category, source, isCompulsory) ->
             val res = when (source) {
-                is CategorySource.SelfStated -> categoryValues
-                is CategorySource.RelationGranted -> _relation[source.relation]?.categoryValues
+                is CategorySource.SelfStated -> categoryValues + word.semanticsCore.staticCategories
+                is CategorySource.RelationGranted -> _relation[source.relation]?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {

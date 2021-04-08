@@ -20,15 +20,15 @@ class SyntaxLogic(
     val copulaCasesSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val genderCategorySolver: Map<GenderValue, GenderValue>?,
-    val deixisCategorySolver: Map<DeixisValue?, CategoryValues>,
+    val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
     val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
-    fun resolvePronounCategories(actorValue: ContextValue.ActorValue): CategoryValues {
+    fun resolvePronounCategories(actorValue: ContextValue.ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount, deixis) = actorValue
 
         resultCategories.add(person)
-        resultCategories.addAll(deixisCategorySolver.getValue(deixis))
+        resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
         resultCategories.addNumber(amount)
 
         if (genderCategorySolver != null)
@@ -37,11 +37,11 @@ class SyntaxLogic(
         return resultCategories
     }
 
-    fun resolveComplimentCategories(actorCompliment: ContextValue.ActorComplimentValue): CategoryValues {
+    fun resolveComplimentCategories(actorCompliment: ContextValue.ActorComplimentValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (amount, deixis) = actorCompliment
 
-        resultCategories.addAll(deixisCategorySolver.getValue(deixis))
+        resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
         resultCategories.addNumber(amount)
 
         return resultCategories

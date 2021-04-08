@@ -19,8 +19,10 @@ class SpeechPartChangeParadigm(
     inline fun <reified E: Category> getCategory() = categories
         .first { it.category is E }
 
-    inline fun <reified E: Category> getCategoryValues() = categories
+    inline fun <reified E: Category> getCategoryOrNull() = categories
         .firstOrNull { it.category is E }
+
+    inline fun <reified E: Category> getCategoryValues() = getCategoryOrNull<E>()
         ?.category
         ?.actualValues
         ?: emptyList()

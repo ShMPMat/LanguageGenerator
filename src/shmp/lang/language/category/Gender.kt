@@ -76,7 +76,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         val type = GenderPresence.values().randomElement()
 
         return if (type == GenderPresence.NonGendered)
-            randomSublist(type.possibilities, RandomSingleton.random, min = 2)
+            randomSublist(type.possibilities, RandomSingleton.random, min = 4)
         else
             type.possibilities
     }

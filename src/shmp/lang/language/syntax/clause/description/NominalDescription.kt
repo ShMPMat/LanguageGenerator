@@ -2,6 +2,8 @@ package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
 import shmp.lang.language.syntax.context.ActorType
@@ -20,7 +22,7 @@ open class NominalDescription(
             NominalClause(
                 word,
                 definitions.map { it.toClause(language, context, random) },
-                language.changeParadigm.syntaxLogic.resolveComplimentCategories(actorCompliment),
+                language.changeParadigm.syntaxLogic.resolveComplimentCategories(actorCompliment, word.semanticsCore.speechPart),
                 null
             )
         }
@@ -41,7 +43,7 @@ class PronounDescription(
         return NominalClause(
             clause.nominal,
             clause.definitions,
-            language.changeParadigm.syntaxLogic.resolvePronounCategories(actor),
+            language.changeParadigm.syntaxLogic.resolvePronounCategories(actor, clause.nominal.semanticsCore.speechPart),
             actorType
         )
     }

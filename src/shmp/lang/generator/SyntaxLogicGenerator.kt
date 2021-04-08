@@ -180,49 +180,83 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             genderCategorySolver
         }
 
-    private fun generateDeixisCategorySolver(): Map<DeixisValue?, List<CategoryValue>> = changeParadigm.categories
-        .filterIsInstance<Deixis>()
-        .first()
-        .let { deixisCategory ->
-            val definitenessCategory = changeParadigm.categories
-                .filterIsInstance<Definiteness>()
-                .firstOrNull()
-            val indefiniteArticleWrapped = definitenessCategory?.actualValues
-                ?.firstOrNull { it == DefinitenessValue.Indefinite }
-                ?.let { listOf(it) }
-            val definiteArticleWrapped = definitenessCategory?.actualValues
-                ?.firstOrNull { it == DefinitenessValue.Definite }
-                ?.let { listOf(it) }
+    private fun generateDeixisCategorySolver(): Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> {
+        val deixisCategorySolver: MutableMap<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mutableMapOf()
 
-            val deixisCategorySolver = deixisCategory.actualValues.map {
+        for (speechPart in changeParadigm.speechParts) {
+            val deixisValues = changeParadigm.getSpeechPartParadigm(speechPart)
+                .getCategoryValues<Deixis>()
+            val definitenessValues = changeParadigm.getSpeechPartParadigm(speechPart)
+                .getCategoryValues<Definiteness>()
+
+
+            val indefiniteArticleWrapped = definitenessValues
+                .firstOrNull { it == DefinitenessValue.Indefinite }
+                ?.let { mutableSetOf(it) }
+            val definiteArticleWrapped = definitenessValues
+                .firstOrNull { it == DefinitenessValue.Definite }
+                ?.let { mutableSetOf(it) }
+
+            val naiveSolver = deixisValues.map {
                 it as DeixisValue
-                it to listOf(it)
-            }.toMap().toMutableMap<DeixisValue?, List<CategoryValue>>()
+                it to mutableSetOf<CategoryValue>(it)
+            }.toMap().toMutableMap<DeixisValue?, MutableSet<CategoryValue>>()
 
-            deixisCategorySolver[null] = listOf()
+            naiveSolver[null] = mutableSetOf()
 
-            val absentDeixis = deixisCategory.allPossibleValues
-                .filter { it !in deixisCategory.actualValues }
-                .map { it as DeixisValue }
+            if (deixisValues.isNotEmpty()) {
+                val absentDeixis = changeParadigm.getSpeechPartParadigm(speechPart)
+                    .getCategory<Deixis>()
+                    .category
+                    .allPossibleValues
+                    .filter { it !in deixisValues }
+                    .map { it as DeixisValue }
 
-            for (deixis in absentDeixis) deixisCategorySolver[deixis] = when (deixis) {
-                DeixisValue.Undefined -> indefiniteArticleWrapped
-                    ?: listOf()
-                DeixisValue.Proximal -> definiteArticleWrapped
-                    ?: listOf(DeixisValue.Undefined)
-                DeixisValue.Medial -> listOf(listOf(DeixisValue.Proximal), listOf(DeixisValue.Distant))
-                    .filter { it[0] in deixisCategory.actualValues }.randomElementOrNull()
-                    ?: definiteArticleWrapped
-                    ?: listOf(DeixisValue.Undefined)
-                DeixisValue.Distant -> definiteArticleWrapped ?: listOf(DeixisValue.Undefined)
-                DeixisValue.ProximalAddressee -> listOf(listOf(DeixisValue.Proximal), listOf(DeixisValue.Distant))
-                    .filter { it[0] in deixisCategory.actualValues }.randomElementOrNull()
-                    ?: definiteArticleWrapped
-                    ?: listOf(DeixisValue.Undefined)
+                for (deixis in absentDeixis) naiveSolver[deixis] = when (deixis) {
+                    DeixisValue.Undefined -> indefiniteArticleWrapped
+                        ?: mutableSetOf()
+                    DeixisValue.Proximal -> definiteArticleWrapped
+                        ?: mutableSetOf(DeixisValue.Undefined)
+                    DeixisValue.Medial -> listOf(
+                        mutableSetOf<CategoryValue>(DeixisValue.Proximal),
+                        mutableSetOf<CategoryValue>(DeixisValue.Distant)
+                    )
+                        .filter { it.first() in deixisValues }.randomElementOrNull()
+                        ?: definiteArticleWrapped
+                        ?: mutableSetOf(DeixisValue.Undefined)
+                    DeixisValue.Distant -> definiteArticleWrapped ?: mutableSetOf(DeixisValue.Undefined)
+                    DeixisValue.ProximalAddressee -> listOf(
+                        mutableSetOf<CategoryValue>(DeixisValue.Proximal),
+                        mutableSetOf<CategoryValue>(DeixisValue.Distant)
+                    )
+                        .filter { it.first() in deixisValues }.randomElementOrNull()
+                        ?: definiteArticleWrapped
+                        ?: mutableSetOf(DeixisValue.Undefined)
+                }
+
             }
 
-            deixisCategorySolver
+            val definitenessNecessity = changeParadigm.getSpeechPartParadigm(speechPart)
+                .getCategoryOrNull<Definiteness>()
+                ?.isCompulsory ?: false
+
+            if (definitenessNecessity)
+                for (deixis in DeixisValue.values().toList() + listOf<DeixisValue?>(null)) when (deixis) {
+                    null, DeixisValue.Undefined -> indefiniteArticleWrapped?.let {
+                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, mutableSetOf()) + it).toMutableSet()
+                    }
+                    else -> definiteArticleWrapped?.let {
+                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, mutableSetOf()) + it).toMutableSet()
+                    }
+                }
+
+            for ((t, u) in naiveSolver) {
+                deixisCategorySolver[t to speechPart] = u.toList()
+            }
         }
+
+        return deixisCategorySolver
+    }
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
         val verbalCategories =
