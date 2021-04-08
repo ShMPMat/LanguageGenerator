@@ -8,6 +8,7 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
+import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
@@ -70,6 +71,14 @@ object CaseRandomSupplements : CategoryRandomSupplements {
     override fun randomRealization(): List<CaseValue> {
         val coreCases = CoreCasePresence.values().randomElement().possibilities
 
+        val nonCoreCases = if (coreCases.isEmpty()) {
+            0.25.chanceOf<List<CaseValue>> {
+                NonCoreCasePresence.ObliqueOnly.possibilities
+            } ?: listOf()
+        } else {
+            NonCoreCasePresence.All.possibilities
+        }
+
         return coreCases
     }
 
@@ -83,6 +92,12 @@ object CaseRandomSupplements : CategoryRandomSupplements {
         DeixisPronoun -> 0.8.testProbability()
         else -> true
     }
+}
+
+
+enum class NonCoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
+    All(100.0, listOf(Genitive, Dative, Instrumental, Locative)),
+    ObliqueOnly(25.0, listOf(Oblique))
 }
 
 enum class CoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
