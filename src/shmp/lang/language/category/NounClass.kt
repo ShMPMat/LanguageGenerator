@@ -3,7 +3,7 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.category.GenderValue.*
+import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
@@ -14,20 +14,20 @@ import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val genderName = "Gender"
+const val nounClassName = "NounClass"
 
-class Gender(
-    categories: List<GenderValue>,
+class NounClass(
+    categories: List<NounClassValue>,
     affected: Set<PSpeechPart>,
     override val staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    GenderValue.values().toSet(),
+    NounClassValue.values().toSet(),
     affected,
-    genderName
+    nounClassName
 )
 
-object GenderRandomSupplements : CategoryRandomSupplements {
+object NounClassRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not actual data
             CategoryRealization.PrefixSeparateWord -> 10.0
@@ -56,7 +56,7 @@ object GenderRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == genderName }
+        val acceptableValues = values.filter { it.parentClassName == nounClassName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
@@ -72,10 +72,10 @@ object GenderRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization(): List<GenderValue> {
-        val type = GenderPresence.values().randomElement()
+    override fun randomRealization(): List<NounClassValue> {
+        val type = NounClassPresence.values().randomElement()
 
-        return if (type == GenderPresence.NonGendered)
+        return if (type == NounClassPresence.NonGendered)
             randomSublist(type.possibilities, RandomSingleton.random, min = 4)
         else
             type.possibilities
@@ -95,26 +95,26 @@ object GenderRandomSupplements : CategoryRandomSupplements {
     }
 }
 
-enum class GenderPresence(override val probability: Double, val possibilities: List<GenderValue>): SampleSpaceObject {
+enum class NounClassPresence(override val probability: Double, val possibilities: List<NounClassValue>): SampleSpaceObject {
     None(145.0, listOf()),
     FmcnGendered(6.0, listOf(Common, Female, Male, Neutral)),
     FmnGendered(26.0, listOf(Female, Male, Neutral)),
     CnGendered(26.0, listOf(Common, Neutral)),
     FmGendered(26.0, listOf(Female, Male)),
-    NonGendered(28.0, GenderValue.values().toList())
+    NonGendered(28.0, NounClassValue.values().toList())
 }
 
-enum class GenderValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class NounClassValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(SemanticsCore("(female gender ind)".toCluster(), Particle.toUnspecified()), "FEM"),
-    Male(SemanticsCore("(male gender ind)".toCluster(), Particle.toUnspecified()), "MALE"),
-    Neutral(SemanticsCore("(neutral gender ind)".toCluster(), Particle.toUnspecified()), "NEUT"),
-    Common(SemanticsCore("(common gender ind)".toCluster(), Particle.toUnspecified()), "COMM"),
+    Female(SemanticsCore("(female class ind)".toCluster(), Particle.toUnspecified()), "FEM"),
+    Male(SemanticsCore("(male class ind)".toCluster(), Particle.toUnspecified()), "MALE"),
+    Neutral(SemanticsCore("(neutral class ind)".toCluster(), Particle.toUnspecified()), "NEUT"),
+    Common(SemanticsCore("(common class ind)".toCluster(), Particle.toUnspecified()), "COMM"),
 
     Person(SemanticsCore("(person class ind)".toCluster(), Particle.toUnspecified()), "PERS"),
     Plant(SemanticsCore("(plant class ind)".toCluster(), Particle.toUnspecified()), "PLANT"),
     Fruit(SemanticsCore("(fruit class ind)".toCluster(), Particle.toUnspecified()), "FRUIT"),
     LongObject(SemanticsCore("(long object class ind)".toCluster(), Particle.toUnspecified()), "LONG.OBJ");
 
-    override val parentClassName = genderName
+    override val parentClassName = nounClassName
 }

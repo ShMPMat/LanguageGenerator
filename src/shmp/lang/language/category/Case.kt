@@ -52,7 +52,7 @@ object CaseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == genderName }
+        val acceptableValues = values.filter { it.parentClassName == nounClassName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {

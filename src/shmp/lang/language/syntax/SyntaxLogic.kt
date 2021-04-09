@@ -19,7 +19,7 @@ class SyntaxLogic(
     val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
     val copulaCasesSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
-    val genderCategorySolver: Map<GenderValue, GenderValue>?,
+    val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
     val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
     val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
@@ -31,8 +31,8 @@ class SyntaxLogic(
         resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
         resultCategories.addNumber(amount)
 
-        if (genderCategorySolver != null)
-            resultCategories.add(genderCategorySolver.getValue(gender))
+        if (nounClassCategorySolver != null)
+            resultCategories.add(nounClassCategorySolver.getValue(gender))
 
         return resultCategories
     }
@@ -127,7 +127,7 @@ class SyntaxLogic(
     } 
         |
         |${
-        genderCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
+        nounClassCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
             "$g1 is seen as $g2"
         } ?: ""
     } 

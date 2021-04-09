@@ -4,7 +4,7 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.*
-import shmp.lang.language.category.GenderValue.*
+import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.lexis.TypedSpeechPart
@@ -148,26 +148,26 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         }
 
     private fun generateGenderCategorySolver() = changeParadigm.categories
-        .filterIsInstance<Gender>()
+        .filterIsInstance<NounClass>()
         .firstOrNull()
         ?.takeIf { it.actualValues.isNotEmpty() }
         ?.let { genderCategory ->
             val genderCategorySolver = genderCategory.actualValues.map {
-                it as GenderValue
+                it as NounClassValue
                 it to it
             }.toMap().toMutableMap()
 
             val absentGenders = genderCategory.allPossibleValues
                 .filter { it !in genderCategory.actualValues }
-                .map { it as GenderValue }
+                .map { it as NounClassValue }
 
             for (gender in absentGenders) genderCategorySolver[gender] = when (gender) {
-                Female -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
-                Male -> listOf(GenderValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
+                Female -> listOf(NounClassValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
+                Male -> listOf(NounClassValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
                 Neutral -> listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 Common -> Neutral.takeIf { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
-                GenderValue.Person -> listOf(Common, Neutral).firstOrNull() { it in genderCategory.actualValues }
+                NounClassValue.Person -> listOf(Common, Neutral).firstOrNull() { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
                 Plant -> Neutral.takeIf { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()

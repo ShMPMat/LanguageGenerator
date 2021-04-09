@@ -4,7 +4,7 @@ import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.animosityName
-import shmp.lang.language.category.genderName
+import shmp.lang.language.category.nounClassName
 import shmp.lang.language.derivation.DerivationType
 import shmp.lang.language.lexis.CompoundLink
 import shmp.lang.language.lexis.DerivationLink
@@ -97,7 +97,7 @@ fun parseSemanticsTagTemplates(string: String) = string
     }
 
 fun getType(string: String) = when (string) {
-    "G" -> genderName
+    "G" -> nounClassName
     "A" -> animosityName
     "T" -> "transitivity"
     else -> if (string.length <= 1)

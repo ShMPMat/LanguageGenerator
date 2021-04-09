@@ -132,6 +132,10 @@ be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.1,world:0.8
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
                                       VNAbstract@existence:0.8,time:0.01,life:0.5
+exist              Verb        1.0    T|trans:0,intrans:1
+                                      VNPlace@existence:0.1,world:0.8
+                                      VNPerson@person:0.9,animal:0.9,living_thing:0.8
+                                      VNAbstract@existence:0.8,time:0.01,life:0.5
 have               Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@warehouse:0.3
                                       VNPerson@owner:0.9
@@ -711,7 +715,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /space
 /heard
 /hour
-/better
 /true
 /during
 /remember

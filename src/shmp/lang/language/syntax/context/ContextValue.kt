@@ -1,7 +1,7 @@
 package shmp.lang.language.syntax.context
 
 import shmp.lang.language.category.DeixisValue
-import shmp.lang.language.category.GenderValue
+import shmp.lang.language.category.NounClassValue
 import shmp.lang.language.category.PersonValue
 
 
@@ -33,7 +33,7 @@ sealed class ContextValue {
 
     data class ActorValue(
         val person: PersonValue,
-        val gender: GenderValue,
+        val nounClass: NounClassValue,
         val number: AmountValue,
         val deixis: DeixisValue
     ) : ContextValue()

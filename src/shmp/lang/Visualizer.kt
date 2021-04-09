@@ -4,7 +4,7 @@ import shmp.lang.containers.WordBase
 import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
 import shmp.lang.language.category.DeixisValue
-import shmp.lang.language.category.GenderValue
+import shmp.lang.language.category.NounClassValue
 import shmp.lang.language.category.PersonValue
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
@@ -50,7 +50,7 @@ class Visualizer(val language: Language) {
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
-            ActorValue(PersonValue.First, GenderValue.Female, AmountValue(1), DeixisValue.Proximal)
+            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(1), DeixisValue.Proximal)
         )
         val firstObj = NominalDescription(
             "time",
@@ -61,7 +61,7 @@ class Visualizer(val language: Language) {
             "_deixis_pronoun",
             listOf(),
             ActorType.Patient,
-            ActorValue(PersonValue.Third, GenderValue.Neutral, AmountValue(10), DeixisValue.ProximalAddressee)
+            ActorValue(PersonValue.Third, NounClassValue.Neutral, AmountValue(10), DeixisValue.ProximalAddressee)
         )
         val firstVerb = TransitiveVerbDescription("see", firstSubj, firstObj)
         val secondVerb = TransitiveVerbDescription("see", secondSubj, firstObj)
@@ -78,7 +78,7 @@ class Visualizer(val language: Language) {
             CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj)),
-            PossessionConstructionDescription(firstSubj, firstObj)
+            PredicatePossessionDescription(firstSubj, firstObj)
         )
 
         val firstContext = Context(
