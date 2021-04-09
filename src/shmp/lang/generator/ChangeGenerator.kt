@@ -3,37 +3,33 @@ package shmp.lang.generator
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.morphem.change.*
-import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.phonology.Phoneme
+import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.lang.language.phonology.doesPhonemesCollide
 import shmp.random.SampleSpaceObject
-import shmp.random.randomElement
-import kotlin.random.Random
+import shmp.random.singleton.randomElement
 
 
-class ChangeGenerator(
-    val lexisGenerator: LexisGenerator,
-    private val random: Random
-) {
+class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private val generationAttempts = 10
 
     internal fun generateChanges(
         position: Position,
         restrictions: PhoneticRestrictions
     ): TemplateSequenceChange {
-        val isClosed = when (position) {
-            Position.Beginning -> false
-            Position.End -> true
+        val (hasInitial, hasFinal)  = when (position) {
+            Position.Beginning -> null to true
+            Position.End -> true to null
         }
-        val rawSubstitutions = when (randomElement(AffixTypes.values(), random)) {
+        val rawSubstitutions = when (AffixTypes.values().randomElement()) {
             AffixTypes.UniversalAffix -> {
                 val templates = listOf(
                     TemplateSingleChange(
                         position,
                         listOf(),
                         listOf(),
-                        generateSyllableAffix(restrictions, isClosed, false)
+                        generateSyllableAffix(restrictions, hasInitial, hasFinal)
                     )
                 )
                 randomDoubleEdgeLettersElimination(templates, restrictions)
@@ -46,7 +42,7 @@ class ChangeGenerator(
                         listOf(PassingPositionSubstitution()),
                         generateSyllableAffix(
                             restrictions,
-                            isClosed || it == PhonemeType.Vowel,
+                            hasInitial == true || it == PhonemeType.Vowel,
                             it == PhonemeType.Vowel && position == Position.End
                         )
                     )
@@ -88,7 +84,7 @@ class ChangeGenerator(
     ): WordChange? {
         for (i in 1..generationAttempts) {
             val newChange =
-                generateSyllableAffix(restrictions, canHaveFinal = true, shouldHaveFinal = false)
+                generateSyllableAffix(restrictions, null, null)
             val newBorderPhoneme = when (wordChange.position) {
                 Position.Beginning -> newChange.last()
                 Position.End -> newChange[0]
@@ -145,14 +141,15 @@ class ChangeGenerator(
 
     private fun generateSyllableAffix(
         phoneticRestrictions: PhoneticRestrictions,
-        canHaveFinal: Boolean,
-        shouldHaveFinal: Boolean
+        hasInitial: Boolean?,
+        hasFinal: Boolean?
     ) = lexisGenerator.syllableGenerator.generateSyllable(
         SyllableRestrictions(
             lexisGenerator.phonemeContainer,
             phoneticRestrictions,
-            if (canHaveFinal) SyllablePosition.End else SyllablePosition.Middle,
-            hasInitial = shouldHaveFinal
+            if (hasFinal == true) SyllablePosition.End else SyllablePosition.Middle,
+            hasInitial = hasInitial,
+            hasFinal = hasFinal
         )
     ).phonemeSequence.phonemes
         .map { PhonemePositionSubstitution(it) }

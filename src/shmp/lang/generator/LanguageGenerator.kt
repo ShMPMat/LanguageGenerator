@@ -15,7 +15,6 @@ import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
 import java.io.File
 import java.text.ParseException
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.random.Random
@@ -45,7 +44,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         stressPattern,
         random
     )
-    private val changeGenerator = ChangeGenerator(lexisGenerator, random)
+    private val changeGenerator = ChangeGenerator(lexisGenerator)
     private val categoryGenerator = CategoryGenerator(random)
     private val changeParadigmGenerator = ChangeParadigmGenerator(
         stressPattern,

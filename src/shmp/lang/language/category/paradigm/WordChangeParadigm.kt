@@ -34,14 +34,12 @@ class WordChangeParadigm(
         val newWs = ws.words.flatMapIndexed { j, w ->
             if (i == j || w.semanticsCore.speechPart.type == SpeechPart.Particle)
                 listOf(w)
-            else {
-                apply(
-                    w,
-                    ws[i].categoryValues.map {
-                        SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent))
-                    }
-                ).words
-            }
+            else apply(
+                w,
+                ws[i].categoryValues.map {
+                    SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent))
+                }
+            ).words
         }
         return WordSequence(newWs) to i
     }
