@@ -24,9 +24,14 @@ class SyntaxParadigmGenerator {
 
         val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
 
+        val possessionConstructionPresence = PossessionConstructionPresence(
+            listOf(PossessionConstructionType.values().randomElement().toSso(1.0))
+        )
+
         return SyntaxParadigm(
             copulaPresence,
-            questionMarkerPresence
+            questionMarkerPresence,
+            possessionConstructionPresence
         )
     }
 }

@@ -29,7 +29,7 @@ class Visualizer(val language: Language) {
         printAdditionalLexisInfo()
     }
 
-    fun printTestSentences() {
+    private fun printTestSentences() {
         val firstSubj = NominalDescription(
             "mother",
             listOf(
@@ -63,10 +63,10 @@ class Visualizer(val language: Language) {
             ActorType.Patient,
             ActorValue(PersonValue.Third, GenderValue.Neutral, AmountValue(10), DeixisValue.ProximalAddressee)
         )
-        val firstVerb = TransitiveVerbDescription("have", firstSubj, firstObj)
-        val secondVerb = TransitiveVerbDescription("have", secondSubj, firstObj)
-        val thirdVerb = TransitiveVerbDescription("have", thirdSubj, firstObj)
-        val fourthVerb = TransitiveVerbDescription("have", thirdSubj, secondObj)
+        val firstVerb = TransitiveVerbDescription("see", firstSubj, firstObj)
+        val secondVerb = TransitiveVerbDescription("see", secondSubj, firstObj)
+        val thirdVerb = TransitiveVerbDescription("see", thirdSubj, firstObj)
+        val fourthVerb = TransitiveVerbDescription("see", thirdSubj, secondObj)
 
         val testSentencesMain = listOf(
             TransitiveVerbMainClauseDescription(firstVerb),
@@ -77,7 +77,8 @@ class Visualizer(val language: Language) {
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
-            CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj))
+            CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj)),
+            PossessionConstructionDescription(firstSubj, firstObj)
         )
 
         val firstContext = Context(
@@ -100,7 +101,7 @@ class Visualizer(val language: Language) {
         printSampleClause(testSentencesCopula, secondContext, "Copula question")
     }
 
-    fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
+    private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
         println("$comment:")
 
         for (it in clauses)
@@ -109,15 +110,11 @@ class Visualizer(val language: Language) {
         println()
     }
 
-    fun printSampleClause(clause: UnfoldableClauseDescription, context: Context) {
-        println(
-            getClauseAndInfoStr(
-                clause.unfold(language, context, Random(10))
-            )
-        )
+    private fun printSampleClause(clause: UnfoldableClauseDescription, context: Context) {
+        println(getClauseAndInfoStr(clause.unfold(language, context, Random(10))))
     }
 
-    fun printAdditionalLexisInfo() {
+    private fun printAdditionalLexisInfo() {
         val synonyms = language.lexis.words
             .groupBy { it.semanticsCore.toString() }
             .map { it.value }
