@@ -123,7 +123,9 @@ class Visualizer(val language: Language) {
         print(
             """
         |Synonyms:
-        |${synonyms.joinToString("\n") { "$it - ${it[0].semanticsCore}" }}
+        |${synonyms.joinToString("\n") { words -> 
+                "${words.joinToString { "$it (${it.semanticsCore.connotations})" }} - ${words[0].semanticsCore}" 
+            }}
         |
         |Lexis size - ${language.lexis.size} words
         |

@@ -29,14 +29,20 @@ class DerivationGenerator(
     private var derivationParadigm = DerivationParadigm(listOf(), listOf())
 
     internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
-        if (words.isEmpty())
+        if (words.isEmpty()) {
+            injectionByConnotations(words)
             return emptyList()
+        }
 
         val newWords = injectors.flatMap { inj ->
             words.mapNotNull { inj.injector(it) }
         }
 
         return newWords + injectDerivationOptions(newWords)
+    }
+
+    private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
+//        TODO("Not yet implemented")
     }
 
     internal fun generateDerivationParadigm(

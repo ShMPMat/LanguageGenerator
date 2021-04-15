@@ -42,4 +42,8 @@ data class Connotations(val values: Set<Connotation>) {
 
         return Connotations(values)
     }
+
+    override fun toString() = if (values.isNotEmpty())
+        values.joinToString()
+    else "no connotations"
 }
