@@ -13,6 +13,7 @@ import shmp.random.UnwrappableSSO
 data class SemanticsCore(
     val meaningCluster: MeaningCluster,
     val speechPart: TypedSpeechPart,
+    val connotations: Connotations = Connotations(setOf()),
     val tags: Set<SemanticsTag> = setOf(),
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
     val staticCategories: Set<CategoryValue> = setOf(),

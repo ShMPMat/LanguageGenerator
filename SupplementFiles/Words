@@ -8,6 +8,7 @@ word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
                                       NNAbstract@language:0.8,speech(ability):0.5,speech(performance):0.2
                                       say&thing:0.2 think&thing:0.1
+                                      *language:1*talk:1*smart:0.2*wise:0.3
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
                                       flow&thing:0.03   day&night:0.3   sun&moon:0.05

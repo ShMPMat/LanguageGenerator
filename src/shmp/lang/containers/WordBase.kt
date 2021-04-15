@@ -2,12 +2,10 @@ package shmp.lang.containers
 
 import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.generator.util.GeneratorException
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.animosityName
 import shmp.lang.language.category.nounClassName
 import shmp.lang.language.derivation.DerivationType
-import shmp.lang.language.lexis.CompoundLink
-import shmp.lang.language.lexis.DerivationLink
+import shmp.lang.language.lexis.*
 import java.io.File
 
 
@@ -26,6 +24,7 @@ class WordBase(private val supplementPath: String) {
             val speechPart = SpeechPart.valueOf(tokens[1])
             val realizationProbability = tokens[2].toDouble()
 
+            val connotations = tokens.filter { it.contains("*") }
             val tags = tokens.filter { it.contains("|") }
             val derivations = tokens.filter { it.contains("@") }
             val compounds = tokens.filter { it.contains("&") }
@@ -33,6 +32,7 @@ class WordBase(private val supplementPath: String) {
             val core = SemanticsCoreTemplate(
                 word,
                 speechPart,
+                parseConnotations(connotations),
                 tags.map {
                     val (name, semanticTags) = it.split("|")
                     SemanticsTagCluster(
@@ -69,6 +69,16 @@ class WordBase(private val supplementPath: String) {
 
 
     }
+
+    private fun parseConnotations(connotations: List<String>) = Connotations(
+        connotations.flatMap { it.split('*') }
+            .filter { it.isNotBlank() }
+            .map {
+                val (name, strength) = it.split(':')
+                Connotation(name, strength.toDouble())
+            }
+            .toSet()
+    )
 
     private fun readLines(): List<String> {
         val semiLines = File("$supplementPath/Words")

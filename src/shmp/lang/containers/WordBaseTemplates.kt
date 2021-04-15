@@ -14,6 +14,7 @@ import kotlin.random.Random
 data class SemanticsCoreTemplate(
     val word: Meaning,
     val speechPart: SpeechPart,
+    val connotations: Connotations,
     val tagClusters: Set<SemanticsTagCluster>,
     val derivationClusterTemplate: DerivationClusterTemplate,
     override val probability: Double
@@ -23,6 +24,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, 
     SemanticsCore(
         MeaningCluster(word),
         this.speechPart.toUnspecified(),
+        this.connotations,
         this.tagClusters
             .filter { it.shouldBeInstantiated }
             .map {
@@ -40,7 +42,8 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
     return SemanticsCore(
         MeaningCluster(core.meaningCluster.meanings + listOf(this.word)),
         core.speechPart,
-        this.tagClusters
+        connotations + core.connotations,
+        tagClusters
             .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
             .map {
                 SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))

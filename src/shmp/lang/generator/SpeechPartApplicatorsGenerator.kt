@@ -75,9 +75,10 @@ class SpeechPartApplicatorsGenerator(
             semanticsCore = SemanticsCore(
                 semanticsCore.meaningCluster + core.meaningCluster,
                 if (core.speechPart.type != SpeechPart.Particle) core.speechPart else semanticsCore.speechPart,
-                semanticsCore.tags.union(core.tags),
+                semanticsCore.connotations + core.connotations,
+                semanticsCore.tags + core.tags,
                 semanticsCore.derivationCluster,
-                semanticsCore.staticCategories.union(core.staticCategories)
+                semanticsCore.staticCategories + core.staticCategories
             )
         return semanticsCore
     }

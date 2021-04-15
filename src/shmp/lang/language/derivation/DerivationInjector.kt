@@ -32,6 +32,7 @@ data class DerivationInjector(
             SemanticsCoreTemplate(
                 descriptionCreator(core.word),
                 newSpeechPart,
+                core.connotations + type.connotations,
                 tagCreator(core.tagClusters)
                         + setOf(
                     SemanticsTagCluster(
