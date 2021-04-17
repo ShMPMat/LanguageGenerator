@@ -55,7 +55,7 @@ class WordBase(private val supplementPath: String) {
             for (derivation in data.derivations) {
                 val (name, tags) = derivation.split("@")
                 data.template.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
-                    parseDerivationTemplates(tags, wordsAndDataMap)
+                    parseDerivationTemplates(tags, wordsAndDataMap).toMutableList()
             }
 
         for (data in wordsAndDataMap.values)

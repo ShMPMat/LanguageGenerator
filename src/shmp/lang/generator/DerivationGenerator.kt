@@ -4,10 +4,9 @@ import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.derivation.*
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryPool
-import shmp.lang.language.lexis.TypedSpeechPart
-import shmp.lang.language.lexis.Word
+import shmp.lang.language.derivation.DerivationType.*
+import shmp.lang.language.lexis.*
 import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
@@ -18,6 +17,7 @@ import shmp.random.randomSublist
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.testProbability
+import kotlin.math.max
 import kotlin.random.Random
 
 
@@ -29,6 +29,16 @@ class DerivationGenerator(
     private var derivationParadigm = DerivationParadigm(listOf(), listOf())
 
     internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
+        injectionByConnotations(words)
+
+        val newWords = internalInjectDerivationOptions(words)
+
+//        injectionByConnotations(newWords + words)
+
+        return newWords
+    }
+
+    private fun internalInjectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
         if (words.isEmpty()) {
             injectionByConnotations(words)
             return emptyList()
@@ -38,12 +48,64 @@ class DerivationGenerator(
             words.mapNotNull { inj.injector(it) }
         }
 
-        return newWords + injectDerivationOptions(newWords)
+        return newWords + internalInjectDerivationOptions(newWords)
     }
 
     private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
-//        TODO("Not yet implemented")
+        val bannedTypes = setOf(Big, Old, Smallness, Young)
+        for (derivation in DerivationType.values().filter { it !in bannedTypes }) {
+            for (from in words.filter { it.speechPart == derivation.fromSpeechPart })
+                for (to in words.filter { it.speechPart == derivation.toSpeechPart }) {
+                    if (from == to)
+                        continue
+
+                    val fromDerivationConnotationStrength = calculateConnotationsStrength(
+                        derivation.connotations.values,
+                        from.connotations.values
+                    )
+
+                    val toDerivationConnotationsStrength = calculateConnotationsStrength(
+                        derivation.connotations.values,
+                        to.connotations.values
+                    )
+
+                    val wordConnotationsStrength = calculateConnotationsStrength(
+                        to.connotations.values.filter { it !in derivation.connotations.values },
+                        from.connotations.values.filter { it !in derivation.connotations.values }
+                    )
+
+                    val probability = toDerivationConnotationsStrength * wordConnotationsStrength *
+                            max(0.0, 1 - fromDerivationConnotationStrength)
+
+
+                    if (toDerivationConnotationsStrength * wordConnotationsStrength > 0 && max(0.0, 1 - fromDerivationConnotationStrength) == 0.0) {
+                        val k = 0
+                    }
+
+                    if (probability > 0) {
+                        val present = from.derivationClusterTemplate.typeToCore[derivation]
+                            ?.firstOrNull { it.template == to }
+
+                        if (present != null) {
+                            println("ALREADY PRESENT ${derivation.name}  ${from.word} -> ${to.word} $probability")
+                            continue
+                        }
+
+                        println("${derivation.name}  ${from.word} -> ${to.word} $probability")
+                        from.derivationClusterTemplate.typeToCore[derivation]
+                            ?.add(DerivationLink(to, probability))
+                    }
+                }
+        }
     }
+
+    private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double = from
+        .mapNotNull { connotation ->
+            val otherStrength = to
+                .mapNotNull { it.getCompatibility(connotation) }
+                .reduceOrNull(Double::times) ?: return@mapNotNull null
+            otherStrength * connotation.strength
+        }.reduceOrNull(Double::times) ?: 0.0
 
     internal fun generateDerivationParadigm(
         changeGenerator: ChangeGenerator,

@@ -6,7 +6,6 @@ _personal_pronoun  PersonalPronoun     1.0
 _deixis_pronoun    DeixisPronoun       1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
-                                      NNAbstract@language:0.8,speech(ability):0.5,speech(performance):0.2
                                       say&thing:0.2 think&thing:0.1
                                       *language:1*talk:1*smart:0.2*wise:0.3
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
@@ -148,8 +147,9 @@ do                 Verb        1.0    T|trans:1,intrans:0
 say                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.3
                                       VNPerson@speaker:0.9,writer:0.3,actor:0.3
-                                      VNAbstract@language:0.5,speech(ability):0.5,speech(performance):0.3,memory:0.2
+                                      VNAbstract@memory:0.2
                                       hear&thing:0.3
+                                      *language:0.8*talk:1*action:0.95
 write              Verb        0.7    T|trans:100,intrans:1
                                       VNPlace@library:0.4,school:0.5
                                       VNPerson@speaker:0.1,writer:0.9,actor:0.1
@@ -316,6 +316,7 @@ valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 ice_land           Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 glacier            Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
+                                      *language:1*talk:1*abstract:0.9
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -351,7 +352,9 @@ control            Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 space              Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 activity           Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 speech(ability)    Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *language:0.8*talk:1*abstract:0.9*ability:0.9*action:0.5
 speech(performance) Noun       0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *language:0.1*talk:0.9*abstract:0.1*ability:0.5*action:0.9
 inspiration        Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 pretence           Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 diversity          Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100

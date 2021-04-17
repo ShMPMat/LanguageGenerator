@@ -22,19 +22,19 @@ enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: Spe
 }
 
 enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart, val connotations: Connotations) {
-    Smallness(Noun, Noun, Connotations(setOf(Connotation("small", 1.0)))),
-    Young(Noun, Noun, Connotations(setOf(Connotation("young", 1.0)))),
+    Smallness(Noun, Noun, Connotations(setOf(Connotation("small", 0.5)))),
+    Young(Noun, Noun, Connotations(setOf(Connotation("young", 0.5)))),
 
-    Big(Noun, Noun, Connotations(setOf(Connotation("big", 1.0)))),
-    Old(Noun, Noun, Connotations(setOf(Connotation("old", 1.0)))),
+    Big(Noun, Noun, Connotations(setOf(Connotation("big", 0.5)))),
+    Old(Noun, Noun, Connotations(setOf(Connotation("old", 0.5)))),
 
-    NNPlace(Noun, Noun, Connotations(setOf(Connotation("place", 0.1)))),
-    NNPerson(Noun, Noun, Connotations(setOf(Connotation("person", 0.1)))),
-    NNAbstract(Noun, Noun, Connotations(setOf(Connotation("abstract", 0.1)))),
+    NNPlace(Noun, Noun, Connotations(setOf(Connotation("place", 1.0)))),
+    NNPerson(Noun, Noun, Connotations(setOf(Connotation("person", 1.0)))),
+    NNAbstract(Noun, Noun, Connotations(setOf(Connotation("abstract", 1.0)))),
 
-    VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 0.1)))),
-    VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 0.1)))),
-    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 0.1))))
+    VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0)))),
+    VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0)))),
+    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0))))
 }//TODO NNAbstract
 
 data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
