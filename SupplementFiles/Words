@@ -5,7 +5,7 @@
 _personal_pronoun  PersonalPronoun     1.0
 _deixis_pronoun    DeixisPronoun       1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@scene:0.01,school:0.001                     NNPerson@speaker:0.3,writer:0.3
+                                      NNPerson@speaker:0.3,writer:0.3
                                       say&thing:0.2 think&thing:0.1
                                       *language:1*talk:1*smart:0.2*wise:0.3
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
@@ -92,6 +92,7 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       NNPlace@theater:0.2      NNPerson@actor:0.3
                                       NNAbstract@pretence:0.2
                                       theater&place:0.02
+                                      *talk:0.2*act_out:0.2*place:0.8
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@library:0.5                                 NNPerson@writer:0.3
                                       NNAbstract@history:0.4,inspiration:0.2,memory:0.5,knowledge:0.5
@@ -151,13 +152,13 @@ say                Verb        1.0    T|trans:100,intrans:1
                                       hear&thing:0.3
                                       *language:0.8*talk:1*action:0.95
 write              Verb        0.7    T|trans:100,intrans:1
-                                      VNPlace@library:0.4,school:0.5
                                       VNPerson@speaker:0.1,writer:0.9,actor:0.1
                                       VNAbstract@history:0.5,inspiration:0.5,memory:0.2
+                                      language:0.3*smart:0.2*wise:0.2*write:1.0*action:0.95
 think              Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@library:0.3,school:0.6
                                       VNPerson@speaker:0.01,writer:0.1,actor:0.01,thinker:0.8
                                       VNAbstract@thought:0.5,inspiration:0.05,memory:0.1,worldview:0.3,thinking:0.5
+                                      smart:0.1*wise:0.1*learn:0.1*think:1.0*action:0.95
 want               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.8,one_in_need:0.3,poor_person:0.1
                                       VNAbstract@wish:0.8,love:0.1,power(control):0.1,control:0.05
@@ -178,9 +179,9 @@ put                Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_putting:0.1,owner:0.1,keeper:0.1
                                       VNAbstract@answer:0.1,control:0.05
 read               Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@library:0.4
                                       VNPerson@reader:0.9,smart(being):0.2
                                       VNAbstract@reading:0.8,thought:0.1,memory:0.1,worldview:0.01,thinking:0.1
+                                      smart:0.1*wise:0.1*learn:0.1*read:1.0*action:0.95
 add                Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
                                       VNPerson@one_adding:0.1,owner:0.1,keeper:0.1
@@ -207,9 +208,9 @@ eat                Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@life:0.5,consumption:0.5
                                       food&do:0.1
 know               Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@school:0.1
                                       VNPerson@one_knowing:0.9,smart(being):0.5
                                       VNAbstract@understanding:0.5,help(noun):0.01,thought:0.3,memory:0.5,thinking:0.3,sight(sense):0.1
+                                      smart:0.9*wise:0.5*learn:0.1
 change             Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@changer:0.5
                                       VNAbstract@change(noun):0.8,flow(noun):0.3,memory:0.05,understanding:0.03,impermanence:0.1
@@ -292,6 +293,7 @@ river_animal       Noun        0.03   G|Plant:1,Fruit:0,Person:1                
 ice_land_animal    Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      smart:0.2*wise:0.1*think:0.2*learn:0.9*place:0.9
 start(noun)        Noun        0.7    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sky                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -320,6 +322,7 @@ language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      smart:0.3*wise:0.3*learn:0.3*read:0.7*place:0.95
 warehouse          Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 forum_(place)      Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 dead_end           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -354,7 +357,7 @@ activity           Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 speech(ability)    Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       *language:0.8*talk:1*abstract:0.9*ability:0.9*action:0.5
 speech(performance) Noun       0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      *language:0.1*talk:0.9*abstract:0.1*ability:0.5*action:0.9
+                                      *language:0.1*talk:0.9*act_out:0.2*abstract:0.1*ability:0.5*action:0.9
 inspiration        Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 pretence           Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 diversity          Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100

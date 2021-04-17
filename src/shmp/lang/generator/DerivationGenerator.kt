@@ -18,6 +18,7 @@ import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.testProbability
 import kotlin.math.max
+import kotlin.math.pow
 import kotlin.random.Random
 
 
@@ -77,11 +78,6 @@ class DerivationGenerator(
                     val probability = toDerivationConnotationsStrength * wordConnotationsStrength *
                             max(0.0, 1 - fromDerivationConnotationStrength)
 
-
-                    if (toDerivationConnotationsStrength * wordConnotationsStrength > 0 && max(0.0, 1 - fromDerivationConnotationStrength) == 0.0) {
-                        val k = 0
-                    }
-
                     if (probability > 0) {
                         val present = from.derivationClusterTemplate.typeToCore[derivation]
                             ?.firstOrNull { it.template == to }
@@ -94,18 +90,26 @@ class DerivationGenerator(
                         println("${derivation.name}  ${from.word} -> ${to.word} $probability")
                         from.derivationClusterTemplate.typeToCore[derivation]
                             ?.add(DerivationLink(to, probability))
+                            ?: from.derivationClusterTemplate.typeToCore.put(
+                                derivation,
+                                mutableListOf(DerivationLink(to, probability))
+                            )
                     }
                 }
         }
     }
 
-    private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double = from
-        .mapNotNull { connotation ->
-            val otherStrength = to
-                .mapNotNull { it.getCompatibility(connotation) }
-                .reduceOrNull(Double::times) ?: return@mapNotNull null
-            otherStrength * connotation.strength
-        }.reduceOrNull(Double::times) ?: 0.0
+    private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double {
+        val hits = from
+            .mapNotNull { connotation ->
+                val otherStrength = to
+                    .mapNotNull { it.getCompatibility(connotation) }
+                    .reduceOrNull(Double::times) ?: return@mapNotNull null
+                otherStrength * connotation.strength
+            }
+
+        return hits.reduceOrNull(Double::times)?.pow(1.0 / hits.size.toDouble().pow(2.0)) ?: 0.0
+    }
 
     internal fun generateDerivationParadigm(
         changeGenerator: ChangeGenerator,
