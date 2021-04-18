@@ -3,7 +3,7 @@ package shmp.lang.language.lexis
 import shmp.lang.language.LanguageException
 
 
-data class Connotation(val name: String, val strength: Double) {
+data class Connotation(val name: String, val strength: Double, var isGlobal: Boolean = false) {
     fun getCompatibility(that: Connotation) = (if (name == that.name) 1.0
     else connotationsCompatibility[name]?.get(that.name))?.times(strength)
 

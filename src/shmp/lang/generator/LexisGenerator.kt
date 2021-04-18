@@ -37,6 +37,18 @@ class LexisGenerator(
     private val wordBase = WordBase(supplementPath)
 
     init {
+        val allConnotations =  File("$supplementPath/Connotations")
+            .readLines()
+            .filter { it.isNotBlank() }
+            .map { if (it[0] == '-') it.drop(1) to true else it to false }
+            .toMap()
+
+        for (template in wordBase.allWords) {
+            template.connotations.values
+                .forEach { it.isGlobal = allConnotations[it.name]
+                    ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}") }
+        }
+
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
         wordBase.allWords.addAll(newWords)
     }
@@ -51,19 +63,6 @@ class LexisGenerator(
             .firstOrNull { it.meaning !in allMeanings }
         if (unknownMeaning != null)
             throw DataConsistencyException("Unknown meaning in cluster - $unknownMeaning")
-
-        val allConnotations =  File("$supplementPath/Connotations")
-            .readLines()
-            .filter { it.isNotBlank() }
-            .toSet()
-
-        for (template in wordBase.allWords) {
-            val unknownConnotation = template.connotations.values
-                .firstOrNull { it.name !in allConnotations }
-                ?: continue
-
-            throw DataConsistencyException("Unknown connotation '$unknownConnotation' in word - ${template.word}")
-        }
     }
 
     private val words = mutableListOf<Word>()

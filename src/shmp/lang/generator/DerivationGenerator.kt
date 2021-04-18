@@ -71,8 +71,8 @@ class DerivationGenerator(
                     )
 
                     val wordConnotationsStrength = calculateConnotationsStrength(
-                        to.connotations.values.filter { it !in derivation.connotations.values },
-                        from.connotations.values.filter { it !in derivation.connotations.values }
+                        to.connotations.values.filter { !it.isGlobal },
+                        from.connotations.values.filter { !it.isGlobal }
                     )
 
                     val probability = toDerivationConnotationsStrength * wordConnotationsStrength *
