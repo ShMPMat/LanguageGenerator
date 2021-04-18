@@ -94,9 +94,10 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
                                       theater&place:0.02
                                       *talk:0.2*act_out:0.2*place:0.8
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      NNPlace@library:0.5                                 NNPerson@writer:0.3
+                                      NNPerson@writer:0.3
                                       NNAbstract@history:0.4,inspiration:0.2,memory:0.5,knowledge:0.5
                                       word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05  think&thing:0.05
+                                      *language:0.2*smart:0.2*wise:0.2*learn:0.3*read:0.7*write:0.7*object:0.975
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       NNAbstract@uniqueness:0.1
@@ -154,7 +155,7 @@ say                Verb        1.0    T|trans:100,intrans:1
 write              Verb        0.7    T|trans:100,intrans:1
                                       VNPerson@speaker:0.1,writer:0.9,actor:0.1
                                       VNAbstract@history:0.5,inspiration:0.5,memory:0.2
-                                      language:0.3*smart:0.2*wise:0.2*write:1.0*action:0.95
+                                      *language:0.3*smart:0.2*wise:0.2*write:1.0*action:0.95
 think              Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@speaker:0.01,writer:0.1,actor:0.01,thinker:0.8
                                       VNAbstract@thought:0.5,inspiration:0.05,memory:0.1,worldview:0.3,thinking:0.5

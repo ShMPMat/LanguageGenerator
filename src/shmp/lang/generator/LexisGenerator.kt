@@ -18,6 +18,7 @@ import shmp.lang.language.syntax.SyntaxParadigm
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.language.syntax.features.QuestionMarker
 import shmp.random.*
+import java.io.File
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.random.Random
@@ -48,9 +49,21 @@ class LexisGenerator(
         val unknownMeaning = wordClusters.clusters
             .flatMap { it.meanings }
             .firstOrNull { it.meaning !in allMeanings }
-
         if (unknownMeaning != null)
             throw DataConsistencyException("Unknown meaning in cluster - $unknownMeaning")
+
+        val allConnotations =  File("$supplementPath/Connotations")
+            .readLines()
+            .filter { it.isNotBlank() }
+            .toSet()
+
+        for (template in wordBase.allWords) {
+            val unknownConnotation = template.connotations.values
+                .firstOrNull { it.name !in allConnotations }
+                ?: continue
+
+            throw DataConsistencyException("Unknown connotation '$unknownConnotation' in word - ${template.word}")
+        }
     }
 
     private val words = mutableListOf<Word>()
