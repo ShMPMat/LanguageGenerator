@@ -97,6 +97,40 @@ class DerivationGenerator(
                     }
                 }
         }
+
+        injectCompounds(words)
+    }
+
+    private fun injectCompounds(words: List<SemanticsCoreTemplate>) {
+        for (target in words)
+            for ((index, left) in words.withIndex())
+                for (right in words.drop(index)) {
+                    if (left == right || left == target || right == target)
+                        continue
+
+                    val connotationsSum = left.connotations + right.connotations
+                    val distance = target.connotations distance connotationsSum
+                    val leftDistance = target.connotations.values.filter { !it.isGlobal } distance
+                            left.connotations.values.filter { !it.isGlobal }
+                    val rightDistance = target.connotations.values.filter { !it.isGlobal } distance
+                            right.connotations.values.filter { !it.isGlobal }
+                    val clearDistance = target.connotations.values.filter { !it.isGlobal } distance
+                            connotationsSum.values.filter { !it.isGlobal }
+
+                    if (clearDistance > 0 && leftDistance > 0 && rightDistance > 0) {
+                        val present = target.derivationClusterTemplate.possibleCompounds
+                            .firstOrNull { it.templates == listOf(left, right) || it.templates == listOf(right, left) }
+
+                        if (present != null) {
+                            println("ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
+                            continue
+                        }
+
+                        println("${left.word} + ${right.word} = ${target.word} $distance")
+                        target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left, right), distance))
+                    }
+                }
+
     }
 
     private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double {

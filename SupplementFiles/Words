@@ -46,7 +46,6 @@ change(noun)       Noun        1.0    G|LongObject:100                          
                                       *change:1.0*abstract:0.9
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNAbstract@good(noun):0.5
-                                      sun&see:0.2
                                       *light:1.0*abstract:0.4
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
                                       NNAbstract@diversity:0.5
@@ -122,7 +121,7 @@ food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                
                                       one_eating&thing:0.003 eat&thing:0.3
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005
-                                      sea&ocean:0.005  sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
+                                      sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
                                       *water:1.0*change:0.05
 ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@ice_land:0.4,glacier:0.5
@@ -239,6 +238,7 @@ see                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@scene:0.03,beautiful_place:0.05
                                       VNPerson@one_seeing:0.8,owner:0.04,master:0.02,ruler:0.005
                                       VNAbstract@sight(sense):0.7,life:0.05
+                                      *see:1.0*understand:0.05*learn:0.05*light:0.05*action:0.8
 hear               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@scene:0.01
                                       VNPerson@one_hearing:0.8,master:0.01,ruler:0.001

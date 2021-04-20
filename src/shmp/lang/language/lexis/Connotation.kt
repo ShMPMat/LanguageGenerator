@@ -1,6 +1,7 @@
 package shmp.lang.language.lexis
 
 import shmp.lang.language.LanguageException
+import kotlin.math.abs
 
 
 data class Connotation(val name: String, val strength: Double, var isGlobal: Boolean = false) {
@@ -31,6 +32,8 @@ data class Connotation(val name: String, val strength: Double, var isGlobal: Boo
 }
 
 data class Connotations(val values: Set<Connotation>) {
+    constructor(values: List<Connotation>): this(values.toSet())
+
     operator fun plus(that: Connotations): Connotations {
         val values = values.toMutableSet()
 
@@ -50,6 +53,29 @@ data class Connotations(val values: Set<Connotation>) {
         values.joinToString()
     else "no connotations"
 }
+
+infix fun Connotations.distance(that: Connotations): Double {
+    val mutualConnotations = values.mapNotNull { c ->
+        val other = that.values.firstOrNull { c == it }
+            ?: return@mapNotNull null
+
+        c to other
+    }
+    val otherElementsAmount = values.size + that.values.size - 2 * mutualConnotations.size
+
+    if (values.isEmpty() || that.values.isEmpty())
+        return 0.0
+
+    return mutualConnotations
+//        .map { (c1, c2) -> 1 - abs(c1.strength - c2.strength) }
+        .map { (c1, c2) -> c1.strength * c2.strength }
+        .toMutableList()
+        .apply { addAll(List(otherElementsAmount) { 0.0 }) }
+        .average()
+}
+
+infix fun List<Connotation>.distance(that: List<Connotation>) =
+    Connotations(this) distance Connotations(that)
 
 
 val connotationsCompatibility = mapOf<String, Map<String, Double>>(
