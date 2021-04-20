@@ -1,11 +1,12 @@
 language
 water
 soil
+air
 beauty
 discovery
 path
 home
-return
+light
 
 smart
 wise
@@ -13,6 +14,7 @@ small
 big
 young
 old
+limitless
 
 remember
 act_out
@@ -24,6 +26,9 @@ think
 change
 follow
 understand
+not_understand
+return
+move
 
 -action
 -ability
@@ -31,3 +36,4 @@ understand
 -abstract
 -object
 -person
+-building

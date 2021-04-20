@@ -56,5 +56,7 @@ val connotationsCompatibility = mapOf<String, Map<String, Double>>(
     "small" to mapOf("big" to 0.0),
     "big" to mapOf("small" to 0.0),
     "young" to mapOf("old" to 0.0),
-    "old" to mapOf("young" to 0.0)
+    "old" to mapOf("young" to 0.0),
+    "understand" to mapOf("not_understand" to 0.0),
+    "not_understand" to mapOf("understand" to 0.0)
 )

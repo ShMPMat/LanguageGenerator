@@ -17,19 +17,20 @@ wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                
                                       NNAbstract@need(noun):0.6,fantasy:0.2
                                       think&thing:0.05 need(noun)&thing:0.2 want&thing:0.2 want&see:0.2 wish&see:0.1 wish&think:0.01
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@sky:0.05                                    NNPerson@aviator:0.1
-                                      NNAbstract@infinity:0.1
+                                      NNPerson@aviator:0.1                                NNAbstract@infinity:0.1
+                                      *air:1.0*move:0.1*limitless:0.3*abstract:0.1*place:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@sky:0.05,air:0.05                           NNPerson@aviator:0.1
-                                      NNAbstract@change(noun):0.1,impermanence:0.1
+                                      NNPerson@aviator:0.1
                                       hear&thing:0.1
+                                      *air:0.8*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.5
 end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
                                       NNAbstract@finiteness:0.2
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
+                                      NNPerson@relative:0.3
                                       NNAbstract@life:0.05,safety:0.3,comfort:0.2
                                       house&live:1.0
+                                      *home:1.0*object:0.5*place:0.8*abstract:0.2*building:0.7
 hand               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:20
                                                                                           NNPerson@helper:0.1,friend:0.025
                                       NNAbstract@reach(noun):0.1,boundary:0.05,control:0.1
@@ -41,13 +42,12 @@ territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNAbstract@power(control):0.05
 change(noun)       Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                                                                           NNPerson@changer:0.2
-                                      NNAbstract@impermanence:0.1
                                       appearance&change:0.05
                                       *change:1.0*abstract:0.9
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@sun:0.01
                                       NNAbstract@good(noun):0.5
                                       sun&see:0.2
+                                      *light:1.0*abstract:0.4
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
                                       NNAbstract@diversity:0.5
                                       part&thing:0.08
@@ -58,6 +58,7 @@ need(noun)         Noun        1.0    G|Plant:1,Fruit:0,Person:1                
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
                                       NNAbstract@life:0.01,safety:0.1,comfort:0.05
+                                      *home:0.05*object:0.5*place:0.8*building:0.7
 picture(noun)      Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
                                       NNAbstract@appearance:0.2,thought:0.03,memory:0.05,thinking:0.03,sight(sense):0.07
@@ -105,7 +106,6 @@ thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                
                                       world&part(noun):0.005 world&part:0.005
 river              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
-                                      NNAbstract@impermanence:0.03
                                       *water:0.95*change:0.1*place:0.95
 day                Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@world:0.6
@@ -122,7 +122,6 @@ food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                
                                       one_eating&thing:0.003 eat&thing:0.3
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005
-                                      NNAbstract@impermanence:0.01
                                       sea&ocean:0.005  sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
                                       *water:1.0*change:0.05
 ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -197,7 +196,7 @@ help               Verb        0.8    T|trans:100,intrans:1
                                       VNAbstract@help(noun):0.8,activity:0.05,selflessness:0.5
 follow             Verb        0.99   T|trans:100,intrans:1
                                       VNPerson@one_following:0.5,friend:0.5,relative:0.5
-                                      change:0.025*follow:1.0*understand:0.05*abstract:0.05
+                                      change:0.025*follow:1.0*move:0.4*understand:0.05*abstract:0.05
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
                                       VNPerson@one_asking:0.5
@@ -214,7 +213,6 @@ know               Verb        1.0    T|trans:100,intrans:1
                                       smart:0.9*wise:0.5*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
 change             Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@changer:0.5
-                                      VNAbstract@impermanence:0.1
                                       *change:1.0*abstract:0.7*action:0.5
 need               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.1,one_in_need:0.8,poor_person:0.1
@@ -262,11 +260,10 @@ flow               Verb        0.85   T|trans:0,intrans:1
                                       VNPlace@time:0.002
                                       VNPerson@one_flowing:0.8,sailor:0.1
                                       change&see:0.07 impermanence&see:0.07
-                                      *water:0.7*change:0.2*follow:0.1*abstract:0.2*action:0.7
+                                      *water:0.7*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.7
 return_home        Verb        0.1    T|trans:1,intrans:100
-                                      VNPlace@home:0.01
                                       VNPerson@one_returning:0.8
-                                      *home:0.9*return:0.9
+                                      *home:0.9*return:0.9*action:0.8
 
 hot                Adjective   1.0
 cold               Adjective   1.0
@@ -294,15 +291,19 @@ river_animal       Noun        0.03   G|Plant:1,Fruit:0,Person:1                
 ice_land_animal    Noun        0.03   G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
 
 school             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      *smart:0.2*wise:0.1*think:0.2*learn:0.9*place:0.9
+                                      *smart:0.2*wise:0.1*think:0.2*learn:0.9*place:0.9*building:0.8
 start(noun)        Noun        0.7    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 camp               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sky                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *air:0.5*move:0.2*limitless:0.3*abstract:0.1*place:0.2
 cemetery           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 city               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *home:0.05*object:0.01*place:0.8*building:0.2
 neighbourhood      Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *home:0.5*object:0.01*place:0.9*building:0.2*abstract:0.3
 earth              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 sun                Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
+                                      *light:0.8*place:0.05*object:0.05
 moon               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:10
 toilet             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 art_gallery        Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -323,7 +324,7 @@ language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 theater            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 library            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      smart:0.3*wise:0.3*learn:0.3*read:0.7*place:0.95
+                                      smart:0.3*wise:0.3*learn:0.3*read:0.7*place:0.5*building:0.9
 warehouse          Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 forum_(place)      Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 dead_end           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -379,6 +380,7 @@ uniqueness         Noun        0.05   G|Plant:0,Fruit:0,Person:0                
 darkness           Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 staleness          Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 impermanence       Noun        0.05   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *change:0.7*not_understand:0.1*abstract:1.0
 finiteness         Noun        0.001  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 infinity           Noun        0.001  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 selflessness       Noun        0.001  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -398,7 +400,7 @@ worldview          Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 movement           Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 play(noun)         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 flow(noun)         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      *water:0.7*change:0.2*abstract:0.7
+                                      *water:0.7*change:0.2*move:0.5*abstract:0.7
 construction(process) Noun     0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 motivation         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 deprivation        Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -408,11 +410,11 @@ answer             Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 reading            Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 increase(noun)     Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 return(noun)       Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      *return:0.9*follow:0.01*abstract:0.4*action:0.2
+                                      *return:0.9*follow:0.01*move:0.5*abstract:0.4*action:0.2
 sight(sense)       Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 hearing(sense)     Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 journey            Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      *follow:0.3*discovery:0.5*path:0.6*abstract:0.1
+                                      *follow:0.3*move:0.7*discovery:0.5*path:0.6*abstract:0.1
 fantasy            Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 
 
