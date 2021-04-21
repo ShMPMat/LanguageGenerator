@@ -142,7 +142,7 @@ class DerivationGenerator(
                 otherStrength * connotation.strength
             }
 
-        return hits.reduceOrNull(Double::times)?.pow(1.0 / hits.size.toDouble().pow(2.0)) ?: 0.0
+        return hits.reduceOrNull(Double::plus)?.div(hits.size)?.pow(1.0 / hits.size.toDouble().pow(2.0)) ?: 0.0
     }
 
     internal fun generateDerivationParadigm(

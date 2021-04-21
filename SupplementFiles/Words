@@ -28,15 +28,15 @@ end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNAbstract@finiteness:0.2
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@relative:0.3
-                                      NNAbstract@life:0.05,safety:0.3,comfort:0.2
+                                      NNAbstract@life:0.05,safety:0.3
                                       house&live:1.0
-                                      *home:1.0*object:0.5*place:0.8*abstract:0.2*building:0.7
+                                      *home:1.0*family:0.6*defence:0.1*comfort:0.2*object:0.2*place:0.8*abstract:0.2*building:0.7
 hand               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:20
                                                                                           NNPerson@helper:0.1,friend:0.025
                                       NNAbstract@reach(noun):0.1,boundary:0.05,control:0.1
-seaport            Noun        0.8
+seaport            Noun        0.05
                                                                                           NNPerson@sailor:0.1
-                                      sea&home:0.05
+                                      *water:0.7*home:0.001*object:0.2*place:0.8*building:0.7
 territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
                                       NNAbstract@power(control):0.05
@@ -56,7 +56,7 @@ need(noun)         Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       wish&thing:0.05 want&thing:0.02 want&see:0.02 wish&see:0.05
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
-                                      NNAbstract@life:0.01,safety:0.1,comfort:0.05
+                                      NNAbstract@life:0.01,safety:0.1
                                       *home:0.05*object:0.5*place:0.8*building:0.7
 picture(noun)      Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
@@ -68,16 +68,16 @@ animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       live&thing:0.3 eat&thing:0.1 one_eating&thing:0.1
 point              Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
 mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000               A|Animate:1000
-                                      NNPlace@home:0.01,motherland:0.01
-                                      NNAbstract@care(noun):0.05,safety:0.3,comfort:0.2
+                                      NNAbstract@safety:0.3
+                                      *home:0.3*family:0.6*defence:0.1*comfort:0.2*abstract:0.1*person:1.0
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
                                       NNAbstract@universe:0.1,infinity:0.05
                                       world&existence:0.07     existence&thing:0.05
                                       day&night:0.02
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
-                                      NNPlace@home:0.01,motherland:0.01
-                                      NNAbstract@care(noun):0.05,safety:0.3,comfort:0.2
+                                      NNAbstract@safety:0.3
+                                      *home:0.3*family:0.6*defence:0.1*comfort:0.2*abstract:0.1*person:1.0
 job                Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@factory:0.1,workplace:0.1,workshop:0.1      NNPerson@worker:0.3
                                       NNAbstract@production:0.3,result:0.1
@@ -157,8 +157,8 @@ write              Verb        0.7    T|trans:100,intrans:1
                                       *language:0.3*smart:0.2*wise:0.2*write:1.0*action:0.95
 think              Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@speaker:0.01,writer:0.1,actor:0.01,thinker:0.8
-                                      VNAbstract@thought:0.5,inspiration:0.05,worldview:0.3,thinking:0.5
-                                      smart:0.1*wise:0.1*learn:0.1*think:1.0*remember:0.2*action:0.95
+                                      VNAbstract@inspiration:0.05,worldview:0.3
+                                      smart:0.1*wise:0.1*learn:0.1*think:1.0*remember:0.2*action:0.95*abstract:0.5
 want               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.8,one_in_need:0.3,poor_person:0.1
                                       VNAbstract@wish:0.8,love:0.1,power(control):0.1,control:0.05
@@ -180,7 +180,7 @@ put                Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@answer:0.1,control:0.05
 read               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@reader:0.9,smart(being):0.2
-                                      VNAbstract@reading:0.8,thought:0.1,worldview:0.01,thinking:0.1
+                                      VNAbstract@reading:0.8,worldview:0.01
                                       smart:0.1*wise:0.1*learn:0.1*read:1.0*remember:0.2*action:0.95
 add                Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
@@ -192,15 +192,17 @@ land_on_earth      Verb        0.8    T|trans:100,intrans:1
 help               Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@workplace:0.05
                                       VNPerson@helper:0.95,friend:0.3,worker:0.1
-                                      VNAbstract@help(noun):0.8,activity:0.05,selflessness:0.5
+                                      VNAbstract@activity:0.05,selflessness:0.5
+                                      *help:1.0*need:0.2*wise:0.01*action:0.9*abstract:0.4
 follow             Verb        0.99   T|trans:100,intrans:1
                                       VNPerson@one_following:0.5,friend:0.5,relative:0.5
                                       change:0.025*follow:1.0*move:0.4*understand:0.05*abstract:0.05
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
                                       VNPerson@one_asking:0.5
-                                      VNAbstract@understanding:0.2,help(noun):0.01,thought:0.1,thinking:0.1
-                                      hear&need:0.1 think&help:0.05
+                                      VNAbstract@understanding:0.2
+                                      hear&need:0.1
+                                      *help:0.1*need:0.7*smart:0.05*wise:0.1*learn:0.4*think:0.1*action:0.95*abstract:0.3
 eat                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@canteen:0.2,market:0.08
                                       VNPerson@one_eating:0.5
@@ -208,7 +210,7 @@ eat                Verb        1.0    T|trans:100,intrans:1
                                       food&do:0.1
 know               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_knowing:0.9,smart(being):0.5
-                                      VNAbstract@help(noun):0.01,thought:0.3,thinking:0.3,sight(sense):0.1
+                                      VNAbstract@sight(sense):0.1
                                       smart:0.9*wise:0.5*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
 change             Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@changer:0.5
@@ -312,6 +314,7 @@ wild               Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 forest             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 zoo                Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 motherland         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *home:0.3*family:0.3*defence:0.1*comfort:0.1*abstract:0.5*place:0.7
 universe           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 factory            Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 workplace          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -387,13 +390,18 @@ selflessness       Noun        0.001  G|Plant:0,Fruit:0,Person:0                
 cause(reason)      Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 safety             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 comfort            Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *home:0.01*family:0.1*defence:0.1*comfort:1.0*abstract:0.8
 care(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *home:0.01*family:0.1*defence:0.1*comfort:0.4*abstract:0.6
 help(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *help:0.9*need:0.1*wise:0.01*action:0.6*abstract:0.7
 reach(noun)        Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 cold(noun)         Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 boundary           Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 thought            Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      smart:0.2*wise:0.1*learn:0.1*think:0.5*remember:0.1*abstract:0.7*object:0.2
 thinking           Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      smart:0.1*wise:0.1*learn:0.1*think:0.8*remember:0.1*abstract:0.7*action:0.5
 understanding      Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       change:0.05*follow:0.2*understand:0.9*abstract:0.5
 worldview          Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
