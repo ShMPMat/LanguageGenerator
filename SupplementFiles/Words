@@ -24,7 +24,7 @@ wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                
                                       hear&thing:0.1
                                       *air:0.8*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.5
 end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
-                                      NNPlace@cemetery:0.01                               NNPerson@person_who_finishes_smth:0.1
+                                      NNPlace@cemetery:0.01
                                       NNAbstract@finiteness:0.2
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@relative:0.3
@@ -65,7 +65,8 @@ picture(noun)      Noun        0.9    G|Plant:1,Fruit:0,Person:1                
 animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Animate:100          species|species:1
                                       NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
                                       NNAbstract@life:0.8,movement:0.05
-                                      live&thing:0.3 eat&thing:0.1 one_eating&thing:0.1
+                                      live&thing:0.3 eat&thing:0.1
+/                                      one_eating&thing:0.1
 point              Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
 mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000               A|Animate:1000
                                       NNAbstract@safety:0.3
@@ -116,9 +117,10 @@ night              Noun        1.0    G|Plant:0,Fruit:0,Person:0                
                                       NNAbstract@darkness:0.5,evil(noun):0.1
 food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@warehouse:0.1
-                                      NNPerson@one_eating:0.3,cook(person):0.2
+/                                      NNPerson@one_eating:0.3,cook(person):0.2
                                       NNAbstract@life:0.3,consumption:0.1
-                                      one_eating&thing:0.003 eat&thing:0.3
+/                                      one_eating&thing:0.003
+                                      eat&thing:0.3
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005
                                       sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
@@ -164,19 +166,19 @@ want               Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@wish:0.8,love:0.1,power(control):0.1,control:0.05
 play               Verb        0.99   T|trans:100,intrans:1
                                       VNPlace@playground:0.2
-                                      VNPerson@child:0.8,one_playing:0.3
+                                      VNPerson@child:0.8
                                       VNAbstract@play(noun):0.8,game:0.5
 end                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@end(noun):0.5,dead_end:0.2
-                                      VNPerson@dead(being):0.5,moribund(being):0.3,one_ending:0.9
+                                      VNPerson@dead(being):0.5,moribund(being):0.3
                                       VNAbstract@end(noun):0.5,finiteness:0.2
 start              Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@start(noun):0.5
-                                      VNPerson@born(being):0.5,one_being_born_soon:0.05,one_starting:0.9
+                                      VNPerson@born(being):0.5,one_being_born_soon:0.05
                                       VNAbstract@start(noun):0.5,cause(reason):0.5
 put                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@warehouse:0.1
-                                      VNPerson@one_putting:0.1,owner:0.1,keeper:0.1
+                                      VNPerson@owner:0.1,keeper:0.1
                                       VNAbstract@answer:0.1,control:0.05
 read               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@reader:0.9,smart(being):0.2
@@ -184,32 +186,29 @@ read               Verb        1.0    T|trans:100,intrans:1
                                       smart:0.1*wise:0.1*learn:0.1*read:1.0*remember:0.2*action:0.95
 add                Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
-                                      VNPerson@one_adding:0.1,owner:0.1,keeper:0.1
+                                      VNPerson@owner:0.1,keeper:0.1
                                       VNAbstract@increase(noun):0.8
 land_on_earth      Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@landing:0.05
-                                      VNPerson@one_landing:0.5
 help               Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@workplace:0.05
                                       VNPerson@helper:0.95,friend:0.3,worker:0.1
                                       VNAbstract@activity:0.05,selflessness:0.5
                                       *help:1.0*need:0.2*wise:0.01*action:0.9*abstract:0.4
 follow             Verb        0.99   T|trans:100,intrans:1
-                                      VNPerson@one_following:0.5,friend:0.5,relative:0.5
+                                      VNPerson@friend:0.5,relative:0.5
                                       change:0.025*follow:1.0*move:0.4*understand:0.05*abstract:0.05
 ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05
-                                      VNPerson@one_asking:0.5
                                       VNAbstract@understanding:0.2
                                       hear&need:0.1
                                       *help:0.1*need:0.7*smart:0.05*wise:0.1*learn:0.4*think:0.1*action:0.95*abstract:0.3
 eat                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@canteen:0.2,market:0.08
-                                      VNPerson@one_eating:0.5
                                       VNAbstract@life:0.5,consumption:0.5
                                       food&do:0.1
 know               Verb        1.0    T|trans:100,intrans:1
-                                      VNPerson@one_knowing:0.9,smart(being):0.5
+                                      VNPerson@smart(being):0.5
                                       VNAbstract@sight(sense):0.1
                                       smart:0.9*wise:0.5*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
 change             Verb        1.0    T|trans:100,intrans:1
@@ -226,7 +225,7 @@ picture            Verb        0.9    T|trans:100,intrans:1
                                       think&see:0.05
 point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@destination:0.4
-                                      VNPerson@one_pointing:0.8,traveller:0.05
+                                      VNPerson@traveller:0.05
                                       VNAbstract@motivation:0.5,cause(reason):0.1
 build              Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@building:0.6
@@ -238,21 +237,21 @@ work               Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@help(noun):0.1,activity:0.7
 see                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@scene:0.03,beautiful_place:0.05
-                                      VNPerson@one_seeing:0.8,owner:0.04,master:0.02,ruler:0.005
+                                      VNPerson@owner:0.04,master:0.02,ruler:0.005
                                       VNAbstract@sight(sense):0.7,life:0.05
                                       *see:1.0*understand:0.05*learn:0.05*light:0.05*action:0.8
 hear               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@scene:0.01
-                                      VNPerson@one_hearing:0.8,master:0.01,ruler:0.001
+                                      VNPerson@master:0.01,ruler:0.001
                                       VNAbstract@hearing(sense):0.7,understanding:0.3
                                       see&air:0.05
 part               Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@canyon:0.6
-                                      VNPerson@one_parting:0.8,traveller:0.2,adventurer:0.1
+                                      VNPerson@traveller:0.2,adventurer:0.1
                                       VNAbstract@part(noun):0.7,understanding:0.1
 take               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@shop:0.1,market:0.1
-                                      VNPerson@one_taking:0.8,owner:0.2
+                                      VNPerson@owner:0.2
                                       VNAbstract@wish:0.4,power(control):0.1,control:0.05,deprivation:0.4,hardship:0.2
 live               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@home:0.4,building:0.2
@@ -260,11 +259,10 @@ live               Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@life:0.9,existence:0.6
 flow               Verb        0.85   T|trans:0,intrans:1
                                       VNPlace@time:0.002
-                                      VNPerson@one_flowing:0.8,sailor:0.1
+                                      VNPerson@sailor:0.1
                                       change&see:0.07 impermanence&see:0.07
                                       *water:0.7*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.7
 return_home        Verb        0.1    T|trans:1,intrans:100
-                                      VNPerson@one_returning:0.8
                                       *home:0.9*return:0.9*action:0.8
 
 hot                Adjective   1.0
@@ -472,27 +470,10 @@ master             Noun        0.1    G|Person:1000,Female:1000,Common:5000     
 ruler              Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 
 
-person_who_finishes_smth      Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_does_smth_temporary   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_who_wants_smth            Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_in_need                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_playing                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_putting                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_adding                    Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_landing                   Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_following                 Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_asking                    Noun      0.1    G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_pointing                  Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_parting                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_taking                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_flowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_returning                 Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_ending                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_starting                  Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_knowing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_eating                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_seeing                    Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
-one_hearing                   Noun      0.01   G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:5000  A|Animate:1000
 
 

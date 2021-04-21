@@ -81,5 +81,11 @@ val defaultInjectors = listOf(
         { "old_$it" },
         prohibitedTags = listOf(Smallness, Young).map { it.toString() },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
+    ),
+    DerivationInjector(
+        VNPerson,
+        SpeechPart.Verb,
+        { "one_${it}ing" },
+        newSpeechPart = SpeechPart.Noun
     )
 )
