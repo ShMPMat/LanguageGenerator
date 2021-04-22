@@ -14,6 +14,7 @@ class Derivation(
     private val affix: Affix,
     val dClass: DerivationClass,
     val resultSpeechPart: TypedSpeechPart,
+    val strength: Double,
     private val categoriesChanger: CategoryChanger
 ) {
     fun derive(word: Word, random: Random): Word? {
@@ -23,7 +24,7 @@ class Derivation(
         val applicableTypes = dClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.type) }
 
-        val chosenType = randomUnwrappedElement(applicableTypes + noType, random)
+        val chosenType = randomUnwrappedElement(applicableTypes + makeNoType(1.0 / strength), random)
             ?: return null
 
         val chosenSemantics = randomUnwrappedElement(
@@ -70,5 +71,5 @@ class Derivation(
         return result
     }
 
-    override fun toString() = "Class - $dClass; $affix; $categoriesChanger"
+    override fun toString() = "Class - $dClass; $affix; $categoriesChanger; strength = %.2f".format(strength)
 }

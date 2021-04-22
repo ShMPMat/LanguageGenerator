@@ -39,4 +39,4 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
 
 data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
 
-val noType = listOf(Box(null, 1.0))
+fun makeNoType(probability: Double) = listOf(Box(null, probability))

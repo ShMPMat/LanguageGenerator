@@ -14,6 +14,7 @@ import shmp.lang.language.phonology.PhonemeSequence
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.random.randomElement
 import shmp.random.randomSublist
+import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.testProbability
@@ -187,6 +188,9 @@ class DerivationGenerator(
             affix,
             derivationClass,
             speechPart,
+            0.5.chanceOf<Double> {
+                RandomSingleton.random.nextDouble(0.1, 1.0)
+            } ?: RandomSingleton.random.nextDouble(1.0, 10.0),
             generateCategoryMaker(categoryPool, derivationClass, speechPart)
         )
     }
