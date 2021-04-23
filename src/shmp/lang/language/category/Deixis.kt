@@ -17,11 +17,12 @@ private const val outName = "Deixis"
 class Deixis(
     categories: List<DeixisValue>,
     affected: Set<PSpeechPart>,
-    override val staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     DeixisValue.values().toSet(),
     affected,
+    staticSpeechParts,
     outName
 )
 

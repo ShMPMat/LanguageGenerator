@@ -127,7 +127,7 @@ class DerivationGenerator(
                             continue
                         }
 
-                        println("${left.word} + ${right.word} = ${target.word} $distance")
+//                        println("${left.word} + ${right.word} = ${target.word} $distance")
                         target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left, right), distance))
                     }
                 }

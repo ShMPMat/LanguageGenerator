@@ -16,11 +16,12 @@ const val animosityName = "Animosity"
 class Animosity(
     categories: List<AnimosityValue>,
     affected: Set<PSpeechPart>,
-    override val staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     AnimosityValue.values().toSet(),
     affected,
+    staticSpeechParts,
     animosityName
 )
 

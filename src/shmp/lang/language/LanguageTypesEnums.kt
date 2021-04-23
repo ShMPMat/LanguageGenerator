@@ -46,4 +46,10 @@ interface CategoryValue {
     val shortName: String
 }
 
+data class AbstractCategoryValue(
+    override val semanticsCore: SemanticsCore,
+    override val parentClassName: String,
+    override val shortName: String
+) : CategoryValue
+
 typealias CategoryValues = List<CategoryValue>

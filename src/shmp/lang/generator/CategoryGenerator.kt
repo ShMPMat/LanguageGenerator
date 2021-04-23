@@ -11,16 +11,34 @@ import kotlin.random.Random
 class CategoryGenerator(
     private val random: Random
 ) {
-    internal fun randomCategories() = listOf(
-        randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
-        randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
-        randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements),
-        randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
-        randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
-        randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
-        randomCategory({ l: List<DeixisValue>, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements),
-        randomCategory({ l: List<CaseValue>, s, ss -> Case(l, s, ss) }, CaseRandomSupplements)
-    )
+    internal fun randomCategories(): List<Pair<Category, CategoryRandomSupplements>> {
+        val defaults = mutableListOf(
+            randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
+            randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
+            randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements),
+            randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
+            randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
+            randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
+            randomCategory({ l: List<DeixisValue>, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)
+        )
+
+        val caseCategory = randomCategory(
+            { l: List<CaseValue>, s, ss -> Case(l, s, ss) },
+            CaseRandomSupplements
+        )
+        defaults.add(caseCategory)
+
+        val absentScenarios = caseCategory.first.allPossibleValues
+            .filter { it !in CoreCasePresence.NAEA.possibilities + caseCategory.first.actualValues }
+
+//        if (absentScenarios.isNotEmpty())
+//            defaults.add(
+//                Case(absentScenarios, caseCategory.first.affected, setOf(), "adpositions") to
+//                        AdpositionRandomSupplements
+//            )
+
+        return defaults
+    }
 
     private fun <E: CategoryValue> randomCategory(
         constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,

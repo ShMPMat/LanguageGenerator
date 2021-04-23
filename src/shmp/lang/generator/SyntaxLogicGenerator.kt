@@ -93,7 +93,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         //TODO handle split
         //TODO handle different nominals
         val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
-        val cases = changeParadigm.categories.filterIsInstance<Case>().first().actualValues
+        val cases = changeParadigm.categories.first { it.outType == caseOutName }.actualValues
 
 
         for (verbTypeParadigm in verbParadigms) {

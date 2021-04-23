@@ -18,11 +18,12 @@ private const val outName = "Numbers"
 class Numbers(
     categories: List<NumbersValue>,
     affected: Set<PSpeechPart>,
-    override val staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     NumbersValue.values().toSet(),
     affected,
+    staticSpeechParts,
     outName
 )
 

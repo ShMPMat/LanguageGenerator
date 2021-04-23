@@ -19,11 +19,12 @@ const val nounClassName = "NounClass"
 class NounClass(
     categories: List<NounClassValue>,
     affected: Set<PSpeechPart>,
-    override val staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
     NounClassValue.values().toSet(),
     affected,
+    staticSpeechParts,
     nounClassName
 )
 

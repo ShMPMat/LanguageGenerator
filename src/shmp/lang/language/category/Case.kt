@@ -13,17 +13,19 @@ import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-private const val outName = "Case"
+const val caseOutName = "Case"
 
 class Case(
     categories: List<CaseValue>,
     affected: Set<PSpeechPart>,
-    override val staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart>,
+    outType: String = caseOutName
 ) : AbstractChangeCategory(
     categories,
     CaseValue.values().toSet(),
     affected,
-    outName
+    staticSpeechParts,
+    outType
 )
 
 object CaseRandomSupplements : CategoryRandomSupplements {
@@ -76,7 +78,7 @@ object CaseRandomSupplements : CategoryRandomSupplements {
                 NonCoreCasePresence.ObliqueOnly.possibilities
             } ?: listOf()
         } else {
-            NonCoreCasePresence.All.possibilities
+            NonCoreCasePresence.values().randomElement().possibilities
         }
 
         return coreCases + nonCoreCases
@@ -94,8 +96,35 @@ object CaseRandomSupplements : CategoryRandomSupplements {
     }
 }
 
+object AdpositionRandomSupplements : CategoryRandomSupplements {
+    override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
+        when (categoryRealization) {//TODO not actual data
+            CategoryRealization.PrefixSeparateWord -> 20.0
+            CategoryRealization.SuffixSeparateWord -> 20.0
+            CategoryRealization.Prefix -> 0.0
+            CategoryRealization.Suffix -> 0.0
+            CategoryRealization.Reduplication -> 0.0
+            CategoryRealization.Passing -> 0.0
+            CategoryRealization.NewWord -> 0.0
+        }
+
+    override fun speechPartProbabilities(speechPart: SpeechPart) =
+        CaseRandomSupplements.speechPartProbabilities(speechPart)
+
+    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart) = emptyRealization
+
+    override fun randomRealization(): List<CaseValue> {
+        return emptyList()
+    }
+
+    override fun randomStaticSpeechParts() = setOf<SpeechPart>()
+
+    override fun randomIsCompulsory(speechPart: SpeechPart) = false
+}
+
 
 enum class NonCoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
+    None(100.0, listOf()),
     All(100.0, listOf(Genitive, Dative, Instrumental, Locative)),
     ObliqueOnly(25.0, listOf(Oblique))
 }
@@ -121,5 +150,5 @@ enum class CaseValue(override val semanticsCore: SemanticsCore, override val sho
     Instrumental(SemanticsCore("(instrumental case ind)".toCluster(), Adposition.toUnspecified()), "INS"),
     Locative(SemanticsCore("(locative case ind)".toCluster(), Adposition.toUnspecified()), "LOC");
 
-    override val parentClassName = outName
+    override val parentClassName = caseOutName
 }
