@@ -14,6 +14,7 @@ import shmp.random.singleton.testProbability
 
 
 const val caseOutName = "Case"
+const val adpositionOutName = "Adposition"
 
 class Case(
     categories: List<CaseValue>,

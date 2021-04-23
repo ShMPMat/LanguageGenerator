@@ -1,6 +1,7 @@
 package shmp.lang.generator
 
 import shmp.lang.generator.util.DataConsistencyException
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart
@@ -29,13 +30,20 @@ class CategoryGenerator(
         defaults.add(caseCategory)
 
         val absentScenarios = caseCategory.first.allPossibleValues
-            .filter { it !in CoreCasePresence.NAEA.possibilities + caseCategory.first.actualValues }
+            .filter { it !in CoreCasePresence.NAEA.possibilities + caseCategory.first.actualValues + listOf(CaseValue.Oblique) }
 
-//        if (absentScenarios.isNotEmpty())
-//            defaults.add(
-//                Case(absentScenarios, caseCategory.first.affected, setOf(), "adpositions") to
-//                        AdpositionRandomSupplements
-//            )
+        if (absentScenarios.isNotEmpty()) {
+            val values = absentScenarios
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionOutName, it.shortName) }
+            val allPossibleValues = caseCategory.first.allPossibleValues
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionOutName, it.shortName) }
+                .toSet()
+
+            defaults.add(
+                AbstractChangeCategory(values, allPossibleValues, caseCategory.first.affected, setOf(), adpositionOutName) to
+                        AdpositionRandomSupplements
+            )
+        }
 
         return defaults
     }

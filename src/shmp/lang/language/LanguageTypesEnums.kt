@@ -50,6 +50,8 @@ data class AbstractCategoryValue(
     override val semanticsCore: SemanticsCore,
     override val parentClassName: String,
     override val shortName: String
-) : CategoryValue
+) : CategoryValue {
+    override fun toString() = "$parentClassName.$semanticsCore"
+}
 
 typealias CategoryValues = List<CategoryValue>
