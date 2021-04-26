@@ -111,11 +111,9 @@ class DerivationGenerator(
 
                     val connotationsSum = left.connotations + right.connotations
                     val distance = target.connotations distance connotationsSum
-                    val leftDistance = target.connotations.values.filter { !it.isGlobal } distance
-                            left.connotations.values.filter { !it.isGlobal }
-                    val rightDistance = target.connotations.values.filter { !it.isGlobal } distance
-                            right.connotations.values.filter { !it.isGlobal }
-                    val clearDistance = target.connotations.values.filter { !it.isGlobal } distance
+                    val leftDistance = target.connotations localDistance left.connotations
+                    val rightDistance = target.connotations localDistance right.connotations
+                    val clearDistance = target.connotations.values.toList() distance
                             connotationsSum.values.filter { !it.isGlobal }
 
                     if (clearDistance > 0 && leftDistance > 0 && rightDistance > 0) {

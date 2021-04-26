@@ -1,10 +1,9 @@
 package shmp.lang.language.lexis
 
 import shmp.lang.language.LanguageException
-import kotlin.math.abs
 
 
-data class Connotation(val name: String, val strength: Double, var isGlobal: Boolean = false) {
+data class Connotation(var name: String, val strength: Double, var isGlobal: Boolean = false) {
     fun getCompatibility(that: Connotation) = (if (name == that.name) 1.0
     else connotationsCompatibility[name]?.get(that.name))?.times(strength)
 
@@ -12,7 +11,7 @@ data class Connotation(val name: String, val strength: Double, var isGlobal: Boo
         if (name != that.name)
             throw LanguageException("Cannot sum connotations $name and ${that.name}")
 
-        return Connotation(name, strength + that.strength)
+        return Connotation(name, strength + that.strength, isGlobal || that.isGlobal)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -76,6 +75,14 @@ infix fun Connotations.distance(that: Connotations): Double {
 
 infix fun List<Connotation>.distance(that: List<Connotation>) =
     Connotations(this) distance Connotations(that)
+
+infix fun Connotations.localDistance(that: Connotations): Double {
+    val globalConnotations = values
+        .filter { it.isGlobal && that.values.firstOrNull { c -> c == it }?.isGlobal ?: true } +
+            that.values.filter { it.isGlobal && values.firstOrNull { c -> c == it }?.isGlobal ?: true }
+
+    return values.filter { it !in globalConnotations } distance that.values.filter { it !in globalConnotations }
+}
 
 
 val connotationsCompatibility = mapOf<String, Map<String, Double>>(

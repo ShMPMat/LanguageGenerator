@@ -37,7 +37,7 @@ class LexisGenerator(
     private val wordBase = WordBase(supplementPath)
 
     init {
-        val allConnotations =  File("$supplementPath/Connotations")
+        val allConnotations = File("$supplementPath/Connotations")
             .readLines()
             .filter { it.isNotBlank() }
             .map { if (it[0] == '-') it.drop(1) to true else it to false }
@@ -45,8 +45,16 @@ class LexisGenerator(
 
         for (template in wordBase.allWords) {
             template.connotations.values
-                .forEach { it.isGlobal = allConnotations[it.name]
-                    ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}") }
+                .forEach {
+                    if (it.name[0] == 'T') {
+                        it.name = it.name.drop(1)
+
+                        allConnotations[it.name]
+                            ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
+                    } else
+                        it.isGlobal = allConnotations[it.name]
+                            ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
+                }
         }
 
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)

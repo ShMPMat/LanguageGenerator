@@ -6,8 +6,7 @@ _personal_pronoun  PersonalPronoun     1.0
 _deixis_pronoun    DeixisPronoun       1.0
 word               Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@speaker:0.3,writer:0.3
-                                      say&thing:0.2 think&thing:0.1
-                                      *language:1*talk:1*smart:0.2*wise:0.3
+                                      *language:1*talk:1*smart:0.2*wise:0.3*object:0.075
 time               Noun        1.0    G|LongObject:100                                    A|Inanimate:100
                                       NNPlace@camp:0.01                                   NNPerson@one_who_does_smth_temporary:0.1
                                       flow&thing:0.03   day&night:0.3   sun&moon:0.05
@@ -74,8 +73,7 @@ mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000     
 world              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@universe:0.01                               NNPerson@traveller:0.1:adventurer:0.1
                                       NNAbstract@universe:0.1,infinity:0.05
-                                      world&existence:0.07     existence&thing:0.05
-                                      day&night:0.02
+                                      world&existence:0.07     existence&thing:0.05   day&night:0.02
 father             Noun        1.0    G|Person:1000,Male:5000,Common:1000                 A|Animate:1000
                                       NNAbstract@safety:0.3
                                       *home:0.3*family:0.6*defence:0.1*comfort:0.2*abstract:0.1*person:1.0
@@ -98,12 +96,13 @@ scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 book               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPerson@writer:0.3
                                       NNAbstract@history:0.4,inspiration:0.2,knowledge:0.5
-                                      word&place:0.05   word&home:0.05 word&house:0.05 word&thing:0.05  think&thing:0.05
+                                      word&place:0.05   word&home:0.05 word&house:0.05
                                       *language:0.2*remember:0.2*smart:0.2*wise:0.2*learn:0.3*read:0.7*write:0.7*object:0.975
 thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       NNAbstract@uniqueness:0.1
                                       world&part(noun):0.005 world&part:0.005
+                                      *Tobject:0.3
 river              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
                                       *water:0.95*change:0.1*place:0.95
@@ -147,6 +146,7 @@ do                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@workplace:0.3
                                       VNPerson@worker:0.9,helper:0.3,one_who_does_smth_temporary:0.01
                                       VNAbstract@help(noun):0.1,activity:0.7
+                                      *Taction:0.09*Tability:0.05
 say                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.3
                                       VNPerson@speaker:0.9,writer:0.3,actor:0.3
