@@ -50,7 +50,7 @@ internal val emptyRealization = setOf(noValue(1.0))
 
 sealed class CategorySource {
     object SelfStated : CategorySource()
-    data class RelationGranted(val relation: SyntaxRelation) : CategorySource()
+    data class RelationGranted(val relation: SyntaxRelation, val possibleSpeechParts: List<SpeechPart>) : CategorySource()
 }
 
 data class PSpeechPart(val speechPart: SpeechPart, val source: CategorySource)

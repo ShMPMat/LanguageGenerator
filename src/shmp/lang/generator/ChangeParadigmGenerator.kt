@@ -2,6 +2,7 @@ package shmp.lang.generator
 
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
+import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.definitenessName
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -50,11 +51,12 @@ class ChangeParadigmGenerator(
                     .flatMap { (c, s) ->
                         c.affected
                             .filter { it.speechPart == speechPart.type }
-                            .map { SourcedCategory(
-                                c,
-                                it.source,
-                                s.randomIsCompulsory(speechPart.type) && c.actualValues.size > 1
-                            ) to s
+                            .map {
+                                SourcedCategory(
+                                    c,
+                                    it.source,
+                                    s.randomIsCompulsory(speechPart.type) && c.actualValues.size > 1
+                                ) to s
                             }
                     }
                 val (words, applicators) = speechPartApplicatorsGenerator
@@ -86,6 +88,21 @@ class ChangeParadigmGenerator(
             speechParts.addAll(newSpeechParts)
             newSpeechParts.clear()
         }
+
+        for ((speechPart, paradigm) in speechPartChangesMap.entries)
+            for (sourcedCategory in paradigm.categories)
+                if (sourcedCategory.source is CategorySource.RelationGranted && sourcedCategory.isCompulsory) {
+                    val areAllRelationsCompulsory = sourcedCategory.source.possibleSpeechParts
+                        .flatMap { sp -> speechPartChangesMap.entries.filter { it.key.type == sp } }
+                        .all { e ->
+                            e.value.categories
+                                .firstOrNull { it.category == sourcedCategory.category }
+                                ?.isCompulsory
+                                ?: false
+                        }
+
+                    sourcedCategory.isCompulsory = areAllRelationsCompulsory
+                }
 
         if (!articlePresent(categories, speechPartChangesMap)) {
             speechPartChangesMap[SpeechPart.Article.toUnspecified()] =

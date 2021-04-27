@@ -268,11 +268,12 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
         for (actor in ActorType.values()) {
             val source = when (actor) {
-                Agent -> CategorySource.RelationGranted(SyntaxRelation.Agent)
-                Patient -> CategorySource.RelationGranted(SyntaxRelation.Patient)
+                Agent -> SyntaxRelation.Agent
+                Patient -> SyntaxRelation.Patient
             }
 
-            val relevantCategories = verbalCategories.filter { it.source == source }
+            val relevantCategories = verbalCategories
+                .filter { it.source is CategorySource.RelationGranted && it.source.relation == source }
 
             if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })

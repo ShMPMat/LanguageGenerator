@@ -41,7 +41,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 500.0))
         Verb -> listOf()
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 100.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 100.0))
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()

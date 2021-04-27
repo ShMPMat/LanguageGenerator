@@ -44,10 +44,10 @@ object CaseRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 95.0))
         Verb -> listOf()
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 80.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 80.0))
         Adverb -> listOf()
         Numeral -> listOf()
-        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent), 1.0))
+        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 1.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
         Adposition -> listOf()
