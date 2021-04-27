@@ -5,6 +5,8 @@ import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart
+import shmp.random.singleton.chanceOf
+import shmp.random.singleton.testProbability
 import shmp.random.testProbability
 import kotlin.random.Random
 
@@ -75,7 +77,8 @@ class CategoryGenerator(
         return SpeechPart.values().flatMap { speechPart ->
             supplements.speechPartProbabilities(speechPart).mapNotNull {
                 val probability = it.probability / max
-                if (testProbability(probability, random)) it else null
+
+                probability.chanceOf<SourceTemplate> { it }
             }.map { PSpeechPart(speechPart, it.source) }
         }.toSet()
     }

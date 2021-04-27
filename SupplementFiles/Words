@@ -126,7 +126,8 @@ water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                
                                       *water:1.0*change:0.05*substance:0.9
 ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPerson@ice_land_animal:0.03
-                                      NNAbstract@cold(noun):0.3,staleness:0.1
+/                                      NNAbstract@coldness:0.3
+                                      NNAbstract@staleness:0.1
                                       *ice:1.0*water:0.5*cold:0.7*sturdy:0.6*transparent:0.1*object:0.2*substance:0.8
 
 
@@ -398,7 +399,6 @@ care(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 help(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       *help:0.9*need:0.1*wise:0.01*action:0.6*abstract:0.7
 reach(noun)        Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-cold(noun)         Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 boundary           Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 thought            Noun        0.3    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       smart:0.2*wise:0.1*learn:0.1*think:0.5*remember:0.1*abstract:0.7*object:0.2

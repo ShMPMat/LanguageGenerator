@@ -86,6 +86,14 @@ val defaultInjectors = listOf(
         VNPerson,
         SpeechPart.Verb,
         { "one_${it}ing" },
-        newSpeechPart = SpeechPart.Noun
+        newSpeechPart = SpeechPart.Noun,
+        probability = 0.2
+    ),
+    DerivationInjector(
+        ANAbstract,
+        SpeechPart.Adjective,
+        { "${it}ness" },
+        newSpeechPart = SpeechPart.Noun,
+        probability = 0.4
     )
 )
