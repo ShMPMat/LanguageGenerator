@@ -17,11 +17,11 @@ wish               Noun        0.99   G|Plant:1,Fruit:0,Person:1                
                                       think&thing:0.05 need(noun)&thing:0.2 want&thing:0.2 want&see:0.2 wish&see:0.1 wish&think:0.01
 air                Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@aviator:0.1                                NNAbstract@infinity:0.1
-                                      *air:1.0*move:0.1*limitless:0.3*abstract:0.1*place:0.1
+                                      *air:1.0*move:0.1*limitless:0.3*abstract:0.1*place:0.1*substance:0.1
 wind               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@aviator:0.1
                                       hear&thing:0.1
-                                      *air:0.8*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.5
+                                      *air:0.8*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.5*substance:0.01
 end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@cemetery:0.01
                                       NNAbstract@finiteness:0.2
@@ -45,7 +45,7 @@ change(noun)       Noun        1.0    G|LongObject:100                          
                                       *change:1.0*abstract:0.9
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNAbstract@good(noun):0.5
-                                      *light:1.0*abstract:0.4
+                                      *light:1.0*abstract:0.4*substance:0.1
 kind               Noun        0.99   G|Plant:20                                          A|Inanimate:100
                                       NNAbstract@diversity:0.5
                                       part&thing:0.08
@@ -102,7 +102,7 @@ thing              Noun        0.999  G|Plant:0,Fruit:0,Person:0                
                                       NNPlace@world:0.001                                 NNPerson@person:0.0005
                                       NNAbstract@uniqueness:0.1
                                       world&part(noun):0.005 world&part:0.005
-                                      *Tobject:0.3
+                                      *Tobject:0.3*Tsubstance:0.05
 river              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005,river_fish:0005,river_animal:0.0008
                                       *water:0.95*change:0.1*place:0.95
@@ -122,13 +122,13 @@ food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                
                                       eat&thing:0.3
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005
-                                      sea&thing:0.005  thing&ocean:0.005 hot&ice:0.005
-                                      *water:1.0*change:0.05
+                                      hot&ice:0.005
+                                      *water:1.0*change:0.05*substance:0.9
 ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-                                      NNPlace@ice_land:0.4,glacier:0.5
                                       NNPerson@ice_land_animal:0.03
                                       NNAbstract@cold(noun):0.3,staleness:0.1
-                                      sea&cold:0.005  cold&ocean:0.005 cold&water:0.005
+                                      *ice:1.0*water:0.5*cold:0.7*sturdy:0.6*transparent:0.1*object:0.2*substance:0.8
+
 
 be                 Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@existence:0.1,world:0.8
@@ -266,7 +266,9 @@ return_home        Verb        0.1    T|trans:1,intrans:100
                                       *home:0.9*return:0.9*action:0.8
 
 hot                Adjective   1.0
+                                      *hot:1.0*abstract:0.9
 cold               Adjective   1.0
+                                      *cold:1.0*abstract:0.9
 small              Adjective   1.0
 large              Adjective   1.0
 high               Adjective   1.0
@@ -319,7 +321,9 @@ workplace          Noun        0.5    G|Plant:0,Fruit:0,Person:0                
 workshop           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 valley             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 ice_land           Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *ice:0.8*cold:0.6*place:0.9
 glacier            Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *ice:0.8*water:0.01*cold:0.5*transparent:0.05*place:0.9
 language           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:50
                                       *language:1*talk:1*abstract:0.9
 tongue             Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -794,7 +798,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /speak
 /weight
 /general
-/ice
 /matter
 /circle
 /pair
