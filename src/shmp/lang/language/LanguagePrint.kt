@@ -9,12 +9,13 @@ import shmp.lang.language.syntax.WordSequence
 import shmp.lang.utils.listCartesianProduct
 
 
-fun getParadigmPrinted(language: Language, word: Word): String {
+fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: Boolean = false): String {
     return "Base - $word\n" +
             listCartesianProduct(
                 language.changeParadigm.wordChangeParadigm
-                    .getSpeechPartParadigm(word.semanticsCore.speechPart).exponenceClusters
-                    .flatMap { it.categories }
+                    .getSpeechPartParadigm(word.semanticsCore.speechPart)
+                    .categories
+                    .filter { if (printOptionalCategories) true else it.isCompulsory }
                     .map { it.actualSourcedValues }
             )
                 .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }

@@ -22,6 +22,10 @@ class ExponenceCluster(
 
             val neededValues = categoryValues
                 .filter { v -> categories.any { it.containsValue(v) } }
+
+            if (neededValues.isEmpty())
+                return null
+
             possibleValues.firstOrNull { it.categoryValues.containsAll(neededValues) }
                 ?: throw LanguageException("No exponence cluster for $neededValues")
         } catch (e: LanguageException) {

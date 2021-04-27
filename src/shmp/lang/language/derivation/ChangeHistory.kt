@@ -31,7 +31,7 @@ data class CompoundHistory(val compound: Compound, val previous: List<Word>) : C
 
 
 private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arrowLabel: String): String {
-    val (maxDepthString, maxDepth) = previousWords.maxBy { it.semanticsCore.changeDepth }
+    val (maxDepthString, maxDepth) = previousWords.maxByOrNull { it.semanticsCore.changeDepth }
         ?.let { it.printChange() to it.semanticsCore.changeDepth }
         ?: throw GeneratorException("Empty word list has been given")
     val indexes = getIndexes(maxDepthString)
