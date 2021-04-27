@@ -117,51 +117,91 @@ class SyntaxLogic(
         |Syntax:
         |
         |${
-        verbFormSolver.entries.joinToString("\n") { (context, categories) ->
-            "For $context the following form is used: " + categories.joinToString(", ")
+        verbFormSolver.entries.map { (context, categories) ->
+            listOf(
+                "For ${context.first}, ",
+                "${context.second} ", 
+                " the following form is used: ",
+                categories.joinToString(", ")
+            )
         }
+            .lineUpAll()
+            .joinToString("\n") 
     }
         |
         |${
-        verbCasesSolver.entries.joinToString("\n") { (context, categories) ->
-            "For $context the following cases are used: " + categories.joinToString(", ")
+        verbCasesSolver.entries.map { (context, categories) ->
+            listOf(
+                "For ${context.first.first}, ",
+                "${context.first.second}, ",
+                "${context.second} ",
+                " the following cases are used: ", 
+                categories.joinToString(", ")
+            )
         }
+            .lineUpAll()
+            .joinToString("\n")
     }
         |
         |${
-        numberCategorySolver?.entries?.joinToString("\n") { (number, range) ->
-            "$number is used for amounts $range"
-        } ?: ""
-    } 
+        numberCategorySolver?.entries?.map { (number, range) ->
+            listOf("$number ", "is used for amounts $range")
+        }
+            ?.lineUpAll()
+            ?.joinToString("\n")
+            ?: ""
+    }
         |
         |${
-        nounClassCategorySolver?.entries?.joinToString("\n") { (g1, g2) ->
-            "$g1 is seen as $g2"
-        } ?: ""
-    } 
-        |${
-        deixisCategorySolver.entries.joinToString("\n") { (g1, g2) ->
-            "$g1 is expressed as $g2"
+        nounClassCategorySolver?.entries?.map { (g1, g2) ->
+            listOf("$g1", " is seen as $g2")
         }
-    } 
+            ?.lineUpAll()
+            ?.joinToString("\n")
+            ?: ""
+    }
+        | 
+        |${
+        deixisCategorySolver.entries.map { (g1, g2) ->
+            listOf("${g1.first}, ", "${g1.second} ", " is expressed as $g2")
+        }
+            .lineUpAll()
+            .joinToString("\n")
+    }
         |
         |Dropped pronouns:
-        |${
-        personalPronounDropSolver.joinToString("\n") { (g1, g2) ->
-            "$g1 with categories ${g2.joinToString(".") { it.shortName }}"
-        } + if (personalPronounDropSolver.isEmpty()) "none" else ""
-    } 
         |
         |${
-        copulaCaseSolver.entries.joinToString("\n") { (context, categories) ->
-            "For $context the following cases are used: " + categories.joinToString(", ")
+        personalPronounDropSolver.map { (g1, g2) ->
+            listOf("$g1", " with categories ${g2.joinToString(".") { it.shortName }}")
         }
+            .lineUpAll()
+            .joinToString("\n") + if (personalPronounDropSolver.isEmpty()) "none" else ""
     }
         |
         |${
-        nonCoreCaseSolver.entries.joinToString("\n") { (context, categories) ->
-            "For $context the following cases are used: " + categories.joinToString(", ")
+        copulaCaseSolver.entries.map { (context, categories) ->
+            listOf(
+                "For ${context.first.first}, ",
+                "${context.first.second}, ",
+                "${context.second} ",
+                " the following cases are used: " + categories.joinToString(", ")
+            )
         }
+            .lineUpAll()
+            .joinToString("\n")
+    }
+        |
+        |${
+        nonCoreCaseSolver.entries.map { (context, categories) ->
+            listOf(
+                "For ${context.first}, ", 
+                "${context.second} ",
+                " the following cases are used: " + categories.joinToString(", ")
+            )
+        }
+            .lineUpAll()
+            .joinToString("\n")
     }
     """.trimMargin()
 }

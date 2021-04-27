@@ -19,7 +19,8 @@ fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: 
                     .map { it.actualSourcedValues }
             )
                 .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
-                .map { "${it.first} - " + it.second.joinToString() }
+                .map { listOf("${it.first}", " - ") + it.second.joinToString(", &").split("&") }
+                .lineUpAll()
                 .sorted()
                 .joinToString("\n")
 }
@@ -39,11 +40,23 @@ fun lineUp(ss: List<String>): List<String> {
     val max = ss
         .map { it.length }
         .maxOrNull()
-        ?: throw GeneratorException("Cannot line up list of strings, because it's empty")
+        ?: throw GeneratorException("String list is empty")
     return ss.map { it + " ".repeat(max - it.length) }
 }
 
 fun lineUp(vararg ss: String) = lineUp(ss.toList())
+
+fun List<List<String>>.lineUpAll(): List<String> {
+    return if (this[0].size == 1)
+        lineUp(map { it[0] })
+    else {
+        val linedPostfixes = lineUp(this.map { it.last() })
+
+        this.map { it.dropLast(1) }
+            .lineUpAll()
+            .mapIndexed { i, s -> s + linedPostfixes[i] }
+    }
+}
 
 fun getClauseInfoPrinted(wordSequence: WordSequence) =
     wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
