@@ -17,7 +17,8 @@ import kotlin.math.abs
 class SyntaxLogic(
     val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
     val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
-    val copulaCasesSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
+    val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
+    val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
     val numberCategorySolver: Map<NumbersValue, IntRange>?,
     val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
     val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
@@ -71,7 +72,14 @@ class SyntaxLogic(
     }
 
     fun resolveCopulaCase(copulaType: CopulaType, syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart) : CategoryValues {
-        return copulaCasesSolver.getValue(copulaType to syntaxRelation to speechPart)
+        return copulaCaseSolver.getValue(copulaType to syntaxRelation to speechPart)
+    }
+
+    fun resolveNonCoreCase(caseValue: CaseValue, speechPart: TypedSpeechPart) : CategoryValues {
+        if (caseValue in nonCoreCases)
+            throw SyntaxException("Cannot resolve core cases")
+
+        return nonCoreCaseSolver.getValue(caseValue to speechPart)
     }
 
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
@@ -145,7 +153,13 @@ class SyntaxLogic(
     } 
         |
         |${
-        copulaCasesSolver.entries.joinToString("\n") { (context, categories) ->
+        copulaCaseSolver.entries.joinToString("\n") { (context, categories) ->
+            "For $context the following cases are used: " + categories.joinToString(", ")
+        }
+    }
+        |
+        |${
+        nonCoreCaseSolver.entries.joinToString("\n") { (context, categories) ->
             "For $context the following cases are used: " + categories.joinToString(", ")
         }
     }

@@ -1,8 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
-import shmp.lang.language.category.Case
-import shmp.lang.language.category.caseOutName
+import shmp.lang.language.category.caseName
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
@@ -41,7 +40,7 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause() {
                 isDropped = true
 
             language.changeParadigm.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).categories
-                .firstOrNull { it.category.outType == caseOutName }
+                .firstOrNull { it.category.outType == caseName }
                 ?.actualSourcedValues
                 ?.firstOrNull()
                 ?.let {

@@ -20,52 +20,80 @@ import shmp.random.toSampleSpaceObject
 
 
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxParadigm: SyntaxParadigm) {
+    private val nominalParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Noun) +
+            changeParadigm.getSpeechPartParadigms(SpeechPart.PersonalPronoun) +
+            changeParadigm.getSpeechPartParadigms(SpeechPart.DeixisPronoun)
+
     fun generateSyntaxLogic() = SyntaxLogic(
         generateVerbFormSolver(),
         generateVerbCaseSolver(),
-        generateCopulaCasesSolver(),
+        generateCopulaCaseSolver(),
+        generateNonCoreCasesSolver(),
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver()
     )
 
-    private fun generateCopulaCasesSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
-        val copulaCasesSolver: MutableMap<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
+    private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
+        val copulaCaseSolver: MutableMap<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
             mutableMapOf()
 
         val copulas = syntaxParadigm.copulaPresence.copulaType.map { it.feature }
-        val nominals = changeParadigm.getSpeechPartParadigms(SpeechPart.Noun) +
-                changeParadigm.getSpeechPartParadigms(SpeechPart.PersonalPronoun) +
-                changeParadigm.getSpeechPartParadigms(SpeechPart.DeixisPronoun)
 
-        for (speechPartParadigm in nominals) {
+        for (speechPartParadigm in nominalParadigms)
             for (copula in copulas) {
-                copulaCasesSolver[copula to SyntaxRelation.Agent to speechPartParadigm.speechPart] = listOf(
+                copulaCaseSolver[copula to SyntaxRelation.Agent to speechPartParadigm.speechPart] = listOf(
                     CaseValue.Nominative.toSampleSpaceObject(0.9),
                     CaseValue.Absolutive.toSampleSpaceObject(0.9),
                     CaseValue.Ergative.toSampleSpaceObject(0.1),
                     CaseValue.Accusative.toSampleSpaceObject(0.1)
                 )
-                    .filter { it.value in speechPartParadigm.getCategoryValues<Case>() }
+                    .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
                     .randomUnwrappedElementOrNull()
                     ?.let { listOf(it) }
                     ?: emptyList()
 
-                copulaCasesSolver[copula to SyntaxRelation.SubjectCompliment to speechPartParadigm.speechPart] = listOf(
+                copulaCaseSolver[copula to SyntaxRelation.SubjectCompliment to speechPartParadigm.speechPart] = listOf(
                     CaseValue.Nominative.toSampleSpaceObject(0.5),
                     CaseValue.Absolutive.toSampleSpaceObject(0.5),
                     CaseValue.Ergative.toSampleSpaceObject(0.5),
                     CaseValue.Accusative.toSampleSpaceObject(0.5)
                 )
-                    .filter { it.value in speechPartParadigm.getCategoryValues<Case>() }
+                    .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
                     .randomUnwrappedElementOrNull()
                     ?.let { listOf(it) }
                     ?: emptyList()
             }
+
+        return copulaCaseSolver
+    }
+
+    private fun generateNonCoreCasesSolver(): Map<Pair<CaseValue, TypedSpeechPart>, List<CategoryValue>> {
+        val nonCoreCaseSolver: MutableMap<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mutableMapOf()
+
+        for (speechPartParadigm in nominalParadigms) {
+            val caseValues = speechPartParadigm.getCategoryValues(caseName)
+            val adpositionValues = speechPartParadigm.getCategoryValues(adpositionName)
+
+            val obliqueCaseWrapped = caseValues
+                .firstOrNull { it == CaseValue.Oblique }
+                ?.let { listOf(it) }
+                ?: emptyList()
+
+            for (caseValue in nonCoreCases) {
+                nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = caseValues
+                    .firstOrNull { it == caseValue }?.let { listOf(it) }
+                    ?: obliqueCaseWrapped + (
+                            adpositionValues
+                                .firstOrNull { it.semanticsCore == caseValue.semanticsCore }
+                                ?.let { listOf(it) }
+                                ?: emptyList()
+                            )
+            }
         }
 
-        return copulaCasesSolver
+        return nonCoreCaseSolver
     }
 
     private fun generateVerbFormSolver(): MutableMap<VerbContextInfo, List<CategoryValue>> {
@@ -93,7 +121,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         //TODO handle split
         //TODO handle different nominals
         val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
-        val cases = changeParadigm.categories.first { it.outType == caseOutName }.actualValues
+        val cases = changeParadigm.categories.first { it.outType == caseName }.actualValues
 
 
         for (verbTypeParadigm in verbParadigms) {
@@ -185,9 +213,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
         for (speechPart in changeParadigm.speechParts) {
             val deixisValues = changeParadigm.getSpeechPartParadigm(speechPart)
-                .getCategoryValues<Deixis>()
+                .getCategoryValues(deixisName)
             val definitenessValues = changeParadigm.getSpeechPartParadigm(speechPart)
-                .getCategoryValues<Definiteness>()
+                .getCategoryValues(definitenessName)
 
 
             val indefiniteArticleWrapped = definitenessValues
@@ -206,7 +234,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
             if (deixisValues.isNotEmpty()) {
                 val absentDeixis = changeParadigm.getSpeechPartParadigm(speechPart)
-                    .getCategory<Deixis>()
+                    .getCategory(deixisName)
                     .category
                     .allPossibleValues
                     .filter { it !in deixisValues }
@@ -237,7 +265,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             }
 
             val definitenessNecessity = changeParadigm.getSpeechPartParadigm(speechPart)
-                .getCategoryOrNull<Definiteness>()
+                .getCategoryOrNull(definitenessName)
                 ?.isCompulsory ?: false
 
             if (definitenessNecessity)

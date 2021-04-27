@@ -6,8 +6,6 @@ import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.random.singleton.chanceOf
-import shmp.random.singleton.testProbability
-import shmp.random.testProbability
 import kotlin.random.Random
 
 
@@ -32,17 +30,17 @@ class CategoryGenerator(
         defaults.add(caseCategory)
 
         val absentScenarios = caseCategory.first.allPossibleValues
-            .filter { it !in CoreCasePresence.NAEA.possibilities + caseCategory.first.actualValues + listOf(CaseValue.Oblique) }
+            .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
 
         if (absentScenarios.isNotEmpty()) {
             val values = absentScenarios
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionOutName, it.shortName) }
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.shortName) }
             val allPossibleValues = caseCategory.first.allPossibleValues
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionOutName, it.shortName) }
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.shortName) }
                 .toSet()
 
             defaults.add(
-                AbstractChangeCategory(values, allPossibleValues, caseCategory.first.affected, setOf(), adpositionOutName) to
+                AbstractChangeCategory(values, allPossibleValues, caseCategory.first.affected, setOf(), adpositionName) to
                         AdpositionRandomSupplements
             )
         }

@@ -13,14 +13,14 @@ import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val caseOutName = "Case"
-const val adpositionOutName = "Adposition"
+const val caseName = "Case"
+const val adpositionName = "Adposition"
 
 class Case(
     categories: List<CaseValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>,
-    outType: String = caseOutName
+    outType: String = caseName
 ) : AbstractChangeCategory(
     categories,
     CaseValue.values().toSet(),
@@ -151,5 +151,9 @@ enum class CaseValue(override val semanticsCore: SemanticsCore, override val sho
     Instrumental(SemanticsCore("(instrumental case ind)".toCluster(), Adposition.toUnspecified()), "INS"),
     Locative(SemanticsCore("(locative case ind)".toCluster(), Adposition.toUnspecified()), "LOC");
 
-    override val parentClassName = caseOutName
+    override val parentClassName = caseName
 }
+
+val coreCases = listOf(Nominative, Accusative, Ergative, Absolutive)
+
+val nonCoreCases = CaseValue.values().filter { it !in coreCases && it != Oblique }

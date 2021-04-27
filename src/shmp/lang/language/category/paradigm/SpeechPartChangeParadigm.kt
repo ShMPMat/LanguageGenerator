@@ -16,13 +16,14 @@ class SpeechPartChangeParadigm(
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
-    inline fun <reified E: Category> getCategory() = categories
-        .first { it.category is E }
+    fun getCategory(name: String) = categories
+        .first { it.category.outType == name }
 
-    inline fun <reified E: Category> getCategoryOrNull() = categories
-        .firstOrNull { it.category is E }
 
-    inline fun <reified E: Category> getCategoryValues() = getCategoryOrNull<E>()
+    fun getCategoryOrNull(name: String) = categories
+        .firstOrNull { it.category.outType == name }
+
+    fun getCategoryValues(name: String) = getCategoryOrNull(name)
         ?.category
         ?.actualValues
         ?: emptyList()

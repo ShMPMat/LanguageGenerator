@@ -9,10 +9,9 @@ import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
-import shmp.random.singleton.testProbability
 
 
-private const val outName = "Deixis"
+const val deixisName = "Deixis"
 
 class Deixis(
     categories: List<DeixisValue>,
@@ -23,7 +22,7 @@ class Deixis(
     DeixisValue.values().toSet(),
     affected,
     staticSpeechParts,
-    outName
+    deixisName
 )
 
 object DeixisRandomSupplements : CategoryRandomSupplements {
@@ -52,7 +51,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+        val acceptableValues = values.filter { it.parentClassName == deixisName }
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
             else -> when (speechPart) {
@@ -94,5 +93,5 @@ enum class DeixisValue(override val semanticsCore: SemanticsCore, override val s
     ProximalAddressee(SemanticsCore("this.addr".toCluster(), DeixisPronoun.toAdnominal()), "PROX.ADDR");
     //TODO more values
 
-    override val parentClassName = outName
+    override val parentClassName = deixisName
 }
