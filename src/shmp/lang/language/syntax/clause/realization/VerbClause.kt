@@ -6,6 +6,7 @@ import shmp.lang.language.category.TenseValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
+import shmp.lang.language.syntax.SyntaxLogic
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.arranger.UndefinedArranger
@@ -29,22 +30,8 @@ class TransitiveVerbClause(
         val agent = subjectClause.toNode(language, random).addThirdPerson()
         val patient = objectClause.toNode(language, random).addThirdPerson()
 
-        val caseRelevantCategories = verb.categoryValues
-            .map { it.categoryValue }
-            .filterIsInstance<TenseValue>()
-            .toSet()
-        agent.categoryValues.removeIf { it is CaseValue }
-        agent.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
-            verb.semanticsCore.speechPart,
-            SyntaxRelation.Agent,
-            caseRelevantCategories
-        ))
-        patient.categoryValues.removeIf { it is CaseValue }
-        patient.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
-            verb.semanticsCore.speechPart,
-            SyntaxRelation.Patient,
-            caseRelevantCategories
-        ))
+        agent.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Agent)
+        patient.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Patient)
 
         node.setRelationChild(SyntaxRelation.Agent, agent)
         node.setRelationChild(SyntaxRelation.Patient, patient)
@@ -68,16 +55,7 @@ class IntransitiveVerbClause(
         val node = verb.wordToNode(UndefinedArranger, SyntaxRelation.Verb)
         val argument = argumentClause.toNode(language, random).addThirdPerson()
 
-        val caseRelevantCategories = verb.categoryValues
-            .map { it.categoryValue }
-            .filterIsInstance<TenseValue>()
-            .toSet()
-        argument.categoryValues.removeIf { it is CaseValue }
-        argument.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
-            verb.semanticsCore.speechPart,
-            SyntaxRelation.Argument,
-            caseRelevantCategories
-        ))
+        argument.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Argument)
 
         node.setRelationChild(SyntaxRelation.Argument, argument)
 
@@ -89,3 +67,18 @@ internal fun SentenceNode.addThirdPerson() =
     if (this.categoryValues.none { it.parentClassName == "Person" })
         this.apply { insertCategoryValue(shmp.lang.language.category.PersonValue.Third) }
     else this
+
+
+private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: Word, syntaxRelation: SyntaxRelation) {
+    val caseRelevantCategories = verb.categoryValues
+        .map { it.categoryValue }
+        .filterIsInstance<TenseValue>()
+        .toSet()
+
+   categoryValues.removeIf { it is CaseValue }
+   categoryValues.addAll(syntaxLogic.resolveVerbCase(
+        verb.semanticsCore.speechPart,
+        syntaxRelation,
+        caseRelevantCategories
+    ))
+}
