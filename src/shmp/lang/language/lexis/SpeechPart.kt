@@ -24,6 +24,8 @@ data class TypedSpeechPart(val type: SpeechPart, val subtype: String) {
 
 fun SpeechPart.toUnspecified() = TypedSpeechPart(this, defaultSubtype)
 fun SpeechPart.toAdnominal() = TypedSpeechPart(this, adnominalSubtype)
+fun SpeechPart.toIntransitive() = TypedSpeechPart(this, intransitiveSubtype)
 
 const val defaultSubtype = "unspecified"
 const val adnominalSubtype = "Adnominal"
+const val intransitiveSubtype = "Intransitive"

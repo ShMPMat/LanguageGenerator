@@ -2,6 +2,7 @@ package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
 import shmp.lang.language.syntax.CopulaWordOrder
+import shmp.lang.language.syntax.SubstitutingOrder
 import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
 import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType
@@ -32,6 +33,36 @@ class TransitiveVerbSentenceClause(
                             .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
+        }
+
+    override fun unfold(language: Language, random: Random) =
+        SentenceClauseTranslator(language.changeParadigm)
+            .applyNode(toNode(language, random), SyntaxRelation.Verb, random).second
+}
+
+class IntransitiveVerbSentenceClause(
+    private val verbClause: IntransitiveVerbClause,
+    val type: VerbSentenceType
+) : SentenceClause {
+    override fun toNode(language: Language, random: Random): SentenceNode =
+        verbClause.toNode(language, random).apply {
+            if (type == VerbSentenceType.QuestionVerbClause)
+                if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
+                    setRelationChild(
+                        SyntaxRelation.QuestionMarker,
+                        language.lexis.getQuestionMarkerWord(QuestionMarker)
+                            .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
+                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
+                    )
+            arranger = RelationArranger(SubstitutingOrder(
+                language.changeParadigm.wordOrder.sovOrder.getValue(type)
+            ) { lst ->
+                lst.map { r ->
+                    if (r == SyntaxRelation.Agent)
+                        SyntaxRelation.Argument
+                    else r
+                }
+            })
         }
 
     override fun unfold(language: Language, random: Random) =

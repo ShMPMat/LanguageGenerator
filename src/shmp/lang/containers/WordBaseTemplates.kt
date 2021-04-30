@@ -20,20 +20,23 @@ data class SemanticsCoreTemplate(
     override val probability: Double
 ) : SampleSpaceObject
 
-fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random) =
-    SemanticsCore(
+fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random): SemanticsCore {
+    val tags = this.tagClusters
+        .filter { it.shouldBeInstantiated }
+        .map {
+            SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
+        }
+        .toSet()
+
+    return SemanticsCore(
         MeaningCluster(word),
-        this.speechPart.toUnspecified(),
+        if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toUnspecified(),
         this.connotations,
-        this.tagClusters
-            .filter { it.shouldBeInstantiated }
-            .map {
-                SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
-            }
-            .toSet(),
+        tags,
         DerivationCluster(this.derivationClusterTemplate.typeToCore),
         staticCategories
     )
+}
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
     if (this.speechPart != core.speechPart.type)

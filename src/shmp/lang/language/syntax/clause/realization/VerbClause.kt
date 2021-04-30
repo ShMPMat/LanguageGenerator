@@ -25,8 +25,6 @@ class TransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val changeParadigm = language.changeParadigm
-
         val node = verb.wordToNode(UndefinedArranger, SyntaxRelation.Verb)
         val agent = subjectClause.toNode(language, random).addThirdPerson()
         val patient = objectClause.toNode(language, random).addThirdPerson()
@@ -55,6 +53,37 @@ class TransitiveVerbClause(
     }
 }
 
+class IntransitiveVerbClause(
+    val verb: Word,
+    val argumentClause: NominalClause
+): SyntaxClause {
+    init {
+        if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
+            throw SyntaxException("$verb is not a verb")
+        if (verb.semanticsCore.tags.any { it.name == "trans" })
+            throw SyntaxException("$verb in the intransitive clause is transitive")
+    }
+
+    override fun toNode(language: Language, random: Random): SentenceNode {
+        val node = verb.wordToNode(UndefinedArranger, SyntaxRelation.Verb)
+        val argument = argumentClause.toNode(language, random).addThirdPerson()
+
+        val caseRelevantCategories = verb.categoryValues
+            .map { it.categoryValue }
+            .filterIsInstance<TenseValue>()
+            .toSet()
+        argument.categoryValues.removeIf { it is CaseValue }
+        argument.categoryValues.addAll(language.changeParadigm.syntaxLogic.resolveVerbCase(
+            verb.semanticsCore.speechPart,
+            SyntaxRelation.Argument,
+            caseRelevantCategories
+        ))
+
+        node.setRelationChild(SyntaxRelation.Argument, argument)
+
+        return node
+    }
+}
 
 internal fun SentenceNode.addThirdPerson() =
     if (this.categoryValues.none { it.parentClassName == "Person" })

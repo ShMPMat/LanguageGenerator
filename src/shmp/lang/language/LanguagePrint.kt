@@ -47,6 +47,10 @@ fun lineUp(ss: List<String>): List<String> {
 fun lineUp(vararg ss: String) = lineUp(ss.toList())
 
 fun List<List<String>>.lineUpAll(): List<String> {
+    if (this.isEmpty()) {
+        return emptyList()
+    }
+
     return if (this[0].size == 1)
         lineUp(map { it[0] })
     else {

@@ -45,7 +45,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         random
     )
     private val changeGenerator = ChangeGenerator(lexisGenerator)
-    private val categoryGenerator = CategoryGenerator(random)
+    private val categoryGenerator = CategoryGenerator()
     private val changeParadigmGenerator = ChangeParadigmGenerator(
         stressPattern,
         lexisGenerator,

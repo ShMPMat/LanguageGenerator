@@ -1,5 +1,6 @@
 package shmp.lang.generator
 
+import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.lexis.SpeechPart
@@ -90,6 +91,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                                 ?.let { listOf(it) }
                                 ?: emptyList()
                             )
+
+                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
+                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
             }
         }
 

@@ -67,12 +67,14 @@ class Visualizer(val language: Language) {
         val secondVerb = TransitiveVerbDescription("see", secondSubj, firstObj)
         val thirdVerb = TransitiveVerbDescription("see", thirdSubj, firstObj)
         val fourthVerb = TransitiveVerbDescription("see", thirdSubj, secondObj)
+        val fifthVerb = IntransitiveVerbDescription("exist", thirdSubj)
 
         val testSentencesMain = listOf(
             TransitiveVerbMainClauseDescription(firstVerb),
             TransitiveVerbMainClauseDescription(secondVerb),
             TransitiveVerbMainClauseDescription(thirdVerb),
-            TransitiveVerbMainClauseDescription(fourthVerb)
+            TransitiveVerbMainClauseDescription(fourthVerb),
+            IntransitiveVerbMainClauseDescription(fifthVerb)
         )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
@@ -153,7 +155,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 33)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 34)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

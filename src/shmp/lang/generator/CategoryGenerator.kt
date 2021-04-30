@@ -6,12 +6,9 @@ import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.random.singleton.chanceOf
-import kotlin.random.Random
 
 
-class CategoryGenerator(
-    private val random: Random
-) {
+class CategoryGenerator {
     internal fun randomCategories(): List<Pair<Category, CategoryRandomSupplements>> {
         val defaults = mutableListOf(
             randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),

@@ -2,10 +2,7 @@ package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.Language
 import shmp.lang.language.syntax.WordSequence
-import shmp.lang.language.syntax.clause.realization.CopulaSentenceClause
-import shmp.lang.language.syntax.clause.realization.SyntaxClause
-import shmp.lang.language.syntax.clause.realization.TransitiveVerbSentenceClause
-import shmp.lang.language.syntax.clause.realization.UnfoldableClause
+import shmp.lang.language.syntax.clause.realization.*
 import shmp.lang.language.syntax.clause.translation.CopulaSentenceType
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType
 import shmp.lang.language.syntax.context.Context
@@ -27,6 +24,19 @@ class TransitiveVerbMainClauseDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         TransitiveVerbSentenceClause(
+            verbClause.toClause(language, context, random),
+            when (context.type.first) {
+                Simple -> VerbSentenceType.MainVerbClause
+                GeneralQuestion -> VerbSentenceType.QuestionVerbClause
+            }
+        )
+}
+
+class IntransitiveVerbMainClauseDescription(
+    private val verbClause: IntransitiveVerbDescription
+) : SentenceDescription() {
+    override fun toClause(language: Language, context: Context, random: Random) =
+        IntransitiveVerbSentenceClause(
             verbClause.toClause(language, context, random),
             when (context.type.first) {
                 Simple -> VerbSentenceType.MainVerbClause

@@ -1,12 +1,11 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.category.Category
-import shmp.lang.language.category.Deixis
-import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.syntax.WordSequence
+
 
 class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,

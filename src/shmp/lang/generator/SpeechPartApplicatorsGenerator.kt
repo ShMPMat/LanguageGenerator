@@ -170,12 +170,12 @@ class SpeechPartApplicatorsGenerator(
         }
     }
 
-    fun randomApplicatorsOrder(
-        applicators: Map<ExponenceCluster,
-                Map<ExponenceValue, CategoryApplicator>>
-    ): List<ExponenceCluster> = applicators.keys.shuffled(random)
+    fun randomApplicatorsOrder(applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>) =
+        applicators.keys
+            .sortedBy { k -> k.categories.joinToString { it.category.outType } }
+            .shuffled(random)
 
-    private fun constructExponenceUnionSets(
+    internal fun constructExponenceUnionSets(
         categories: List<SourcedCategory>,
         neighbourCategories: BoxedInt = BoxedInt(1)
     ): Set<List<SourcedCategoryValue>> =
@@ -237,7 +237,7 @@ class SpeechPartApplicatorsGenerator(
     }
 }
 
-private data class BoxedInt(var value: Int)
+internal data class BoxedInt(var value: Int)
 
 typealias RealizationMapper = (CategoryRealization) -> Double
 
