@@ -46,7 +46,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
             SourceTemplate(RelationGranted(Agent, nominals), 20.0),
             SourceTemplate(RelationGranted(Patient, nominals), 1.0)
         )//TODO not an actual data
-        Adjective -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 20.0))//TODO not an actual data
+        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()

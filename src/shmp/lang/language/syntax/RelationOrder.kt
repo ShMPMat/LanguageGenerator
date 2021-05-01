@@ -81,11 +81,11 @@ enum class NominalGroupOrder(
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
     //TODO no data on that
-    DNP(listOf(listOf(Definition, Agent, Possessor).toSampleSpaceObject(1.0)), 10.0),
-    NDP(listOf(listOf(Agent, Definition, Possessor).toSampleSpaceObject(1.0)), 100.0),
-    DPN(listOf(listOf(Definition, Possessor, Agent).toSampleSpaceObject(1.0)), 100.0),
-    NPD(listOf(listOf(Agent, Possessor, Definition).toSampleSpaceObject(1.0)), 100.0),
-    PDN(listOf(listOf(Possessor, Definition, Agent).toSampleSpaceObject(1.0)), 100.0),
-    PND(listOf(listOf(Possessor, Agent, Definition).toSampleSpaceObject(1.0)), 10.0),
+    DNP(listOf(listOf(Definition, Nominal, Possessor).toSampleSpaceObject(1.0)), 10.0),
+    NDP(listOf(listOf(Nominal, Definition, Possessor).toSampleSpaceObject(1.0)), 100.0),
+    DPN(listOf(listOf(Definition, Possessor, Nominal).toSampleSpaceObject(1.0)), 100.0),
+    NPD(listOf(listOf(Nominal, Possessor, Definition).toSampleSpaceObject(1.0)), 100.0),
+    PDN(listOf(listOf(Possessor, Definition, Nominal).toSampleSpaceObject(1.0)), 100.0),
+    PND(listOf(listOf(Possessor, Nominal, Definition).toSampleSpaceObject(1.0)), 10.0),
     None(listOf(DNP, NDP, DPN, NPD, PDN, PND).flatMap { it.references }, 10.0)
 }

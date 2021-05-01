@@ -5,7 +5,9 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
@@ -40,13 +42,13 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 200.0))//TODO no data at all
         Verb -> listOf(
-            SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 20.0),
-            SourceTemplate(RelationGranted(SyntaxRelation.Patient, nominals), 1.0)
+            SourceTemplate(RelationGranted(Agent, nominals), 20.0),
+            SourceTemplate(RelationGranted(Patient, nominals), 1.0)
         )
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 20.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))
         Adverb -> listOf()
         Numeral -> listOf()
-        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 10.0))
+        Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 10.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         Particle -> listOf()

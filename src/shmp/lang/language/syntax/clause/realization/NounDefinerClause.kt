@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
+import shmp.lang.language.category.CaseValue
 import shmp.lang.language.category.caseName
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
@@ -34,17 +35,16 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause() {
 
     override fun toNode(language: Language, random: Random) =
         nominalClause.toNode(language, random).apply {
-            typeForChildren = SyntaxRelation.Possessed
+            typeForChildren = SyntaxRelation.Possessor
 
             if (word.semanticsCore.speechPart.type == SpeechPart.PersonalPronoun)
                 isDropped = true
 
-            language.changeParadigm.wordChangeParadigm.getSpeechPartParadigm(word.semanticsCore.speechPart).categories
-                .firstOrNull { it.category.outType == caseName }
-                ?.actualSourcedValues
-                ?.firstOrNull()
-                ?.let {
-                    categoryValues.add(it.categoryValue)
-                }
+            categoryValues.removeIf { it is CaseValue }
+            val newCaseMarkers = language.changeParadigm.syntaxLogic.resolveNonCoreCase(
+                CaseValue.Genitive,
+                word.semanticsCore.speechPart
+            )
+            categoryValues.addAll(newCaseMarkers)
         }
 }

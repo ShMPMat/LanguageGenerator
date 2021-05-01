@@ -10,7 +10,6 @@ import shmp.lang.language.syntax.clause.realization.ObliquePredicatePossessionCl
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue
-import shmp.lang.language.syntax.features.PredicatePossessionType
 import shmp.lang.language.syntax.features.PredicatePossessionType.*
 import shmp.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
@@ -39,6 +38,12 @@ class PredicatePossessionDescription(
                 ownerDescription,
                 ownedDescription,
                 CaseValue.Dative
+            )
+            GenitiveOblique -> IntransitiveVerbMainClauseDescription(
+                SimpleIntransitiveVerbDescription(
+                    "exist",
+                    ownedDescription.copyAndAddDefinitions(listOf(PossessorDescription(ownerDescription)))
+                )
             )
         }.toClause(language, context, random)
 }

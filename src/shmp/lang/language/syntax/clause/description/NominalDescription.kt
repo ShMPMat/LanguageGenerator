@@ -27,6 +27,12 @@ open class NominalDescription(
             )
         }
             ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
+
+    open fun copyAndAddDefinitions(newDefinitions: List<NounDefinerDescription>) = NominalDescription(
+        noun,
+        definitions + newDefinitions,
+        actorCompliment
+    )
 }
 
 class PronounDescription(
@@ -47,4 +53,11 @@ class PronounDescription(
             actorType
         )
     }
+
+    override fun copyAndAddDefinitions(newDefinitions: List<NounDefinerDescription>) = PronounDescription(
+        noun,
+        definitions + newDefinitions,
+        actorType,
+        actor
+    )
 }

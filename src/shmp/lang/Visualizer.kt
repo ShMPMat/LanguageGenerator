@@ -80,8 +80,8 @@ class Visualizer(val language: Language) {
             CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj)),
-            PredicatePossessionDescription(firstSubj, firstObj),
-            PredicatePossessionDescription(thirdSubj, secondObj)
+            PredicatePossessionDescription(thirdSubj, secondObj),
+            PredicatePossessionDescription(firstSubj, firstObj)
         )
 
         val firstContext = Context(
@@ -156,7 +156,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 35)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 37)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

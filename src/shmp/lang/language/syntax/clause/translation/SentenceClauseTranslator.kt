@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 
 class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
-    internal fun applyNode(sentenceNode: SentenceNode, relation: SyntaxRelation, random: Random): NonJoinedClause {
+    internal fun applyNode(sentenceNode: SentenceNode, random: Random): WordSequence {
         val categoryValues = computeValues(sentenceNode)
 
         val currentClause =
@@ -18,11 +18,15 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
             )
 
         val childrenClauses = sentenceNode.children
-            .map { it to applyNode(it.second, it.first, random) }
+            .map { it to applyNode(it.second, random) }
             .filter { !it.first.second.isDropped }
-            .map { it.second }
+            .map { it.first.first to it.second }
 
-        return relation to sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
+        if (sentenceNode.typeForChildren == SyntaxRelation.Nominal) {
+            val k = 0
+        }
+
+        return sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<SourcedCategoryValue> {

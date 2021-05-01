@@ -15,17 +15,17 @@ import shmp.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
-abstract class SentenceClause(private val topNodeRelation: SyntaxRelation) : UnfoldableClause {
+abstract class SentenceClause : UnfoldableClause {
     final override fun unfold(language: Language, random: Random) =
         SentenceClauseTranslator(language.changeParadigm)
-            .applyNode(toNode(language, random), topNodeRelation, random).second
+            .applyNode(toNode(language, random), random)
 }
 
 
 class TransitiveVerbSentenceClause(
     private val verbClause: TransitiveVerbClause,
     val type: VerbSentenceType
-) : SentenceClause(SyntaxRelation.Verb) {
+) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
@@ -43,7 +43,7 @@ class TransitiveVerbSentenceClause(
 class IntransitiveVerbSentenceClause(
     private val verbClause: IntransitiveVerbClause,
     val type: VerbSentenceType
-) : SentenceClause(SyntaxRelation.Verb) {
+) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
@@ -69,7 +69,7 @@ class IntransitiveVerbSentenceClause(
 class CopulaSentenceClause(
     private val copulaClause: CopulaClause,
     val type: CopulaSentenceType
-) : SentenceClause(copulaClause.topType) {
+) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SentenceNode =
         copulaClause.toNode(language, random).apply {
             if (type == CopulaSentenceType.QuestionCopulaClause)

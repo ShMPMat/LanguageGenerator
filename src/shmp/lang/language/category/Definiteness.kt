@@ -6,7 +6,9 @@ import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.DefinitenessValue.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
@@ -41,7 +43,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf(SourceTemplate(SelfStated, 500.0))
         Verb -> listOf()
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 100.0))
+        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 100.0))
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
