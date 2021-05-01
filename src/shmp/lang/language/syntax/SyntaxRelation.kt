@@ -7,6 +7,8 @@ enum class SyntaxRelation {
     SubjectCompliment,
     Verb,
 
+    PossessorAdjunct,
+
     CopulaParticle,
     QuestionMarker,
 

@@ -8,6 +8,6 @@ data class PredicatePossessionPresence(val predicatePossessionType: SsoSyntaxFea
 
 enum class PredicatePossessionType(override val probability: Double): SyntaxFeature {
     HaveVerb(1.0),
-//    LocativeOblique(1.0),
-//    DativeOblique(1.0)
+    LocativeOblique(1.0),
+    DativeOblique(1.0)
 }

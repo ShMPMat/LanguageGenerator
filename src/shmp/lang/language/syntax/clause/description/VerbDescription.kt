@@ -4,6 +4,7 @@ import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.IntransitiveVerbClause
+import shmp.lang.language.syntax.clause.realization.SyntaxClause
 import shmp.lang.language.syntax.clause.realization.TransitiveVerbClause
 import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
@@ -27,10 +28,15 @@ class TransitiveVerbDescription(
             ?: throw SyntaxException("No verb '$verb' in Language")
 }
 
-class IntransitiveVerbDescription(
+
+interface IntransitiveVerbDescription: ClauseDescription {
+    override fun toClause(language: Language, context: Context, random: Random): IntransitiveVerbClause
+}
+
+class SimpleIntransitiveVerbDescription(
     val verb: Meaning,
     val argumentDescription: NominalDescription
-): ClauseDescription {
+): IntransitiveVerbDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
             IntransitiveVerbClause(

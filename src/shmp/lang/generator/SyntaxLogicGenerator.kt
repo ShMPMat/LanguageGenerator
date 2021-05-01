@@ -80,6 +80,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             val obliqueCaseWrapped = caseValues
                 .firstOrNull { it == CaseValue.Oblique }
                 ?.let { listOf(it) }
+                ?: caseValues
+                    .firstOrNull { it == CaseValue.Nominative }
+                    ?.let { listOf(it) }
                 ?: emptyList()
 
             for (caseValue in nonCoreCases) {

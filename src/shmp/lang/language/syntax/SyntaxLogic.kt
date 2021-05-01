@@ -76,7 +76,7 @@ class SyntaxLogic(
     }
 
     fun resolveNonCoreCase(caseValue: CaseValue, speechPart: TypedSpeechPart) : CategoryValues {
-        if (caseValue in nonCoreCases)
+        if (caseValue !in nonCoreCases)
             throw SyntaxException("Cannot resolve core cases")
 
         return nonCoreCaseSolver.getValue(caseValue to speechPart)

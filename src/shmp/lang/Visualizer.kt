@@ -67,7 +67,7 @@ class Visualizer(val language: Language) {
         val secondVerb = TransitiveVerbDescription("see", secondSubj, firstObj)
         val thirdVerb = TransitiveVerbDescription("see", thirdSubj, firstObj)
         val fourthVerb = TransitiveVerbDescription("see", thirdSubj, secondObj)
-        val fifthVerb = IntransitiveVerbDescription("exist", thirdSubj)
+        val fifthVerb = SimpleIntransitiveVerbDescription("exist", thirdSubj)
 
         val testSentencesMain = listOf(
             TransitiveVerbMainClauseDescription(firstVerb),
@@ -80,7 +80,8 @@ class Visualizer(val language: Language) {
             CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
             CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj)),
-            PredicatePossessionDescription(firstSubj, firstObj)
+            PredicatePossessionDescription(firstSubj, firstObj),
+            PredicatePossessionDescription(thirdSubj, secondObj)
         )
 
         val firstContext = Context(

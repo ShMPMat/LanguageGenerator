@@ -88,7 +88,7 @@ class CopulaSentenceClause(
                 language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
         }
 
-    override fun unfold(language: Language, random: Random) =
+    override fun unfold(language: Language, random: Random) =//TODO to parent
         SentenceClauseTranslator(language.changeParadigm)
             .applyNode(toNode(language, random), copulaClause.topType, random).second
 }

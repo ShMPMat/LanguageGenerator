@@ -16,8 +16,9 @@ import kotlin.random.Random
 class TransitiveVerbClause(
     val verb: Word,
     val subjectClause: NominalClause,
-    val objectClause: NominalClause
-): SyntaxClause {
+    val objectClause: NominalClause,
+    val adjuncts: List<AdjunctClause> = listOf()
+) : SyntaxClause {
     init {
         if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$verb is not a verb")
@@ -36,14 +37,18 @@ class TransitiveVerbClause(
         node.setRelationChild(SyntaxRelation.Agent, agent)
         node.setRelationChild(SyntaxRelation.Patient, patient)
 
+        for (adjunct in adjuncts)
+            node.setRelationChild(adjunct.relation, adjunct.toNode(language, random))
+
         return node
     }
 }
 
 class IntransitiveVerbClause(
     val verb: Word,
-    val argumentClause: NominalClause
-): SyntaxClause {
+    val argumentClause: NominalClause,
+    val adjuncts: List<AdjunctClause> = listOf()
+) : SyntaxClause {
     init {
         if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$verb is not a verb")
@@ -59,13 +64,16 @@ class IntransitiveVerbClause(
 
         node.setRelationChild(SyntaxRelation.Argument, argument)
 
+        for (adjunct in adjuncts)
+            node.setRelationChild(adjunct.relation, adjunct.toNode(language, random))
+
         return node
     }
 }
 
 internal fun SentenceNode.addThirdPerson() =
     if (this.categoryValues.none { it.parentClassName == "Person" })
-        this.apply { insertCategoryValue(shmp.lang.language.category.PersonValue.Third) }
+        apply { insertCategoryValue(shmp.lang.language.category.PersonValue.Third) }
     else this
 
 
@@ -75,10 +83,12 @@ private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: Word, 
         .filterIsInstance<TenseValue>()
         .toSet()
 
-   categoryValues.removeIf { it is CaseValue }
-   categoryValues.addAll(syntaxLogic.resolveVerbCase(
-        verb.semanticsCore.speechPart,
-        syntaxRelation,
-        caseRelevantCategories
-    ))
+    categoryValues.removeIf { it is CaseValue }
+    categoryValues.addAll(
+        syntaxLogic.resolveVerbCase(
+            verb.semanticsCore.speechPart,
+            syntaxRelation,
+            caseRelevantCategories
+        )
+    )
 }
