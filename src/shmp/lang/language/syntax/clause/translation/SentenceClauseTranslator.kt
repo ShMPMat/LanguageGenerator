@@ -22,10 +22,6 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
             .filter { !it.first.second.isDropped }
             .map { it.first.first to it.second }
 
-        if (sentenceNode.typeForChildren == SyntaxRelation.Nominal) {
-            val k = 0
-        }
-
         return sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
     }
 
