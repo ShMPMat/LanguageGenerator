@@ -76,13 +76,15 @@ interface SentenceType
 enum class VerbSentenceType : SentenceType {
     MainVerbClause,
     SubordinateVerbClause,
-    QuestionVerbClause
+    QuestionVerbClause,
+    NegatedVerbClause
 }
 
 enum class CopulaSentenceType : SentenceType {
     MainCopulaClause,
     SubordinateCopulaClause,
-    QuestionCopulaClause
+    QuestionCopulaClause,
+    NegatedCopulaClause
 }
 
 
@@ -90,6 +92,7 @@ fun differentWordOrderProbability(sentenceType: VerbSentenceType) = when (senten
     MainVerbClause -> 0.0
     SubordinateVerbClause -> 0.03
     QuestionVerbClause -> 0.1
+    NegatedVerbClause -> 0.01
 }
 
 fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when (sentenceType) {
@@ -97,6 +100,7 @@ fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when
     MainCopulaClause -> 0.02
     SubordinateCopulaClause -> 0.02
     QuestionCopulaClause -> 0.02
+    NegatedCopulaClause -> 0.01
 }
 
 

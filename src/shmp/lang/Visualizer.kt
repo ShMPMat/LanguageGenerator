@@ -13,8 +13,7 @@ import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue.*
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
-import shmp.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
-import shmp.lang.language.syntax.context.ContextValue.TypeContext.Simple
+import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
 import shmp.lang.language.syntax.context.Priority.Explicit
 import shmp.lang.language.syntax.context.Priority.Implicit
 import kotlin.random.Random
@@ -93,15 +92,17 @@ class Visualizer(val language: Language) {
             GeneralQuestion to Explicit
 //            mutableMapOf(ActorType.Agent to ActorValue(PersonValue.Second, GenderValue.Male, AmountValue(2)))
         )
-        val fourthContext = Context(
+        val thirdContext = Context(
             Regular to Implicit,
-            Simple to Explicit
+            Negative to Explicit
         )
 
         printSampleClause(testSentencesMain, firstContext, "Main")
         printSampleClause(testSentencesMain, secondContext, "General question")
+        printSampleClause(testSentencesMain, thirdContext, "Negative")
         printSampleClause(testSentencesCopula, firstContext, "Copula")
         printSampleClause(testSentencesCopula, secondContext, "Copula question")
+        printSampleClause(testSentencesCopula, thirdContext, "Copula negation")
     }
 
     private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {

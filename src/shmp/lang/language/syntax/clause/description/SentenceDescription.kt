@@ -28,6 +28,7 @@ class TransitiveVerbMainClauseDescription(
             when (context.type.first) {
                 Simple -> VerbSentenceType.MainVerbClause
                 GeneralQuestion -> VerbSentenceType.QuestionVerbClause
+                Negative -> VerbSentenceType.NegatedVerbClause
             }
         )
 }
@@ -41,6 +42,7 @@ class IntransitiveVerbMainClauseDescription(
             when (context.type.first) {
                 Simple -> VerbSentenceType.MainVerbClause
                 GeneralQuestion -> VerbSentenceType.QuestionVerbClause
+                Negative -> VerbSentenceType.NegatedVerbClause
             }
         )
 }
@@ -55,6 +57,7 @@ class CopulaMainClauseDescription(
             when (context.type.first) {
                 Simple -> CopulaSentenceType.MainCopulaClause
                 GeneralQuestion -> CopulaSentenceType.QuestionCopulaClause
+                Negative -> CopulaSentenceType.NegatedCopulaClause
             }
         )
 }

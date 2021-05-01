@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
+import shmp.lang.language.category.NegationValue
 import shmp.lang.language.syntax.CopulaWordOrder
 import shmp.lang.language.syntax.SubstitutingOrder
 import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
@@ -36,6 +37,10 @@ class TransitiveVerbSentenceClause(
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                             .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
+
+            if (type == VerbSentenceType.NegatedVerbClause)
+                categoryValues.add(NegationValue.Negative)
+
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
 }
@@ -54,6 +59,10 @@ class IntransitiveVerbSentenceClause(
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                             .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
+
+            if (type == VerbSentenceType.NegatedVerbClause)
+                categoryValues.add(NegationValue.Negative)
+
             arranger = RelationArranger(SubstitutingOrder(
                 language.changeParadigm.wordOrder.sovOrder.getValue(type)
             ) { lst ->
@@ -80,6 +89,10 @@ class CopulaSentenceClause(
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                             .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
                     )
+
+            if (type == CopulaSentenceType.NegatedCopulaClause)
+                categoryValues.add(NegationValue.Negative)
+
             arranger =
                 language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
         }
