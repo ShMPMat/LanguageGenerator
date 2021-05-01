@@ -15,13 +15,17 @@ import shmp.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
-interface SentenceClause : UnfoldableClause
+abstract class SentenceClause(private val topNodeRelation: SyntaxRelation) : UnfoldableClause {
+    final override fun unfold(language: Language, random: Random) =
+        SentenceClauseTranslator(language.changeParadigm)
+            .applyNode(toNode(language, random), topNodeRelation, random).second
+}
 
 
 class TransitiveVerbSentenceClause(
     private val verbClause: TransitiveVerbClause,
     val type: VerbSentenceType
-) : SentenceClause {
+) : SentenceClause(SyntaxRelation.Verb) {
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
@@ -34,16 +38,12 @@ class TransitiveVerbSentenceClause(
                     )
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
-
-    override fun unfold(language: Language, random: Random) =
-        SentenceClauseTranslator(language.changeParadigm)
-            .applyNode(toNode(language, random), SyntaxRelation.Verb, random).second
 }
 
 class IntransitiveVerbSentenceClause(
     private val verbClause: IntransitiveVerbClause,
     val type: VerbSentenceType
-) : SentenceClause {
+) : SentenceClause(SyntaxRelation.Verb) {
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
@@ -64,16 +64,12 @@ class IntransitiveVerbSentenceClause(
                 }
             })
         }
-
-    override fun unfold(language: Language, random: Random) =
-        SentenceClauseTranslator(language.changeParadigm)
-            .applyNode(toNode(language, random), SyntaxRelation.Verb, random).second
 }
 
 class CopulaSentenceClause(
     private val copulaClause: CopulaClause,
     val type: CopulaSentenceType
-) : SentenceClause {
+) : SentenceClause(copulaClause.topType) {
     override fun toNode(language: Language, random: Random): SentenceNode =
         copulaClause.toNode(language, random).apply {
             if (type == CopulaSentenceType.QuestionCopulaClause)
@@ -87,8 +83,4 @@ class CopulaSentenceClause(
             arranger =
                 language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
         }
-
-    override fun unfold(language: Language, random: Random) =//TODO to parent
-        SentenceClauseTranslator(language.changeParadigm)
-            .applyNode(toNode(language, random), copulaClause.topType, random).second
 }

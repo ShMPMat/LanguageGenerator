@@ -18,8 +18,8 @@ interface RelationOrder {
 
 
 class SubstitutingOrder(
-    val relationOrder: RelationOrder,
-    val substituteFun: (SyntaxRelations) -> SyntaxRelations
+    relationOrder: RelationOrder,
+    substituteFun: (SyntaxRelations) -> SyntaxRelations
 ): RelationOrder {
     override val references = relationOrder.references
         .map { substituteFun(it.value).toSampleSpaceObject(it.probability) }

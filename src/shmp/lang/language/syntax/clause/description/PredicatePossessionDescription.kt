@@ -31,7 +31,7 @@ class PredicatePossessionDescription(
                     )
                 )
             LocativeOblique -> ObliquePredicatePossessionDescription(
-                ownedDescription,
+                ownerDescription,
                 ownedDescription,
                 CaseValue.Locative
             )
