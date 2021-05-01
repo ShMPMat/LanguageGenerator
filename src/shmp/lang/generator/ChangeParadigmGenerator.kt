@@ -2,7 +2,6 @@ package shmp.lang.generator
 
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
-import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.definitenessName
 import shmp.lang.language.category.paradigm.ExponenceCluster
@@ -10,7 +9,6 @@ import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.category.realization.WordCategoryApplicator
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toIntransitive
@@ -156,7 +154,7 @@ class ChangeParadigmGenerator(
         }
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
-        val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm()
+        val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)
         val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
         val syntaxLogic = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm).generateSyntaxLogic()
 

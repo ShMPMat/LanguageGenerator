@@ -45,6 +45,11 @@ class PredicatePossessionDescription(
                     ownedDescription.copyAndAddDefinitions(listOf(PossessorDescription(ownerDescription)))
                 )
             )
+            Topic -> ObliquePredicatePossessionDescription(
+                ownerDescription,
+                ownedDescription,
+                CaseValue.Topic
+            )
         }.toClause(language, context, random)
 }
 

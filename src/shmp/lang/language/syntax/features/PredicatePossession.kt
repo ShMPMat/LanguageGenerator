@@ -11,4 +11,5 @@ enum class PredicatePossessionType(override val probability: Double): SyntaxFeat
     LocativeOblique(24.0),
     DativeOblique(24.0),
     GenitiveOblique(22.0),
+    Topic(100.0)
 }

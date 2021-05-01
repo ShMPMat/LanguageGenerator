@@ -78,7 +78,10 @@ object CaseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization(): List<CaseValue> {
-        val coreCases = CoreCasePresence.values().randomElement().possibilities
+        val coreCases = CoreCasePresence.values().randomElement().possibilities.toMutableList()
+
+        if (coreCases.isNotEmpty())
+            0.3.chanceOf { coreCases.add(Topic) }
 
         val nonCoreCases = if (coreCases.isEmpty()) {
             0.25.chanceOf<List<CaseValue>> {
@@ -149,6 +152,8 @@ enum class CaseValue(override val semanticsCore: SemanticsCore, override val sho
     Accusative(SemanticsCore("(accusative case ind)".toCluster(), Adposition.toUnspecified()), "ACC"),
     Ergative(SemanticsCore("(ergative case ind)".toCluster(), Adposition.toUnspecified()), "ERG"),
     Absolutive(SemanticsCore("(absolutive case ind)".toCluster(), Adposition.toUnspecified()), "ABS"),
+
+    Topic(SemanticsCore("(topic case ind)".toCluster(), Adposition.toUnspecified()), "TOP"),
 
     Oblique(SemanticsCore("(oblique case ind)".toCluster(), Adposition.toUnspecified()), "OBL"),
 
