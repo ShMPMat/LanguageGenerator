@@ -56,8 +56,12 @@ object CaseRandomSupplements : CategoryRandomSupplements {
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
-        if (acceptableValues.size != 1) return emptyRealization
-        val value = values.first()
+
+        val defaultRealization = if (nonCoreCases.all { it !in acceptableValues }) setOf(
+            RealizationBox(CategoryRealization.Suffix, 1.5),
+            RealizationBox(CategoryRealization.Prefix, 1.5)
+        ) else emptyRealization
+
         return when(speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
@@ -67,7 +71,7 @@ object CaseRandomSupplements : CategoryRandomSupplements {
                 RealizationBox(CategoryRealization.Suffix, 1.5),
                 RealizationBox(CategoryRealization.Prefix, 1.5)
             )
-            else -> emptyRealization
+            else -> defaultRealization
         }
     }
 
