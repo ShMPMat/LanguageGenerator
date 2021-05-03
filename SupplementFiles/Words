@@ -27,9 +27,8 @@ end(noun)          Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNAbstract@finiteness:0.2
 home               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPerson@relative:0.3
-                                      NNAbstract@life:0.05,safety:0.3
-                                      house&live:1.0
-                                      *home:1.0*family:0.6*defence:0.1*comfort:0.2*object:0.2*place:0.8*abstract:0.2*building:0.7
+                                      NNAbstract@safety:0.3
+                                      *home:1.0*life:0.2*reside:0.8*family:0.6*defence:0.1*comfort:0.2*object:0.2*place:0.8*abstract:0.2*building:0.7
 hand               Noun        0.99   G|Plant:1,Fruit:0,Person:1                          A|Inanimate:20
                                                                                           NNPerson@helper:0.1,friend:0.025
                                       NNAbstract@reach(noun):0.1,boundary:0.05,control:0.1
@@ -40,7 +39,7 @@ territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
                                       NNAbstract@power(control):0.05
 change(noun)       Noun        1.0    G|LongObject:100                                    A|Inanimate:100
-                                                                                          NNPerson@changer:0.2
+/                                                                                          NNPerson@changer:0.2
                                       appearance&change:0.05
                                       *change:1.0*abstract:0.9
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -55,8 +54,8 @@ need(noun)         Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       wish&thing:0.05 want&thing:0.02 want&see:0.02 wish&see:0.05
 house              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@city:0.1,neighbourhood:0.1                  NNPerson@relative:0.3
-                                      NNAbstract@life:0.01,safety:0.1
-                                      *home:0.05*object:0.5*place:0.8*building:0.7
+                                      NNAbstract@safety:0.1
+                                      *Tbuilding:0.8*home:0.05*reside:0.1*object:0.5*place:0.8
 picture(noun)      Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
                                       NNPlace@art_gallery:0.01,museum:0.01                NNPerson@painter:0.3:artist:0.1
                                       NNAbstract@appearance:0.2,thought:0.03,memory:0.05,thinking:0.03,sight(sense):0.07
@@ -88,6 +87,7 @@ place              Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                                                                           NNPerson@local_person:0.3
                                       NNAbstract@space:0.4
                                       world&point:0.07
+                                      *Tplace:1.0
 scene              Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPlace@theater:0.2      NNPerson@actor:0.3
                                       NNAbstract@pretence:0.2
@@ -132,13 +132,13 @@ ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                
 
 
 be                 Verb        1.0    T|trans:1,intrans:0
-                                      VNPlace@existence:0.1,world:0.8
+                                      VNPlace@world:0.8 VNAbstract@time:0.01
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
-                                      VNAbstract@existence:0.8,time:0.01,life:0.5
+                                      *life:0.6*exist:0.8*abstract:0.3
 exist              Verb        1.0    T|trans:0,intrans:1
-                                      VNPlace@existence:0.1,world:0.8
+                                      VNPlace@world:0.8 VNAbstract@time:0.01
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
-                                      VNAbstract@existence:0.8,time:0.01,life:0.5
+                                      *life:0.6*exist:1.0*abstract:0.3
 have               Verb        1.0    T|trans:1,intrans:0
                                       VNPlace@warehouse:0.3
                                       VNPerson@owner:0.9
@@ -213,7 +213,7 @@ know               Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@sight(sense):0.1
                                       smart:0.9*wise:0.5*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
 change             Verb        1.0    T|trans:100,intrans:1
-                                      VNPerson@changer:0.5
+/                                      VNPerson@changer:0.5
                                       *change:1.0*abstract:0.7*action:0.5
 need               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.1,one_in_need:0.8,poor_person:0.1
@@ -229,9 +229,8 @@ point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPerson@traveller:0.05
                                       VNAbstract@motivation:0.5,cause(reason):0.1
 build              Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@building:0.6
                                       VNPerson@builder:0.8
-                                      VNAbstract@construction(process):0.5
+                                      *Tbuilding:0.4*abstract:0.1*action:0.9
 work               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@workplace:0.6
                                       VNPerson@worker:0.9,helper:0.3,one_who_does_smth_temporary:0.01
@@ -255,9 +254,9 @@ take               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@owner:0.2
                                       VNAbstract@wish:0.4,power(control):0.1,control:0.05,deprivation:0.4,hardship:0.2
 live               Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@home:0.4,building:0.2
                                       VNPerson@being:0.8,living_thing:0.7,animal:0.6,person:0.2
-                                      VNAbstract@life:0.9,existence:0.6
+                                      VNAbstract@life:0.9
+                                      *Tlife:0.9*reside:0.3*exist:0.4*abstract:0.3
 flow               Verb        0.85   T|trans:0,intrans:1
                                       VNPlace@time:0.002
                                       VNPerson@sailor:0.1
@@ -338,7 +337,6 @@ playground         Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 shop               Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 market             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 beautiful_place    Noun        0.01   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
-building           Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 canteen            Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 destination        Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 canyon             Noun        0.2    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -356,9 +354,11 @@ bank(near_water)   Noun        0.8    G|Plant:0,Fruit:0,Person:0                
 
 
 existence          Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *life:0.2*exist:0.9*abstract:0.9*place:0.05
 good(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 evil(noun)         Noun        0.5    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 life               Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *Tlife:1.0*reside:0.2*exist:0.3*abstract:0.8
 memory             Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       *learn:0.1*change:0.2*remember:0.9*abstract:0.7
 love               Noun        0.8    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -412,6 +412,7 @@ play(noun)         Noun        0.1    G|Plant:0,Fruit:0,Person:0                
 flow(noun)         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       *water:0.7*change:0.2*move:0.5*abstract:0.7
 construction(process) Noun     0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
+                                      *Tbuilding:0.4*abstract:0.7*action:0.4
 motivation         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 deprivation        Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
 production         Noun        0.1    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
@@ -453,7 +454,6 @@ helper             Noun        0.1    G|Person:1000,Female:1000,Common:5000     
 friend             Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 foe                Noun        0.6    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 sailor             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
-changer            Noun        0.05   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 poor_person        Noun        0.03   G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 painter            Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000
 artist             Noun        0.1    G|Person:1000,Female:1000,Common:5000               A|Animate:1000

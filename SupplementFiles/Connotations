@@ -43,6 +43,8 @@ move
 see
 help
 need
+exist
+reside
 
 -action
 -ability
@@ -52,3 +54,4 @@ need
 -person
 -building
 -substance
+-life
