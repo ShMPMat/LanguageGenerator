@@ -106,12 +106,15 @@ enum class NumbersPresence(
 ) : SampleSpaceObject {
     None(100.0, listOf()),
     Plural(180.0, listOf(Singular, NumbersValue.Plural)),
-    Dual(20.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Plural))
+    Dual(20.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Plural)),
+    Paucal(10.0, listOf(Singular, NumbersValue.Paucal, NumbersValue.Plural)),
+    PaucalDual(2.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Paucal, NumbersValue.Plural))
 }
 
 enum class NumbersValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     Singular(SemanticsCore("(singular number indicator)".toCluster(), Particle.toUnspecified()), "SN"),//TODO more diversity
     Dual(SemanticsCore("(dual number indicator)".toCluster(), Particle.toUnspecified()), "DL"),
+    Paucal(SemanticsCore("(paucal number indicator)".toCluster(), Particle.toUnspecified()), "PC"),
     Plural(SemanticsCore("(plural number indicator)".toCluster(), Particle.toUnspecified()), "PL");
 
     override val parentClassName = outName

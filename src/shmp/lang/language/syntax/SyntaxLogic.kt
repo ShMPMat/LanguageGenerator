@@ -7,8 +7,7 @@ import shmp.lang.language.category.paradigm.withSource
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
-import shmp.lang.language.syntax.context.ContextValue
-import shmp.lang.language.syntax.context.ContextValue.TimeContext
+import shmp.lang.language.syntax.context.ContextValue.*
 import shmp.lang.language.syntax.context.Priority
 import shmp.lang.language.syntax.features.CopulaType
 import kotlin.math.abs
@@ -19,12 +18,12 @@ class SyntaxLogic(
     val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
     val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
-    val numberCategorySolver: Map<NumbersValue, IntRange>?,
+    val numberCategorySolver: NumberCategorySolver?,
     val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
     val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
     val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
-    fun resolvePronounCategories(actorValue: ContextValue.ActorValue, speechPart: TypedSpeechPart): CategoryValues {
+    fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount, deixis) = actorValue
 
@@ -38,7 +37,10 @@ class SyntaxLogic(
         return resultCategories
     }
 
-    fun resolveComplimentCategories(actorCompliment: ContextValue.ActorComplimentValue, speechPart: TypedSpeechPart): CategoryValues {
+    fun resolveComplimentCategories(
+        actorCompliment: ActorComplimentValue,
+        speechPart: TypedSpeechPart
+    ): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (amount, deixis) = actorCompliment
 
@@ -48,13 +50,15 @@ class SyntaxLogic(
         return resultCategories
     }
 
-    private fun MutableList<CategoryValue>.addNumber(amount: ContextValue.AmountValue) {
+    private fun MutableList<CategoryValue>.addNumber(amount: Amount) {
         if (numberCategorySolver != null) {
-            val number = numberCategorySolver.entries
-                .firstOrNull { it.value.contains(amount.amount) }
-                ?.key
-                ?: throw LanguageException("No handler for amount ${amount.amount}")
-
+            val number = when (amount) {
+                is Amount.All -> numberCategorySolver.allForm
+                is Amount.AmountValue -> numberCategorySolver.amountMap.entries
+                    .firstOrNull { it.value.contains(amount.amount) }
+                    ?.key
+                    ?: throw LanguageException("No handler for amount ${amount.amount}")
+            }
             add(number)
         }
     }
@@ -67,15 +71,23 @@ class SyntaxLogic(
                         && cs.size == categories.size
             }
 
-    fun resolveVerbCase(verbType: TypedSpeechPart, syntaxRelation: SyntaxRelation, categories: Set<CategoryValue>) : CategoryValues {
+    fun resolveVerbCase(
+        verbType: TypedSpeechPart,
+        syntaxRelation: SyntaxRelation,
+        categories: Set<CategoryValue>
+    ): CategoryValues {
         return verbCasesSolver.getValue(verbType to categories to syntaxRelation)
     }
 
-    fun resolveCopulaCase(copulaType: CopulaType, syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart) : CategoryValues {
+    fun resolveCopulaCase(
+        copulaType: CopulaType,
+        syntaxRelation: SyntaxRelation,
+        speechPart: TypedSpeechPart
+    ): CategoryValues {
         return copulaCaseSolver.getValue(copulaType to syntaxRelation to speechPart)
     }
 
-    fun resolveNonCoreCase(caseValue: CaseValue, speechPart: TypedSpeechPart) : CategoryValues {
+    fun resolveNonCoreCase(caseValue: CaseValue, speechPart: TypedSpeechPart): CategoryValues {
         if (caseValue !in nonCoreCases)
             throw SyntaxException("Cannot resolve core cases")
 
@@ -95,7 +107,11 @@ class SyntaxLogic(
             return chooseClosestTense(language, verbType, timeValue)
     }
 
-    private fun chooseClosestTense(language: Language, verbType: TypedSpeechPart, timeContext: TimeContext): SourcedCategoryValues {
+    private fun chooseClosestTense(
+        language: Language,
+        verbType: TypedSpeechPart,
+        timeContext: TimeContext
+    ): SourcedCategoryValues {
         val timeValueNumber = timeContext.toNumber()
 
         val tense = language.changeParadigm.wordChangeParadigm
@@ -120,22 +136,8 @@ class SyntaxLogic(
         verbFormSolver.entries.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
-                "${context.second} ", 
-                " the following form is used: ",
-                categories.joinToString(", ")
-            )
-        }
-            .lineUpAll()
-            .joinToString("\n") 
-    }
-        |
-        |${
-        verbCasesSolver.entries.map { (context, categories) ->
-            listOf(
-                "For ${context.first.first}, ",
-                "${context.first.second}, ",
                 "${context.second} ",
-                " the following cases are used: ", 
+                " the following form is used: ",
                 categories.joinToString(", ")
             )
         }
@@ -144,13 +146,28 @@ class SyntaxLogic(
     }
         |
         |${
-        numberCategorySolver?.entries?.map { (number, range) ->
+        verbCasesSolver.entries.map { (context, categories) ->
+            listOf(
+                "For ${context.first.first}, ",
+                "${context.first.second}, ",
+                "${context.second} ",
+                " the following cases are used: ",
+                categories.joinToString(", ")
+            )
+        }
+            .lineUpAll()
+            .joinToString("\n")
+    }
+        |
+        |${
+        numberCategorySolver?.amountMap?.entries?.map { (number, range) ->
             listOf("$number ", "is used for amounts $range")
         }
             ?.lineUpAll()
             ?.joinToString("\n")
             ?: ""
     }
+        |All instances - ${numberCategorySolver?.allForm}
         |
         |${
         nounClassCategorySolver?.entries?.map { (g1, g2) ->
@@ -195,7 +212,7 @@ class SyntaxLogic(
         |${
         nonCoreCaseSolver.entries.map { (context, categories) ->
             listOf(
-                "For ${context.first}, ", 
+                "For ${context.first}, ",
                 "${context.second} ",
                 " the following cases are used: " + categories.joinToString(", ")
             )
@@ -231,6 +248,8 @@ private fun TimeContext.toNumber() = when (this) {
     TimeContext.LongGonePast -> -1000.0
     TimeContext.Regular -> Double.NaN
 }
+
+data class NumberCategorySolver(val amountMap: Map<NumbersValue, IntRange>, val allForm: NumbersValue)
 
 typealias PersonalPronounDropSolver = List<Pair<ActorType, CategoryValues>>
 

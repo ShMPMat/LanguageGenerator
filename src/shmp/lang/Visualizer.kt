@@ -12,6 +12,7 @@ import shmp.lang.language.syntax.clause.description.*
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
 import shmp.lang.language.syntax.context.ContextValue.*
+import shmp.lang.language.syntax.context.ContextValue.Amount.*
 import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
 import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
 import shmp.lang.language.syntax.context.Priority.Explicit

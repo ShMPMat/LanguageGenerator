@@ -30,16 +30,19 @@ sealed class ContextValue {
         object Negative: TypeContext()
     }
 
-    data class ActorComplimentValue(val number: AmountValue, val deixis: DeixisValue?)
+    data class ActorComplimentValue(val number: Amount, val deixis: DeixisValue?)
 
     data class ActorValue(
         val person: PersonValue,
         val nounClass: NounClassValue,
-        val number: AmountValue,
+        val number: Amount,
         val deixis: DeixisValue
     ) : ContextValue()
 
-    data class AmountValue(val amount: Int): ContextValue()
+    sealed class Amount: ContextValue()  {
+        data class AmountValue(val amount: Int): Amount()
+        object All: Amount()
+    }
 
     override fun toString() = this::class.simpleName ?: ""
 }

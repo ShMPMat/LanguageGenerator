@@ -163,23 +163,39 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         .firstOrNull()
         ?.takeIf { it.actualValues.isNotEmpty() }
         ?.let { numbersCategory ->
-            val numberCategorySolver = numbersCategory.actualValues.map {
+            val values = numbersCategory.actualValues
+
+            val paucalLowerBound = if (Dual in values) 3 else 2
+            val paucalUpperBound = RandomSingleton.random.nextInt(paucalLowerBound + 1, paucalLowerBound + 9)
+            val paucalBound = paucalLowerBound..paucalUpperBound
+
+            val numberCategorySolver = values.map {
                 it as NumbersValue
                 it to when (it) {
                     Singular -> 1..1
                     Dual -> 2..2
+                    Paucal -> paucalBound
                     Plural -> 2..Int.MAX_VALUE
                 }
             }.toMap().toMutableMap()
 
-            if (Dual in numbersCategory.actualValues)
+            if (Dual in values) {
                 numberCategorySolver[Plural] = 3..Int.MAX_VALUE
-            else 0.05.chanceOf {
+            } else 0.05.chanceOf {
                 numberCategorySolver[Plural] = 3..Int.MAX_VALUE
                 numberCategorySolver[Singular] = 1..2
+                if (Paucal in values)
+                    numberCategorySolver[Paucal] = 3..paucalUpperBound
             }
 
-            numberCategorySolver
+            if (Paucal in values)
+                numberCategorySolver[Plural] = (paucalBound.last+1)..Int.MAX_VALUE
+
+            val allForm =
+                if (Plural in values) Plural
+                else Singular
+
+            NumberCategorySolver(numberCategorySolver, allForm)
         }
 
     private fun generateGenderCategorySolver() = changeParadigm.categories
