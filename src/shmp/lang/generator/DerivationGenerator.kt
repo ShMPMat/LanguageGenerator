@@ -76,8 +76,8 @@ class DerivationGenerator(
                         from.connotations.values.filter { !it.isGlobal }
                     )
 
-                    val probability = toDerivationConnotationsStrength * wordConnotationsStrength *
-                            max(0.0, 1 - fromDerivationConnotationStrength)
+                    val probability = (toDerivationConnotationsStrength * wordConnotationsStrength *
+                            max(0.0, 1 - fromDerivationConnotationStrength)).pow(0.5)
 
                     if (probability > 0) {
                         val present = from.derivationClusterTemplate.typeToCore[derivation]

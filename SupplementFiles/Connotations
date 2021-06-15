@@ -26,6 +26,8 @@ cold
 hot
 sturdy
 transparent
+bad
+good
 
 remember
 act_out
@@ -40,6 +42,7 @@ understand
 not_understand
 return
 move
+fly
 see
 help
 need
@@ -55,3 +58,4 @@ reside
 -building
 -substance
 -life
+-body_part

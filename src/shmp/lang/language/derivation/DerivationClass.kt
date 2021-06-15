@@ -17,6 +17,7 @@ enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: Spe
     AbstractNounFromNoun(listOf(Box(NNAbstract, 1.0)), Noun, Noun),
 
     AbstractNounFromAdjective(listOf(Box(ANAbstract, 1.0)), Adjective, Noun),
+    PlaceFromAdjective(listOf(Box(ANPlace, 1.0)), Adjective, Noun),
 
     PlaceFromVerb(listOf(Box(VNPlace, 1.0)), Verb, Noun),
     PersonFromVerb(listOf(Box(VNPerson, 1.0)), Verb, Noun),
@@ -35,11 +36,12 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
     NNAbstract(Noun, Noun, Connotations(setOf(Connotation("abstract", 1.0)))),
 
     ANAbstract(Adjective, Noun, Connotations(setOf(Connotation("abstract", 1.0)))),
+    ANPlace(Adjective, Noun, Connotations(setOf(Connotation("place", 1.0)))),
 
     VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0)))),
     VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0)))),
     VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0))))
-}//TODO NNAbstract
+}
 
 data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
 

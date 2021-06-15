@@ -94,6 +94,7 @@ val defaultInjectors = listOf(
         SpeechPart.Adjective,
         { "${it}ness" },
         newSpeechPart = SpeechPart.Noun,
-        probability = 0.4
+        probability = 0.4,
+        coreRealizationProbability = 0.1
     )
 )
