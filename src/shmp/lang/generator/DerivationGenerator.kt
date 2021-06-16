@@ -1,6 +1,7 @@
 package shmp.lang.generator
 
 import shmp.lang.containers.SemanticsCoreTemplate
+import shmp.lang.containers.WordBase
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.derivation.*
@@ -81,7 +82,7 @@ class DerivationGenerator(
 
                     if (probability > 0) {
                         val present = from.derivationClusterTemplate.typeToCore[derivation]
-                            ?.firstOrNull { it.template == to }
+                            ?.firstOrNull { it.template == to.word }
 
                         if (present != null) {
                             println("ALREADY PRESENT ${derivation.name}  ${from.word} -> ${to.word} $probability")
@@ -90,10 +91,10 @@ class DerivationGenerator(
 
                         println("${derivation.name}  ${from.word} -> ${to.word} $probability")
                         from.derivationClusterTemplate.typeToCore[derivation]
-                            ?.add(DerivationLink(to, probability))
+                            ?.add(DerivationLink(to.word, probability))
                             ?: from.derivationClusterTemplate.typeToCore.put(
                                 derivation,
-                                mutableListOf(DerivationLink(to, probability))
+                                mutableListOf(DerivationLink(to.word, probability))
                             )
                     }
                 }
@@ -126,7 +127,7 @@ class DerivationGenerator(
                         }
 
 //                        println("${left.word} + ${right.word} = ${target.word} $distance")
-                        target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left, right), distance))
+                        target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left.word, right.word), distance))
                     }
                 }
 
@@ -257,12 +258,12 @@ class DerivationGenerator(
         return randomElement(possibleCategoryMakers, random)
     }
 
-    internal fun makeDerivations(words: MutableList<Word>) {
+    internal fun makeDerivations(words: MutableList<Word>, wordBase: WordBase) {
         var i = 0
         while (i < words.size) {
             val word = words[i]
             for (derivation in derivationParadigm.derivations) {
-                val derivedWord = derivation.derive(word, random)
+                val derivedWord = derivation.derive(word, wordBase, random)
                     ?: continue
                 words.add(derivedWord)
             }

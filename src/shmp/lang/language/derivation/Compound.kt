@@ -71,7 +71,7 @@ data class Compound(
         ?.map { t ->
             words.filter {//TODO generate probability test
                 (1 / (it.semanticsCore.changeDepth + 1.0)).testProbability()
-                        && it.semanticsCore.meaningCluster.contains(t.word)
+                        && it.semanticsCore.meaningCluster.contains(t)
             }
         }
         ?.takeIf { o -> o.all { it.isNotEmpty() } }

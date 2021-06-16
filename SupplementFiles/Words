@@ -34,7 +34,7 @@ territory          Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNPlace@earth:0.05                                  NNPerson@countryman:0.2
                                       NNAbstract@power(control):0.05
 change(noun)       Noun        1.0    G|LongObject:100                                    A|Inanimate:100
-/                                                                                          NNPerson@changer:0.2
+                                      NNPerson@one_changing:0.2
                                       appearance&change:0.05
                                       *change:1.0*abstract:0.9
 light              Noun        1.0    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
@@ -57,7 +57,7 @@ animal             Noun        1.0    G|Plant:1,Fruit:0,Person:1                
                                       NNPlace@wild:0.01,forest:0.01,zoo:0.01              NNPerson@stock_farmer:0.1,barbarian:0.025
                                       NNAbstract@life:0.8,movement:0.05
                                       live&thing:0.3 eat&thing:0.1
-/                                      one_eating&thing:0.1
+                                      one_eating&thing:0.1
 point              Noun        0.9    G|Plant:1,Fruit:0,Person:1                          A|Inanimate:100
 mother             Noun        1.0    G|Person:1000,Female:5000,Common:1000               A|Animate:1000
                                       *home:0.3*family:0.6*defence:0.1*comfort:0.2*abstract:0.1*person:1.0
@@ -104,9 +104,9 @@ night              Noun        1.0    G|Plant:0,Fruit:0,Person:0                
                                       NNAbstract@darkness:0.5,evil(noun):0.1
 food               Noun        0.99   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPlace@warehouse:0.1
-/                                      NNPerson@one_eating:0.3,cook(person):0.2
+                                      NNPerson@one_eating:0.3,cook(person):0.2
                                       NNAbstract@life:0.3,consumption:0.1
-/                                      one_eating&thing:0.003
+                                      one_eating&thing:0.003
                                       eat&thing:0.3
 water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                          A|Inanimate:75
                                       NNPerson@fish:0.05,water_animal:0.0005
@@ -114,8 +114,7 @@ water              Noun        1.0    G|Plant:0,Fruit:0,Person:0                
                                       *water:1.0*change:0.05*substance:0.9
 ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                          A|Inanimate:100
                                       NNPerson@ice_land_animal:0.03
-/                                      NNAbstract@coldness:0.3
-                                      NNAbstract@staleness:0.1
+                                      NNAbstract@coldness:0.3,staleness:0.1
                                       *ice:1.0*water:0.5*cold:0.7*sturdy:0.6*transparent:0.1*object:0.2*substance:0.8
 
 
@@ -201,7 +200,6 @@ know               Verb        1.0    T|trans:100,intrans:1
                                       VNAbstract@sight(sense):0.1
                                       smart:0.9*wise:0.5*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
 change             Verb        1.0    T|trans:100,intrans:1
-/                                      VNPerson@changer:0.5
                                       *change:1.0*abstract:0.7*action:0.5
 need               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.1,one_in_need:0.8,poor_person:0.1

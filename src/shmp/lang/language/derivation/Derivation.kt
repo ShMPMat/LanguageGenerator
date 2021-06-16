@@ -1,5 +1,6 @@
 package shmp.lang.language.derivation
 
+import shmp.lang.containers.WordBase
 import shmp.lang.containers.toSemanticsCore
 import shmp.lang.language.lexis.SemanticsTag
 import shmp.lang.language.lexis.TypedSpeechPart
@@ -17,7 +18,7 @@ class Derivation(
     val strength: Double,
     private val categoriesChanger: CategoryChanger
 ) {
-    fun derive(word: Word, random: Random): Word? {
+    fun derive(word: Word, allWords: WordBase, random: Random): Word? {
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 
@@ -27,7 +28,7 @@ class Derivation(
         val chosenType = randomUnwrappedElement(applicableTypes + makeNoType(1.0 / strength), random)
             ?: return null
 
-        val chosenSemantics = randomUnwrappedElement(
+        val chosenMeaning = randomUnwrappedElement(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
         ) ?: return null
@@ -38,13 +39,14 @@ class Derivation(
             listOf(word.semanticsCore),
             resultSpeechPart
         ) ?: return null
-        val newCore = chosenSemantics.toSemanticsCore(newStaticCategories, random).let {
-            it.copy(
-                tags = it.tags + listOf(SemanticsTag(dClass.name)),
-                appliedDerivations = newDerivations,
-                changeHistory = DerivationHistory(this, word)
-            )
-        }
+        val newCore = allWords.allWords.first { it.word == chosenMeaning }
+            .toSemanticsCore(newStaticCategories, random).let {
+                it.copy(
+                    tags = it.tags + listOf(SemanticsTag(dClass.name)),
+                    appliedDerivations = newDerivations,
+                    changeHistory = DerivationHistory(this, word)
+                )
+            }
 
         return derivedWord.copy(semanticsCore = newCore)
     }

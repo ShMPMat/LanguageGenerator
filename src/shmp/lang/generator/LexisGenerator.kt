@@ -66,11 +66,29 @@ class LexisGenerator(
     init {
         val allMeanings = wordBase.allWords.map { it.word }
 
-        val unknownMeaning = wordClusters.clusters
+        val unknownClusterMeaning = wordClusters.clusters
             .flatMap { it.meanings }
             .firstOrNull { it.meaning !in allMeanings }
-        if (unknownMeaning != null)
-            throw DataConsistencyException("Unknown meaning in cluster - $unknownMeaning")
+        if (unknownClusterMeaning != null)
+            throw DataConsistencyException("Unknown meaning in cluster - $unknownClusterMeaning")
+
+        val unknownCompoundMeaning = wordBase.allWords
+            .flatMap { it.derivationClusterTemplate.possibleCompounds }
+            .mapNotNull { it.templates }
+            .flatten()
+            .firstOrNull { it !in allMeanings }
+        if (unknownCompoundMeaning != null)
+            throw DataConsistencyException("Unknown meaning in compound - $unknownCompoundMeaning")
+
+
+
+        val unknownDerivationMeaning = wordBase.allWords
+            .flatMap { it.derivationClusterTemplate.typeToCore.values }
+            .flatten()
+            .mapNotNull { it.template }
+            .firstOrNull { it !in allMeanings }
+        if (unknownDerivationMeaning != null)
+            throw DataConsistencyException("Unknown meaning in derivation - $unknownDerivationMeaning")
     }
 
     private val words = mutableListOf<Word>()
@@ -98,7 +116,7 @@ class LexisGenerator(
             val extendedCore = extendCore(mainCore)
             val newWords = mutableListOf(generateWord(extendedCore))
 
-            derivationGenerator.makeDerivations(newWords)
+            derivationGenerator.makeDerivations(newWords, wordBase)
             words.addAll(newWords)
         }
 

@@ -43,32 +43,32 @@ data class SemanticsTag(val name: String)
 
 
 data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>) {
-    init {
-        for ((type, lst) in typeToCore) {
-            val existingTemplates = lst.mapNotNull { it.template }
-
-            existingTemplates.firstOrNull { it.speechPart != type.toSpeechPart }?.let {
-                throw GeneratorException(
-                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart} ${it.word}"
-                )
-            }
-        }
-    }
+//    init {
+//        for ((type, lst) in typeToCore) {
+//            val existingTemplates = lst.mapNotNull { it.template }
+//
+//            existingTemplates.firstOrNull { it.speechPart != type.toSpeechPart }?.let {
+//                throw GeneratorException(
+//                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart} ${it.word}"
+//                )
+//            }
+//        }
+//    }
 }
 
 
 data class DerivationLink(
-    val template: SemanticsCoreTemplate?,
+    val template: Meaning?,
     override val probability: Double
-) : UnwrappableSSO<SemanticsCoreTemplate?>(template)
+) : UnwrappableSSO<Meaning?>(template)
 
 val noDerivationLink = listOf(DerivationLink(null, 1.0))
 
 
 data class CompoundLink(
-    val templates: List<SemanticsCoreTemplate>?,
+    val templates: List<String>?,
     override val probability: Double
-) : UnwrappableSSO<List<SemanticsCoreTemplate>?>(templates)
+) : UnwrappableSSO<List<String>?>(templates)
 
 val noCompoundLink = CompoundLink(null, 0.0)//TODO back to 1.0
 

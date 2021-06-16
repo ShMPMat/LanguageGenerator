@@ -55,7 +55,7 @@ class WordBase(private val supplementPath: String) {
             for (derivation in data.derivations) {
                 val (name, tags) = derivation.split("@")
                 data.template.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
-                    parseDerivationTemplates(tags, wordsAndDataMap).toMutableList()
+                    parseDerivationTemplates(tags).toMutableList()
             }
 
         for (data in wordsAndDataMap.values)
@@ -126,17 +126,17 @@ fun getInstantiationType(string: String) = when (string) {
             throw DataConsistencyException("Unknown SemanticsTag type alias $string")
 }
 
-private fun parseDerivationTemplates(string: String, wordsAndDataMap: WordsAndDataMap) = string
-    .split(",")
+private fun parseDerivationTemplates(string: String) = string.split(",")
     .map {
         val (name, prob) = it.split(":")
-        DerivationLink(wordsAndDataMap.getValue(name).template, prob.toDouble())
+        DerivationLink(name, prob.toDouble())
     }
 
 
 private fun parseCompoundTemplate(string: String, wordsAndDataMap: WordsAndDataMap): CompoundLink {
     val (names, prob) = string.split(":")
-    val cores = names.split("&").map { wordsAndDataMap.getValue(it).template }
+//    val cores = names.split("&").map { wordsAndDataMap.getValue(it).template }
+    val cores = names.split("&")
 
     return CompoundLink(cores, prob.toDouble())
 }

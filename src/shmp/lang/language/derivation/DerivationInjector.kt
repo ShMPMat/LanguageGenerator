@@ -28,30 +28,28 @@ data class DerivationInjector(
             || !additionalTest(core)
         ) return null
 
-        val link = DerivationLink(
-            SemanticsCoreTemplate(
-                descriptionCreator(core.word),
-                newSpeechPart,
-                core.connotations + type.connotations,
-                tagCreator(core.tagClusters)
-                        + setOf(
-                    SemanticsTagCluster(
-                        listOf(SemanticsTagTemplate(type.name, 1.0)),
-                        type.name,
-                        true
-                    )
-                ),
-                DerivationClusterTemplate(
-                    appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
-                ),
-                coreRealizationProbability
+        val template = SemanticsCoreTemplate(
+            descriptionCreator(core.word),
+            newSpeechPart,
+            core.connotations + type.connotations,
+            tagCreator(core.tagClusters)
+                    + setOf(
+                SemanticsTagCluster(
+                    listOf(SemanticsTagTemplate(type.name, 1.0)),
+                    type.name,
+                    true
+                )
             ),
-            probability
+            DerivationClusterTemplate(
+                appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
+            ),
+            coreRealizationProbability
         )
+        val link = DerivationLink(template.word, probability)
         val existingLinks = core.derivationClusterTemplate.typeToCore[type] ?: mutableListOf()
         existingLinks.add(link)
         core.derivationClusterTemplate.typeToCore[type] = existingLinks
-        return link.template
+        return template
     }
 }
 
@@ -85,7 +83,10 @@ val defaultInjectors = listOf(
     DerivationInjector(
         VNPerson,
         SpeechPart.Verb,
-        { "one_${it}ing" },
+        {
+            val cutRoot = if (it.last() == 'e') it.dropLast(1) else it
+            "one_${cutRoot}ing"
+        },
         newSpeechPart = SpeechPart.Noun,
         probability = 0.2
     ),
