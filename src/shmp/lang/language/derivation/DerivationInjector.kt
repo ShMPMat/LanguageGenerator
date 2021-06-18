@@ -16,7 +16,8 @@ data class DerivationInjector(
     val prohibitedTags: List<String> = listOf(),
     val additionalTest: (SemanticsCoreTemplate) -> Boolean = { true },
     val newSpeechPart: SpeechPart = applicableSpeechPart,
-    val tagCreator: (Set<SemanticsTagCluster>) -> Set<SemanticsTagCluster> = { it },
+    val tagCreator: (Set<SemanticsTagCluster>) -> Set<SemanticsTagCluster> =
+        { it.filter { t -> t.type == "intrans" }.toSet() },
     val probability: Double = 1.0,
     val coreRealizationProbability: Double = 0.05
 ) {
@@ -53,6 +54,28 @@ data class DerivationInjector(
     }
 }
 
+val defaultMainInjectors = listOf(
+    DerivationInjector(
+        VNPerson,
+        SpeechPart.Verb,
+        {
+            val cutRoot = if (it.last() == 'e') it.dropLast(1) else it
+            "one_${cutRoot}ing"
+        },
+        newSpeechPart = SpeechPart.Noun,
+        probability = 0.2
+    ),
+    DerivationInjector(
+        ANAbstract,
+        SpeechPart.Adjective,
+        { "${it}ness" },
+        newSpeechPart = SpeechPart.Noun,
+        probability = 0.4,
+        coreRealizationProbability = 0.1
+    )
+)
+
+
 val defaultInjectors = listOf(
     DerivationInjector(
         Smallness,
@@ -79,23 +102,5 @@ val defaultInjectors = listOf(
         { "old_$it" },
         prohibitedTags = listOf(Smallness, Young).map { it.toString() },
         additionalTest = { it.tagClusters.any { c -> c.type == "species" } }
-    ),
-    DerivationInjector(
-        VNPerson,
-        SpeechPart.Verb,
-        {
-            val cutRoot = if (it.last() == 'e') it.dropLast(1) else it
-            "one_${cutRoot}ing"
-        },
-        newSpeechPart = SpeechPart.Noun,
-        probability = 0.2
-    ),
-    DerivationInjector(
-        ANAbstract,
-        SpeechPart.Adjective,
-        { "${it}ness" },
-        newSpeechPart = SpeechPart.Noun,
-        probability = 0.4,
-        coreRealizationProbability = 0.1
     )
 )

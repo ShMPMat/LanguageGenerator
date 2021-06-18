@@ -31,16 +31,16 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
     Big(Noun, Noun, Connotations(setOf(Connotation("big", 0.5)))),
     Old(Noun, Noun, Connotations(setOf(Connotation("old", 0.5)))),
 
-    NNPlace(Noun, Noun, Connotations(setOf(Connotation("place", 1.0)))),
-    NNPerson(Noun, Noun, Connotations(setOf(Connotation("person", 1.0)))),
-    NNAbstract(Noun, Noun, Connotations(setOf(Connotation("abstract", 1.0)))),
+    NNPlace(Noun, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
+    NNPerson(Noun, Noun, Connotations(setOf(Connotation("person", 1.0, true)))),
+    NNAbstract(Noun, Noun, Connotations(setOf(Connotation("abstract", 1.0, true)))),
 
-    ANAbstract(Adjective, Noun, Connotations(setOf(Connotation("abstract", 1.0)))),
-    ANPlace(Adjective, Noun, Connotations(setOf(Connotation("place", 1.0)))),
+    ANAbstract(Adjective, Noun, Connotations(setOf(Connotation("abstract", 1.0, true)))),
+    ANPlace(Adjective, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
 
-    VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0)))),
-    VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0)))),
-    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0))))
+    VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
+    VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0, true)))),
+    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0, true))))
 }
 
 data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)

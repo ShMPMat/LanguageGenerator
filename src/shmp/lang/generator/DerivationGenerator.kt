@@ -27,31 +27,34 @@ import kotlin.random.Random
 class DerivationGenerator(
     private val restrictionsParadigm: RestrictionsParadigm,
     private val random: Random,
-    private val injectors: List<DerivationInjector> = defaultInjectors
+    private val mainInjectors: List<DerivationInjector> = defaultMainInjectors,
+    private val additionalInjectors: List<DerivationInjector> = defaultInjectors,
 ) {
     private var derivationParadigm = DerivationParadigm(listOf(), listOf())
 
     internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
-        injectionByConnotations(words)
+        val newWords = internalInjectDerivationOptions(words, mainInjectors)
+            .toMutableList()
 
-        val newWords = internalInjectDerivationOptions(words)
+        injectionByConnotations(newWords + words)
 
-//        injectionByConnotations(newWords + words)
+        newWords.addAll(internalInjectDerivationOptions(words, additionalInjectors))
 
         return newWords
     }
 
-    private fun internalInjectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
-        if (words.isEmpty()) {
-            injectionByConnotations(words)
+    private fun internalInjectDerivationOptions(
+        words: List<SemanticsCoreTemplate>,
+        injectors: List<DerivationInjector>
+    ): List<SemanticsCoreTemplate> {
+        if (words.isEmpty())
             return emptyList()
-        }
 
         val newWords = injectors.flatMap { inj ->
             words.mapNotNull { inj.injector(it) }
         }
 
-        return newWords + internalInjectDerivationOptions(newWords)
+        return newWords + internalInjectDerivationOptions(newWords, injectors)
     }
 
     private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
@@ -125,7 +128,9 @@ class DerivationGenerator(
                             println("ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
                             continue
                         }
-
+                        if (left.word == "oldness" && right.word == "highness" || right.word == "oldness" && left.word == "highness") {
+                            val w = 0
+                        }
 //                        println("${left.word} + ${right.word} = ${target.word} $distance")
                         target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left.word, right.word), distance))
                     }
