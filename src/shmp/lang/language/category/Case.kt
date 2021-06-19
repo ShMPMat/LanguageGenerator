@@ -120,6 +120,7 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) =
         CaseRandomSupplements.speechPartProbabilities(speechPart)
+            .mapNotNull { if (it.source == SelfStated) it.copy(probability = 100.0) else null }
 
     override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart) = emptyRealization
 

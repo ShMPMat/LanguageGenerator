@@ -37,10 +37,17 @@ class CategoryGenerator {
                 .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.shortName) }
                 .toSet()
 
-            defaults.add(
-                AbstractChangeCategory(values, allPossibleValues, caseCategory.first.affected, setOf(), adpositionName) to
-                        AdpositionRandomSupplements
+            val affectedSpeechPartsAndSources = randomAffectedSpeechParts(AdpositionRandomSupplements)
+
+            val adpositionCategory = AbstractChangeCategory(
+                values,
+                allPossibleValues,
+                affectedSpeechPartsAndSources,
+                setOf(),
+                adpositionName
             )
+
+            defaults.add(adpositionCategory to AdpositionRandomSupplements)
         }
 
         return defaults

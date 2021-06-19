@@ -8,6 +8,9 @@ enum class SyntaxRelation {
     Verb,
 
     PossessorAdjunct,
+    Instrument,
+    Addressee,
+    Location,
 
     CopulaParticle,
     QuestionMarker,

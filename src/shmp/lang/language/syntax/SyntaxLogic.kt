@@ -14,14 +14,14 @@ import kotlin.math.abs
 
 
 class SyntaxLogic(
-    val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
-    val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
-    val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
-    val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
-    val numberCategorySolver: NumberCategorySolver?,
-    val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
-    val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
-    val personalPronounDropSolver: PersonalPronounDropSolver
+    private val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
+    private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
+    private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
+    private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
+    private val numberCategorySolver: NumberCategorySolver?,
+    private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
+    private val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
+    private val personalPronounDropSolver: PersonalPronounDropSolver
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()

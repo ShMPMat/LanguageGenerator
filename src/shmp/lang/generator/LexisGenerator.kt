@@ -80,8 +80,6 @@ class LexisGenerator(
         if (unknownCompoundMeaning != null)
             throw DataConsistencyException("Unknown meaning in compound - $unknownCompoundMeaning")
 
-
-
         val unknownDerivationMeaning = wordBase.allWords
             .flatMap { it.derivationClusterTemplate.typeToCore.values }
             .flatten()
@@ -157,7 +155,29 @@ class LexisGenerator(
             questionMarker[QuestionMarker] = particle
         }
 
+        injectTags()
+
         return Lexis(words, copula, questionMarker)
+    }
+
+    private fun injectTags() {
+        injectVerbObjectTags()
+    }
+
+    private fun injectVerbObjectTags() {
+        val verbs = words.mapIndexedNotNull { i, w ->
+            (w to i).takeIf { w.semanticsCore.speechPart.type == SpeechPart.Verb }
+        }
+
+        for ((verb, i) in verbs) {
+            val newVerb = verb.copy(
+                semanticsCore = verb.semanticsCore.copy(
+                    tags = verb.semanticsCore.tags + listOf(SemanticsTag("location"))
+                )
+            )
+
+            words[i] = newVerb
+        }
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {

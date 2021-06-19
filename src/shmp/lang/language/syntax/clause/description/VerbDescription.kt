@@ -4,7 +4,6 @@ import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.IntransitiveVerbClause
-import shmp.lang.language.syntax.clause.realization.SyntaxClause
 import shmp.lang.language.syntax.clause.realization.TransitiveVerbClause
 import shmp.lang.language.syntax.context.Context
 import kotlin.random.Random
@@ -13,7 +12,8 @@ import kotlin.random.Random
 class TransitiveVerbDescription(
     val verb: Meaning,
     val actorDescription: NominalDescription,
-    val patientDescription: NominalDescription
+    val patientDescription: NominalDescription,
+    val indirectObjectDescriptions: List<IndirectObjectDescription> = listOf()
 ): ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
@@ -22,7 +22,12 @@ class TransitiveVerbDescription(
                     language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context)
                 ),
                 actorDescription.toClause(language, context, random),
-                patientDescription.toClause(language, context, random)
+                patientDescription.toClause(language, context, random),
+                indirectObjectDescriptions.map { obj ->
+                    if (word.semanticsCore.tags.none { it.name == obj.type.name.toLowerCase() })
+                        throw SyntaxException("Verb $verb does not support indirect object of type ${obj.type}")
+                    obj.toClause(language, context, random)
+                }
             )
         }
             ?: throw SyntaxException("No verb '$verb' in Language")
@@ -35,7 +40,8 @@ interface IntransitiveVerbDescription: ClauseDescription {
 
 class SimpleIntransitiveVerbDescription(
     val verb: Meaning,
-    val argumentDescription: NominalDescription
+    val argumentDescription: NominalDescription,
+    val indirectObjectDescriptions: List<IndirectObjectDescription> = listOf()
 ): IntransitiveVerbDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
@@ -43,7 +49,12 @@ class SimpleIntransitiveVerbDescription(
                 word.copyWithValues(
                     language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context)
                 ),
-                argumentDescription.toClause(language, context, random)
+                argumentDescription.toClause(language, context, random),
+                indirectObjectDescriptions.map { obj ->
+                    if (word.semanticsCore.tags.none { it.name == obj.type.name.toLowerCase() })
+                        throw SyntaxException("Verb $verb does not support indirect object of type ${obj.type}")
+                    obj.toClause(language, context, random)
+                }
             )
         }
             ?: throw SyntaxException("No verb '$verb' in Language")

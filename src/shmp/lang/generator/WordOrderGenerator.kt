@@ -3,6 +3,7 @@ package shmp.lang.generator
 import shmp.lang.language.syntax.*
 import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.arranger.RelationArranger
+import shmp.lang.language.syntax.clause.description.IndirectObjectType
 import shmp.lang.language.syntax.clause.translation.*
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.random.GenericSSO
@@ -145,12 +146,25 @@ class WordOrderGenerator(val random: Random) {
             else -> basicTemplate.references to basicTemplate.name
         }
 
-
-
-        return SovOrder(injectQuestionMarker(references, syntaxParadigm), name)
+        return SovOrder(injectAdditionalRelations(references, syntaxParadigm), name)
     }
 
-    fun injectQuestionMarker(
+    private fun injectAdditionalRelations(
+        references: List<GenericSSO<SyntaxRelations>>,
+        syntaxParadigm: SyntaxParadigm
+    ): List<GenericSSO<SyntaxRelations>> {
+        val withQa = injectQuestionMarker(references, syntaxParadigm)
+
+        val position = RandomSingleton.random.nextInt(withQa.size + 1)
+        val orderedObjects = IndirectObjectType.values().toList().shuffled(RandomSingleton.random)
+
+        return withQa.map {
+            (it.value.take(position) + orderedObjects.map { io -> io.relation } + it.value.drop(position))
+                .toSampleSpaceObject(it.probability)
+        }
+    }
+
+    private fun injectQuestionMarker(
         references: List<GenericSSO<SyntaxRelations>>,
         syntaxParadigm: SyntaxParadigm
     ): List<GenericSSO<SyntaxRelations>> {
