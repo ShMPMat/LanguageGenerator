@@ -23,6 +23,8 @@ class SubstitutingOrder(
 ): RelationOrder {
     override val references = relationOrder.references
         .map { substituteFun(it.value).toSampleSpaceObject(it.probability) }
+
+    override fun toString() = references.joinToString { it.value.toString() }
 }
 
 

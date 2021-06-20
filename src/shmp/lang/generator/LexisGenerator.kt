@@ -18,6 +18,7 @@ import shmp.lang.language.syntax.SyntaxParadigm
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.language.syntax.features.QuestionMarker
 import shmp.random.*
+import shmp.random.singleton.randomElement
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.pow
@@ -234,7 +235,7 @@ class LexisGenerator(
     internal fun generateWord(core: SemanticsCore): Word {
         val syllables = mutableListOf<Syllable>()
         val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
-        val length = randomElement((1..10).toList(), { 1 / (1 + abs(it - avgWordLength).pow(2)) }, random)
+        val length = (1..10).toList().randomElement { 1 / (1 + abs(it - avgWordLength).pow(4)) }
 
         fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
             var syllable = Syllable(listOf())
