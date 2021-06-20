@@ -61,7 +61,11 @@ val defaultMainInjectors = listOf(
             if (it.contains("^be_".toRegex()))
                 return@DerivationInjector "${it.drop(3)}_one"
 
-            val cutRoot = if (it.last() == 'e') it.dropLast(1) else it
+            val cutRoot =
+                if (it.last() == 'e' && it != "be" && it.takeLast(2) != "ee")
+                    it.dropLast(1)
+                else it
+
             "one_${cutRoot}ing"
         },
         newSpeechPart = SpeechPart.Noun,
