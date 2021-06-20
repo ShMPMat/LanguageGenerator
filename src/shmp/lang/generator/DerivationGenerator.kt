@@ -121,15 +121,13 @@ class DerivationGenerator(
                             connotationsSum.values.filter { !it.isGlobal }
 
                     if (clearDistance > 0 && leftDistance > 0 && rightDistance > 0) {
-                        val present = target.derivationClusterTemplate.possibleCompounds
-                            .firstOrNull { it.templates == listOf(left, right) || it.templates == listOf(right, left) }
+                        val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
+                            it.templates == listOf(left.word, right.word) || it.templates == listOf(right.word, left.word)
+                        }
 
                         if (present != null) {
                             println("ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
                             continue
-                        }
-                        if (left.word == "oldness" && right.word == "highness" || right.word == "oldness" && left.word == "highness") {
-                            val w = 0
                         }
 //                        println("${left.word} + ${right.word} = ${target.word} $distance")
                         target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left.word, right.word), distance))
