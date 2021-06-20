@@ -35,6 +35,7 @@ class WordBase(private val supplementPath: String) {
                 parseConnotations(connotations),
                 tags.map {
                     val (name, semanticTags) = it.split("|")
+
                     SemanticsTagCluster(
                         parseSemanticsTagTemplates(semanticTags),
                         getType(name),
@@ -99,10 +100,10 @@ class WordBase(private val supplementPath: String) {
     }
 }
 
-fun parseSemanticsTagTemplates(string: String) = string
-    .split(",")
+fun parseSemanticsTagTemplates(string: String) = string.split(",")
     .map {
         val (name, prob) = it.split(":")
+
         SemanticsTagTemplate(name, prob.toDouble())
     }
 

@@ -111,7 +111,7 @@ class LexisGenerator(
                 continue
 
             val staticCategories = makeStaticCategories(core, categoryPool)
-            val mainCore = core.toSemanticsCore(staticCategories, random)
+            val mainCore = core.toSemanticsCore(staticCategories)
             val extendedCore = extendCore(mainCore)
             val newWords = mutableListOf(generateWord(extendedCore))
 

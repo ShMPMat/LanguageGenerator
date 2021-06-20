@@ -32,7 +32,6 @@ class NestedOrder(
     val outerOrder: RelationOrder,
     val innerOrder: RelationOrder,
     val nestedRelation: SyntaxRelation
-
 ): RelationOrder {
     override val references = outerOrder.references.flatMap { outerOrder ->
         innerOrder.references.map { innerOrder ->

@@ -7,6 +7,7 @@ import shmp.lang.containers.SemanticsTagTemplate
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.derivation.DerivationType.*
 import shmp.lang.language.lexis.DerivationLink
+import shmp.lang.language.lexis.SemanticsTag
 
 
 data class DerivationInjector(
@@ -29,20 +30,17 @@ data class DerivationInjector(
             || !additionalTest(core)
         ) return null
 
+        val injectionType = SemanticsTagCluster(
+            listOf(SemanticsTagTemplate(type.name, 1.0)),
+            type.name,
+            true
+        )
         val template = SemanticsCoreTemplate(
             descriptionCreator(core.word),
             newSpeechPart,
             core.connotations + type.connotations,
-            tagCreator(core.tagClusters)
-                    + setOf(
-                SemanticsTagCluster(
-                    listOf(SemanticsTagTemplate(type.name, 1.0)),
-                    type.name,
-                    true
-                )
-            ),
-            DerivationClusterTemplate(
-                appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
+            tagCreator(core.tagClusters) + setOf(injectionType),
+            DerivationClusterTemplate(appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
             ),
             coreRealizationProbability
         )
@@ -50,6 +48,7 @@ data class DerivationInjector(
         val existingLinks = core.derivationClusterTemplate.typeToCore[type] ?: mutableListOf()
         existingLinks.add(link)
         core.derivationClusterTemplate.typeToCore[type] = existingLinks
+
         return template
     }
 }
@@ -59,6 +58,9 @@ val defaultMainInjectors = listOf(
         VNPerson,
         SpeechPart.Verb,
         {
+            if (it.contains("^be_".toRegex()))
+                return@DerivationInjector "${it.drop(3)}_one"
+
             val cutRoot = if (it.last() == 'e') it.dropLast(1) else it
             "one_${cutRoot}ing"
         },
@@ -72,6 +74,23 @@ val defaultMainInjectors = listOf(
         newSpeechPart = SpeechPart.Noun,
         probability = 0.4,
         coreRealizationProbability = 0.1
+    ),
+    DerivationInjector(
+        AVBeingState,
+        SpeechPart.Adjective,
+        { "be_$it" },
+        newSpeechPart = SpeechPart.Verb,
+        probability = 0.3,
+        coreRealizationProbability = 0.025,
+        tagCreator = { ts ->
+            val transTag = SemanticsTagCluster(
+                listOf(SemanticsTagTemplate("trans", 1.0)),
+                "transitivity",
+                true
+            )
+
+            ts + setOf(transTag)
+        }
     )
 )
 

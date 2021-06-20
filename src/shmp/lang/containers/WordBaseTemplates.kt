@@ -8,6 +8,7 @@ import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.UnwrappableSSO
 import shmp.random.randomUnwrappedElement
+import shmp.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
 
@@ -20,12 +21,10 @@ data class SemanticsCoreTemplate(
     override val probability: Double
 ) : SampleSpaceObject
 
-fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>, random: Random): SemanticsCore {
+fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>): SemanticsCore {
     val tags = this.tagClusters
         .filter { it.shouldBeInstantiated }
-        .map {
-            SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
-        }
+        .map { SemanticsTag(it.semanticsTags.randomUnwrappedElement()) }
         .toSet()
 
     return SemanticsCore(

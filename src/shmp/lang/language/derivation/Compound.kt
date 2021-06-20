@@ -55,7 +55,7 @@ data class Compound(
                 if (infix.size == 0 || syllableTemplate.splitOnSyllables(infix) == null) 0 else 1
             ),
             syllableTemplate,
-            resultCore.toSemanticsCore(newCategories, random)
+            resultCore.toSemanticsCore(newCategories)
                 .copy(changeHistory = CompoundHistory(this, chosenWords))
         )
     }

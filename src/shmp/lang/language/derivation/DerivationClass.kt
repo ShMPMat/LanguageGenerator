@@ -19,6 +19,8 @@ enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: Spe
     AbstractNounFromAdjective(listOf(Box(ANAbstract, 1.0)), Adjective, Noun),
     PlaceFromAdjective(listOf(Box(ANPlace, 1.0)), Adjective, Noun),
 
+    BeingStateFromAdjective(listOf(Box(AVBeingState, 1.0)), Adjective, Verb),
+
     PlaceFromVerb(listOf(Box(VNPlace, 1.0)), Verb, Noun),
     PersonFromVerb(listOf(Box(VNPerson, 1.0)), Verb, Noun),
     AbstractNounFromVerb(listOf(Box(VNAbstract, 1.0)), Verb, Noun)
@@ -37,6 +39,8 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
 
     ANAbstract(Adjective, Noun, Connotations(setOf(Connotation("abstract", 1.0, true)))),
     ANPlace(Adjective, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
+
+    AVBeingState(Adjective, Verb, Connotations(setOf(Connotation("action", 0.7, true)))),
 
     VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
     VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0, true)))),

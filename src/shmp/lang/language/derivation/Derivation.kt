@@ -40,7 +40,7 @@ class Derivation(
             resultSpeechPart
         ) ?: return null
         val newCore = allWords.allWords.first { it.word == chosenMeaning }
-            .toSemanticsCore(newStaticCategories, random).let {
+            .toSemanticsCore(newStaticCategories).let {
                 it.copy(
                     tags = it.tags + listOf(SemanticsTag(dClass.name)),
                     appliedDerivations = newDerivations,
