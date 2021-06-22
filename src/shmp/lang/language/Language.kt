@@ -22,7 +22,7 @@ class Language(
         return """phonemes:
          |${phonemeContainer}
          |Syllable structure: ${lexis.words[0].syllableTemplate}
-         |Stress patern: $stressType
+         |Stress pattern: $stressType
          |Numeral system base: $numeralSystemBase
          |$lexis
          |words:

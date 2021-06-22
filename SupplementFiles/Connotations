@@ -14,14 +14,21 @@ not_comfort
 defence
 danger
 family
+time
+passage
+start
+end
+death
+birth
 
 smart
-wise
+dumb
 small
 big
 young
 old
 limitless
+limited
 cold
 hot
 sturdy
@@ -43,7 +50,9 @@ not_understand
 return
 move
 fly
+swim
 see
+hear
 help
 need
 eat

@@ -38,12 +38,9 @@ private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arr
     val prefix = previousWords
         .map { it.semanticsCore.changeDepth to it.printChange() }
         .joinToString("\n") { (d, s) ->
-            if (maxDepth - d >= indexes.size) {
-                val k = 0
+            s.lines().joinToString("\n") {
+                " ".repeat(indexes.elementAtOrNull(maxDepth - d) ?: indexes.last()) + it
             }
-
-            s.lines()
-                .joinToString("\n") { " ".repeat(indexes[maxDepth - d]) + it }
         }
 
     val prefixWithArrows = lineUp(prefix.lines())

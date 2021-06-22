@@ -29,6 +29,7 @@ data class WordClusterInstance(val meaning: Meaning, override val probability: D
 fun readWordClusters(supplementPath: String): WordClusterContainer {
     val clusters = File("$supplementPath/WordClusters")
         .readLines()
+        .filter { it.isNotBlank() }
         .map {
             val cluster = it.drop(1).dropLast(1).split(",").map { t -> readWordClusterInstance(t) }
             WordCluster(cluster)
