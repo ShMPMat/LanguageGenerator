@@ -51,7 +51,7 @@ class DerivationGenerator(
             return emptyList()
 
         val newWords = injectors.flatMap { inj ->
-            words.mapNotNull { inj.injector(it) }
+            words.mapNotNull { inj.inject(it) }
         }
 
         return newWords + internalInjectDerivationOptions(newWords, injectors)
@@ -76,7 +76,7 @@ class DerivationGenerator(
                     )
 
                     val wordConnotationsStrength = calculateConnotationsStrength(
-                        to.connotations.values.filter { !it.isGlobal },
+                        to.connotations.values,
                         from.connotations.values.filter { !it.isGlobal }
                     )
 
@@ -92,7 +92,7 @@ class DerivationGenerator(
                             continue
                         }
 
-                        println("${derivation.name}  ${from.word} -> ${to.word} $probability")
+//                        println("${derivation.name}  ${from.word} -> ${to.word} $probability")
                         from.derivationClusterTemplate.typeToCore[derivation]
                             ?.add(DerivationLink(to.word, probability))
                             ?: from.derivationClusterTemplate.typeToCore.put(
@@ -122,7 +122,10 @@ class DerivationGenerator(
 
                     if (clearDistance > 0 && leftDistance > 0 && rightDistance > 0) {
                         val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
-                            it.templates == listOf(left.word, right.word) || it.templates == listOf(right.word, left.word)
+                            it.templates == listOf(left.word, right.word) || it.templates == listOf(
+                                right.word,
+                                left.word
+                            )
                         }
 
                         if (present != null) {
@@ -130,20 +133,21 @@ class DerivationGenerator(
                             continue
                         }
 //                        println("${left.word} + ${right.word} = ${target.word} $distance")
-                        target.derivationClusterTemplate.possibleCompounds.add(CompoundLink(listOf(left.word, right.word), distance))
+                        target.derivationClusterTemplate.possibleCompounds.add(
+                            CompoundLink(listOf(left.word, right.word), distance)
+                        )
                     }
                 }
 
     }
 
     private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double {
-        val hits = from
-            .mapNotNull { connotation ->
-                val otherStrength = to
-                    .mapNotNull { it.getCompatibility(connotation) }
-                    .reduceOrNull(Double::times) ?: return@mapNotNull null
-                otherStrength * connotation.strength
-            }
+        val hits = from.mapNotNull { connotation ->
+            val otherStrength = to
+                .mapNotNull { it.getCompatibility(connotation) }
+                .reduceOrNull(Double::times) ?: return@mapNotNull null
+            otherStrength * connotation.strength
+        }
 
         return hits.reduceOrNull(Double::plus)?.div(hits.size)?.pow(1.0 / hits.size.toDouble().pow(2.0)) ?: 0.0
     }

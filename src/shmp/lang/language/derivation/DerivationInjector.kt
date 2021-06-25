@@ -22,7 +22,7 @@ data class DerivationInjector(
     val probability: Double = 1.0,
     val coreRealizationProbability: Double = 0.05
 ) {
-    fun injector(core: SemanticsCoreTemplate): SemanticsCoreTemplate? {
+    fun inject(core: SemanticsCoreTemplate): SemanticsCoreTemplate? {
         if (
             core.speechPart != applicableSpeechPart
             || core.tagClusters.map { it.type }.any { it in prohibitedTags }
