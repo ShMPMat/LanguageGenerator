@@ -1,6 +1,7 @@
 package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
+import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
@@ -43,7 +44,7 @@ class SpeechPartApplicatorsGenerator(
         exponenceTemplates.forEach { map[it.exponenceCluster] = mutableMapOf() }
 
         val realizationTypes = exponenceTemplates
-            .mapIndexed { i, t -> t to CategoryRealization.values().randomElement { c -> t.mapper(i, c) } }
+            .mapIndexed { i, t -> t to values().randomElement { c -> t.mapper(i, c) } }
 
         for (i in realizationTypes.indices) {
             val (cluster, realization) = realizationTypes[i]
@@ -93,7 +94,7 @@ class SpeechPartApplicatorsGenerator(
             it.specialRealization(categoryValues, speechPart.type, categories)
         }
         val finalVariants = uniteMutualProbabilities(variants) { copy(probability = it) }
-            .filter { position == 0 || it.realization != CategoryRealization.NewWord }
+            .filter { position == 0 || it.realization != NewWord }
 
         return finalVariants.randomUnwrappedElement()
             ?: categoryRealization
@@ -122,7 +123,7 @@ class SpeechPartApplicatorsGenerator(
 
             data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
-                if (i == 0 || c != CategoryRealization.NewWord)
+                if (i == 0 || c != NewWord)
                     data[i].map { it(c) }.sum()
                 else
                     0.0
@@ -143,31 +144,31 @@ class SpeechPartApplicatorsGenerator(
         phoneticRestrictions: PhoneticRestrictions,
         semanticsCore: SemanticsCore
     ): Pair<CategoryApplicator, Word?> = when (realizationType) {
-        CategoryRealization.PrefixSeparateWord -> {
+        PrefixSeparateWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             PrefixWordCategoryApplicator(word) to word
         }
-        CategoryRealization.SuffixSeparateWord -> {
+        SuffixSeparateWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             SuffixWordCategoryApplicator(word) to word
         }
-        CategoryRealization.Prefix -> {
+        Prefix -> {
             val changes = changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)
             AffixCategoryApplicator(
                 Prefix(changes),
-                CategoryRealization.Prefix
+                Prefix
             ) to null
         }
-        CategoryRealization.Suffix -> {
+        Suffix -> {
             val change = changeGenerator.generateChanges(Position.End, phoneticRestrictions)
             AffixCategoryApplicator(
                 Suffix(change),
-                CategoryRealization.Suffix
+                Suffix
             ) to null
         }
-        CategoryRealization.Reduplication -> ReduplicationCategoryApplicator() to null
-        CategoryRealization.Passing -> PassingCategoryApplicator() to null
-        CategoryRealization.NewWord -> {
+        Reduplication -> ReduplicationCategoryApplicator() to null
+        Passing -> PassingCategoryApplicator() to null
+        NewWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             NewWordCategoryApplicator(word) to word
         }

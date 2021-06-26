@@ -89,7 +89,10 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private fun chooseSyllableStructure(restrictions: SyllableRestrictions): List<ValencyPlace> {
         val syllable = mutableListOf(template.valencies[template.nucleusIndex])
 
-        val startValencies = if (restrictions.hasInitial == true) {
+        val compulsoryOnset = template.valencies.first().realizationProbability == 1.0
+                && template.nucleusIndex != 0
+
+        val startValencies = if (restrictions.hasInitial == true || compulsoryOnset) {
             syllable.add(template.valencies[template.nucleusIndex - 1])
 
             template.valencies.take(template.nucleusIndex - 1)
