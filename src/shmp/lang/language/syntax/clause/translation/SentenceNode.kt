@@ -3,6 +3,7 @@ package shmp.lang.language.syntax.clause.translation
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategorySource
+import shmp.lang.language.category.inclusivityOutName
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.Word
@@ -56,6 +57,10 @@ class SentenceNode(
     fun extractValues(references: List<SourcedCategory>) =
         references.mapNotNull { sourcedCategory ->
             val (category, source, compulsoryData) = sourcedCategory
+            if (source is CategorySource.RelationGranted && category.outType == inclusivityOutName) {
+                val f = 0
+            }
+
             val res = when (source) {
                 is CategorySource.SelfStated -> categoryValues + word.semanticsCore.staticCategories
                 is CategorySource.RelationGranted -> _relation[source.relation]?.let { it.categoryValues + it.word.semanticsCore.staticCategories }

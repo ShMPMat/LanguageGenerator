@@ -47,7 +47,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 50.0))
+        Verb -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 100.0))
         Adjective -> listOf()
         Adverb -> listOf()
         Numeral -> listOf()
@@ -70,10 +70,11 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
     override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
-        PersonalPronoun -> true
-        Verb -> 0.9.testProbability()
-        else -> false
-    } withCoCategories listOf(listOf(Dual, Paucal, Plural), listOf(First))
+        PersonalPronoun -> true withCoCategories listOf(listOf(Dual, Paucal, Plural), listOf(First))
+//        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue.values().toList())
+        Verb -> true withCoCategories listOf(PersonValue.values().toList())
+        else -> false withCoCategories listOf()
+    }
 }
 
 enum class InclusivityPresence(

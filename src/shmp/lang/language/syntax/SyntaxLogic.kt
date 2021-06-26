@@ -24,6 +24,8 @@ class SyntaxLogic(
     private val personalPronounDropSolver: PersonalPronounDropSolver,
     private val personalPronounInclusivity: SourcedCategory? // WALS only knows about separate inclusive
 ) {
+    val defaultInclusivity = if (personalPronounInclusivity != null) InclusivityValue.Exclusive else null
+
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount, deixis, inclusivity) =

@@ -131,7 +131,7 @@ class ChangeParadigmGenerator(
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
 
 
-        for (paradigm in speechPartChangesMap.values)
+        for (paradigm in speechPartChangesMap.values) //TODO what if after changes some category becomes optional via chain reaction?
             for (sourcedCategory in paradigm.categories)
                 if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
                     val relevantCategories = sourcedCategory.source.possibleSpeechParts

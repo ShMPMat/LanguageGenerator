@@ -4,6 +4,7 @@ import shmp.lang.containers.WordBase
 import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
 import shmp.lang.language.category.DeixisValue
+import shmp.lang.language.category.InclusivityValue
 import shmp.lang.language.category.NounClassValue
 import shmp.lang.language.category.PersonValue
 import shmp.lang.language.getClauseAndInfoStr
@@ -52,6 +53,12 @@ class Visualizer(val language: Language) {
             ActorType.Agent,
             ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(1), DeixisValue.Proximal, null)
         )
+        val fourthSubj = PronounDescription(
+            "_personal_pronoun",
+            listOf(),
+            ActorType.Agent,
+            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Exclusive)
+        )
         val firstObj = NominalDescription(
             "time",
             listOf(AdjectiveDescription("small")),
@@ -91,7 +98,7 @@ class Visualizer(val language: Language) {
         )
         val seventhVerb = TransitiveVerbDescription(
             "build",
-            thirdSubj,
+            fourthSubj,
             fourthObj,
             listOf(IndirectObjectDescription(secondObj, IndirectObjectType.Instrument))
         )
@@ -187,7 +194,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 45)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 46)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

@@ -45,15 +45,13 @@ class SpeechPartChangeParadigm(
                 exponenceUnion,
                 actualValues
             )
-            if (currentClause.size != newClause.size) {
-                for (i in wordPosition until newClause.size) {
+            if (currentClause.size != newClause.size)
+                for (i in wordPosition until newClause.size)
                     if (currentWord == newClause[i]) {
                         wordPosition = i
                         break
                     }
-                }
-            } else
-                currentWord = newClause[wordPosition]
+            currentWord = newClause[wordPosition]
             currentClause = newClause
         }
 
@@ -84,7 +82,7 @@ class SpeechPartChangeParadigm(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"
                 )
-        else WordSequence(listOf(word.copy()))
+        else WordSequence(wordSequence.words.map { it.copy() })
     }
 
     private fun getExponenceUnion(
