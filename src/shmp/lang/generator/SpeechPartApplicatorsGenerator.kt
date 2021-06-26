@@ -45,13 +45,15 @@ class SpeechPartApplicatorsGenerator(
         val realizationTypes = exponenceTemplates
             .mapIndexed { i, t -> t to CategoryRealization.values().randomElement { c -> t.mapper(i, c) } }
 
-        for ((cluster, realization) in realizationTypes) {
+        for (i in realizationTypes.indices) {
+            val (cluster, realization) = realizationTypes[i]
+
             cluster.exponenceCluster.possibleValues.forEach { exponenceValue ->
                 val cores = exponenceValue.categoryValues
                     .map { it.categoryValue.semanticsCore }
                 val semanticsCore = combineSemanticCores(cores)
                 val (applicator, word) = randomCategoryApplicator(
-                    decideRealizationType(realization, exponenceValue, cluster.supplements, speechPart, categories),
+                    decideRealizationType(realization, exponenceValue, cluster.supplements, speechPart, categories, i),
                     phoneticRestrictions,
                     semanticsCore
                 )
@@ -83,13 +85,15 @@ class SpeechPartApplicatorsGenerator(
         value: ExponenceValue,
         supplements: List<CategoryRandomSupplements>,
         speechPart: TypedSpeechPart,
-        categories: List<SourcedCategory>
+        categories: List<SourcedCategory>,
+        position: Int
     ): CategoryRealization {
         val categoryValues = value.categoryValues.map { it.categoryValue }
         val variants = supplements.map {
             it.specialRealization(categoryValues, speechPart.type, categories)
         }
         val finalVariants = uniteMutualProbabilities(variants) { copy(probability = it) }
+            .filter { position == 0 || it.realization != CategoryRealization.NewWord }
 
         return finalVariants.randomUnwrappedElement()
             ?: categoryRealization
@@ -118,7 +122,10 @@ class SpeechPartApplicatorsGenerator(
 
             data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
-                data[i].map { it(c) }.foldRight(0.0, Double::plus)
+                if (i == 0 || c != CategoryRealization.NewWord)
+                    data[i].map { it(c) }.sum()
+                else
+                    0.0
             }
             clusters.add(ExponenceTemplate(
                 cluster,

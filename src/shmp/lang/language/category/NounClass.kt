@@ -69,7 +69,7 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
         return when(speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
-                RealizationBox(CategoryRealization.NewWord, 2.0)
+                RealizationBox(CategoryRealization.NewWord, 3.0)
             )
             DeixisPronoun -> setOf(//TODO no actual data
                 RealizationBox(CategoryRealization.Suffix, 1.5),

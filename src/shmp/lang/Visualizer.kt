@@ -180,7 +180,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 41)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 43)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

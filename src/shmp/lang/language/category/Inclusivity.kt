@@ -62,20 +62,10 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         values: List<CategoryValue>,
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
-    ): Set<RealizationBox> {
-//        val hasNoPlurals = categories
-//            .map { it.category }
-//            .firstOrNull { it.outType == numbersOutName }
-//            ?.actualValues?.isEmpty()
-//            ?: true
-//        val isPluralPresent = values.any { it in listOf(Dual, Paucal, Plural) } || hasNoPlurals
-//        val isSingularPresent = values.any { it in listOf(First) }
-
-//        return if (!isPluralPresent || !isSingularPresent)
-//            setOf(RealizationBox(Passing, 1.0))
-//        else
-        return emptyRealization
-    }
+    ) = setOf(//TODO no actual data
+        noValue(1.0),
+        RealizationBox(NewWord, 3.0)
+    )
 
     override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities
 
@@ -90,7 +80,7 @@ enum class InclusivityPresence(
     val possibilities: List<InclusivityValue>
 ) : SampleSpaceObject {
     None(132.0, listOf()),
-    Present(68000.0, listOf(Inclusive, Exclusive))
+    Present(68.0, listOf(Inclusive, Exclusive))
 }
 
 enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {

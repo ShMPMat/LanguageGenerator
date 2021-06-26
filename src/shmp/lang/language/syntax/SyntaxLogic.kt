@@ -22,7 +22,7 @@ class SyntaxLogic(
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
     private val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
     private val personalPronounDropSolver: PersonalPronounDropSolver,
-    private val personalPronounInclusivity: SourcedCategory // WALS only knows about separate inclusive
+    private val personalPronounInclusivity: SourcedCategory? // WALS only knows about separate inclusive
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -37,7 +37,7 @@ class SyntaxLogic(
             resultCategories.add(nounClassCategorySolver.getValue(gender))
 
         inclusivity?.let { resultCategories.add(it) } ?: run {
-            if (personalPronounInclusivity.compulsoryData.isApplicable(resultCategories)) {
+            if (personalPronounInclusivity?.compulsoryData?.isApplicable(resultCategories) == true) {
                 resultCategories.add(InclusivityValue.Exclusive)
             }
         }

@@ -56,7 +56,7 @@ fun List<List<String>>.lineUpAll(): List<String> {
     if (isEmpty())
         return emptyList()
 
-    return if (first().size == 1)
+    return if (maxOf { it.size } == 1)
         lineUp(map { if (it.isEmpty()) "" else it[0] })
     else {
         val linedPrefixes = lineUp(map { it.first() })

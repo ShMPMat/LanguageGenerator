@@ -36,7 +36,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver(),
-        changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).getCategory(inclusivityOutName)
+        changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityOutName)
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
