@@ -4,6 +4,8 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.NounClassValue.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
@@ -56,7 +58,11 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 2.0))
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
@@ -93,7 +99,7 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
         DeixisPronoun -> 0.8.testProbability()
         Adposition -> 0.6.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class NounClassPresence(override val probability: Double, val possibilities: List<NounClassValue>): SampleSpaceObject {

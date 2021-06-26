@@ -7,6 +7,8 @@ import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.*
 import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.category.NumbersValue.*
+import shmp.lang.language.category.paradigm.SourcedCategoryValue
+import shmp.lang.language.category.paradigm.SourcedCategoryValues
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
@@ -33,7 +35,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
-        generatePersonalPronounDropSolver()
+        generatePersonalPronounDropSolver(),
+        changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).getCategory(inclusivityOutName)
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -103,18 +106,16 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return nonCoreCaseSolver
     }
 
-    private fun generateVerbFormSolver(): MutableMap<VerbContextInfo, List<CategoryValue>> {
-        val verbFormSolver: MutableMap<VerbContextInfo, List<CategoryValue>> = mutableMapOf()
+    private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {
+        val verbFormSolver: MutableMap<VerbContextInfo, SourcedCategoryValues> = mutableMapOf()
 
         val verbalSpeechParts = changeParadigm.getSpeechParts(SpeechPart.Verb)
 
         for (speechPart in verbalSpeechParts)
             changeParadigm.getSpeechPartParadigm(speechPart).categories
-                .map { it.category }
-                .filterIsInstance<Tense>()
-                .firstOrNull()
-                ?.actualValues
-                ?.firstOrNull { it as TenseValue == TenseValue.Present }
+                .firstOrNull { it.category.outType == tenseOutName }
+                ?.actualSourcedValues
+                ?.firstOrNull { it.categoryValue == TenseValue.Present }
                 ?.let {
                     verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(it)
                 }
@@ -289,7 +290,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
             val definitenessNecessity = changeParadigm.getSpeechPartParadigm(speechPart)
                 .getCategoryOrNull(definitenessName)
-                ?.isCompulsory ?: false
+                ?.compulsoryData?.isCompulsory ?: false
 
             if (definitenessNecessity)
                 for (deixis in DeixisValue.values().toList() + listOf<DeixisValue?>(null)) when (deixis) {

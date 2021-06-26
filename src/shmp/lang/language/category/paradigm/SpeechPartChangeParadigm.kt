@@ -90,9 +90,7 @@ class SpeechPartChangeParadigm(
     private fun getExponenceUnion(
         categoryValues: Set<SourcedCategoryValue>,
         exponenceCluster: ExponenceCluster
-    ): ExponenceValue? {
-        return exponenceCluster.filterExponenceUnion(categoryValues)
-    }
+    ) = exponenceCluster.filterExponenceUnion(categoryValues)
 
     private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) = WordSequence(
         wordSequence.words.subList(0, wordPosition)

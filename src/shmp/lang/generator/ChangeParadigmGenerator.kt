@@ -1,13 +1,9 @@
 package shmp.lang.generator
 
 import shmp.lang.language.category.Category
-import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.definitenessName
-import shmp.lang.language.category.paradigm.ExponenceCluster
-import shmp.lang.language.category.paradigm.SourcedCategory
-import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
-import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.category.paradigm.*
 import shmp.lang.language.category.realization.WordCategoryApplicator
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.TypedSpeechPart
@@ -33,9 +29,7 @@ class ChangeParadigmGenerator(
     val wordOrderGenerator = WordOrderGenerator(random)
     val syntaxParadigmGenerator = SyntaxParadigmGenerator()
 
-    internal fun generateChangeParadigm(
-        categoriesWithMappers: List<Pair<Category, CategoryRandomSupplements>>
-    ): ChangeParadigm {
+    internal fun generateChangeParadigm(categoriesWithMappers: List<SupplementedCategory>): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
 
         val oldSpeechParts = mutableListOf<TypedSpeechPart>()
@@ -48,18 +42,27 @@ class ChangeParadigmGenerator(
             oldSpeechParts.addAll(speechParts)
             speechParts.map { speechPart ->
                 val restrictions = restrictionsParadigm.restrictionsMapper.getValue(speechPart)
-                val speechPartCategoriesAndSupply = categoriesWithMappers
+                val presentCategories = categoriesWithMappers
                     .filter { it.first.speechParts.contains(speechPart.type) }
                     .filter { it.first.actualValues.isNotEmpty() }
+                val speechPartCategoriesAndSupply = presentCategories
                     .flatMap { (c, s) ->
                         c.affected
                             .filter { it.speechPart == speechPart.type }
                             .map {
-                                SourcedCategory(
-                                    c,
-                                    it.source,
-                                    s.randomIsCompulsory(speechPart.type) && c.actualValues.size > 1
-                                ) to s
+                                var compulsoryData = s.randomIsCompulsory(speechPart.type)
+                                if (c.actualValues.size <= 1)
+                                    compulsoryData = compulsoryData.copy(isCompulsory = false)
+
+                                val existingCoCategories = compulsoryData.compulsoryCoCategories.filter {
+                                    presentCategories
+                                        .firstOrNull { sc -> sc.first.outType == it.first().parentClassName }
+                                        ?.let { true }
+                                        ?: false
+                                }
+                                compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
+
+                                SourcedCategory(c, it.source, compulsoryData) to s
                             }
                     }
                 val (words, applicators) = speechPartApplicatorsGenerator
@@ -130,17 +133,21 @@ class ChangeParadigmGenerator(
 
         for (paradigm in speechPartChangesMap.values)
             for (sourcedCategory in paradigm.categories)
-                if (sourcedCategory.source is RelationGranted && sourcedCategory.isCompulsory) {
-                    val areAllRelationsCompulsory = sourcedCategory.source.possibleSpeechParts
+                if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
+                    val relevantCategories = sourcedCategory.source.possibleSpeechParts
                         .flatMap { sp -> speechPartChangesMap.entries.filter { it.key.type == sp } }
-                        .all { e ->
+                        .map { e ->
                             e.value.categories
                                 .firstOrNull { it.category == sourcedCategory.category }
-                                ?.isCompulsory
-                                ?: false
                         }
+                    val areAllRelationsCompulsory = relevantCategories.all { c ->
+                            c?.compulsoryData?.isCompulsory ?: false
+                        }
+                    val allCoCategories = relevantCategories
+                        .mapNotNull { it?.compulsoryData?.compulsoryCoCategories }
+                        .flatten()
 
-                    sourcedCategory.isCompulsory = areAllRelationsCompulsory
+                    sourcedCategory.compulsoryData = CompulsoryData(areAllRelationsCompulsory, allCoCategories)
                 }
 
         if (!articlePresent(categories, speechPartChangesMap)) {

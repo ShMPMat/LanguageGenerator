@@ -5,12 +5,14 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.TenseValue.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
-private const val outName = "Tense"
+const val tenseOutName = "Tense"
 
 class Tense(
     categories: List<TenseValue>,
@@ -21,7 +23,7 @@ class Tense(
     TenseValue.values().toSet(),
     affected,
     staticSpeechParts,
-    outName
+    tenseOutName
 )
 
 object TenseRandomSupplements : CategoryRandomSupplements {
@@ -49,8 +51,12 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf()
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == tenseOutName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when (value) {
@@ -68,7 +74,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         Verb -> true
         Adjective -> 0.5.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class TensePresence(override val probability: Double, val possibilities: List<TenseValue>) : SampleSpaceObject {
@@ -95,5 +101,5 @@ enum class TenseValue(override val semanticsCore: SemanticsCore, override val sh
     MonthPast(SemanticsCore("(month past tense ind)".toCluster(), Particle.toUnspecified()), "MTH.PST"),
     YearPast(SemanticsCore("(year past tense ind)".toCluster(), Particle.toUnspecified()), "YR.PST");
 
-    override val parentClassName = outName
+    override val parentClassName = tenseOutName
 }

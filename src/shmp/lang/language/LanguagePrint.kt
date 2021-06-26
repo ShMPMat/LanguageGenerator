@@ -9,21 +9,27 @@ import shmp.lang.language.syntax.WordSequence
 import shmp.lang.utils.listCartesianProduct
 
 
-fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: Boolean = false): String {
-    return "Base - $word\n" +
+fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: Boolean = false) =
+    "Base - $word\n" +
             listCartesianProduct(
                 language.changeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart)
                     .categories
-                    .filter { if (printOptionalCategories) true else it.isCompulsory }
+                    .filter { if (printOptionalCategories) true else it.compulsoryData.isCompulsory }
                     .map { it.actualSourcedValues }
             )
                 .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
-                .map { listOf("${it.first}", " - ") + it.second.joinToString(", &").split("&") }
+                .map { (ws, vs) ->
+                    val categoryValues = vs.map { it.categoryValue }
+                    val relevantCategories = vs
+                        .filter { it.parent.compulsoryData.isApplicable(categoryValues) }
+
+                    listOf("$ws", " - ") + relevantCategories.joinToString(", &").split("&")
+                }
                 .lineUpAll()
                 .sorted()
+                .distinct()
                 .joinToString("\n")
-}
 
 fun getClauseAndInfoStr(wordSequence: WordSequence): String {
     val (words, infos) = wordSequence.words
@@ -47,18 +53,17 @@ fun lineUp(ss: List<String>): List<String> {
 fun lineUp(vararg ss: String) = lineUp(ss.toList())
 
 fun List<List<String>>.lineUpAll(): List<String> {
-    if (this.isEmpty()) {
+    if (isEmpty())
         return emptyList()
-    }
 
-    return if (this[0].size == 1)
-        lineUp(map { it[0] })
+    return if (first().size == 1)
+        lineUp(map { if (it.isEmpty()) "" else it[0] })
     else {
-        val linedPostfixes = lineUp(this.map { it.last() })
+        val linedPrefixes = lineUp(map { it.first() })
 
-        this.map { it.dropLast(1) }
+        map { if (it.isEmpty()) listOf("") else it.drop(1) }
             .lineUpAll()
-            .mapIndexed { i, s -> s + linedPostfixes[i] }
+            .mapIndexed { i, s -> linedPrefixes[i] + s }
     }
 }
 

@@ -3,10 +3,11 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -55,7 +56,11 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf()
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == animosityName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
@@ -90,7 +95,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> 0.4.testProbability()
         DeixisPronoun -> 0.4.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class AnimosityPresence(

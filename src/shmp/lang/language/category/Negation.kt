@@ -3,6 +3,8 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.SemanticsCore
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
@@ -50,13 +52,17 @@ object NegationRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf()
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         return emptyRealization
     }
 
     override fun randomRealization() = NegationPresence.values().randomElement().possibilities
 
-    override fun randomIsCompulsory(speechPart: SpeechPart) = false
+    override fun randomIsCompulsory(speechPart: SpeechPart) = false withCoCategories listOf()
 }
 
 enum class NegationPresence(override val probability: Double, val possibilities: List<NegationValue>) : SampleSpaceObject {

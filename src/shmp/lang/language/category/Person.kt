@@ -7,6 +7,8 @@ import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.PersonValue.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
@@ -56,7 +58,11 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 2.0))
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == outName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
@@ -82,7 +88,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> true
         Adposition -> 0.7.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class PersonPresence(override val probability: Double, val possibilities: List<PersonValue>) : SampleSpaceObject {

@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax.context
 
 import shmp.lang.language.category.DeixisValue
+import shmp.lang.language.category.InclusivityValue
 import shmp.lang.language.category.NounClassValue
 import shmp.lang.language.category.PersonValue
 
@@ -36,7 +37,8 @@ sealed class ContextValue {
         val person: PersonValue,
         val nounClass: NounClassValue,
         val number: Amount,
-        val deixis: DeixisValue
+        val deixis: DeixisValue,
+        val inclusive: InclusivityValue?
     ) : ContextValue()
 
     sealed class Amount: ContextValue()  {

@@ -22,12 +22,18 @@ class WordChangeParadigm(
 
     private fun innerApply(
         word: Word,
-        categoryValues: List<SourcedCategoryValue> = getDefaultState(word)
-    ): Pair<WordSequence, Int> =
-        speechPartChangeParadigms[word.semanticsCore.speechPart]
-            ?.apply(word, categoryValues.toSet())
+        categoryValues: List<SourcedCategoryValue>
+    ): Pair<WordSequence, Int> {
+        val simpleCategoryValues = categoryValues.map { it.categoryValue }
+        val applicableValues = categoryValues
+            .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
+            .toSet()
+
+        return speechPartChangeParadigms[word.semanticsCore.speechPart]
+            ?.apply(word, applicableValues)
             ?.handleNewWsWords()
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+    }
 
     private fun Pair<WordSequence, Int>.handleNewWsWords(): Pair<WordSequence, Int> {
         val (ws, i) = this
@@ -38,24 +44,32 @@ class WordChangeParadigm(
             else apply(
                 w,
                 ws[i].categoryValues.map {
-                    SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent, nominals))
+                    SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent, nominals), it.parent)
                 }
             ).words
         }
         return WordSequence(newWs) to i
     }
 
-    fun getDefaultState(word: Word): List<SourcedCategoryValue> =
-        speechPartChangeParadigms[word.semanticsCore.speechPart]?.exponenceClusters
-            ?.flatMap { it.categories }
-            ?.filter { it.actualSourcedValues.isNotEmpty() && it.isCompulsory }
-            ?.map { it.actualSourcedValues[0] }//TODO another method for static categories swap
-            ?.filter { v ->
+    private fun getDefaultState(word: Word): List<SourcedCategoryValue> {
+        val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]
+            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+
+        return paradigm.exponenceClusters
+            .flatMap { it.categories }
+            .filter { it.actualSourcedValues.isNotEmpty() && it.compulsoryData.isCompulsory }
+            .map { it.actualSourcedValues[0] }//TODO another method for static categories swap
+            .filter { v ->
                 word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }
             }
-            ?.union(word.semanticsCore.staticCategories.map { SourcedCategoryValue(it, SelfStated) })
-            ?.toList()
-            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+            .union(word.semanticsCore.staticCategories.map { v ->
+                SourcedCategoryValue(
+                    v,
+                    SelfStated,
+                    paradigm.categories.first { it.category.outType == it.category.outType })
+            })
+            .toList()
+    }
 
     fun getSpeechPartParadigm(speechPart: TypedSpeechPart) = speechPartChangeParadigms.getValue(speechPart)
     fun getSpeechPartParadigms(speechPart: SpeechPart) = speechPartChangeParadigms

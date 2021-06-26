@@ -4,14 +4,16 @@ import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.category.*
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.lexis.SpeechPart
 import shmp.random.singleton.chanceOf
 
 
 class CategoryGenerator {
-    internal fun randomCategories(): List<Pair<Category, CategoryRandomSupplements>> {
+    internal fun randomCategories(): List<SupplementedCategory> {
         val defaults = mutableListOf(
             randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
+            randomCategory({ l: List<InclusivityValue>, s, ss -> Inclusivity(l, s, ss) }, InclusivityRandomSupplements),
             randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
             randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements),
             randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
@@ -56,7 +58,7 @@ class CategoryGenerator {
     private fun <E: CategoryValue> randomCategory(
         constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,
         supplements: CategoryRandomSupplements
-    ): Pair<Category, CategoryRandomSupplements> {
+    ): SupplementedCategory {
         val presentElements = supplements.randomRealization()
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
         val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.speechPart }
@@ -86,3 +88,6 @@ class CategoryGenerator {
         }.toSet()
     }
 }
+
+typealias SupplementedCategory = Pair<Category, CategoryRandomSupplements>
+typealias SupplementedSourcedCategory = Pair<SourcedCategory, CategoryRandomSupplements>

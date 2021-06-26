@@ -54,19 +54,22 @@ class SentenceNode(
     }
 
     fun extractValues(references: List<SourcedCategory>) =
-        references.mapNotNull { (category, source, isCompulsory) ->
+        references.mapNotNull { sourcedCategory ->
+            val (category, source, compulsoryData) = sourcedCategory
             val res = when (source) {
                 is CategorySource.SelfStated -> categoryValues + word.semanticsCore.staticCategories
                 is CategorySource.RelationGranted -> _relation[source.relation]?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {
-                    if (isCompulsory)
+                    val hasAllCategoryClusters = compulsoryData.isApplicable(categoryValues)
+
+                    if (compulsoryData.isCompulsory && hasAllCategoryClusters)
                         throw SyntaxException("No value for compulsory category ${category.outType} and source $source")
                     else
                         return@mapNotNull null
                 }
-            SourcedCategoryValue(res, source)
+            SourcedCategoryValue(res, source, sourcedCategory)
         }
 }
 

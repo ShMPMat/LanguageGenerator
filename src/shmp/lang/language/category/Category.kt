@@ -2,6 +2,8 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.category.paradigm.CompulsoryData
+import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
@@ -20,10 +22,10 @@ interface Category {
 interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): List<SourceTemplate>
-    fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox>
+    fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart, categories: List<SourcedCategory>): Set<RealizationBox>
     fun randomRealization(): List<CategoryValue>
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
-    fun randomIsCompulsory(speechPart: SpeechPart): Boolean
+    fun randomIsCompulsory(speechPart: SpeechPart): CompulsoryData
 }
 
 data class RealizationBox(

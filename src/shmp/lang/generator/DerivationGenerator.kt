@@ -279,8 +279,8 @@ class DerivationGenerator(
     }
 
     internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: MutableList<Word>) {
-        for (template in templates.shuffled())
-            for (compound in derivationParadigm.compounds.shuffled()) {
+        for (template in templates.shuffled(RandomSingleton.random))
+            for (compound in derivationParadigm.compounds.shuffled(RandomSingleton.random)) {
                 val derivedWord = compound.compose(availableWords, template, random)
                     ?: continue
 

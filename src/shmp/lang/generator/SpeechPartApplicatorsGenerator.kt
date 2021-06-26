@@ -33,8 +33,9 @@ class SpeechPartApplicatorsGenerator(
     internal fun randomApplicatorsForSpeechPart(
         speechPart: TypedSpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
-        categoriesAndSupply: List<Pair<SourcedCategory, CategoryRandomSupplements>>
+        categoriesAndSupply: List<SupplementedSourcedCategory>
     ): Result {
+        val categories = categoriesAndSupply.map { it.first }
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
         val words = mutableListOf<Word>()
 
@@ -49,14 +50,8 @@ class SpeechPartApplicatorsGenerator(
                 val cores = exponenceValue.categoryValues
                     .map { it.categoryValue.semanticsCore }
                 val semanticsCore = combineSemanticCores(cores)
-
                 val (applicator, word) = randomCategoryApplicator(
-                    decideRealizationType(
-                        realization,
-                        exponenceValue,
-                        cluster.supplements,
-                        speechPart
-                    ),
+                    decideRealizationType(realization, exponenceValue, cluster.supplements, speechPart, categories),
                     phoneticRestrictions,
                     semanticsCore
                 )
@@ -87,23 +82,24 @@ class SpeechPartApplicatorsGenerator(
         categoryRealization: CategoryRealization,
         value: ExponenceValue,
         supplements: List<CategoryRandomSupplements>,
-        speechPart: TypedSpeechPart
+        speechPart: TypedSpeechPart,
+        categories: List<SourcedCategory>
     ): CategoryRealization {
-        val variants = supplements
-            .map { s -> s.specialRealization(value.categoryValues.map { it.categoryValue }, speechPart.type) }
-        val finalVariants = uniteMutualProbabilities(variants) { this.copy(probability = it) }
+        val categoryValues = value.categoryValues.map { it.categoryValue }
+        val variants = supplements.map {
+            it.specialRealization(categoryValues, speechPart.type, categories)
+        }
+        val finalVariants = uniteMutualProbabilities(variants) { copy(probability = it) }
 
         return finalVariants.randomUnwrappedElement()
             ?: categoryRealization
     }
 
-    private fun splitCategoriesOnClusters(
-        categories: List<Pair<SourcedCategory, CategoryRandomSupplements>>
-    ): List<ExponenceTemplate> {
+    private fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
             .let {
-                val nonCompulsory = it.filter { (c) -> !c.isCompulsory }
-                val compulsory = it.filter { (c) -> c.isCompulsory }
+                val nonCompulsory = it.filter { (c) -> !c.compulsoryData.isCompulsory }
+                val compulsory = it.filter { (c) -> c.compulsoryData.isCompulsory }
                 nonCompulsory + compulsory
             }
         val clusters = ArrayList<ExponenceTemplate>()
@@ -111,7 +107,7 @@ class SpeechPartApplicatorsGenerator(
         val data = mutableListOf<List<RealizationMapper>>()
 
         while (l < shuffledCategories.size) {
-            val r = if (shuffledCategories[l].first.isCompulsory)
+            val r = if (shuffledCategories[l].first.compulsoryData.isCompulsory)
                 (l + 1..shuffledCategories.size).toList().randomElement { 1.0 / it }
             else l + 1
 

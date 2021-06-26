@@ -4,10 +4,11 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CaseValue.*
 import shmp.lang.language.category.CategorySource.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.chanceOf
@@ -56,7 +57,11 @@ object CaseRandomSupplements : CategoryRandomSupplements {
         Particle -> listOf()
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
 
         val defaultRealization = if (nonCoreCases.all { it !in acceptableValues }) setOf(
@@ -103,7 +108,7 @@ object CaseRandomSupplements : CategoryRandomSupplements {
         PersonalPronoun -> 0.8.testProbability()
         DeixisPronoun -> 0.8.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 object AdpositionRandomSupplements : CategoryRandomSupplements {
@@ -122,7 +127,11 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
         CaseRandomSupplements.speechPartProbabilities(speechPart)
             .mapNotNull { if (it.source == SelfStated) it.copy(probability = 100.0) else null }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart) = emptyRealization
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ) = emptyRealization
 
     override fun randomRealization(): List<CaseValue> {
         return emptyList()
@@ -130,7 +139,7 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
 
     override fun randomStaticSpeechParts() = setOf<SpeechPart>()
 
-    override fun randomIsCompulsory(speechPart: SpeechPart) = false
+    override fun randomIsCompulsory(speechPart: SpeechPart) = false withCoCategories listOf()
 }
 
 

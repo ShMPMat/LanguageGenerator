@@ -6,6 +6,8 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategorySource.SelfStated
 import shmp.lang.language.category.DeixisValue.*
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
@@ -50,7 +52,11 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf()
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == deixisName }
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
@@ -71,7 +77,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         Noun -> false
         DeixisPronoun -> true
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class DeixisPresence(

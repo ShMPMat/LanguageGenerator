@@ -3,19 +3,22 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.lexis.SpeechPart.*
-import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.category.NumbersValue.*
+import shmp.lang.language.category.CategorySource.RelationGranted
+import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.NumbersValue.Plural
+import shmp.lang.language.category.NumbersValue.Singular
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-private const val outName = "Numbers"
+const val numbersOutName = "Numbers"
 
 class Numbers(
     categories: List<NumbersValue>,
@@ -26,7 +29,7 @@ class Numbers(
     NumbersValue.values().toSet(),
     affected,
     staticSpeechParts,
-    outName
+    numbersOutName
 )
 
 object NumbersRandomSupplements : CategoryRandomSupplements {
@@ -57,8 +60,12 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         Adposition -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 2.0))
     }
 
-    override fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+    override fun specialRealization(
+        values: List<CategoryValue>,
+        speechPart: SpeechPart,
+        categories: List<SourcedCategory>
+    ): Set<RealizationBox> {
+        val acceptableValues = values.filter { it.parentClassName == numbersOutName }
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
             Singular -> setOf(
@@ -97,7 +104,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         DeixisPronoun -> 0.9.testProbability()
         Adposition -> 0.7.testProbability()
         else -> true
-    }
+    } withCoCategories listOf()
 }
 
 enum class NumbersPresence(
@@ -117,5 +124,5 @@ enum class NumbersValue(override val semanticsCore: SemanticsCore, override val 
     Paucal(SemanticsCore("(paucal number indicator)".toCluster(), Particle.toUnspecified()), "PC"),
     Plural(SemanticsCore("(plural number indicator)".toCluster(), Particle.toUnspecified()), "PL");
 
-    override val parentClassName = outName
+    override val parentClassName = numbersOutName
 }

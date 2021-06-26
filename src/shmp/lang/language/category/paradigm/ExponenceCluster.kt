@@ -77,25 +77,43 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
     }
 }
 
-data class SourcedCategory(val category: Category, val source: CategorySource, var isCompulsory: Boolean) {
-    val allPossibleSourcedValues = category.allPossibleValues.map { SourcedCategoryValue(it, source) }
-    val actualSourcedValues = category.actualValues.map { SourcedCategoryValue(it, source) }
+data class SourcedCategory(val category: Category, val source: CategorySource, var compulsoryData: CompulsoryData) {
+    val allPossibleSourcedValues = category.allPossibleValues.map { SourcedCategoryValue(it, source, this) }
+    val actualSourcedValues = category.actualValues.map { SourcedCategoryValue(it, source, this) }
 
     fun containsValue(value: SourcedCategoryValue) = allPossibleSourcedValues.contains(value)
 
-    override fun toString() =
-        (if (isCompulsory) "Compulsory " else "Optional ") + category.toString() + getSourceString(source)
+    override fun toString(): String {
+        val categoriesString = category.toString() + getSourceString(source)
+        val compulsoryString = if (compulsoryData.isCompulsory)
+            "Compulsory " + (
+                    if (compulsoryData.compulsoryCoCategories.isNotEmpty())
+                        compulsoryData.compulsoryCoCategories.joinToString(", ", "for ", " ")
+                    else ""
+                    )
+        else "Optional "
+
+        return compulsoryString + categoriesString
+    }
 }
 
-data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource) {
+data class SourcedCategoryValue constructor(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
     override fun toString() = categoryValue.toString() + getSourceString(source)
 }
 
+
+data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster>) {
+    fun isApplicable(values: List<CategoryValue>) = compulsoryCoCategories
+        .all { it.any { cc -> values.contains(cc) } }
+}
+
+typealias CategoryCluster = List<CategoryValue>
+
+infix fun Boolean.withCoCategories(coCategories: List<CategoryCluster>) =
+    CompulsoryData(this, coCategories)
+
+
 typealias SourcedCategoryValues = List<SourcedCategoryValue>
-
-fun CategoryValue.withSource(source: CategorySource) =
-    SourcedCategoryValue(this, source)
-
 
 private fun getSourceString(source: CategorySource) =
     if (source is CategorySource.RelationGranted)

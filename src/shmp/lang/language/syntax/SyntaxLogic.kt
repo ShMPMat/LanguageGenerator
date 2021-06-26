@@ -2,8 +2,8 @@ package shmp.lang.language.syntax
 
 import shmp.lang.language.*
 import shmp.lang.language.category.*
+import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValues
-import shmp.lang.language.category.paradigm.withSource
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context
@@ -14,18 +14,20 @@ import kotlin.math.abs
 
 
 class SyntaxLogic(
-    private val verbFormSolver: Map<VerbContextInfo, CategoryValues>,
+    private val verbFormSolver: Map<VerbContextInfo, SourcedCategoryValues>,
     private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
     private val numberCategorySolver: NumberCategorySolver?,
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
     private val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
-    private val personalPronounDropSolver: PersonalPronounDropSolver
+    private val personalPronounDropSolver: PersonalPronounDropSolver,
+    private val personalPronounInclusivity: SourcedCategory // WALS only knows about separate inclusive
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
-        val (person, gender, amount, deixis) = actorValue
+        val (person, gender, amount, deixis, inclusivity) =
+            actorValue
 
         resultCategories.add(person)
         resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
@@ -33,6 +35,12 @@ class SyntaxLogic(
 
         if (nounClassCategorySolver != null)
             resultCategories.add(nounClassCategorySolver.getValue(gender))
+
+        inclusivity?.let { resultCategories.add(it) } ?: run {
+            if (personalPronounInclusivity.compulsoryData.isApplicable(resultCategories)) {
+                resultCategories.add(InclusivityValue.Exclusive)
+            }
+        }
 
         return resultCategories
     }
@@ -98,7 +106,7 @@ class SyntaxLogic(
         val (timeValue, priority) = context.time
 
         verbFormSolver[verbType to timeValue]?.let { categories ->
-            return categories.map { it.withSource(CategorySource.SelfStated) }
+            return categories.map { it }
         }
 
         if (priority == Priority.Explicit) {
