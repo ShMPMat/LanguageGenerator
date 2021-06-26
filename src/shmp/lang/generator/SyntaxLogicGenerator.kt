@@ -98,8 +98,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                                 ?: emptyList()
                             )
 
-                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
-                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
+//                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
+//                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
             }
         }
 

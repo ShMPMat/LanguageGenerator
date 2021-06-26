@@ -98,7 +98,7 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
 }
 
 data class SourcedCategoryValue constructor(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
-    override fun toString() = categoryValue.toString() + getSourceString(source)
+    override fun toString() = categoryValue.shortName + getSourceString(source)
 }
 
 
@@ -117,5 +117,5 @@ typealias SourcedCategoryValues = List<SourcedCategoryValue>
 
 private fun getSourceString(source: CategorySource) =
     if (source is CategorySource.RelationGranted)
-        " ${source.relation}"
+        " ${source.relation.shortName}"
     else ""

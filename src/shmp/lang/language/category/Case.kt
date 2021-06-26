@@ -133,9 +133,7 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
         categories: List<SourcedCategory>
     ) = emptyRealization
 
-    override fun randomRealization(): List<CaseValue> {
-        return emptyList()
-    }
+    override fun randomRealization(): List<CaseValue> = emptyList()
 
     override fun randomStaticSpeechParts() = setOf<SpeechPart>()
 

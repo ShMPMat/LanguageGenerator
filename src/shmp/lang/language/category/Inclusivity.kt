@@ -3,20 +3,20 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.category.CategorySource.RelationGranted
 import shmp.lang.language.category.CategorySource.SelfStated
 import shmp.lang.language.category.InclusivityValue.Exclusive
 import shmp.lang.language.category.InclusivityValue.Inclusive
 import shmp.lang.language.category.NumbersValue.*
-import shmp.lang.language.category.PersonValue.*
+import shmp.lang.language.category.PersonValue.First
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
-import shmp.lang.language.lexis.toCluster
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.syntax.SyntaxRelation.Agent
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.testProbability
 
 
 const val inclusivityOutName = "Inclusivity"
@@ -47,7 +47,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf()
+        Verb -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 50.0))
         Adjective -> listOf()
         Adverb -> listOf()
         Numeral -> listOf()
@@ -62,15 +62,16 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         values: List<CategoryValue>,
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
-    ) = setOf(//TODO no actual data
+    ) = if (speechPart == PersonalPronoun) setOf(//TODO no actual data
         noValue(1.0),
         RealizationBox(NewWord, 3.0)
-    )
+    ) else emptyRealization
 
     override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         PersonalPronoun -> true
+        Verb -> 0.9.testProbability()
         else -> false
     } withCoCategories listOf(listOf(Dual, Paucal, Plural), listOf(First))
 }
@@ -80,7 +81,7 @@ enum class InclusivityPresence(
     val possibilities: List<InclusivityValue>
 ) : SampleSpaceObject {
     None(132.0, listOf()),
-    Present(68.0, listOf(Inclusive, Exclusive))
+    Present(6800000.0, listOf(Inclusive, Exclusive))
 }
 
 enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {

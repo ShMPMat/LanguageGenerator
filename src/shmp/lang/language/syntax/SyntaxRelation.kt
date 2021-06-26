@@ -1,25 +1,25 @@
 package shmp.lang.language.syntax
 
-enum class SyntaxRelation {
-    Agent,
-    Patient,
-    Argument,
-    SubjectCompliment,
-    Verb,
+enum class SyntaxRelation(val shortName: String) {
+    Agent("AG"),
+    Patient("PAT"),
+    Argument("ARG"),
+    SubjectCompliment("SC"),
+    Verb("VRB"),
 
-    PossessorAdjunct,
-    Instrument,
-    Addressee,
-    Location,
+    PossessorAdjunct("POS_ADJ"),
+    Instrument("INSTR"),
+    Addressee("ADRSEE"),
+    Location("LOCATION"),
 
-    CopulaParticle,
-    QuestionMarker,
+    CopulaParticle("COP"),
+    QuestionMarker("QM"),
 
-    Nominal,
-    Definition,
+    Nominal("NOMINAL"),
+    Definition("DEFINITION"),
 
-    Possessed,
-    Possessor
+    Possessed("POSSESED"),
+    Possessor("POSSESOR");
 }
 
 typealias SyntaxRelations = List<SyntaxRelation>
