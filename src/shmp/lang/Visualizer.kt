@@ -127,7 +127,6 @@ class Visualizer(val language: Language) {
         val secondContext = Context(
             FarFuture to Implicit,
             GeneralQuestion to Explicit
-//            mutableMapOf(ActorType.Agent to ActorValue(PersonValue.Second, GenderValue.Male, AmountValue(2)))
         )
         val thirdContext = Context(
             Regular to Implicit,

@@ -70,10 +70,18 @@ fun List<List<String>>.lineUpAll(): List<String> {
 fun getClauseInfoPrinted(wordSequence: WordSequence) =
     wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
 
-fun getWordInfoPrinted(word: Word) = getSemanticsPrinted(word) +
-        word.categoryValues
-            .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
-            .replace(" ", ".")
+fun getWordInfoPrinted(word: Word): String {
+    val semantics = getSemanticsPrinted(word)
+    val categories =  word.categoryValues
+        .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
+        .replace(" ", ".")
+
+    return if (semantics.isBlank())
+        categories.drop(1)
+    else
+        semantics + categories
+
+}
 
 private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
     if (word.semanticsCore.speechPart.type !in listOf(SpeechPart.Particle, SpeechPart.Article, SpeechPart.DeixisPronoun, SpeechPart.Adposition))

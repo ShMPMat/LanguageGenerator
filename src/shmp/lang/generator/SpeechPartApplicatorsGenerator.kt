@@ -177,7 +177,7 @@ class SpeechPartApplicatorsGenerator(
             .sortedBy { k -> k.categories.joinToString { it.category.outType } }
             .shuffled(RandomSingleton.random)
 
-    internal fun constructExponenceUnionSets(
+    private fun constructExponenceUnionSets(
         categories: List<SourcedCategory>,
         neighbourCategories: BoxedInt = BoxedInt(1)
     ): Set<List<SourcedCategoryValue>> =
@@ -189,7 +189,7 @@ class SpeechPartApplicatorsGenerator(
     private fun makeTrivialExponenceUnionSets(
         category: SourcedCategory,
         neighbourCategories: BoxedInt
-    ): Set<List<SourcedCategoryValue>> =
+    ) =
         if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability()) {
             neighbourCategories.value--
             setOf(category.actualSourcedValues)
@@ -201,11 +201,12 @@ class SpeechPartApplicatorsGenerator(
         neighbourCategories: BoxedInt
     ): Set<List<SourcedCategoryValue>> {
         val currentCategory = categories.last()
+        val leftCategories = categories.dropLast(1)
 
         return if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability())
-            makeCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
+            makeCollapsedExponenceUnionSets(currentCategory, leftCategories, neighbourCategories)
         else
-            makeNonCollapsedExponenceUnionSets(currentCategory, categories.dropLast(1), neighbourCategories)
+            makeNonCollapsedExponenceUnionSets(currentCategory, leftCategories, neighbourCategories)
     }
 
     private fun makeCollapsedExponenceUnionSets(
