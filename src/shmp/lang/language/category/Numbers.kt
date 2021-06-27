@@ -126,3 +126,5 @@ enum class NumbersValue(override val semanticsCore: SemanticsCore, override val 
 
     override val parentClassName = numbersOutName
 }
+
+val nonSingularNumbers = listOf(NumbersValue.Dual, NumbersValue.Paucal, Plural)

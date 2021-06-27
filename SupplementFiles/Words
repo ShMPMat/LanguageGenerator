@@ -175,12 +175,12 @@ picture            Verb        0.9    T|trans:100,intrans:1 T|instrument:1
 point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@destination:0.4  VNPerson@traveller:0.05
                                       VNAbstract@motivation:0.5,cause(reason):0.1
-build              Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+build              Verb        1.0    T|trans:100 T|instrument:1
                                       *Tbuilding:0.4*abstract:0.1*action:0.9
 work               Verb        1.0    T|trans:100,intrans:1 T|instrument:1
                                       VNAbstract@activity:0.7
                                       *work:1.0*help:0.01*action:0.95
-see                Verb        1.0    T|trans:100,intrans:1
+see                Verb        1.0    T|trans:100
                                       VNPlace@scene:0.03,beautiful_place:0.05
                                       VNPerson@owner:0.04,master:0.02,ruler:0.005  VNAbstract@life:0.05
                                       *see:1.0*understand:0.05*learn:0.05*light:0.05*action:0.8

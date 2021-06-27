@@ -2,6 +2,7 @@ package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
+import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
@@ -115,9 +116,21 @@ class SpeechPartApplicatorsGenerator(
             else l + 1
 
             val currentCategoriesWithSupplement = shuffledCategories.subList(l, r)
+                .mapIndexed { i, p ->
+                    val externalValues = categories.toMutableList().apply { removeAt(i) }
+                        .flatMap { it.first.category.actualValues }
+
+                    p to p.second.getCollapseCoefficient(externalValues)
+                }
+                .sortedBy { it.second }
+                .map { it.first }
+
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
 
-            val cluster = ExponenceCluster(currentCategories, constructExponenceUnionSets(currentCategories))
+            val cluster = ExponenceCluster(
+                currentCategories,
+                constructExponenceUnionSets(currentCategoriesWithSupplement)
+            )
 
             data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
@@ -178,65 +191,91 @@ class SpeechPartApplicatorsGenerator(
             .shuffled(RandomSingleton.random)
 
     private fun constructExponenceUnionSets(
-        categories: List<SourcedCategory>,
+        categories: List<SupplementedSourcedCategory>,
+        previousCategoryValues: List<CategoryValue> = listOf(),
         neighbourCategories: BoxedInt = BoxedInt(1)
-    ): Set<List<SourcedCategoryValue>> =
-        if (categories.size == 1)
-            makeTrivialExponenceUnionSets(categories.first(), neighbourCategories)
-        else
-            makeRecursiveExponenceUnionSets(categories, neighbourCategories)
+    ): Set<List<SourcedCategoryValue>> = if (categories.size == 1)
+        makeTrivialExponenceUnionSets(categories.first(), neighbourCategories, previousCategoryValues)
+    else
+        makeRecursiveExponenceUnionSets(categories, neighbourCategories, previousCategoryValues)
 
     private fun makeTrivialExponenceUnionSets(
-        category: SourcedCategory,
-        neighbourCategories: BoxedInt
+        category: SupplementedSourcedCategory,
+        neighbourCategories: BoxedInt,
+        previousCategoryValues: List<CategoryValue>
     ) =
-        if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability()) {
+        if (neighbourCategories.value > 1 && testCollapse(category.second, previousCategoryValues)) {
             neighbourCategories.value--
-            setOf(category.actualSourcedValues)
+            setOf(category.first.actualSourcedValues)
         } else
-            category.actualSourcedValues.map { listOf(it) }.toSet()
+            category.first.actualSourcedValues.map { listOf(it) }.toSet()
 
     private fun makeRecursiveExponenceUnionSets(
-        categories: List<SourcedCategory>,
-        neighbourCategories: BoxedInt
+        categories: List<SupplementedSourcedCategory>,
+        neighbourCategories: BoxedInt,
+        previousCategoryValues: List<CategoryValue>
     ): Set<List<SourcedCategoryValue>> {
-        val currentCategory = categories.last()
+        val (currentCategory, currentSupplement) = categories.last()
         val leftCategories = categories.dropLast(1)
 
-        return if (neighbourCategories.value > 1 && categoryCollapseProbability.testProbability())
-            makeCollapsedExponenceUnionSets(currentCategory, leftCategories, neighbourCategories)
+        return if (neighbourCategories.value > 1 && testCollapse(currentSupplement, previousCategoryValues))
+            makeCollapsedExponenceUnionSets(
+                currentCategory,
+                leftCategories,
+                neighbourCategories,
+                previousCategoryValues
+            )
         else
-            makeNonCollapsedExponenceUnionSets(currentCategory, leftCategories, neighbourCategories)
+            makeNonCollapsedExponenceUnionSets(
+                currentCategory,
+                leftCategories,
+                neighbourCategories,
+                previousCategoryValues
+            )
     }
 
     private fun makeCollapsedExponenceUnionSets(
         currentCategory: SourcedCategory,
-        categories: List<SourcedCategory>,
-        neighbourCategories: BoxedInt
+        categories: List<SupplementedSourcedCategory>,
+        neighbourCategories: BoxedInt,
+        previousCategoryValues: List<CategoryValue>
     ): Set<List<SourcedCategoryValue>> {
         neighbourCategories.value--
         val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.actualSourcedValues.size)
-        val recSets = constructExponenceUnionSets(categories, existingPaths)
+        val recSets = constructExponenceUnionSets(
+            categories,
+            previousCategoryValues + currentCategory.actualSourcedValues.map { it.categoryValue },
+            existingPaths
+        )
 
         return recSets.map { it + currentCategory.actualSourcedValues }.toSet()
     }
 
     private fun makeNonCollapsedExponenceUnionSets(
         currentCategory: SourcedCategory,
-        categories: List<SourcedCategory>,
-        neighbourCategories: BoxedInt
+        categories: List<SupplementedSourcedCategory>,
+        neighbourCategories: BoxedInt,
+        previousCategoryValues: List<CategoryValue>
     ): Set<List<SourcedCategoryValue>> {
         val lists = mutableSetOf<List<SourcedCategoryValue>>()
 
-        for (new in currentCategory.actualSourcedValues) {
+        for (newCategory in currentCategory.actualSourcedValues) {
             val recSets = constructExponenceUnionSets(
                 categories,
+                previousCategoryValues + listOf(newCategory.categoryValue),
                 BoxedInt(neighbourCategories.value * currentCategory.actualSourcedValues.size)
             )
-            lists.addAll(recSets.map { it + listOf(new) })
+            lists.addAll(recSets.map { it + listOf(newCategory) })
         }
 
         return lists
+    }
+
+    private fun testCollapse(supplements: CategoryRandomSupplements, otherCategories: List<CategoryValue>): Boolean {
+        val collapseProbability = categoryCollapseProbability /
+                supplements.getCollapseCoefficient(otherCategories)
+
+        return collapseProbability.testProbability()
     }
 }
 

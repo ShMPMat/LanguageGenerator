@@ -26,6 +26,7 @@ interface CategoryRandomSupplements {
     fun randomRealization(): List<CategoryValue>
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
     fun randomIsCompulsory(speechPart: SpeechPart): CompulsoryData
+    fun getCollapseCoefficient(previousCategoryValues: List<CategoryValue>): Double = 1.0
 }
 
 data class RealizationBox(

@@ -100,6 +100,20 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
         Adposition -> 0.6.testProbability()
         else -> true
     } withCoCategories listOf()
+
+    override fun getCollapseCoefficient(previousCategoryValues: List<CategoryValue>): Double {
+        var result = super.getCollapseCoefficient(previousCategoryValues)
+
+        if (previousCategoryValues.isEmpty())
+            return result
+
+        if (previousCategoryValues.any { it in nonSingularNumbers })
+            result /= 20
+        if (previousCategoryValues.any { it in listOf(PersonValue.First, PersonValue.Second) })
+            result /= 100
+
+        return result
+    }
 }
 
 enum class NounClassPresence(override val probability: Double, val possibilities: List<NounClassValue>): SampleSpaceObject {

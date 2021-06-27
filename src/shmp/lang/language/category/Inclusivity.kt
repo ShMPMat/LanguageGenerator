@@ -70,7 +70,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
     override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
-        PersonalPronoun -> true withCoCategories listOf(listOf(Dual, Paucal, Plural), listOf(First))
+        PersonalPronoun -> true withCoCategories listOf(nonSingularNumbers, listOf(First))
         Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue.values().toList())
         else -> false withCoCategories listOf()
     }
