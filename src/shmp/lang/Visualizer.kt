@@ -57,7 +57,7 @@ class Visualizer(val language: Language) {
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
-            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Exclusive)
+            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
         )
         val firstObj = NominalDescription(
             "time",
@@ -194,7 +194,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 46)
+    val generator = LanguageGenerator("SupplementFiles", 216 + 47)
     val wordAmount = WordBase("SupplementFiles").baseWords.size
 
     Visualizer(generator.generateLanguage(wordAmount))

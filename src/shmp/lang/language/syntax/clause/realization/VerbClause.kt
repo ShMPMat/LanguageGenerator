@@ -1,8 +1,7 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
-import shmp.lang.language.category.CaseValue
-import shmp.lang.language.category.TenseValue
+import shmp.lang.language.category.*
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
@@ -71,10 +70,14 @@ class IntransitiveVerbClause(
     }
 }
 
-internal fun SentenceNode.addThirdPerson() =
-    if (this.categoryValues.none { it.parentClassName == "Person" })
-        apply { insertCategoryValue(shmp.lang.language.category.PersonValue.Third) }
-    else this
+internal fun SentenceNode.addThirdPerson(): SentenceNode {
+    if (categoryValues.none { it.parentClassName == personOutName })
+        apply { insertCategoryValue(PersonValue.Third) }
+    if (categoryValues.none { it.parentClassName == inclusivityOutName })
+        apply { insertCategoryValue(InclusivityValue.Exclusive) }
+
+    return this
+}
 
 
 private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: Word, syntaxRelation: SyntaxRelation) {

@@ -16,7 +16,7 @@ import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-private const val outName = "Person"
+const val personOutName = "Person"
 
 class Person(
     categories: List<PersonValue>,
@@ -27,7 +27,7 @@ class Person(
     PersonValue.values().toSet(),
     affected,
     staticSpeechParts,
-    outName
+    personOutName
 )
 
 object PersonRandomSupplements : CategoryRandomSupplements {
@@ -63,7 +63,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == outName }
+        val acceptableValues = values.filter { it.parentClassName == personOutName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
@@ -100,5 +100,5 @@ enum class PersonValue(override val semanticsCore: SemanticsCore, override val s
     Second(SemanticsCore("(second person ind)".toCluster(), Particle.toUnspecified()), "2"),
     Third(SemanticsCore("(third person ind)".toCluster(), Particle.toUnspecified()), "3");
 
-    override val parentClassName = outName
+    override val parentClassName = personOutName
 }

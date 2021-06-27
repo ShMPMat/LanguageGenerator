@@ -50,8 +50,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         stressPattern,
         lexisGenerator,
         changeGenerator,
-        restrictionsParadigm,
-        random
+        restrictionsParadigm
     )
 
     fun generateLanguage(wordAmount: Int): Language {

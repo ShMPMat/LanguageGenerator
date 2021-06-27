@@ -104,7 +104,10 @@ class SyntaxLogic(
         return nonCoreCaseSolver.getValue(caseValue to speechPart)
     }
 
-    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
+    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
+        resolveVerbTime(language, verbType, context)
+
+    private fun resolveVerbTime(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
         verbFormSolver[verbType to timeValue]?.let { categories ->

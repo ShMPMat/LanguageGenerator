@@ -52,7 +52,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 50.0))
         DeixisPronoun -> listOf()
         Particle -> listOf()
         Adposition -> listOf()
@@ -71,8 +71,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         PersonalPronoun -> true withCoCategories listOf(listOf(Dual, Paucal, Plural), listOf(First))
-//        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue.values().toList())
-        Verb -> true withCoCategories listOf(PersonValue.values().toList())
+        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue.values().toList())
         else -> false withCoCategories listOf()
     }
 }
@@ -82,7 +81,7 @@ enum class InclusivityPresence(
     val possibilities: List<InclusivityValue>
 ) : SampleSpaceObject {
     None(132.0, listOf()),
-    Present(6800000.0, listOf(Inclusive, Exclusive))
+    Present(68.0, listOf(Inclusive, Exclusive))
 }
 
 enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {

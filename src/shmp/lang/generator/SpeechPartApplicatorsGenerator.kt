@@ -21,13 +21,11 @@ import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.randomUnwrappedElement
 import shmp.random.singleton.testProbability
-import kotlin.random.Random
 
 
 class SpeechPartApplicatorsGenerator(
     private val lexisGenerator: LexisGenerator,
-    private val changeGenerator: ChangeGenerator,
-    private val random: Random
+    private val changeGenerator: ChangeGenerator
 ) {
     private val categoryCollapseProbability = 0.5
 
@@ -177,7 +175,7 @@ class SpeechPartApplicatorsGenerator(
     fun randomApplicatorsOrder(applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>) =
         applicators.keys
             .sortedBy { k -> k.categories.joinToString { it.category.outType } }
-            .shuffled(random)
+            .shuffled(RandomSingleton.random)
 
     internal fun constructExponenceUnionSets(
         categories: List<SourcedCategory>,

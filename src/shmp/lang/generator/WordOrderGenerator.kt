@@ -12,10 +12,9 @@ import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.toSampleSpaceObject
-import kotlin.random.Random
 
 
-class WordOrderGenerator(val random: Random) {
+class WordOrderGenerator {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
         val sovOrder = generateSovOrder(syntaxParadigm)
         val nominalGroupOrder = NominalGroupOrder.values().randomElement()
@@ -136,7 +135,7 @@ class WordOrderGenerator(val random: Random) {
                 val (t1, t2) = randomSublist(
                     BasicSovOrder.values().take(6),
                     { it.probability },
-                    random,
+                    RandomSingleton.random,
                     2,
                     3
                 )

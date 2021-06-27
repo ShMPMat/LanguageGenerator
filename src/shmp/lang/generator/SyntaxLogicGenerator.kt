@@ -1,20 +1,20 @@
 package shmp.lang.generator
 
-import shmp.lang.generator.util.GeneratorException
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.*
 import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.category.NumbersValue.*
-import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.category.paradigm.SourcedCategoryValues
 import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.*
 import shmp.lang.language.syntax.context.ActorType
-import shmp.lang.language.syntax.context.ActorType.*
+import shmp.lang.language.syntax.context.ActorType.Agent
+import shmp.lang.language.syntax.context.ActorType.Patient
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.utils.listCartesianProduct
@@ -23,9 +23,9 @@ import shmp.random.toSampleSpaceObject
 
 
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxParadigm: SyntaxParadigm) {
-    private val nominalParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Noun) +
-            changeParadigm.getSpeechPartParadigms(SpeechPart.PersonalPronoun) +
-            changeParadigm.getSpeechPartParadigms(SpeechPart.DeixisPronoun)
+    private val nominalParadigms = changeParadigm.getSpeechPartParadigms(Noun) +
+            changeParadigm.getSpeechPartParadigms(PersonalPronoun) +
+            changeParadigm.getSpeechPartParadigms(DeixisPronoun)
 
     fun generateSyntaxLogic() = SyntaxLogic(
         generateVerbFormSolver(),
@@ -36,7 +36,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver(),
-        changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityOutName)
+        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityOutName)
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -109,7 +109,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
     private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {
         val verbFormSolver: MutableMap<VerbContextInfo, SourcedCategoryValues> = mutableMapOf()
 
-        val verbalSpeechParts = changeParadigm.getSpeechParts(SpeechPart.Verb)
+        val verbalSpeechParts = changeParadigm.getSpeechParts(Verb)
 
         for (speechPart in verbalSpeechParts)
             changeParadigm.getSpeechPartParadigm(speechPart).categories
@@ -128,7 +128,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             mutableMapOf()
         //TODO handle split
         //TODO handle different nominals
-        val verbParadigms = changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)
+        val verbParadigms = changeParadigm.getSpeechPartParadigms(Verb)
         val cases = changeParadigm.categories.first { it.outType == caseName }.actualValues
 
 
@@ -312,9 +312,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
         val verbalCategories =
-            changeParadigm.getSpeechPartParadigms(SpeechPart.Verb).first().categories//TODO bullshit decision
+            changeParadigm.getSpeechPartParadigms(Verb).first().categories//TODO bullshit decision
         val pronounCategories =
-            changeParadigm.getSpeechPartParadigm(SpeechPart.PersonalPronoun.toUnspecified()).categories
+            changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).categories
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 
