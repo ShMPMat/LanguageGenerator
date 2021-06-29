@@ -15,7 +15,7 @@ class CategoryGenerator {
             randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
             randomCategory({ l: List<InclusivityValue>, s, ss -> Inclusivity(l, s, ss) }, InclusivityRandomSupplements),
             randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
-            randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements),
+            randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements()),
             randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
             randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
             randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
@@ -25,7 +25,7 @@ class CategoryGenerator {
 
         val caseCategory = randomCategory(
             { l: List<CaseValue>, s, ss -> Case(l, s, ss) },
-            CaseRandomSupplements
+            CaseRandomSupplements()
         )
         defaults.add(caseCategory)
 

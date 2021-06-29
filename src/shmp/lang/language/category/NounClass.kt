@@ -30,7 +30,7 @@ class NounClass(
     nounClassName
 )
 
-object NounClassRandomSupplements : CategoryRandomSupplements {
+class NounClassRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not actual data
             CategoryRealization.PrefixSeparateWord -> 10.0
@@ -42,8 +42,11 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.NewWord -> 0.0
         }
 
+    private val nounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
+    private val pronounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
+
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Noun -> listOf(SourceTemplate(SelfStated, nounProbability))
         Verb -> listOf(
             SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 95.0),
             SourceTemplate(RelationGranted(SyntaxRelation.Patient, nominals), 5.0)
@@ -52,7 +55,7 @@ object NounClassRandomSupplements : CategoryRandomSupplements {
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 90.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
         Particle -> listOf()
         Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 2.0))

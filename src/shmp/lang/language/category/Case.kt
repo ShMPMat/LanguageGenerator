@@ -11,6 +11,7 @@ import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.SampleSpaceObject
+import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
@@ -32,7 +33,7 @@ class Case(
     outType
 )
 
-object CaseRandomSupplements : CategoryRandomSupplements {
+class CaseRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not actual data
             CategoryRealization.PrefixSeparateWord -> 20.0
@@ -44,14 +45,17 @@ object CaseRandomSupplements : CategoryRandomSupplements {
             CategoryRealization.NewWord -> 0.0
         }
 
+    private val nounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
+    private val pronounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
+
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, 95.0))
+        Noun -> listOf(SourceTemplate(SelfStated, nounProbability))
         Verb -> listOf()
         Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 80.0))
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 1.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
         Adposition -> listOf()
         Particle -> listOf()
@@ -124,7 +128,7 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) =
-        CaseRandomSupplements.speechPartProbabilities(speechPart)
+        CaseRandomSupplements().speechPartProbabilities(speechPart)
             .mapNotNull { if (it.source == SelfStated) it.copy(probability = 100.0) else null }
 
     override fun specialRealization(

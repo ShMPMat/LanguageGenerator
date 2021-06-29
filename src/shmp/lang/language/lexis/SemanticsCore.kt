@@ -40,19 +40,7 @@ data class SemanticsCore(
 data class SemanticsTag(val name: String)
 
 
-data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>) {
-//    init {
-//        for ((type, lst) in typeToCore) {
-//            val existingTemplates = lst.mapNotNull { it.template }
-//
-//            existingTemplates.firstOrNull { it.speechPart != type.toSpeechPart }?.let {
-//                throw GeneratorException(
-//                    "Derivation type ${type.toSpeechPart} doesn't equals word type ${it.speechPart} ${it.word}"
-//                )
-//            }
-//        }
-//    }
-}
+data class DerivationCluster(val typeToCore: Map<DerivationType, List<DerivationLink>>)
 
 
 data class DerivationLink(

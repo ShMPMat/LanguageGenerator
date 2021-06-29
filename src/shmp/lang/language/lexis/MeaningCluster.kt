@@ -17,7 +17,7 @@ data class MeaningCluster(val meanings: List<Meaning>) {
 
     operator fun plus(other: MeaningCluster) = MeaningCluster(meanings + other.meanings)
 
-    override fun toString() = meanings.joinToString()
+    override fun toString() = meanings.joinToString(";")
 }
 
 fun Meaning.toCluster() = MeaningCluster(this)
