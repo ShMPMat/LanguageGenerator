@@ -171,28 +171,39 @@ class ChangeParadigmGenerator(
     }
 
     private fun checkCompulsoryConsistency(speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
-        for (paradigm in speechPartChangesMap.values) //TODO what if after changes some category becomes optional via chain reaction?
-            for (sourcedCategory in paradigm.categories) {
-                if (sourcedCategory.category.outType in compulsoryConsistencyExceptions)
-                    continue
+        var shouldCheck = true
 
-                if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
-                    val relevantCategories = sourcedCategory.source.possibleSpeechParts
-                        .flatMap { sp -> speechPartChangesMap.entries.filter { it.key.type == sp } }
-                        .map { e ->
-                            e.value.categories
-                                .firstOrNull { it.category == sourcedCategory.category }
+        while (shouldCheck) {
+            shouldCheck = false
+
+            for (paradigm in speechPartChangesMap.values)
+                for (sourcedCategory in paradigm.categories) {
+                    if (sourcedCategory.category.outType in compulsoryConsistencyExceptions)
+                        continue
+
+                    if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
+                        val relevantCategories = sourcedCategory.source.possibleSpeechParts
+                            .flatMap { sp -> speechPartChangesMap.entries.filter { it.key.type == sp } }
+                            .map { e ->
+                                e.value.categories
+                                    .firstOrNull { it.category == sourcedCategory.category }
+                            }
+                        val areAllRelationsCompulsory = relevantCategories.all { c ->
+                            c?.compulsoryData?.isCompulsory ?: false
                         }
-                    val areAllRelationsCompulsory = relevantCategories.all { c ->
-                        c?.compulsoryData?.isCompulsory ?: false
-                    }
-                    val allCoCategories = relevantCategories
-                        .mapNotNull { it?.compulsoryData?.compulsoryCoCategories }
-                        .flatten()
+                        val allCoCategories = relevantCategories
+                            .mapNotNull { it?.compulsoryData?.compulsoryCoCategories }
+                            .flatten()
 
-                    sourcedCategory.compulsoryData = CompulsoryData(areAllRelationsCompulsory, allCoCategories)
+                        val newCompulsoryData = CompulsoryData(areAllRelationsCompulsory, allCoCategories)
+
+                        if (newCompulsoryData != sourcedCategory.compulsoryData)
+                            shouldCheck = true
+
+                        sourcedCategory.compulsoryData = newCompulsoryData
+                    }
                 }
-            }
+        }
     }
 
     private fun articlePresent(
