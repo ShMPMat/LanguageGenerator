@@ -3,6 +3,7 @@ package shmp.lang.generator
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.*
+import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.paradigm.SourcedCategoryValues
@@ -190,7 +191,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             }
 
             if (Paucal in values)
-                numberCategorySolver[Plural] = (paucalBound.last+1)..Int.MAX_VALUE
+                numberCategorySolver[Plural] = (paucalBound.last + 1)..Int.MAX_VALUE
 
             val allForm =
                 if (Plural in values) Plural
@@ -244,19 +245,19 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
             val indefiniteArticleWrapped = definitenessValues
                 .firstOrNull { it == DefinitenessValue.Indefinite }
-                ?.let { mutableSetOf(it) }
+                ?.let { setOf(it) }
             val definiteArticleWrapped = definitenessValues
                 .firstOrNull { it == DefinitenessValue.Definite }
-                ?.let { mutableSetOf(it) }
+                ?.let { setOf(it) }
 
             val naiveSolver = deixisValues.map {
                 it as DeixisValue
-                it to mutableSetOf<CategoryValue>(it)
-            }.toMap().toMutableMap<DeixisValue?, MutableSet<CategoryValue>>()
-
-            naiveSolver[null] = mutableSetOf()
+                it to setOf<CategoryValue>(it)
+            }.toMap().toMutableMap<DeixisValue?, Set<CategoryValue>>()
 
             if (deixisValues.isNotEmpty()) {
+                naiveSolver[null] = setOf()
+
                 val absentDeixis = changeParadigm.getSpeechPartParadigm(speechPart)
                     .getCategory(deixisName)
                     .category
@@ -265,25 +266,32 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                     .map { it as DeixisValue }
 
                 for (deixis in absentDeixis) naiveSolver[deixis] = when (deixis) {
-                    DeixisValue.Undefined -> indefiniteArticleWrapped
-                        ?: mutableSetOf()
-                    DeixisValue.Proximal -> definiteArticleWrapped
-                        ?: mutableSetOf(DeixisValue.Undefined)
-                    DeixisValue.Medial -> listOf(
-                        mutableSetOf<CategoryValue>(DeixisValue.Proximal),
-                        mutableSetOf<CategoryValue>(DeixisValue.Distant)
+                    Undefined -> definiteArticleWrapped
+                        ?: setOf()
+                    Proximal -> definiteArticleWrapped
+                        ?: setOf(Undefined)
+                    Medial -> listOf(
+                        setOf<CategoryValue>(Proximal),
+                        setOf<CategoryValue>(Distant)
                     )
                         .filter { it.first() in deixisValues }.randomElementOrNull()
                         ?: definiteArticleWrapped
-                        ?: mutableSetOf(DeixisValue.Undefined)
-                    DeixisValue.Distant -> definiteArticleWrapped ?: mutableSetOf(DeixisValue.Undefined)
-                    DeixisValue.ProximalAddressee -> listOf(
-                        mutableSetOf<CategoryValue>(DeixisValue.Proximal),
-                        mutableSetOf<CategoryValue>(DeixisValue.Distant)
+                        ?: setOf(Undefined)
+                    Distant -> definiteArticleWrapped ?: setOf(Undefined)
+                    ProximalAddressee -> listOf(
+                        setOf<CategoryValue>(Proximal),
+                        setOf<CategoryValue>(Distant)
                     )
                         .filter { it.first() in deixisValues }.randomElementOrNull()
                         ?: definiteArticleWrapped
-                        ?: mutableSetOf(DeixisValue.Undefined)
+                        ?: setOf(Undefined)
+                    Unseen -> listOf(
+                        setOf<CategoryValue>(Distant),
+                        setOf<CategoryValue>(Proximal)
+                    )
+                        .filter { it.first() in deixisValues }.randomElementOrNull()
+                        ?: definiteArticleWrapped
+                        ?: setOf(Undefined)
                 }
 
             }
@@ -294,17 +302,16 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
             if (definitenessNecessity)
                 for (deixis in DeixisValue.values().toList() + listOf<DeixisValue?>(null)) when (deixis) {
-                    null, DeixisValue.Undefined -> indefiniteArticleWrapped?.let {
-                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, mutableSetOf()) + it).toMutableSet()
+                    null -> indefiniteArticleWrapped?.let {
+                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, setOf()) + it).toSet()
                     }
                     else -> definiteArticleWrapped?.let {
-                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, mutableSetOf()) + it).toMutableSet()
+                        naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, setOf()) + it).toSet()
                     }
                 }
 
-            for ((t, u) in naiveSolver) {
+            for ((t, u) in naiveSolver)
                 deixisCategorySolver[t to speechPart] = u.toList()
-            }
         }
 
         return deixisCategorySolver

@@ -80,13 +80,12 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
     } withCoCategories listOf()
 }
 
-enum class DeixisPresence(
-    override val probability: Double,
-    val possibilities: List<DeixisValue>
-) : SampleSpaceObject {
+enum class DeixisPresence(override val probability: Double, val possibilities: List<DeixisValue>) : SampleSpaceObject {
     Undefined(7.0, listOf(DeixisValue.Undefined)),
     TwoWay(126.0, listOf(Proximal, Distant)),
     ThreeWay(20.0, listOf(Proximal, Medial, Distant)),
+    UnseenTwoWay(10.0, listOf(Proximal, Unseen)),
+    UnseenThreeWay(15.0, listOf(Proximal, Medial, Unseen)),
     TwoWayAddressee(88.0, listOf(Proximal, ProximalAddressee, Distant)),
     TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant)),
 }
@@ -96,6 +95,7 @@ enum class DeixisValue(override val semanticsCore: SemanticsCore, override val s
     Proximal(SemanticsCore("this".toCluster(), DeixisPronoun.toAdnominal()), "PROX"),
     Medial(SemanticsCore("(medial deixis ind)".toCluster(), DeixisPronoun.toAdnominal()), "MED"),
     Distant(SemanticsCore("that".toCluster(), DeixisPronoun.toAdnominal()), "DIST"),
+    Unseen(SemanticsCore("that".toCluster(), DeixisPronoun.toAdnominal()), "DIST"),
     ProximalAddressee(SemanticsCore("this.addr".toCluster(), DeixisPronoun.toAdnominal()), "PROX.ADDR");
     //TODO more values
 
