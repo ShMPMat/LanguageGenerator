@@ -7,7 +7,6 @@ import shmp.lang.language.category.CategorySource.RelationGranted
 import shmp.lang.language.category.CategorySource.SelfStated
 import shmp.lang.language.category.InclusivityValue.Exclusive
 import shmp.lang.language.category.InclusivityValue.Inclusive
-import shmp.lang.language.category.NumbersValue.*
 import shmp.lang.language.category.PersonValue.First
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories

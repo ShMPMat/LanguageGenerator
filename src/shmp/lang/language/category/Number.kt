@@ -5,8 +5,8 @@ import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.RelationGranted
 import shmp.lang.language.category.CategorySource.SelfStated
-import shmp.lang.language.category.NumbersValue.Plural
-import shmp.lang.language.category.NumbersValue.Singular
+import shmp.lang.language.category.NumberValue.Plural
+import shmp.lang.language.category.NumberValue.Singular
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
@@ -18,21 +18,21 @@ import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val numbersOutName = "Numbers"
+const val numberOutName = "Number"
 
-class Numbers(
-    categories: List<NumbersValue>,
+class Number(
+    categories: List<NumberValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    NumbersValue.values().toSet(),
+    NumberValue.values().toSet(),
     affected,
     staticSpeechParts,
-    numbersOutName
+    numberOutName
 )
 
-object NumbersRandomSupplements : CategoryRandomSupplements {
+object NumberRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
         PrefixSeparateWord -> 10.0
@@ -65,7 +65,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == numbersOutName }
+        val acceptableValues = values.filter { it.parentClassName == numberOutName }
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
             Singular -> setOf(
@@ -93,7 +93,7 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = NumbersPresence.values().randomElement().possibilities
+    override fun randomRealization() = NumberPresence.values().randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> 0.95.testProbability()
@@ -107,24 +107,24 @@ object NumbersRandomSupplements : CategoryRandomSupplements {
     } withCoCategories listOf()
 }
 
-enum class NumbersPresence(
+enum class NumberPresence(
     override val probability: Double,
-    val possibilities: List<NumbersValue>
+    val possibilities: List<NumberValue>
 ) : SampleSpaceObject {
     None(100.0, listOf()),
-    Plural(180.0, listOf(Singular, NumbersValue.Plural)),
-    Dual(20.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Plural)),
-    Paucal(10.0, listOf(Singular, NumbersValue.Paucal, NumbersValue.Plural)),
-    PaucalDual(2.0, listOf(Singular, NumbersValue.Dual, NumbersValue.Paucal, NumbersValue.Plural))
+    Plural(180.0, listOf(Singular, NumberValue.Plural)),
+    Dual(20.0, listOf(Singular, NumberValue.Dual, NumberValue.Plural)),
+    Paucal(10.0, listOf(Singular, NumberValue.Paucal, NumberValue.Plural)),
+    PaucalDual(2.0, listOf(Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural))
 }
 
-enum class NumbersValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class NumberValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     Singular(SemanticsCore("(singular number indicator)".toCluster(), Particle.toUnspecified()), "SN"),//TODO more diversity
     Dual(SemanticsCore("(dual number indicator)".toCluster(), Particle.toUnspecified()), "DL"),
     Paucal(SemanticsCore("(paucal number indicator)".toCluster(), Particle.toUnspecified()), "PC"),
     Plural(SemanticsCore("(plural number indicator)".toCluster(), Particle.toUnspecified()), "PL");
 
-    override val parentClassName = numbersOutName
+    override val parentClassName = numberOutName
 }
 
-val nonSingularNumbers = listOf(NumbersValue.Dual, NumbersValue.Paucal, Plural)
+val nonSingularNumbers = listOf(NumberValue.Dual, NumberValue.Paucal, Plural)

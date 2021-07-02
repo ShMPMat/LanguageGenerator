@@ -5,10 +5,10 @@ import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.*
 import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.category.NounClassValue.*
-import shmp.lang.language.category.NumbersValue.*
+import shmp.lang.language.category.Number
+import shmp.lang.language.category.NumberValue.*
 import shmp.lang.language.category.paradigm.SourcedCategoryValues
 import shmp.lang.language.category.paradigm.WordChangeParadigm
-import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toUnspecified
@@ -161,18 +161,18 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
     }
 
     private fun generateNumberCategorySolver() = changeParadigm.categories
-        .filterIsInstance<Numbers>()
+        .filterIsInstance<Number>()
         .firstOrNull()
         ?.takeIf { it.actualValues.isNotEmpty() }
-        ?.let { numbersCategory ->
-            val values = numbersCategory.actualValues
+        ?.let { numberCategory ->
+            val values = numberCategory.actualValues
 
             val paucalLowerBound = if (Dual in values) 3 else 2
             val paucalUpperBound = RandomSingleton.random.nextInt(paucalLowerBound + 1, paucalLowerBound + 9)
             val paucalBound = paucalLowerBound..paucalUpperBound
 
             val numberCategorySolver = values.map {
-                it as NumbersValue
+                it as NumberValue
                 it to when (it) {
                     Singular -> 1..1
                     Dual -> 2..2

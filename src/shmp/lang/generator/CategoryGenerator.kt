@@ -17,7 +17,7 @@ class CategoryGenerator {
             randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
             randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements()),
             randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
-            randomCategory({ l: List<NumbersValue>, s, ss -> Numbers(l, s, ss) }, NumbersRandomSupplements),
+            randomCategory({ l: List<NumberValue>, s, ss -> Number(l, s, ss) }, NumberRandomSupplements),
             randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
             randomCategory({ l: List<NegationValue>, s, ss -> Negation(l, s, ss) }, NegationRandomSupplements),
             randomCategory({ l: List<DeixisValue>, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)

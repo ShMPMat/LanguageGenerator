@@ -156,7 +156,7 @@ enum class CoreCasePresence(override val probability: Double, val possibilities:
     NA(145.0, listOf(Nominative, Accusative)),
     NAEA(145.0, listOf(Nominative, Accusative, Ergative, Absolutive)),
     NAE(145.0, listOf(Nominative, Accusative, Ergative)),
-    AE(0.5, listOf(Ergative, Absolutive)),
+    AE(5.0, listOf(Ergative, Absolutive)),
 }
 
 enum class CaseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {

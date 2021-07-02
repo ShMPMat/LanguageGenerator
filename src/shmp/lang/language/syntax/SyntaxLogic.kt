@@ -262,7 +262,7 @@ private fun TimeContext.toNumber() = when (this) {
     TimeContext.Regular -> Double.NaN
 }
 
-data class NumberCategorySolver(val amountMap: Map<NumbersValue, IntRange>, val allForm: NumbersValue)
+data class NumberCategorySolver(val amountMap: Map<NumberValue, IntRange>, val allForm: NumberValue)
 
 typealias PersonalPronounDropSolver = List<Pair<ActorType, CategoryValues>>
 

@@ -135,8 +135,10 @@ class ChangeParadigmGenerator(
     }
 
     private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
-        val newApplicators = verbParadigm.applicators
-            .mapNotNull { (cluster, applicator) ->
+        val newApplicators = verbParadigm.exponenceClusters
+            .mapNotNull { cluster ->
+                val applicator = verbParadigm.applicators.getValue(cluster)
+
                 if (cluster.categories.any { it.source is RelationGranted && it.source.relation == SyntaxRelation.Patient })
                     return@mapNotNull null
 
@@ -160,19 +162,18 @@ class ChangeParadigmGenerator(
 
                     newValue to applicator
                 }.toMap()
-            }.toMap()
+            }
 
         return SpeechPartChangeParadigm(
             Verb.toIntransitive(),
-            speechPartApplicatorsGenerator.randomApplicatorsOrder(newApplicators),
-            newApplicators,
+            newApplicators.map { it.first },
+            newApplicators.toMap(),
             verbParadigm.prosodyChangeParadigm
         )
     }
 
     private fun checkCompulsoryConsistency(speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
         var shouldCheck = true
-
         while (shouldCheck) {
             shouldCheck = false
 
