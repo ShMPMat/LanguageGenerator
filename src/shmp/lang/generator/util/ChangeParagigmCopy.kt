@@ -34,6 +34,6 @@ fun copyApplicators(
         val newValue = newCluster.possibleValues
             .first { nv -> value.categoryValues.all { c -> c.categoryValue in nv.categoryValues.map { it.categoryValue } } }
 
-        newValue to applicator
+        newValue to applicator.copy()
     }.toMap()
 }

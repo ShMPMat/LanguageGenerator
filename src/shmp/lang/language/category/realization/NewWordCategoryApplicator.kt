@@ -5,17 +5,18 @@ import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 
-class NewWordCategoryApplicator(applicatorWord: Word) :
-    WordCategoryApplicator(applicatorWord, CategoryRealization.NewWord) {
 
-    override fun apply(wordSequence: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence =
+class NewWordCategoryApplicator(word: Word) : WordCategoryApplicator(word, CategoryRealization.NewWord) {
+    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
         WordSequence(
-            wordSequence.words.mapIndexed { i, w ->
+            words.words.mapIndexed { i, w ->
                 if (i == wordPosition)
-                    applicatorWord.copyAndAddValues(w.categoryValues + values)
+                    word.copyAndAddValues(w.categoryValues + values)
                 else w
             }
         )
 
-    override fun toString() = "New word: $applicatorWord"
+    override fun copy() = NewWordCategoryApplicator(word)
+
+    override fun toString() = "New word: $word"
 }

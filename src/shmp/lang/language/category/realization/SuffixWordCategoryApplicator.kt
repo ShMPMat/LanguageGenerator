@@ -5,12 +5,12 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 
-class SuffixWordCategoryApplicator(suffixWord: Word) :
-    WordCategoryApplicator(suffixWord, CategoryRealization.SuffixSeparateWord) {
-    override fun apply(wordSequence: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence =
-        WordSequence(wordSequence.words + listOf(applicatorWord.copyWithValues(values)))
 
-    override fun toString(): String {
-        return "$applicatorWord, placed after the word"
-    }
+class SuffixWordCategoryApplicator(word: Word) : WordCategoryApplicator(word, CategoryRealization.SuffixSeparateWord) {
+    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
+        WordSequence(words.words + listOf(word.copyWithValues(values)))
+
+    override fun copy() = SuffixWordCategoryApplicator(word)
+
+    override fun toString() = "$word, placed after the word"
 }

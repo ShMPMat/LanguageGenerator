@@ -6,21 +6,21 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.morphem.Affix
 
 
-class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) :
-    AbstractCategoryApplicator(type) { //TODO no guaranty for correctness
+class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) : AbstractCategoryApplicator(type) {
+    //TODO no guaranty for correctness
     override fun apply(
-        wordSequence: WordSequence,
+        words: WordSequence,
         wordPosition: Int,
         values: Collection<SourcedCategoryValue>
     ) = WordSequence(
-        wordSequence.words.mapIndexed { i, w ->
+        words.words.mapIndexed { i, w ->
             if (i == wordPosition)
-                affix.change(wordSequence[wordPosition]).copyAndAddValues(values)
+                affix.change(words[wordPosition]).copyAndAddValues(values)
             else w
         }
     )
 
-    override fun toString(): String {
-        return affix.toString()
-    }
+    override fun copy() = AffixCategoryApplicator(affix, type)
+
+    override fun toString() = affix.toString()
 }

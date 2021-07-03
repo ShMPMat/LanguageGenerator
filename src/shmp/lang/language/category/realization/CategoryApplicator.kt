@@ -5,5 +5,7 @@ import shmp.lang.language.syntax.WordSequence
 
 
 interface CategoryApplicator {
-    fun apply(wordSequence: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence
+    fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence
+
+    fun copy(): CategoryApplicator
 }

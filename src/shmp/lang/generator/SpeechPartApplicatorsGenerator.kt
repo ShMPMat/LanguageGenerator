@@ -178,7 +178,7 @@ class SpeechPartApplicatorsGenerator(
             ) to null
         }
         Reduplication -> ReduplicationCategoryApplicator() to null
-        Passing -> PassingCategoryApplicator() to null
+        Passing -> PassingCategoryApplicator to null
         NewWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             NewWordCategoryApplicator(word) to word

@@ -7,7 +7,6 @@ import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.definitenessName
 import shmp.lang.language.category.inclusivityOutName
 import shmp.lang.language.category.paradigm.*
-import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.category.realization.WordCategoryApplicator
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
@@ -19,7 +18,6 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import kotlin.math.max
 
@@ -203,7 +201,7 @@ class ChangeParadigmGenerator(
         return speechPartChangesMap.any { (_, u) ->
             u.applicators.values
                 .flatMap { it.values }
-                .any { it is WordCategoryApplicator && it.applicatorWord.semanticsCore.speechPart.type == Article }
+                .any { it is WordCategoryApplicator && it.word.semanticsCore.speechPart.type == Article }
         }
     }
 
