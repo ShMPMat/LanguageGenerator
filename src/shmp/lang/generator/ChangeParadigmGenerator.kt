@@ -1,13 +1,17 @@
 package shmp.lang.generator
 
+import shmp.lang.generator.util.copyApplicators
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.definitenessName
 import shmp.lang.language.category.inclusivityOutName
 import shmp.lang.language.category.paradigm.*
+import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.category.realization.WordCategoryApplicator
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toIntransitive
 import shmp.lang.language.lexis.toUnspecified
@@ -16,6 +20,7 @@ import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.SyntaxRelation.*
 import kotlin.math.max
 
 
@@ -33,7 +38,7 @@ class ChangeParadigmGenerator(
         val categories = categoriesWithMappers.map { it.first }
 
         val oldSpeechParts = mutableListOf<TypedSpeechPart>()
-        val speechParts = values().map { it.toUnspecified() }.toMutableList()
+        val speechParts = SpeechPart.values().map { it.toUnspecified() }.toMutableList()
         val newSpeechParts = mutableSetOf<TypedSpeechPart>()
 
         val speechPartChangesMap = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
@@ -139,29 +144,10 @@ class ChangeParadigmGenerator(
             .mapNotNull { cluster ->
                 val applicator = verbParadigm.applicators.getValue(cluster)
 
-                if (cluster.categories.any { it.source is RelationGranted && it.source.relation == SyntaxRelation.Patient })
+                if (cluster.categories.any { it.source is RelationGranted && it.source.relation == Patient })
                     return@mapNotNull null
 
-                val newCategories = cluster.categories.map {
-                    it.copy(
-                        source = if (it.source is RelationGranted && it.source.relation == SyntaxRelation.Agent)
-                            it.source.copy(relation = SyntaxRelation.Argument)
-                        else it.source
-                    )
-                }
-                val newClusterValues = cluster.possibleValues.map { v ->
-                    v.categoryValues.map { cv ->
-                        newCategories.flatMap { it.actualSourcedValues }.first { cv.categoryValue == it.categoryValue }
-                    }
-                }.toSet()
-                val newCluster = ExponenceCluster(newCategories, newClusterValues)
-
-                newCluster to applicator.map { (value, applicator) ->
-                    val newValue = newCluster.possibleValues
-                        .first { nv -> value.categoryValues.all { c -> c.categoryValue in nv.categoryValues.map { it.categoryValue } } }
-
-                    newValue to applicator
-                }.toMap()
+                copyApplicators(cluster, applicator, mapOf(Agent to Argument))
             }
 
         return SpeechPartChangeParadigm(
