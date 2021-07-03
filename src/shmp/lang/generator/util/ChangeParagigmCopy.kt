@@ -3,7 +3,9 @@ package shmp.lang.generator.util
 import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
+import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.realization.CategoryApplicator
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
 
 
@@ -31,9 +33,33 @@ fun copyApplicators(
     val newCluster = ExponenceCluster(newCategories, newClusterValues)
 
     return newCluster to applicator.map { (value, applicator) ->
-        val newValue = newCluster.possibleValues
-            .first { nv -> value.categoryValues.all { c -> c.categoryValue in nv.categoryValues.map { it.categoryValue } } }
+        val newValue = newCluster.possibleValues.first { nv ->
+            value.categoryValues.all { c -> c.categoryValue in nv.categoryValues.map { it.categoryValue } }
+        }
 
         newValue to applicator.copy()
     }.toMap()
+}
+
+fun SpeechPartChangeParadigm.copyForNewSpeechPart(
+    speechPart: TypedSpeechPart,
+    sourceMap: Map<SyntaxRelation, SyntaxRelation>,
+    clusterPredicate: (ExponenceCluster) -> Boolean
+): SpeechPartChangeParadigm {
+    val newApplicators = exponenceClusters
+        .mapNotNull { cluster ->
+            val applicator = applicators.getValue(cluster)
+
+            if (!clusterPredicate(cluster))
+                return@mapNotNull null
+
+            copyApplicators(cluster, applicator, sourceMap)
+        }
+
+    return SpeechPartChangeParadigm(
+        speechPart,
+        newApplicators.map { it.first },
+        newApplicators.toMap(),
+        prosodyChangeParadigm.copy()
+    )
 }

@@ -1,11 +1,9 @@
 package shmp.lang.generator
 
 import shmp.lang.generator.util.copyApplicators
-import shmp.lang.language.category.Category
-import shmp.lang.language.category.CategoryRandomSupplements
+import shmp.lang.generator.util.copyForNewSpeechPart
+import shmp.lang.language.category.*
 import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.category.definitenessName
-import shmp.lang.language.category.inclusivityOutName
 import shmp.lang.language.category.paradigm.*
 import shmp.lang.language.category.realization.WordCategoryApplicator
 import shmp.lang.language.lexis.SpeechPart
@@ -18,6 +16,7 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
+import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
 import kotlin.math.max
 
@@ -137,24 +136,10 @@ class ChangeParadigmGenerator(
         }
     }
 
-    private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
-        val newApplicators = verbParadigm.exponenceClusters
-            .mapNotNull { cluster ->
-                val applicator = verbParadigm.applicators.getValue(cluster)
-
-                if (cluster.categories.any { it.source is RelationGranted && it.source.relation == Patient })
-                    return@mapNotNull null
-
-                copyApplicators(cluster, applicator, mapOf(Agent to Argument))
-            }
-
-        return SpeechPartChangeParadigm(
-            Verb.toIntransitive(),
-            newApplicators.map { it.first },
-            newApplicators.toMap(),
-            verbParadigm.prosodyChangeParadigm
-        )
-    }
+    private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm) = verbParadigm.copyForNewSpeechPart(
+        Verb.toIntransitive(),
+        mapOf(Agent to Argument)
+    ) { c -> c.categories.none { it.source is RelationGranted && it.source.relation == Patient } }
 
     private fun checkCompulsoryConsistency(speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
         var shouldCheck = true
