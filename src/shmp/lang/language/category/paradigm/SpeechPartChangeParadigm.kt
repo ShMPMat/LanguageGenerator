@@ -7,7 +7,7 @@ import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.syntax.WordSequence
 
 
-class SpeechPartChangeParadigm(
+data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
     val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
@@ -18,6 +18,7 @@ class SpeechPartChangeParadigm(
     fun getCategory(name: String) = categories
         .first { it.category.outType == name }
 
+    fun getCluster(cluster: ExponenceCluster) = exponenceClusters.firstOrNull { it == cluster }
 
     fun getCategoryOrNull(name: String) = categories
         .firstOrNull { it.category.outType == name }

@@ -7,6 +7,8 @@ import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.realization.CategoryApplicator
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.random.singleton.chanceOf
+import shmp.random.singleton.testProbability
 
 
 fun copyApplicators(
@@ -42,8 +44,8 @@ fun copyApplicators(
 }
 
 fun SpeechPartChangeParadigm.copyForNewSpeechPart(
-    speechPart: TypedSpeechPart,
-    sourceMap: Map<SyntaxRelation, SyntaxRelation>,
+    speechPart: TypedSpeechPart = this.speechPart,
+    sourceMap: Map<SyntaxRelation, SyntaxRelation> = mapOf(),
     clusterPredicate: (ExponenceCluster) -> Boolean
 ): SpeechPartChangeParadigm {
     val newApplicators = exponenceClusters
@@ -63,3 +65,37 @@ fun SpeechPartChangeParadigm.copyForNewSpeechPart(
         prosodyChangeParadigm.copy()
     )
 }
+
+fun SpeechPartChangeParadigm.substituteWith(from: SpeechPartChangeParadigm) =
+    0.9.chanceOf<SpeechPartChangeParadigm> { fullSubstituteWith(from) }
+        ?: partialSubstituteWith(from)
+
+
+private fun SpeechPartChangeParadigm.fullSubstituteWith(from: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
+    val copy = from.copyForNewSpeechPart { getCluster(it) != null }
+
+    return combineParadigms(this, copy)
+}
+
+private fun SpeechPartChangeParadigm.partialSubstituteWith(from: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
+    val copy = from.copyForNewSpeechPart { getCluster(it) != null && 0.5.testProbability() }
+
+    return combineParadigms(this, copy)
+}
+
+private fun combineParadigms(old: SpeechPartChangeParadigm, new: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
+    val newOrder = old.exponenceClusters.map { new.getCluster(it) ?: it }
+    val newApplicators = newOrder.map {
+        it to (new.applicators[it] ?: old.applicators.getValue(it))
+    }.toMap()
+
+    return old.copy(
+        exponenceClusters = newOrder,
+        applicators = newApplicators
+    )
+}
+
+private fun hasSameCategorySet(first: SpeechPartChangeParadigm, second: SpeechPartChangeParadigm) =
+    first.exponenceClusters.size == second.exponenceClusters.size && first.exponenceClusters.all { cluster ->
+        second.getCluster(cluster) != null
+    }

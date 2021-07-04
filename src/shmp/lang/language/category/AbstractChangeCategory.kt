@@ -3,6 +3,7 @@ package shmp.lang.language.category
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.LanguageException
 import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.utils.notEqualsByElement
 
 
 open class AbstractChangeCategory(
@@ -25,6 +26,24 @@ open class AbstractChangeCategory(
     }
 
     private val noCategoriesOut = "Has no $outType"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AbstractChangeCategory
+
+        if (outType != other.outType) return false
+        if (actualValues notEqualsByElement other.actualValues) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = actualValues.hashCode()
+        result = 31 * result + outType.hashCode()
+        return result
+    }
 
     override fun toString() = "$outType:\n" +
             if (actualValues.isEmpty())

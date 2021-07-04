@@ -1,23 +1,28 @@
 package shmp.lang.generator
 
-import shmp.lang.generator.util.copyApplicators
 import shmp.lang.generator.util.copyForNewSpeechPart
-import shmp.lang.language.category.*
-import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.category.paradigm.*
+import shmp.lang.generator.util.substituteWith
+import shmp.lang.language.category.Category
+import shmp.lang.language.category.CategoryRandomSupplements
+import shmp.lang.language.category.CategorySource.RelationGranted
+import shmp.lang.language.category.definitenessName
+import shmp.lang.language.category.inclusivityOutName
+import shmp.lang.language.category.paradigm.CompulsoryData
+import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
+import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.category.realization.WordCategoryApplicator
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.Article
 import shmp.lang.language.lexis.SpeechPart.Verb
-import shmp.lang.language.lexis.TypedSpeechPart
-import shmp.lang.language.lexis.toIntransitive
-import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
-import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.random.singleton.chanceOf
+import shmp.random.singleton.chanceOfNot
+import shmp.random.singleton.randomElement
 import kotlin.math.max
 
 
@@ -55,10 +60,9 @@ class ChangeParadigmGenerator(
                         restrictions,
                         categoriesAndSupply
                     )
-                words.forEach {
-                    if (it.semanticsCore.speechPart !in oldSpeechParts)
-                        newSpeechParts.add(it.semanticsCore.speechPart)
-                }
+                for (word in words)
+                    if (word.semanticsCore.speechPart !in oldSpeechParts)
+                        newSpeechParts.add(word.semanticsCore.speechPart)
 
                 val orderedClusters = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
                 val changeParadigm = SpeechPartChangeParadigm(
@@ -84,30 +88,26 @@ class ChangeParadigmGenerator(
         speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(verbParadigm)
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
 
-        checkCompulsoryConsistency(speechPartChangesMap)
+        checkCompulsoryConsistency(speechPartChangesMap)//TODO it will break cluster necessity, should move it up
+        simplifyParadigm(speechPartChangesMap)
 
-        if (!articlePresent(categories, speechPartChangesMap)) {
-            speechPartChangesMap[Article.toUnspecified()] =
-                SpeechPartChangeParadigm(
-                    Article.toUnspecified(),
-                    listOf(),
-                    mapOf(),
-                    speechPartChangesMap.getValue(Article.toUnspecified()).prosodyChangeParadigm
-                )
-        }
+        if (!articlePresent(categories, speechPartChangesMap))
+            speechPartChangesMap[Article.toUnspecified()] = emptyArticleParadigm
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)
         val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
         val syntaxLogic = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm).generateSyntaxLogic()
 
-        return ChangeParadigm(
-            wordOrder,
-            wordChangeParadigm,
-            syntaxParadigm,
-            syntaxLogic
-        )
+        return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, syntaxLogic)
     }
+
+    private val emptyArticleParadigm = SpeechPartChangeParadigm(
+        Article.toUnspecified(),
+        listOf(),
+        mapOf(),
+        ProsodyChangeParadigm(StressType.None)
+    )
 
     private fun generateSpeechPartCategories(
         speechPart: TypedSpeechPart,
@@ -141,7 +141,7 @@ class ChangeParadigmGenerator(
         mapOf(Agent to Argument)
     ) { c -> c.categories.none { it.source is RelationGranted && it.source.relation == Patient } }
 
-    private fun checkCompulsoryConsistency(speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
+    private fun checkCompulsoryConsistency(speechPartChangesMap: Map<TypedSpeechPart, SpeechPartChangeParadigm>) {
         var shouldCheck = true
         while (shouldCheck) {
             shouldCheck = false
@@ -176,19 +176,31 @@ class ChangeParadigmGenerator(
         }
     }
 
+    private fun simplifyParadigm(speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
+        for ((speechParts, probability) in sameParadigmList)
+            probability.chanceOf {
+                val (from, to) = speechParts
+                val fromParadigm = speechPartChangesMap.map { it.value }
+                    .filter { it.speechPart.type == from }
+                    .randomElement()
+                val toParadigms = speechPartChangesMap.map { it.value }
+                    .filter { it.speechPart.type == to }
+
+                for (toParadigm in toParadigms)
+                    speechPartChangesMap[toParadigm.speechPart] = toParadigm.substituteWith(fromParadigm)
+            }
+    }
+
     private fun articlePresent(
         categories: List<Category>,
         speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>
-    ): Boolean {
-        if (categories.first { it.outType == definitenessName }.actualValues.isEmpty())
-            return false
-
-        return speechPartChangesMap.any { (_, u) ->
+    ) = if (categories.first { it.outType == definitenessName }.actualValues.isNotEmpty())
+        speechPartChangesMap.any { (_, u) ->
             u.applicators.values
                 .flatMap { it.values }
                 .any { it is WordCategoryApplicator && it.word.semanticsCore.speechPart.type == Article }
         }
-    }
+    else false
 
     private val compulsoryConsistencyExceptions = listOf(inclusivityOutName)
 }

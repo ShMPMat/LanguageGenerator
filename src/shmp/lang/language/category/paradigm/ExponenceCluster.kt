@@ -4,6 +4,7 @@ import shmp.lang.language.CategoryValue
 import shmp.lang.language.LanguageException
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource
+import shmp.lang.utils.notEqualsByElement
 
 
 class ExponenceCluster(
@@ -32,6 +33,24 @@ class ExponenceCluster(
             null
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ExponenceCluster) return false
+
+        if (categories != other.categories) return false
+        if (possibleValues notEqualsByElement other.possibleValues) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = categories.hashCode()
+        result = 31 * result + possibleValues.hashCode()
+        return result
+    }
+
+
 
     override fun toString() = categories.joinToString("\n")
 }
@@ -65,14 +84,14 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
         other as ExponenceValue
 
         if (categoryValues != other.categoryValues) return false
-        if (parentCluster != other.parentCluster) return false
+        if (parentCluster.categories!= other.parentCluster.categories) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = categoryValues.hashCode()
-        result = 31 * result + parentCluster.hashCode()
+        result = 31 * result + parentCluster.categories.hashCode()
         return result
     }
 }
