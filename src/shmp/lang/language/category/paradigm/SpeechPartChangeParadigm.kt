@@ -4,6 +4,7 @@ import shmp.lang.generator.ApplicatorMap
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
+import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.WordSequence
 
 
@@ -37,7 +38,11 @@ data class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
-            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster) ?: continue
+            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster)
+//                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(categoryValues.map { it.categoryValue }) })
+//                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
+//                else continue
+                ?: continue
             val actualValues = categoryValues.filter { it in exponenceUnion.categoryValues }
             val newClause = useCategoryApplicator(
                 currentClause,

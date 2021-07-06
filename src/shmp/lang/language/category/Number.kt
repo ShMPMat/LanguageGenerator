@@ -119,10 +119,10 @@ enum class NumberPresence(
 }
 
 enum class NumberValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Singular(SemanticsCore("(singular number indicator)".toCluster(), Particle.toUnspecified()), "SN"),//TODO more diversity
-    Dual(SemanticsCore("(dual number indicator)".toCluster(), Particle.toUnspecified()), "DL"),
-    Paucal(SemanticsCore("(paucal number indicator)".toCluster(), Particle.toUnspecified()), "PC"),
-    Plural(SemanticsCore("(plural number indicator)".toCluster(), Particle.toUnspecified()), "PL");
+    Singular(SemanticsCore("(singular number indicator)", Particle.toUnspecified()), "SN"),//TODO more diversity
+    Dual(SemanticsCore("(dual number indicator)", Particle.toUnspecified()), "DL"),
+    Paucal(SemanticsCore("(paucal number indicator)", Particle.toUnspecified()), "PC"),
+    Plural(SemanticsCore("(plural number indicator)", Particle.toUnspecified()), "PL");
 
     override val parentClassName = numberOutName
 }

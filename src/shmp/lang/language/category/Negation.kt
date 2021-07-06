@@ -70,7 +70,7 @@ enum class NegationPresence(override val probability: Double, val possibilities:
 }
 
 enum class NegationValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Negative(SemanticsCore("(negation indicator)".toCluster(), Particle.toUnspecified()), "NEG");
+    Negative(SemanticsCore("(negation indicator)", Particle.toUnspecified()), "NEG");
 
     override val parentClassName = outName
 }

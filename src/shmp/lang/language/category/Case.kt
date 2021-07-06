@@ -160,19 +160,19 @@ enum class CoreCasePresence(override val probability: Double, val possibilities:
 }
 
 enum class CaseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Nominative(SemanticsCore("(nominative case ind)".toCluster(), Adposition.toUnspecified()), "NOM"),
-    Accusative(SemanticsCore("(accusative case ind)".toCluster(), Adposition.toUnspecified()), "ACC"),
-    Ergative(SemanticsCore("(ergative case ind)".toCluster(), Adposition.toUnspecified()), "ERG"),
-    Absolutive(SemanticsCore("(absolutive case ind)".toCluster(), Adposition.toUnspecified()), "ABS"),
+    Nominative(SemanticsCore("(nominative case ind)", Adposition.toUnspecified()), "NOM"),
+    Accusative(SemanticsCore("(accusative case ind)", Adposition.toUnspecified()), "ACC"),
+    Ergative(SemanticsCore("(ergative case ind)", Adposition.toUnspecified()), "ERG"),
+    Absolutive(SemanticsCore("(absolutive case ind)", Adposition.toUnspecified()), "ABS"),
 
-    Topic(SemanticsCore("(topic case ind)".toCluster(), Adposition.toUnspecified()), "TOP"),
+    Topic(SemanticsCore("(topic case ind)", Adposition.toUnspecified()), "TOP"),
 
-    Oblique(SemanticsCore("(oblique case ind)".toCluster(), Adposition.toUnspecified()), "OBL"),
+    Oblique(SemanticsCore("(oblique case ind)", Adposition.toUnspecified()), "OBL"),
 
-    Genitive(SemanticsCore("(genitive case ind)".toCluster(), Adposition.toUnspecified()), "GEN"),
-    Dative(SemanticsCore("(dative case ind)".toCluster(), Adposition.toUnspecified()), "DAT"),
-    Instrumental(SemanticsCore("(instrumental case ind)".toCluster(), Adposition.toUnspecified()), "INS"),
-    Locative(SemanticsCore("(locative case ind)".toCluster(), Adposition.toUnspecified()), "LOC");
+    Genitive(SemanticsCore("(genitive case ind)", Adposition.toUnspecified()), "GEN"),
+    Dative(SemanticsCore("(dative case ind)", Adposition.toUnspecified()), "DAT"),
+    Instrumental(SemanticsCore("(instrumental case ind)", Adposition.toUnspecified()), "INS"),
+    Locative(SemanticsCore("(locative case ind)", Adposition.toUnspecified()), "LOC");
 
     override val parentClassName = caseName
 }

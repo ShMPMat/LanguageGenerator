@@ -18,6 +18,8 @@ data class SemanticsCore(
     val appliedDerivations: List<Derivation> = listOf(),
     val changeHistory: ChangeHistory? = null
 ) {
+    constructor(meaning: Meaning, speechPart: TypedSpeechPart): this(meaning.toCluster(), speechPart)
+
     init {
         if (speechPart.type == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
             throw LanguageException("Verb $meaningCluster doesn't have transitivity")

@@ -130,15 +130,15 @@ enum class NounClassPresence(override val probability: Double, val possibilities
 
 enum class NounClassValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(SemanticsCore("(female class ind)".toCluster(), Particle.toUnspecified()), "FEM"),
-    Male(SemanticsCore("(male class ind)".toCluster(), Particle.toUnspecified()), "MALE"),
-    Neutral(SemanticsCore("(neutral class ind)".toCluster(), Particle.toUnspecified()), "NEUT"),
-    Common(SemanticsCore("(common class ind)".toCluster(), Particle.toUnspecified()), "COMM"),
+    Female(SemanticsCore("(female class ind)", Particle.toUnspecified()), "FEM"),
+    Male(SemanticsCore("(male class ind)", Particle.toUnspecified()), "MALE"),
+    Neutral(SemanticsCore("(neutral class ind)", Particle.toUnspecified()), "NEUT"),
+    Common(SemanticsCore("(common class ind)", Particle.toUnspecified()), "COMM"),
 
-    Person(SemanticsCore("(person class ind)".toCluster(), Particle.toUnspecified()), "PERS"),
-    Plant(SemanticsCore("(plant class ind)".toCluster(), Particle.toUnspecified()), "PLANT"),
-    Fruit(SemanticsCore("(fruit class ind)".toCluster(), Particle.toUnspecified()), "FRUIT"),
-    LongObject(SemanticsCore("(long object class ind)".toCluster(), Particle.toUnspecified()), "LONG.OBJ");
+    Person(SemanticsCore("(person class ind)", Particle.toUnspecified()), "PERS"),
+    Plant(SemanticsCore("(plant class ind)", Particle.toUnspecified()), "PLANT"),
+    Fruit(SemanticsCore("(fruit class ind)", Particle.toUnspecified()), "FRUIT"),
+    LongObject(SemanticsCore("(long object class ind)", Particle.toUnspecified()), "LONG.OBJ");
 
     override val parentClassName = nounClassName
 }

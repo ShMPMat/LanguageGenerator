@@ -18,11 +18,14 @@ open class AbstractChangeCategory(
         .toSet()
 
     init {
-        if (!allPossibleValues.containsAll(actualValues))
-            throw LanguageException(
-                "Category $outType was initialized with values which do not represent this category: "
-                        + actualValues.filter { !allPossibleValues.contains(it) }.joinToString()
-            )
+        actualValues.filter { !allPossibleValues.contains(it) }
+            .takeIf { it.isNotEmpty() }
+            ?.let { vs ->
+                throw LanguageException(
+                    "Category $outType was initialized with values which do not represent this category: "
+                            + vs.joinToString { it.parentClassName + " " + it.shortName }
+                )
+            }
     }
 
     private val noCategoriesOut = "Has no $outType"

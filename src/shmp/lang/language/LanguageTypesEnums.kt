@@ -46,12 +46,34 @@ interface CategoryValue {
     val shortName: String
 }
 
-data class AbstractCategoryValue(
-    override val semanticsCore: SemanticsCore,
+class AbstractCategoryValue(
+    semanticsCore: SemanticsCore,
     override val parentClassName: String,
     override val shortName: String
 ) : CategoryValue {
-    override fun toString() = "$parentClassName.$semanticsCore"
+    override val semanticsCore = semanticsCore.copy(
+//        staticCategories = setOf(this)
+    )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AbstractCategoryValue
+
+        if (parentClassName != other.parentClassName) return false
+        if (semanticsCore != other.semanticsCore) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = parentClassName.hashCode()
+        result = 31 * result + semanticsCore.hashCode()
+        return result
+    }
+
+
 }
 
 typealias CategoryValues = List<CategoryValue>

@@ -124,6 +124,8 @@ data class SourcedCategoryValue constructor(val categoryValue: CategoryValue, va
 data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster>) {
     fun isApplicable(values: List<CategoryValue>) = compulsoryCoCategories
         .all { it.any { cc -> values.contains(cc) } }
+
+    fun mustExist(values: List<CategoryValue>) = isCompulsory && isApplicable(values)
 }
 
 typealias CategoryCluster = List<CategoryValue>

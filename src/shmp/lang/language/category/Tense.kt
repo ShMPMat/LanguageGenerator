@@ -93,13 +93,13 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 enum class TenseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Present(SemanticsCore("(present tense indicator)".toCluster(), Particle.toUnspecified()), "PRES"),
-    Future(SemanticsCore("(future tense indicator)".toCluster(), Particle.toUnspecified()), "FUT"),
-    Past(SemanticsCore("(past tense indicator)".toCluster(), Particle.toUnspecified()), "PST"),
-    DayPast(SemanticsCore("(day past tense indicator)".toCluster(), Particle.toUnspecified()), "DAY.PST"),
-    SomeDaysPast(SemanticsCore("(some days past tense indicator)".toCluster(), Particle.toUnspecified()), "FEW.DAY.PST"),
-    MonthPast(SemanticsCore("(month past tense ind)".toCluster(), Particle.toUnspecified()), "MTH.PST"),
-    YearPast(SemanticsCore("(year past tense ind)".toCluster(), Particle.toUnspecified()), "YR.PST");
+    Present(SemanticsCore("(present tense indicator)", Particle.toUnspecified()), "PRES"),
+    Future(SemanticsCore("(future tense indicator)", Particle.toUnspecified()), "FUT"),
+    Past(SemanticsCore("(past tense indicator)", Particle.toUnspecified()), "PST"),
+    DayPast(SemanticsCore("(day past tense indicator)", Particle.toUnspecified()), "DAY.PST"),
+    SomeDaysPast(SemanticsCore("(some days past tense indicator)", Particle.toUnspecified()), "FEW.DAY.PST"),
+    MonthPast(SemanticsCore("(month past tense ind)", Particle.toUnspecified()), "MTH.PST"),
+    YearPast(SemanticsCore("(year past tense ind)", Particle.toUnspecified()), "YR.PST");
 
     override val parentClassName = tenseOutName
 }

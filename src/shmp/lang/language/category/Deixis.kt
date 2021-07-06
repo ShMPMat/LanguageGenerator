@@ -91,12 +91,12 @@ enum class DeixisPresence(override val probability: Double, val possibilities: L
 }
 
 enum class DeixisValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Undefined(SemanticsCore("(undefined deixis ind)".toCluster(), DeixisPronoun.toAdnominal()), "UNDEF"),
-    Proximal(SemanticsCore("this".toCluster(), DeixisPronoun.toAdnominal()), "PROX"),
-    Medial(SemanticsCore("(medial deixis ind)".toCluster(), DeixisPronoun.toAdnominal()), "MED"),
-    Distant(SemanticsCore("that".toCluster(), DeixisPronoun.toAdnominal()), "DIST"),
-    Unseen(SemanticsCore("that".toCluster(), DeixisPronoun.toAdnominal()), "DIST"),
-    ProximalAddressee(SemanticsCore("this.addr".toCluster(), DeixisPronoun.toAdnominal()), "PROX.ADDR");
+    Undefined(SemanticsCore("(undefined deixis ind)", DeixisPronoun.toAdnominal()), "UNDEF"),
+    Proximal(SemanticsCore("this", DeixisPronoun.toAdnominal()), "PROX"),
+    Medial(SemanticsCore("(medial deixis ind)", DeixisPronoun.toAdnominal()), "MED"),
+    Distant(SemanticsCore("that", DeixisPronoun.toAdnominal()), "DIST"),
+    Unseen(SemanticsCore("that", DeixisPronoun.toAdnominal()), "DIST"),
+    ProximalAddressee(SemanticsCore("this.addr", DeixisPronoun.toAdnominal()), "PROX.ADDR");
     //TODO more values
 
     override val parentClassName = deixisName
