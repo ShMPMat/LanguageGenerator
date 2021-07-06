@@ -89,13 +89,10 @@ private fun combineParadigms(old: SpeechPartChangeParadigm, new: SpeechPartChang
         it to (new.applicators[it] ?: old.applicators.getValue(it))
     }.toMap()
 
-    return old.copy(
-        exponenceClusters = newOrder,
-        applicators = newApplicators
-    )
+    return old.copy(exponenceClusters = newOrder, applicators = newApplicators)
 }
 
-private fun hasSameCategorySet(first: SpeechPartChangeParadigm, second: SpeechPartChangeParadigm) =
-    first.exponenceClusters.size == second.exponenceClusters.size && first.exponenceClusters.all { cluster ->
-        second.getCluster(cluster) != null
-    }
+//private fun hasSameCategorySet(first: SpeechPartChangeParadigm, second: SpeechPartChangeParadigm) =
+//    first.exponenceClusters.size == second.exponenceClusters.size && first.exponenceClusters.all { cluster ->
+//        second.getCluster(cluster) != null
+//    }

@@ -1,6 +1,6 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.category.realization.CategoryApplicator
+import shmp.lang.generator.ApplicatorMap
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
@@ -10,7 +10,7 @@ import shmp.lang.language.syntax.WordSequence
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
     val exponenceClusters: List<ExponenceCluster>,
-    val applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>,
+    val applicators: ApplicatorMap,
     val prosodyChangeParadigm: ProsodyChangeParadigm
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
@@ -100,8 +100,7 @@ data class SpeechPartChangeParadigm(
     fun hasChanges() = applicators.any { it.value.isNotEmpty() }
 
     override fun toString() = "$speechPart changes on: \n" +
-            exponenceClusters
-                .map { it to applicators.getValue(it) }
+            exponenceClusters.map { it to applicators.getValue(it) }
                 .joinToString("\n\n") { (c, m) ->
                     "$c:\n" + m.entries
                         .map { it.key.toString() + ": " + it.value }

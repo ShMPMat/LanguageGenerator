@@ -185,8 +185,7 @@ class SpeechPartApplicatorsGenerator(
         }
     }
 
-    fun randomApplicatorsOrder(applicators: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>) =
-        applicators.keys
+    fun randomApplicatorsOrder(applicators: ApplicatorMap) = applicators.keys
             .sortedBy { k -> k.categories.joinToString { it.category.outType } }
             .shuffled(RandomSingleton.random)
 
@@ -282,8 +281,9 @@ class SpeechPartApplicatorsGenerator(
 internal data class BoxedInt(var value: Int)
 
 typealias RealizationMapper = (CategoryRealization) -> Double
+typealias ApplicatorMap = Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>
 
-data class Result(val words: List<Word>, val solver: Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>)
+data class Result(val words: List<Word>, val solver: ApplicatorMap)
 
 data class ExponenceTemplate(
     val exponenceCluster: ExponenceCluster,

@@ -86,5 +86,5 @@ class WordChangeParadigm(
             speechPartChangeParadigms
                 .map { it.value }
                 .filter { it.hasChanges() }
-                .joinToString("\n\n\n")
+                .joinToString("\n\n\n\n")
 }

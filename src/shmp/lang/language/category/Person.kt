@@ -69,7 +69,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         return when(speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
-                RealizationBox(NewWord, 2.0)
+                RealizationBox(NewWord, 200.0)
             )
             Verb -> setOf(
                 noValue(10.0),

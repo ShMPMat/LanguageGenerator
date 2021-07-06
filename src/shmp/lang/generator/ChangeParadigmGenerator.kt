@@ -15,13 +15,13 @@ import shmp.lang.language.category.realization.WordCategoryApplicator
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.Article
 import shmp.lang.language.lexis.SpeechPart.Verb
+import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.singleton.chanceOf
-import shmp.random.singleton.chanceOfNot
 import shmp.random.singleton.randomElement
 import kotlin.math.max
 
@@ -36,9 +36,17 @@ class ChangeParadigmGenerator(
     private val wordOrderGenerator = WordOrderGenerator()
     private val syntaxParadigmGenerator = SyntaxParadigmGenerator()
 
+    private val emptyArticleParadigm = SpeechPartChangeParadigm(
+        Article.toUnspecified(),
+        listOf(),
+        mapOf(),
+        ProsodyChangeParadigm(StressType.None)
+    )
+
     internal fun generateChangeParadigm(categoriesWithMappers: List<SupplementedCategory>): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
 
+        val oldCategoryData = mutableListOf<SpeechPartCategoryData>()
         val oldSpeechParts = mutableListOf<TypedSpeechPart>()
         val speechParts = SpeechPart.values().map { it.toUnspecified() }.toMutableList()
         val newSpeechParts = mutableSetOf<TypedSpeechPart>()
@@ -46,14 +54,14 @@ class ChangeParadigmGenerator(
         val speechPartChangesMap = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
 
         while (speechParts.isNotEmpty()) {
-            oldSpeechParts.addAll(speechParts)
-            speechParts.map { speechPart ->
-                val restrictions = restrictionsParadigm.restrictionsMapper.getValue(speechPart)
-                val categoriesAndSupply = generateSpeechPartCategories(
-                    speechPart,
-                    categoriesWithMappers
-                )
+            val categoryData = generateCategoryData(speechParts, categoriesWithMappers)
 
+            oldSpeechParts.addAll(speechParts)
+            oldCategoryData.addAll(categoryData)
+
+            checkCompulsoryConsistency(categoryData, oldCategoryData)
+
+            categoryData.map { (speechPart, restrictions, categoriesAndSupply) ->
                 val (words, applicators) = speechPartApplicatorsGenerator
                     .randomApplicatorsForSpeechPart(
                         speechPart,
@@ -88,7 +96,6 @@ class ChangeParadigmGenerator(
         speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(verbParadigm)
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
 
-        checkCompulsoryConsistency(speechPartChangesMap)//TODO it will break cluster necessity, should move it up
         simplifyParadigm(speechPartChangesMap)
 
         if (!articlePresent(categories, speechPartChangesMap))
@@ -102,12 +109,18 @@ class ChangeParadigmGenerator(
         return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, syntaxLogic)
     }
 
-    private val emptyArticleParadigm = SpeechPartChangeParadigm(
-        Article.toUnspecified(),
-        listOf(),
-        mapOf(),
-        ProsodyChangeParadigm(StressType.None)
-    )
+    private fun generateCategoryData(
+        speechParts: List<TypedSpeechPart>,
+        categoriesWithMappers: List<SupplementedCategory>
+    ) = speechParts.map { speechPart ->
+        val restrictions = restrictionsParadigm.restrictionsMapper.getValue(speechPart)
+        val categoriesAndSupply = generateSpeechPartCategories(
+            speechPart,
+            categoriesWithMappers
+        )
+
+        SpeechPartCategoryData(speechPart, restrictions, categoriesAndSupply)
+    }
 
     private fun generateSpeechPartCategories(
         speechPart: TypedSpeechPart,
@@ -141,23 +154,23 @@ class ChangeParadigmGenerator(
         mapOf(Agent to Argument)
     ) { c -> c.categories.none { it.source is RelationGranted && it.source.relation == Patient } }
 
-    private fun checkCompulsoryConsistency(speechPartChangesMap: Map<TypedSpeechPart, SpeechPartChangeParadigm>) {
+    private fun checkCompulsoryConsistency(
+        targetCategoryData: List<SpeechPartCategoryData>,
+        allCategoryData: MutableList<SpeechPartCategoryData>
+    ) {
         var shouldCheck = true
         while (shouldCheck) {
             shouldCheck = false
 
-            for (paradigm in speechPartChangesMap.values)
-                for (sourcedCategory in paradigm.categories) {
+            for (data in targetCategoryData)
+                for (sourcedCategory in data.categories) {
                     if (sourcedCategory.category.outType in compulsoryConsistencyExceptions)
                         continue
 
                     if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
                         val relevantCategories = sourcedCategory.source.possibleSpeechParts
-                            .flatMap { sp -> speechPartChangesMap.entries.filter { it.key.type == sp } }
-                            .map { e ->
-                                e.value.categories
-                                    .firstOrNull { it.category == sourcedCategory.category }
-                            }
+                            .flatMap { sp -> allCategoryData.filter { it.speechPart.type == sp } }
+                            .map { d -> d.categories.firstOrNull { it.category == sourcedCategory.category } }
                         val areAllRelationsCompulsory = relevantCategories.all { c ->
                             c?.compulsoryData?.isCompulsory ?: false
                         }
@@ -203,4 +216,13 @@ class ChangeParadigmGenerator(
     else false
 
     private val compulsoryConsistencyExceptions = listOf(inclusivityOutName)
+}
+
+
+private data class SpeechPartCategoryData(
+    val speechPart: TypedSpeechPart,
+    val restrictionsParadigm: PhoneticRestrictions,
+    val categoriesAndSupply: List<Pair<SourcedCategory, CategoryRandomSupplements>>
+) {
+    val categories = categoriesAndSupply.map { it.first }
 }
