@@ -52,7 +52,7 @@ class AbstractCategoryValue(
     override val shortName: String
 ) : CategoryValue {
     override val semanticsCore = semanticsCore.copy(
-//        staticCategories = setOf(this)
+        staticCategories = setOf(this)
     )
 
     override fun equals(other: Any?): Boolean {
@@ -62,18 +62,16 @@ class AbstractCategoryValue(
         other as AbstractCategoryValue
 
         if (parentClassName != other.parentClassName) return false
-        if (semanticsCore != other.semanticsCore) return false
+        if (semanticsCore.meaningCluster != other.semanticsCore.meaningCluster) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = parentClassName.hashCode()
-        result = 31 * result + semanticsCore.hashCode()
+        result = 31 * result + semanticsCore.meaningCluster.hashCode()
         return result
     }
-
-
 }
 
 typealias CategoryValues = List<CategoryValue>
