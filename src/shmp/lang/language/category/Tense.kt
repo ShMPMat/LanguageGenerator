@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart.*
@@ -8,11 +9,13 @@ import shmp.lang.language.category.TenseValue.*
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
-const val tenseOutName = "Tense"
+
+const val tenseName = "Tense"
 
 class Tense(
     categories: List<TenseValue>,
@@ -20,10 +23,10 @@ class Tense(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    TenseValue.values().toSet(),
+    TenseValue::class.valuesSet(),
     affected,
     staticSpeechParts,
-    tenseOutName
+    tenseName
 )
 
 object TenseRandomSupplements : CategoryRandomSupplements {
@@ -56,7 +59,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == tenseOutName }
+        val acceptableValues = values.filter { it.parentClassName == tenseName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when (value) {
@@ -92,14 +95,12 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
     FivePastFuture(1.0, listOf(Present, Past, YearPast, MonthPast, SomeDaysPast, DayPast, Future)),
 }
 
-enum class TenseValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Present(SemanticsCore("(present tense indicator)", Particle.toUnspecified()), "PRES"),
-    Future(SemanticsCore("(future tense indicator)", Particle.toUnspecified()), "FUT"),
-    Past(SemanticsCore("(past tense indicator)", Particle.toUnspecified()), "PST"),
-    DayPast(SemanticsCore("(day past tense indicator)", Particle.toUnspecified()), "DAY.PST"),
-    SomeDaysPast(SemanticsCore("(some days past tense indicator)", Particle.toUnspecified()), "FEW.DAY.PST"),
-    MonthPast(SemanticsCore("(month past tense ind)", Particle.toUnspecified()), "MTH.PST"),
-    YearPast(SemanticsCore("(year past tense ind)", Particle.toUnspecified()), "YR.PST");
-
-    override val parentClassName = tenseOutName
+sealed class TenseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(tenseName, Particle, meaning, alias) {
+    object Present : TenseValue("(present tense indicator)", "PRES")
+    object Future : TenseValue("(future tense indicator)", "FUT")
+    object Past : TenseValue("(past tense indicator)", "PST")
+    object DayPast : TenseValue("(day past tense indicator)", "DAY.PST")
+    object SomeDaysPast : TenseValue("(some days past tense indicator)", "FEW.DAY.PST")
+    object MonthPast : TenseValue("(month past tense ind)", "MTH.PST")
+    object YearPast : TenseValue("(year past tense ind)", "YR.PST")
 }

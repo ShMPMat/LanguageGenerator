@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
@@ -11,12 +12,13 @@ import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val personOutName = "Person"
+const val personName = "Person"
 
 class Person(
     categories: List<PersonValue>,
@@ -24,10 +26,10 @@ class Person(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    PersonValue.values().toSet(),
+    PersonValue::class.valuesSet(),
     affected,
     staticSpeechParts,
-    personOutName
+    personName
 )
 
 object PersonRandomSupplements : CategoryRandomSupplements {
@@ -63,7 +65,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == personOutName }
+        val acceptableValues = values.filter { it.parentClassName == personName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
         return when(speechPart) {
@@ -95,10 +97,8 @@ enum class PersonPresence(override val probability: Double, val possibilities: L
     ThreePersons(100.0, listOf(First, Second, Third))//TODO too little actual values
 }
 
-enum class PersonValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    First(SemanticsCore("(first person ind)", Particle.toUnspecified()), "1"),
-    Second(SemanticsCore("(second person ind)", Particle.toUnspecified()), "2"),
-    Third(SemanticsCore("(third person ind)", Particle.toUnspecified()), "3");
-
-    override val parentClassName = personOutName
+sealed class PersonValue(meaning: Meaning, alias: String) : AbstractCategoryValue(personName, Particle, meaning, alias) {
+    object First : PersonValue("(first person ind)", "1")
+    object Second : PersonValue("(second person ind)", "2")
+    object Third : PersonValue("(third person ind)", "3")
 }

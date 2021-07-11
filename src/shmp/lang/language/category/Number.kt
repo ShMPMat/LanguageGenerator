@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
@@ -13,12 +14,13 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val numberOutName = "Number"
+const val numberName = "Number"
 
 class Number(
     categories: List<NumberValue>,
@@ -26,10 +28,10 @@ class Number(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    NumberValue.values().toSet(),
+    NumberValue::class.valuesSet(),
     affected,
     staticSpeechParts,
-    numberOutName
+    numberName
 )
 
 object NumberRandomSupplements : CategoryRandomSupplements {
@@ -65,7 +67,7 @@ object NumberRandomSupplements : CategoryRandomSupplements {
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
-        val acceptableValues = values.filter { it.parentClassName == numberOutName }
+        val acceptableValues = values.filter { it.parentClassName == numberName }
         if (acceptableValues.size != 1) return emptyRealization
         return when (values.first()) {
             Singular -> setOf(
@@ -118,13 +120,11 @@ enum class NumberPresence(
     PaucalDual(2.0, listOf(Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural))
 }
 
-enum class NumberValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Singular(SemanticsCore("(singular number indicator)", Particle.toUnspecified()), "SN"),//TODO more diversity
-    Dual(SemanticsCore("(dual number indicator)", Particle.toUnspecified()), "DL"),
-    Paucal(SemanticsCore("(paucal number indicator)", Particle.toUnspecified()), "PC"),
-    Plural(SemanticsCore("(plural number indicator)", Particle.toUnspecified()), "PL");
-
-    override val parentClassName = numberOutName
+sealed class NumberValue(meaning: Meaning, alias: String) : AbstractCategoryValue(numberName, Particle, meaning, alias) {
+    object Singular : NumberValue("(singular number indicator)", "SN")
+    object Dual : NumberValue("(dual number indicator)", "DL")
+    object Paucal : NumberValue("(paucal number indicator)", "PC")
+    object Plural : NumberValue("(plural number indicator)", "PL")
 }
 
 val nonSingularNumbers = listOf(NumberValue.Dual, NumberValue.Paucal, Plural)

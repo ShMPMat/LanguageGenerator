@@ -19,6 +19,7 @@ import shmp.lang.language.syntax.context.ActorType.Patient
 import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.utils.listCartesianProduct
+import shmp.lang.utils.values
 import shmp.random.singleton.*
 import shmp.random.toSampleSpaceObject
 
@@ -37,7 +38,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver(),
-        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityOutName)
+        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityName)
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -118,7 +119,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
         for (speechPart in verbalSpeechParts)
             changeParadigm.getSpeechPartParadigm(speechPart).categories
-                .firstOrNull { it.category.outType == tenseOutName }
+                .firstOrNull { it.category.outType == tenseName }
                 ?.actualSourcedValues
                 ?.firstOrNull { it.categoryValue == TenseValue.Present }
                 ?.let {
@@ -305,7 +306,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                 ?.compulsoryData?.isCompulsory ?: false
 
             if (definitenessNecessity)
-                for (deixis in DeixisValue.values().toList() + listOf<DeixisValue?>(null)) when (deixis) {
+                for (deixis in DeixisValue::class.values() + listOf<DeixisValue?>(null)) when (deixis) {
                     null -> indefiniteArticleWrapped?.let {
                         naiveSolver[deixis] = (naiveSolver.getOrDefault(deixis, setOf()) + it).toSet()
                     }

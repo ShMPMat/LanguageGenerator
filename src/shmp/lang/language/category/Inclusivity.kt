@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
@@ -13,12 +14,14 @@ import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation.Agent
+import shmp.lang.utils.values
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
 
 
-const val inclusivityOutName = "Inclusivity"
+const val inclusivityName = "Inclusivity"
 
 class Inclusivity(
     categories: List<InclusivityValue>,
@@ -26,10 +29,10 @@ class Inclusivity(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    InclusivityValue.values().toSet(),
+    InclusivityValue::class.valuesSet(),
     affected,
     staticSpeechParts,
-    inclusivityOutName
+    inclusivityName
 )
 
 object InclusivityRandomSupplements : CategoryRandomSupplements {
@@ -70,7 +73,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         PersonalPronoun -> true withCoCategories listOf(nonSingularNumbers, listOf(First))
-        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue.values().toList())
+        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue::class.values())
         else -> false withCoCategories listOf()
     }
 }
@@ -83,9 +86,7 @@ enum class InclusivityPresence(
     Present(68.0, listOf(Inclusive, Exclusive))
 }
 
-enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Inclusive(SemanticsCore("(inclusive indicator)", Particle.toUnspecified()), "INCL"),
-    Exclusive(SemanticsCore("(exclusive indicator)", Particle.toUnspecified()), "EXCL");
-
-    override val parentClassName = inclusivityOutName
+sealed class InclusivityValue(meaning: Meaning, alias: String) : AbstractCategoryValue(inclusivityName, Particle, meaning, alias) {
+    object Inclusive : InclusivityValue("(inclusive indicator)", "INCL")
+    object Exclusive : InclusivityValue("(exclusive indicator)", "EXCL")
 }

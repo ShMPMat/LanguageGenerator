@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
@@ -10,6 +11,7 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
@@ -23,7 +25,7 @@ class Definiteness(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    DefinitenessValue.values().toSet(),
+    DefinitenessValue::class.valuesSet(),
     affected,
     staticSpeechParts,
     definitenessName
@@ -92,10 +94,7 @@ enum class DefinitenessPresence(
     DefiniteAndIndefinite(209.0, listOf(Definite, Indefinite))
 }
 
-enum class DefinitenessValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    //TODO there are proper and partitive articles, naniiiiii???
-    Definite(SemanticsCore("the", Article.toUnspecified()), "DEF"),
-    Indefinite(SemanticsCore("a", Article.toUnspecified()), "INDEF");
-
-    override val parentClassName = definitenessName
+sealed class DefinitenessValue(meaning: Meaning, alias: String) : AbstractCategoryValue(definitenessName, Article, meaning, alias) {
+    object Definite : DefinitenessValue("the", "DEF")
+    object Indefinite : DefinitenessValue("a", "INDEF")
 }

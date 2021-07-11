@@ -6,7 +6,7 @@ import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.CategorySource.RelationGranted
 import shmp.lang.language.category.definitenessName
-import shmp.lang.language.category.inclusivityOutName
+import shmp.lang.language.category.inclusivityName
 import shmp.lang.language.category.paradigm.CompulsoryData
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -215,7 +215,7 @@ class ChangeParadigmGenerator(
         }
     else false
 
-    private val compulsoryConsistencyExceptions = listOf(inclusivityOutName)
+    private val compulsoryConsistencyExceptions = listOf(inclusivityName)
 }
 
 

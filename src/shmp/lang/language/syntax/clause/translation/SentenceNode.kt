@@ -3,7 +3,6 @@ package shmp.lang.language.syntax.clause.translation
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategorySource
-import shmp.lang.language.category.inclusivityOutName
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.Word

@@ -71,9 +71,9 @@ class IntransitiveVerbClause(
 }
 
 internal fun SentenceNode.addThirdPerson(): SentenceNode {
-    if (categoryValues.none { it.parentClassName == personOutName })
+    if (categoryValues.none { it.parentClassName == personName })
         apply { insertCategoryValue(PersonValue.Third) }
-    if (categoryValues.none { it.parentClassName == inclusivityOutName })
+    if (categoryValues.none { it.parentClassName == inclusivityName })
         apply { insertCategoryValue(InclusivityValue.Exclusive) }
 
     return this

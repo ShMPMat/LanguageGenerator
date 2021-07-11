@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
@@ -9,6 +10,7 @@ import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 
@@ -21,7 +23,7 @@ class Deixis(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    DeixisValue.values().toSet(),
+    DeixisValue::class.valuesSet(),
     affected,
     staticSpeechParts,
     deixisName
@@ -90,14 +92,12 @@ enum class DeixisPresence(override val probability: Double, val possibilities: L
     TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant)),
 }
 
-enum class DeixisValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Undefined(SemanticsCore("(undefined deixis ind)", DeixisPronoun.toAdnominal()), "UNDEF"),
-    Proximal(SemanticsCore("this", DeixisPronoun.toAdnominal()), "PROX"),
-    Medial(SemanticsCore("(medial deixis ind)", DeixisPronoun.toAdnominal()), "MED"),
-    Distant(SemanticsCore("that", DeixisPronoun.toAdnominal()), "DIST"),
-    Unseen(SemanticsCore("that", DeixisPronoun.toAdnominal()), "DIST"),
-    ProximalAddressee(SemanticsCore("this.addr", DeixisPronoun.toAdnominal()), "PROX.ADDR");
+sealed class DeixisValue(meaning: Meaning, alias: String) : AbstractCategoryValue(deixisName, DeixisPronoun, meaning, alias) {
     //TODO more values
-
-    override val parentClassName = deixisName
+    object Undefined : DeixisValue("(undefined deixis ind)", "UNDEF")
+    object Proximal : DeixisValue("this", "PROX")
+    object Medial : DeixisValue("(medial deixis ind)", "MED")
+    object Distant : DeixisValue("that", "DIST")
+    object Unseen : DeixisValue("that", "DIST")
+    object ProximalAddressee : DeixisValue("this.addr", "PROX.ADDR")
 }

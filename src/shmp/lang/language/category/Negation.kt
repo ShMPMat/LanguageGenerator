@@ -1,19 +1,19 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.SelfStated
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
-import shmp.lang.language.lexis.toCluster
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 
-private const val outName = "Negation"
+
+private const val negationName = "Negation"
 
 class Negation(
     categories: List<NegationValue>,
@@ -21,10 +21,10 @@ class Negation(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    NegationValue.values().toSet(),
+    NegationValue::class.valuesSet(),
     affected,
     staticSpeechParts,
-    outName
+    negationName
 )
 
 object NegationRandomSupplements : CategoryRandomSupplements {
@@ -69,8 +69,6 @@ enum class NegationPresence(override val probability: Double, val possibilities:
     Default(1.0, listOf(NegationValue.Negative))
 }
 
-enum class NegationValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Negative(SemanticsCore("(negation indicator)", Particle.toUnspecified()), "NEG");
-
-    override val parentClassName = outName
+sealed class NegationValue(meaning: Meaning, alias: String) : AbstractCategoryValue(negationName, Particle, meaning, alias){
+    object Negative : NegationValue("(negation indicator)", "NEG")
 }
