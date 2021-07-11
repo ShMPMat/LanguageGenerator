@@ -92,6 +92,6 @@ fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): Stri
     val allSources = allValues.groupBy { it.source }
 
     return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.SelfStated))
-        categoryValue.shortName
+        categoryValue.alias
     else "$this"
 }

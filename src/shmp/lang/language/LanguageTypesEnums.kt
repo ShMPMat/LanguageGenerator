@@ -1,6 +1,9 @@
 package shmp.lang.language
 
+import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.SpeechPart
+import shmp.lang.language.lexis.toUnspecified
 import shmp.random.SampleSpaceObject
 
 
@@ -20,9 +23,9 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
 }
 
 enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObject {
-    Decimal( 125.0),
-    Vigesimal( 20.0),
-    VigesimalTill100( 22.0),
+    Decimal(125.0),
+    Vigesimal(20.0),
+    VigesimalTill100(22.0),
     SixtyBased(5.0),
     ExtendedBodyPartSystem(4.0),
     Restricted3(6.0),
@@ -43,16 +46,20 @@ enum class CategoryRealization {
 interface CategoryValue {
     val semanticsCore: SemanticsCore
     val parentClassName: String
-    val shortName: String
+    val alias: String
 }
 
-class AbstractCategoryValue(
+open class AbstractCategoryValue(
     semanticsCore: SemanticsCore,
     override val parentClassName: String,
-    override val shortName: String
+    override val alias: String
 ) : CategoryValue {
-    override val semanticsCore = semanticsCore.copy(
-        staticCategories = setOf(this)
+    override val semanticsCore = semanticsCore.copy(staticCategories = setOf(this))
+
+    constructor(parentClassName: String, speechPart: SpeechPart, meaning: Meaning, shortName: String) : this(
+        SemanticsCore(meaning, speechPart.toUnspecified()),
+        parentClassName,
+        shortName
     )
 
     override fun equals(other: Any?): Boolean {

@@ -23,7 +23,7 @@ open class AbstractChangeCategory(
             ?.let { vs ->
                 throw LanguageException(
                     "Category $outType was initialized with values which do not represent this category: "
-                            + vs.joinToString { it.parentClassName + " " + it.shortName }
+                            + vs.joinToString { it.parentClassName + " " + it.alias }
                 )
             }
     }

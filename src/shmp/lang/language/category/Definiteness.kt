@@ -92,7 +92,7 @@ enum class DefinitenessPresence(
     DefiniteAndIndefinite(209.0, listOf(Definite, Indefinite))
 }
 
-enum class DefinitenessValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class DefinitenessValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     //TODO there are proper and partitive articles, naniiiiii???
     Definite(SemanticsCore("the", Article.toUnspecified()), "DEF"),
     Indefinite(SemanticsCore("a", Article.toUnspecified()), "INDEF");

@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CaseValue.*
@@ -27,7 +28,7 @@ class Case(
     outType: String = caseName
 ) : AbstractChangeCategory(
     categories,
-    CaseValue.values().toSet(),
+    CaseValue::class.sealedSubclasses.mapNotNull { it.objectInstance }.toSet(),
     affected,
     staticSpeechParts,
     outType
@@ -159,24 +160,21 @@ enum class CoreCasePresence(override val probability: Double, val possibilities:
     AE(5.0, listOf(Ergative, Absolutive)),
 }
 
-enum class CaseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
-    Nominative(SemanticsCore("(nominative case ind)", Adposition.toUnspecified()), "NOM"),
-    Accusative(SemanticsCore("(accusative case ind)", Adposition.toUnspecified()), "ACC"),
-    Ergative(SemanticsCore("(ergative case ind)", Adposition.toUnspecified()), "ERG"),
-    Absolutive(SemanticsCore("(absolutive case ind)", Adposition.toUnspecified()), "ABS"),
-
-    Topic(SemanticsCore("(topic case ind)", Adposition.toUnspecified()), "TOP"),
-
-    Oblique(SemanticsCore("(oblique case ind)", Adposition.toUnspecified()), "OBL"),
-
-    Genitive(SemanticsCore("(genitive case ind)", Adposition.toUnspecified()), "GEN"),
-    Dative(SemanticsCore("(dative case ind)", Adposition.toUnspecified()), "DAT"),
-    Instrumental(SemanticsCore("(instrumental case ind)", Adposition.toUnspecified()), "INS"),
-    Locative(SemanticsCore("(locative case ind)", Adposition.toUnspecified()), "LOC");
-
-    override val parentClassName = caseName
+sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(caseName, Adposition, meaning, alias) {
+    object Nominative : CaseValue("(nominative case ind)", "NOM")
+    object Accusative : CaseValue("(accusative case ind)", "ACC")
+    object Ergative : CaseValue("(ergative case ind)", "ERG")
+    object Absolutive : CaseValue("(absolutive case ind)", "ABS")
+    object Topic : CaseValue("(topic case ind)", "TOP")
+    object Oblique : CaseValue("(oblique case ind)", "OBL")
+    object Genitive : CaseValue("(genitive case ind)", "GEN")
+    object Dative : CaseValue("(dative case ind)", "DAT")
+    object Instrumental : CaseValue("(instrumental case ind)", "INS")
+    object Locative : CaseValue("(locative case ind)", "LOC")
 }
 
 val coreCases = listOf(Nominative, Accusative, Ergative, Absolutive)
 
-val nonCoreCases = CaseValue.values().filter { it !in coreCases && it != Oblique }
+val nonCoreCases = CaseValue::class.sealedSubclasses
+    .mapNotNull { it.objectInstance }
+    .filter { it !in coreCases && it != Oblique }

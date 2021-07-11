@@ -203,7 +203,7 @@ class SyntaxLogic(
         |
         |${
         personalPronounDropSolver.map { (g1, g2) ->
-            listOf("$g1", " with categories ${g2.joinToString(".") { it.shortName }}")
+            listOf("$g1", " with categories ${g2.joinToString(".") { it.alias }}")
         }
             .lineUpAll()
             .joinToString("\n") + if (personalPronounDropSolver.isEmpty()) "none" else ""

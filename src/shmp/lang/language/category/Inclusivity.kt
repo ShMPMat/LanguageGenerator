@@ -83,7 +83,7 @@ enum class InclusivityPresence(
     Present(68.0, listOf(Inclusive, Exclusive))
 }
 
-enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class InclusivityValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     Inclusive(SemanticsCore("(inclusive indicator)", Particle.toUnspecified()), "INCL"),
     Exclusive(SemanticsCore("(exclusive indicator)", Particle.toUnspecified()), "EXCL");
 

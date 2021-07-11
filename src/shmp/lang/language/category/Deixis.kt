@@ -90,7 +90,7 @@ enum class DeixisPresence(override val probability: Double, val possibilities: L
     TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant)),
 }
 
-enum class DeixisValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class DeixisValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     Undefined(SemanticsCore("(undefined deixis ind)", DeixisPronoun.toAdnominal()), "UNDEF"),
     Proximal(SemanticsCore("this", DeixisPronoun.toAdnominal()), "PROX"),
     Medial(SemanticsCore("(medial deixis ind)", DeixisPronoun.toAdnominal()), "MED"),

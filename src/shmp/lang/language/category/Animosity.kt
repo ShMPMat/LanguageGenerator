@@ -106,7 +106,7 @@ enum class AnimosityPresence(
     SimpleAnimosity(10.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))
 }
 
-enum class AnimosityValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class AnimosityValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     Animate(SemanticsCore("animate indicator", Particle.toUnspecified()), "ANIM"),
     Inanimate(SemanticsCore("inanimate indicator", Particle.toUnspecified()), "INANIM");
 

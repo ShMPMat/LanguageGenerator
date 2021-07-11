@@ -128,7 +128,7 @@ enum class NounClassPresence(override val probability: Double, val possibilities
     NonGendered(28.0, NounClassValue.values().toList())
 }
 
-enum class NounClassValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class NounClassValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     //TODO more classes (don't forget to add tags for words after it!)
     Female(SemanticsCore("(female class ind)", Particle.toUnspecified()), "FEM"),
     Male(SemanticsCore("(male class ind)", Particle.toUnspecified()), "MALE"),

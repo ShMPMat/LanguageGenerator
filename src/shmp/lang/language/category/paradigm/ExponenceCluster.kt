@@ -117,7 +117,7 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
 }
 
 data class SourcedCategoryValue constructor(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
-    override fun toString() = categoryValue.shortName + getSourceString(source)
+    override fun toString() = categoryValue.alias + getSourceString(source)
 }
 
 

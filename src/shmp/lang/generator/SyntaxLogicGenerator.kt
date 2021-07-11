@@ -55,7 +55,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                     CaseValue.Accusative.toSampleSpaceObject(0.1)
                 )
                     .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
-                    .randomUnwrappedElementOrNull()
+                    .randomElementOrNull()
+                    ?.value
+//                    .randomUnwrappedElementOrNull() //TODO out T in the generic
                     ?.let { listOf(it) }
                     ?: emptyList()
 
@@ -66,7 +68,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                     CaseValue.Accusative.toSampleSpaceObject(0.5)
                 )
                     .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
-                    .randomUnwrappedElementOrNull()
+                    .randomElementOrNull()
+                    ?.value
+//                    .randomUnwrappedElementOrNull() //TODO out T in the generic
                     ?.let { listOf(it) }
                     ?: emptyList()
             }

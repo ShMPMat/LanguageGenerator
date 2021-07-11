@@ -34,9 +34,9 @@ class CategoryGenerator {
 
         if (absentScenarios.isNotEmpty()) {
             val values = absentScenarios
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.shortName) }
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
             val allPossibleValues = caseCategory.first.allPossibleValues
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.shortName) }
+                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
                 .toSet()
 
             val affectedSpeechPartsAndSources = randomAffectedSpeechParts(AdpositionRandomSupplements)

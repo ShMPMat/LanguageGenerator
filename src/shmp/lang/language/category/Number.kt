@@ -118,7 +118,7 @@ enum class NumberPresence(
     PaucalDual(2.0, listOf(Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural))
 }
 
-enum class NumberValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class NumberValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     Singular(SemanticsCore("(singular number indicator)", Particle.toUnspecified()), "SN"),//TODO more diversity
     Dual(SemanticsCore("(dual number indicator)", Particle.toUnspecified()), "DL"),
     Paucal(SemanticsCore("(paucal number indicator)", Particle.toUnspecified()), "PC"),

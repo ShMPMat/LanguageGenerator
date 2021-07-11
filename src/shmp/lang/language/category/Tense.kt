@@ -92,7 +92,7 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
     FivePastFuture(1.0, listOf(Present, Past, YearPast, MonthPast, SomeDaysPast, DayPast, Future)),
 }
 
-enum class TenseValue(override val semanticsCore: SemanticsCore, override val shortName: String) : CategoryValue {
+enum class TenseValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
     Present(SemanticsCore("(present tense indicator)", Particle.toUnspecified()), "PRES"),
     Future(SemanticsCore("(future tense indicator)", Particle.toUnspecified()), "FUT"),
     Past(SemanticsCore("(past tense indicator)", Particle.toUnspecified()), "PST"),
