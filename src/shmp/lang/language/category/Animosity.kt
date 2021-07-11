@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
@@ -9,6 +10,7 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.testProbability
@@ -22,7 +24,7 @@ class Animosity(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    AnimosityValue.values().toSet(),
+    AnimosityValue::class.valuesSet(),
     affected,
     staticSpeechParts,
     animosityName
@@ -106,9 +108,7 @@ enum class AnimosityPresence(
     SimpleAnimosity(10.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))
 }
 
-enum class AnimosityValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
-    Animate(SemanticsCore("animate indicator", Particle.toUnspecified()), "ANIM"),
-    Inanimate(SemanticsCore("inanimate indicator", Particle.toUnspecified()), "INANIM");
-
-    override val parentClassName = animosityName
+sealed class AnimosityValue(meaning: Meaning, alias: String) : AbstractCategoryValue(animosityName, Particle, meaning, alias) {
+    object Animate : AnimosityValue("animate indicator", "ANIM")
+    object Inanimate : AnimosityValue("inanimate indicator", "INANIM")
 }

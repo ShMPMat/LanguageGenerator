@@ -1,5 +1,6 @@
 package shmp.lang.language.category
 
+import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.category.CategorySource.*
@@ -9,6 +10,8 @@ import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.utils.values
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.randomSublist
 import shmp.random.singleton.RandomSingleton
@@ -24,7 +27,7 @@ class NounClass(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(
     categories,
-    NounClassValue.values().toSet(),
+    NounClassValue::class.valuesSet(),
     affected,
     staticSpeechParts,
     nounClassName
@@ -125,20 +128,17 @@ enum class NounClassPresence(override val probability: Double, val possibilities
     FmnGendered(26.0, listOf(Female, Male, Neutral)),
     CnGendered(26.0, listOf(Common, Neutral)),
     FmGendered(26.0, listOf(Female, Male)),
-    NonGendered(28.0, NounClassValue.values().toList())
+    NonGendered(28.0, NounClassValue::class.values())
 }
 
-enum class NounClassValue(override val semanticsCore: SemanticsCore, override val alias: String) : CategoryValue {
+sealed class NounClassValue(meaning: Meaning, alias: String) : AbstractCategoryValue(nounClassName, Particle, meaning, alias) {
     //TODO more classes (don't forget to add tags for words after it!)
-    Female(SemanticsCore("(female class ind)", Particle.toUnspecified()), "FEM"),
-    Male(SemanticsCore("(male class ind)", Particle.toUnspecified()), "MALE"),
-    Neutral(SemanticsCore("(neutral class ind)", Particle.toUnspecified()), "NEUT"),
-    Common(SemanticsCore("(common class ind)", Particle.toUnspecified()), "COMM"),
-
-    Person(SemanticsCore("(person class ind)", Particle.toUnspecified()), "PERS"),
-    Plant(SemanticsCore("(plant class ind)", Particle.toUnspecified()), "PLANT"),
-    Fruit(SemanticsCore("(fruit class ind)", Particle.toUnspecified()), "FRUIT"),
-    LongObject(SemanticsCore("(long object class ind)", Particle.toUnspecified()), "LONG.OBJ");
-
-    override val parentClassName = nounClassName
+    object Female : NounClassValue("(female class ind)", "FEM")
+    object Male : NounClassValue("(male class ind)", "MALE")
+    object Neutral : NounClassValue("(neutral class ind)", "NEUT")
+    object Common : NounClassValue("(common class ind)", "COMM")
+    object Person : NounClassValue("(person class ind)", "PERS")
+    object Plant : NounClassValue("(plant class ind)", "PLANT")
+    object Fruit : NounClassValue("(fruit class ind)", "FRUIT")
+    object LongObject : NounClassValue("(long object class ind)", "LONG.OBJ")
 }

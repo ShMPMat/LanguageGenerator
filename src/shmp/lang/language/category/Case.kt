@@ -11,6 +11,8 @@ import shmp.lang.language.lexis.*
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.SpeechPart.Verb
 import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.utils.values
+import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.chanceOf
@@ -28,7 +30,7 @@ class Case(
     outType: String = caseName
 ) : AbstractChangeCategory(
     categories,
-    CaseValue::class.sealedSubclasses.mapNotNull { it.objectInstance }.toSet(),
+    CaseValue::class.valuesSet(),
     affected,
     staticSpeechParts,
     outType
@@ -175,6 +177,4 @@ sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
 
 val coreCases = listOf(Nominative, Accusative, Ergative, Absolutive)
 
-val nonCoreCases = CaseValue::class.sealedSubclasses
-    .mapNotNull { it.objectInstance }
-    .filter { it !in coreCases && it != Oblique }
+val nonCoreCases = CaseValue::class.values().filter { it !in coreCases && it != Oblique }

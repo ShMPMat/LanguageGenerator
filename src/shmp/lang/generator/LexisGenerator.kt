@@ -19,6 +19,8 @@ import shmp.lang.language.syntax.features.CopulaType
 import shmp.lang.language.syntax.features.QuestionMarker
 import shmp.random.*
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.randomUnwrappedElement
+import shmp.random.singleton.testProbability
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.pow
@@ -202,7 +204,7 @@ class LexisGenerator(
             .map { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
             .foldRight(0.0, Double::plus)
         val successProbability = core.probability * wordDoubleProbability.pow(doubles)
-        return testProbability(successProbability, random)
+        return successProbability.testProbability()
     }
 
     private fun makeStaticCategories(
@@ -227,7 +229,7 @@ class LexisGenerator(
                     values.add(v.toSampleSpaceObject(10.0))
             }
 
-            resultCategories.add(randomUnwrappedElement(values, random))
+            resultCategories.add(values.randomUnwrappedElement())
         }
         return resultCategories
     }

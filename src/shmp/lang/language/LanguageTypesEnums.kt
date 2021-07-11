@@ -79,6 +79,8 @@ open class AbstractCategoryValue(
         result = 31 * result + semanticsCore.meaningCluster.hashCode()
         return result
     }
+
+    override fun toString() = this::class.simpleName!!
 }
 
 typealias CategoryValues = List<CategoryValue>
