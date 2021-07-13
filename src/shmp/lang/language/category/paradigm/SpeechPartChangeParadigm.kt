@@ -46,9 +46,8 @@ data class SpeechPartChangeParadigm(
 
                 SourcedCategoryValue(v, CategorySource.SelfStated, parent)
             }
-//            val allCategoryValues = categoryValues + staticCategoryValues
-            val allCategoryValues = categoryValues
-            val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)//TODO case is baked in!!!
+            val allCategoryValues = categoryValues + staticCategoryValues
+            val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
 //                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
 //                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
 //                else continue

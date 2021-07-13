@@ -106,8 +106,6 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         return coreCases + nonCoreCases
     }
 
-    override fun randomStaticSpeechParts() = setOf(Noun)
-
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> true
         Adjective -> 0.95.testProbability()
@@ -141,8 +139,6 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
     ) = emptyRealization
 
     override fun randomRealization(): List<CaseValue> = emptyList()
-
-    override fun randomStaticSpeechParts() = setOf<SpeechPart>()
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = false withCoCategories listOf()
 }
