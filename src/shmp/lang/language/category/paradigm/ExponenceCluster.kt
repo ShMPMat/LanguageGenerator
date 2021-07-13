@@ -116,7 +116,25 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
     }
 }
 
-data class SourcedCategoryValue constructor(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
+data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as SourcedCategoryValue
+
+        if (categoryValue != other.categoryValue) return false
+        if (source != other.source) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = categoryValue.hashCode()
+        result = 31 * result + source.hashCode()
+        return result
+    }
+
     override fun toString() = categoryValue.alias + getSourceString(source)
 }
 

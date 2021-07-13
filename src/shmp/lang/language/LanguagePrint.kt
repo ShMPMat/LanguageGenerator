@@ -16,6 +16,7 @@ fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: 
                     .getSpeechPartParadigm(word.semanticsCore.speechPart)
                     .categories
                     .filter { if (printOptionalCategories) true else it.compulsoryData.isCompulsory }
+                    .filter { !it.category.staticSpeechParts.contains(word.semanticsCore.speechPart.type) }
                     .map { it.actualSourcedValues }
             )
                 .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }

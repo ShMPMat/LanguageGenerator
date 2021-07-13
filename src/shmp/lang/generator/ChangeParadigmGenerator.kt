@@ -2,11 +2,8 @@ package shmp.lang.generator
 
 import shmp.lang.generator.util.copyForNewSpeechPart
 import shmp.lang.generator.util.substituteWith
-import shmp.lang.language.category.Category
-import shmp.lang.language.category.CategoryRandomSupplements
+import shmp.lang.language.category.*
 import shmp.lang.language.category.CategorySource.RelationGranted
-import shmp.lang.language.category.definitenessName
-import shmp.lang.language.category.inclusivityName
 import shmp.lang.language.category.paradigm.CompulsoryData
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -131,21 +128,23 @@ class ChangeParadigmGenerator(
             .filter { it.first.actualValues.isNotEmpty() }
 
         return presentCategories.flatMap { (c, s) ->
-            c.affected.filter { it.speechPart == speechPart.type }.map {
-                var compulsoryData = s.randomIsCompulsory(speechPart.type)
-                if (c.actualValues.size <= 1)
-                    compulsoryData = compulsoryData.copy(isCompulsory = false)
+            c.affected.filter { it.speechPart == speechPart.type }
+                .map {
+                    var compulsoryData = s.randomIsCompulsory(speechPart.type)
+                    if (c.actualValues.size <= 1)
+                        compulsoryData = compulsoryData.copy(isCompulsory = false)
 
-                val existingCoCategories = compulsoryData.compulsoryCoCategories.filter {
-                    presentCategories
-                        .firstOrNull { sc -> sc.first.outType == it.first().parentClassName }
-                        ?.let { true }
-                        ?: false
+                    val existingCoCategories = compulsoryData.compulsoryCoCategories.filter {
+                        presentCategories.any { sc -> sc.first.outType == it.first().parentClassName }
+                    }
+                    compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
+
+                    val source = if (speechPart.subtype == adnominalSubtype && c.outType != deixisName) {
+                        RelationGranted(Agent, nominals)
+                    } else it.source
+
+                    SourcedCategory(c, source, compulsoryData) to s
                 }
-                compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
-
-                SourcedCategory(c, it.source, compulsoryData) to s
-            }
         }
     }
 

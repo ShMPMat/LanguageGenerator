@@ -48,10 +48,10 @@ data class SpeechPartChangeParadigm(
             }
             val allCategoryValues = categoryValues + staticCategoryValues
             val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
-//                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
-//                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
-//                else continue
-                ?: continue
+                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
+                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
+                else continue
+//                ?: continue
             val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
             val newClause = useCategoryApplicator(
                 currentClause,
