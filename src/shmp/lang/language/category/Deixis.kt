@@ -92,7 +92,12 @@ enum class DeixisPresence(override val probability: Double, val possibilities: L
     TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant)),
 }
 
-sealed class DeixisValue(meaning: Meaning, alias: String) : AbstractCategoryValue(deixisName, DeixisPronoun, meaning, alias) {
+sealed class DeixisValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
+    deixisName,
+    meaning,
+    alias,
+    DeixisPronoun.toAdnominal()
+) {
     //TODO more values
     object Undefined : DeixisValue("(undefined deixis ind)", "UNDEF")
     object Proximal : DeixisValue("this", "PROX")

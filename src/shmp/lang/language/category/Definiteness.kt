@@ -94,7 +94,12 @@ enum class DefinitenessPresence(
     DefiniteAndIndefinite(209.0, listOf(Definite, Indefinite))
 }
 
-sealed class DefinitenessValue(meaning: Meaning, alias: String) : AbstractCategoryValue(definitenessName, Article, meaning, alias) {
+sealed class DefinitenessValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
+    definitenessName,
+    meaning,
+    alias,
+    Article
+) {
     object Definite : DefinitenessValue("the", "DEF")
     object Indefinite : DefinitenessValue("a", "INDEF")
 }

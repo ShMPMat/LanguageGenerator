@@ -120,7 +120,7 @@ enum class NumberPresence(
     PaucalDual(2.0, listOf(Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural))
 }
 
-sealed class NumberValue(meaning: Meaning, alias: String) : AbstractCategoryValue(numberName, Particle, meaning, alias) {
+sealed class NumberValue(meaning: Meaning, alias: String) : AbstractCategoryValue(numberName, meaning, alias) {
     object Singular : NumberValue("(singular number indicator)", "SN")
     object Dual : NumberValue("(dual number indicator)", "DL")
     object Paucal : NumberValue("(paucal number indicator)", "PC")

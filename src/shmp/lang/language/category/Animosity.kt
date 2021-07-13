@@ -108,7 +108,7 @@ enum class AnimosityPresence(
     SimpleAnimosity(10.0, listOf(AnimosityValue.Animate, AnimosityValue.Inanimate))
 }
 
-sealed class AnimosityValue(meaning: Meaning, alias: String) : AbstractCategoryValue(animosityName, Particle, meaning, alias) {
+sealed class AnimosityValue(meaning: Meaning, alias: String) : AbstractCategoryValue(animosityName, meaning, alias) {
     object Animate : AnimosityValue("animate indicator", "ANIM")
     object Inanimate : AnimosityValue("inanimate indicator", "INANIM")
 }

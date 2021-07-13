@@ -1,6 +1,7 @@
 package shmp.lang.language.category.paradigm
 
 import shmp.lang.generator.ApplicatorMap
+import shmp.lang.language.category.CategorySource
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
@@ -38,12 +39,21 @@ data class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
-            val exponenceUnion = getExponenceUnion(categoryValues, exponenceCluster)
-//                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(categoryValues.map { it.categoryValue }) })
+            val staticCategoryValues = word.semanticsCore.staticCategories.mapNotNull { v ->
+                val parent = exponenceCluster.categories
+                    .firstOrNull { it.category.outType == v.parentClassName }
+                    ?: return@mapNotNull null
+
+                SourcedCategoryValue(v, CategorySource.SelfStated, parent)
+            }
+//            val allCategoryValues = categoryValues + staticCategoryValues
+            val allCategoryValues = categoryValues
+            val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)//TODO case is baked in!!!
+//                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
 //                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
 //                else continue
                 ?: continue
-            val actualValues = categoryValues.filter { it in exponenceUnion.categoryValues }
+            val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
             val newClause = useCategoryApplicator(
                 currentClause,
                 wordPosition,

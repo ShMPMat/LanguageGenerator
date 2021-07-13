@@ -86,7 +86,10 @@ enum class InclusivityPresence(
     Present(68.0, listOf(Inclusive, Exclusive))
 }
 
-sealed class InclusivityValue(meaning: Meaning, alias: String) : AbstractCategoryValue(inclusivityName, Particle, meaning, alias) {
+sealed class InclusivityValue(
+    meaning: Meaning,
+    alias: String
+) : AbstractCategoryValue(inclusivityName, meaning, alias) {
     object Inclusive : InclusivityValue("(inclusive indicator)", "INCL")
     object Exclusive : InclusivityValue("(exclusive indicator)", "EXCL")
 }

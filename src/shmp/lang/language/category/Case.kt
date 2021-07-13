@@ -162,7 +162,7 @@ enum class CoreCasePresence(override val probability: Double, val possibilities:
     AE(5.0, listOf(Ergative, Absolutive)),
 }
 
-sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(caseName, Adposition, meaning, alias) {
+sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(caseName, meaning, alias, Adposition) {
     object Nominative : CaseValue("(nominative case ind)", "NOM")
     object Accusative : CaseValue("(accusative case ind)", "ACC")
     object Ergative : CaseValue("(ergative case ind)", "ERG")

@@ -1,9 +1,7 @@
 package shmp.lang.language
 
-import shmp.lang.language.lexis.Meaning
-import shmp.lang.language.lexis.SemanticsCore
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.SpeechPart.*
 import shmp.random.SampleSpaceObject
 
 
@@ -56,8 +54,15 @@ open class AbstractCategoryValue(
 ) : CategoryValue {
     override val semanticsCore = semanticsCore.copy(staticCategories = setOf(this))
 
-    constructor(parentClassName: String, speechPart: SpeechPart, meaning: Meaning, shortName: String) : this(
-        SemanticsCore(meaning, speechPart.toUnspecified()),
+    constructor(parentClassName: String, meaning: Meaning, shortName: String, speechPart: SpeechPart = Particle) : this(
+        parentClassName,
+        meaning,
+        shortName,
+        speechPart.toUnspecified()
+    )
+
+    constructor(parentClassName: String, meaning: Meaning, shortName: String, speechPart: TypedSpeechPart) : this(
+        SemanticsCore(meaning, speechPart),
         parentClassName,
         shortName
     )

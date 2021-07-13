@@ -97,7 +97,7 @@ enum class PersonPresence(override val probability: Double, val possibilities: L
     ThreePersons(100.0, listOf(First, Second, Third))//TODO too little actual values
 }
 
-sealed class PersonValue(meaning: Meaning, alias: String) : AbstractCategoryValue(personName, Particle, meaning, alias) {
+sealed class PersonValue(meaning: Meaning, alias: String) : AbstractCategoryValue(personName, meaning, alias) {
     object First : PersonValue("(first person ind)", "1")
     object Second : PersonValue("(second person ind)", "2")
     object Third : PersonValue("(third person ind)", "3")

@@ -207,10 +207,7 @@ class LexisGenerator(
         return successProbability.testProbability()
     }
 
-    private fun makeStaticCategories(
-        core: SemanticsCoreTemplate,
-        categoryPool: CategoryPool
-    ): Set<CategoryValue> {
+    private fun makeStaticCategories(core: SemanticsCoreTemplate, categoryPool: CategoryPool): Set<CategoryValue> {
         val resultCategories = mutableSetOf<CategoryValue>()
 
         for (category in categoryPool.getStaticFor(core.speechPart)) {

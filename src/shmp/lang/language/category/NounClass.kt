@@ -72,7 +72,7 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
         if (acceptableValues.size != 1) return emptyRealization
         val value = values.first()
-        return when(speechPart) {
+        return when (speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
                 RealizationBox(CategoryRealization.NewWord, 3.0)
@@ -122,7 +122,8 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
     }
 }
 
-enum class NounClassPresence(override val probability: Double, val possibilities: List<NounClassValue>): SampleSpaceObject {
+enum class NounClassPresence(override val probability: Double, val possibilities: List<NounClassValue>) :
+    SampleSpaceObject {
     None(145.0, listOf()),
     FmcnGendered(6.0, listOf(Common, Female, Male, Neutral)),
     FmnGendered(26.0, listOf(Female, Male, Neutral)),
@@ -131,7 +132,7 @@ enum class NounClassPresence(override val probability: Double, val possibilities
     NonGendered(28.0, NounClassValue::class.values())
 }
 
-sealed class NounClassValue(meaning: Meaning, alias: String) : AbstractCategoryValue(nounClassName, Particle, meaning, alias) {
+sealed class NounClassValue(meaning: Meaning, alias: String) : AbstractCategoryValue(nounClassName, meaning, alias) {
     //TODO more classes (don't forget to add tags for words after it!)
     object Female : NounClassValue("(female class ind)", "FEM")
     object Male : NounClassValue("(male class ind)", "MALE")

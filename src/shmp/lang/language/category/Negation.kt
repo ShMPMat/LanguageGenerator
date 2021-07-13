@@ -65,10 +65,11 @@ object NegationRandomSupplements : CategoryRandomSupplements {
     override fun randomIsCompulsory(speechPart: SpeechPart) = false withCoCategories listOf()
 }
 
-enum class NegationPresence(override val probability: Double, val possibilities: List<NegationValue>) : SampleSpaceObject {
+enum class NegationPresence(override val probability: Double, val possibilities: List<NegationValue>) :
+    SampleSpaceObject {
     Default(1.0, listOf(NegationValue.Negative))
 }
 
-sealed class NegationValue(meaning: Meaning, alias: String) : AbstractCategoryValue(negationName, Particle, meaning, alias){
+sealed class NegationValue(meaning: Meaning, alias: String) : AbstractCategoryValue(negationName, meaning, alias) {
     object Negative : NegationValue("(negation indicator)", "NEG")
 }
