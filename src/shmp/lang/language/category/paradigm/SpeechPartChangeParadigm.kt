@@ -39,6 +39,9 @@ data class SpeechPartChangeParadigm(
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
+            if (word.categoryValues.map { it.parent }.containsAll(exponenceCluster.categories))
+                continue
+
             val staticCategoryValues = word.semanticsCore.staticCategories.mapNotNull { v ->
                 val parent = exponenceCluster.categories
                     .firstOrNull { it.category.outType == v.parentClassName }
@@ -51,7 +54,6 @@ data class SpeechPartChangeParadigm(
                 ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
                     throw SyntaxException("No value for compulsory cluster $exponenceCluster")
                 else continue
-//                ?: continue
             val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
             val newClause = useCategoryApplicator(
                 currentClause,

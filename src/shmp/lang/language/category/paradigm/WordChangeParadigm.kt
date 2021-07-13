@@ -1,12 +1,9 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.Word
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.category.InclusivityValue
-import shmp.lang.language.lexis.TypedSpeechPart
-import shmp.lang.language.lexis.nominals
+import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
 
@@ -40,14 +37,18 @@ class WordChangeParadigm(
         val (ws, i) = this
 
         val newWs = ws.words.flatMapIndexed { j, w ->
-            if (i == j || w.semanticsCore.speechPart.type == SpeechPart.Particle)
-                listOf(w)
-            else apply(
-                w,
-                ws[i].categoryValues.map {
-                    SourcedCategoryValue(it.categoryValue, RelationGranted(SyntaxRelation.Agent, nominals), it.parent)
-                }
-            ).words
+            if (i != j && w.semanticsCore.speechPart.type != SpeechPart.Particle) {
+                val newCv = if (w.semanticsCore.speechPart.subtype == adnominalSubtype)
+                    ws[i].categoryValues.map {
+                        SourcedCategoryValue(
+                            it.categoryValue,
+                            RelationGranted(SyntaxRelation.Agent, nominals),
+                            it.parent
+                        )
+                    } else ws[i].categoryValues//.filter { it !in ws[i].categoryValues }
+
+                apply(w, newCv).words
+            } else listOf(w)
         }
         return WordSequence(newWs) to i
     }

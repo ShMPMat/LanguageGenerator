@@ -26,10 +26,10 @@ class Lexis(
         .firstOrNull { it.semanticsCore.hasMeaning(meaning) }
 
     override fun toString() = """
-        |word roots:
-        |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
         |copula: $copula
         |question marker: $questionMarker
+        |word roots:
+        |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
     """.trimMargin()
 }
 
