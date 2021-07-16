@@ -3,6 +3,8 @@ water
 ice
 soil
 air
+plant
+tree
 beauty
 discovery
 path
@@ -36,6 +38,8 @@ sturdy
 transparent
 bad
 good
+wild
+tame
 
 remember
 act_out
@@ -68,6 +72,7 @@ work
 -abstract
 -object
 -person
+-animal
 -building
 -substance
 -life

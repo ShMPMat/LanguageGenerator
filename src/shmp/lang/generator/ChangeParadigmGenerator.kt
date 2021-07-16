@@ -139,19 +139,19 @@ class ChangeParadigmGenerator(
                     }
                     compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
 
-                    val source = if (speechPart.subtype == adnominalSubtype && c.outType != deixisName) {
+                    val source = if (speechPart.subtype == adnominalSubtype && c.outType != deixisName)
                         RelationGranted(Agent, nominals)
-                    } else it.source
+                    else it.source
 
                     SourcedCategory(c, source, compulsoryData) to s
                 }
         }
     }
 
-    private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm) = verbParadigm.copyForNewSpeechPart(
-        Verb.toIntransitive(),
-        mapOf(Agent to Argument)
-    ) { c -> c.categories.none { it.source is RelationGranted && it.source.relation == Patient } }
+    private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm) =
+        verbParadigm.copyForNewSpeechPart(Verb.toIntransitive(), mapOf(Agent to Argument)) { c ->
+            c.categories.none { it.source is RelationGranted && it.source.relation == Patient }
+        }
 
     private fun checkCompulsoryConsistency(
         targetCategoryData: List<SpeechPartCategoryData>,
