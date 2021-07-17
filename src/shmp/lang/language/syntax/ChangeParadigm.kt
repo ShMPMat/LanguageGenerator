@@ -7,6 +7,7 @@ class ChangeParadigm(
     val wordOrder: WordOrder,
     val wordChangeParadigm: WordChangeParadigm,
     val syntaxParadigm: SyntaxParadigm,
+    val numeralParadigm: NumeralParadigm,
     val syntaxLogic: SyntaxLogic
 ) {
     override fun toString() = """

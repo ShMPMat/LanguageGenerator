@@ -54,7 +54,6 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
     )
 
     fun generateLanguage(wordAmount: Int): Language {
-        val numeralSystemBase = NumeralSystemBase.values().randomElement()
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = CategoryPool(categoriesWithMappers.map { it.first })
         val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
@@ -68,7 +67,6 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
             lexis,
             phonemeContainer,
             stressPattern,
-            numeralSystemBase,
             restrictionsParadigm,
             derivationParadigm,
             changeParadigm

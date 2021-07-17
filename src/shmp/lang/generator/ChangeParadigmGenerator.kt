@@ -17,6 +17,7 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
+import shmp.lang.language.syntax.NumeralParadigm
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
@@ -102,8 +103,9 @@ class ChangeParadigmGenerator(
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)
         val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
         val syntaxLogic = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm).generateSyntaxLogic()
+        val numeralParadigm = NumeralParadigmGenerator.generateNumeralParadigm()
 
-        return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, syntaxLogic)
+        return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, numeralParadigm, syntaxLogic)
     }
 
     private fun generateCategoryData(

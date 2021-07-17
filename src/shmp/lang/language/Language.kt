@@ -10,43 +10,39 @@ import shmp.lang.language.phonology.prosody.StressType
 
 
 class Language(
-    internal val lexis: Lexis,
-    internal val phonemeContainer: PhonemeContainer,
-    internal val stressType: StressType,
-    internal val numeralSystemBase: NumeralSystemBase,
-    internal val restrictionsParadigm: RestrictionsParadigm,
-    internal val derivationParadigm: DerivationParadigm,
-    internal val changeParadigm: ChangeParadigm
+    val lexis: Lexis,
+    val phonemeContainer: PhonemeContainer,
+    val stressType: StressType,
+    val restrictionsParadigm: RestrictionsParadigm,
+    val derivationParadigm: DerivationParadigm,
+    val changeParadigm: ChangeParadigm
 ) {
-    override fun toString(): String {
-        return """phonemes:
-         |${phonemeContainer}
-         |Syllable structure: ${lexis.words[0].syllableTemplate}
-         |Stress pattern: $stressType
-         |Numeral system base: $numeralSystemBase
-         |$lexis
-         |words:
-         |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
-         |
-         |$changeParadigm
-         |
-         |
-         |Change paradigms elaborated:
-         |
-         |Personal pronoun:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
-         |
-         |Deixis pronoun:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
-         |
-         |Noun:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
-         |
-         |Verb:
-         |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
-         |
-         |
-         |$derivationParadigm
-         |""".trimMargin()
-    }
+    override fun toString() = """phonemes:
+     |${phonemeContainer}
+     |Syllable structure: ${lexis.words[0].syllableTemplate}
+     |Stress pattern: $stressType
+     |$lexis
+     |words:
+     |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
+     |
+     |$changeParadigm
+     |
+     |
+     |Change paradigms elaborated:
+     |
+     |Personal pronoun:
+     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
+     |
+     |Deixis pronoun:
+     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
+     |
+     |Noun:
+     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
+     |
+     |Verb:
+     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
+     |
+     |
+     |$derivationParadigm
+     |""".trimMargin()
 }
