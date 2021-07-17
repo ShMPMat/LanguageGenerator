@@ -11,7 +11,9 @@ class ChangeParadigm(
     val syntaxLogic: SyntaxLogic
 ) {
     override fun toString() = """
-        |Word order: 
+        |$numeralParadigm
+        |
+        |Word order:
         |$wordOrder
         |
         |$syntaxParadigm

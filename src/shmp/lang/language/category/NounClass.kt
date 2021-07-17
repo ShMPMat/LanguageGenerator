@@ -56,7 +56,7 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
         )
         Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Nominal, nominals), 95.0))
         Adverb -> listOf()
-        Numeral -> listOf()
+        Numeral -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Nominal, nominals), 95.0))
         Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 90.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
@@ -100,6 +100,7 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
         Noun -> true
         Verb -> 0.95.testProbability()
         Adjective -> 0.9.testProbability()
+        Numeral -> 0.9.testProbability()
         Article -> 0.9.testProbability()
         PersonalPronoun -> 0.8.testProbability()
         DeixisPronoun -> 0.8.testProbability()

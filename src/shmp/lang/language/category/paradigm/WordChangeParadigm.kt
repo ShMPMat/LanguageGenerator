@@ -38,7 +38,9 @@ class WordChangeParadigm(
 
         val newWs = ws.words.flatMapIndexed { j, w ->
             if (i != j && w.semanticsCore.speechPart.type != SpeechPart.Particle) {
-                val newCv = if (w.semanticsCore.speechPart.subtype == adnominalSubtype)
+                val isAdnominal = w.semanticsCore.speechPart.subtype == adnominalSubtype
+                val isArticle = w.semanticsCore.speechPart.type == SpeechPart.Article
+                val newCv = if (isAdnominal || isArticle)
                     ws[i].categoryValues.map {
                         SourcedCategoryValue(
                             it.categoryValue,

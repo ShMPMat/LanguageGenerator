@@ -56,7 +56,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         Verb -> listOf()
         Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 80.0))
         Adverb -> listOf()
-        Numeral -> listOf()
+        Numeral -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 80.0))
         Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 1.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
@@ -110,6 +110,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         Noun -> true
         Adjective -> 0.95.testProbability()
         Article -> 0.9.testProbability()
+        Numeral -> 0.9.testProbability()
         PersonalPronoun -> 0.8.testProbability()
         DeixisPronoun -> 0.8.testProbability()
         else -> true

@@ -50,7 +50,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         )
         Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))
         Adverb -> listOf()
-        Numeral -> listOf()
+        Numeral -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))
         Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 10.0))
         PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
         DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
@@ -93,6 +93,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         Noun -> true
         Verb -> 0.8.testProbability()
         Adjective -> 0.8.testProbability()
+        Numeral -> 0.8.testProbability()
         Article -> 0.7.testProbability()
         PersonalPronoun -> 0.4.testProbability()
         DeixisPronoun -> 0.4.testProbability()
