@@ -30,7 +30,7 @@ data class Connotation(var name: String, val strength: Double, var isGlobal: Boo
     override fun toString() = "$name:$strength"
 }
 
-data class Connotations(val values: Set<Connotation>) {
+data class Connotations(val values: Set<Connotation> = setOf()) {
     constructor(values: List<Connotation>): this(values.toSet())
 
     operator fun plus(that: Connotations): Connotations {

@@ -35,7 +35,7 @@ class TransitiveVerbSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
@@ -57,7 +57,7 @@ class IntransitiveVerbSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
@@ -87,7 +87,7 @@ class CopulaSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == CopulaSentenceType.NegatedCopulaClause)

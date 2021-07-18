@@ -55,7 +55,7 @@ class WordChangeParadigm(
         return WordSequence(newWs) to i
     }
 
-    private fun getDefaultState(word: Word): List<SourcedCategoryValue> {
+    internal fun getDefaultState(word: Word): List<SourcedCategoryValue> {
         val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 

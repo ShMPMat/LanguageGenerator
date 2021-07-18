@@ -43,7 +43,7 @@ private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arr
             }
         }
 
-    val prefixWithArrows = lineUp(prefix.lines())
+    val prefixWithArrows = prefix.lines().lineUp()
         .joinToString("\n") { "$it ->$arrowLabel-> " }
         .lines()
 

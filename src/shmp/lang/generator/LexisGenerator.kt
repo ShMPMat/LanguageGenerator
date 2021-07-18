@@ -99,8 +99,11 @@ class LexisGenerator(
     internal fun generateLexis(
         wordAmount: Int,
         categoryPool: CategoryPool,
-        syntaxParadigm: SyntaxParadigm
+        syntaxParadigm: SyntaxParadigm,
+        additionalWords: List<SemanticsCoreTemplate>
     ): Lexis {
+        wordBase.addWords(additionalWords)
+
         val cores = randomSublist(
             wordBase.baseWords,
             random,

@@ -15,10 +15,10 @@ import kotlin.random.Random
 data class SemanticsCoreTemplate(
     val word: Meaning,
     val speechPart: SpeechPart,
-    val connotations: Connotations,
-    val tagClusters: Set<SemanticsTagCluster>,
-    val derivationClusterTemplate: DerivationClusterTemplate,
-    override val probability: Double
+    val connotations: Connotations = Connotations(),
+    val tagClusters: Set<SemanticsTagCluster> = setOf(),
+    val derivationClusterTemplate: DerivationClusterTemplate = DerivationClusterTemplate(),
+    override val probability: Double = 1.0
 ) : SampleSpaceObject
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>): SemanticsCore {

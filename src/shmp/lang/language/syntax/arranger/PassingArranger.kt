@@ -7,9 +7,8 @@ import kotlin.random.Random
 
 
 object PassingArranger: Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
-        return WordSequence(clauses.flatMap { it.second.words })
-    }
+    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random) =
+        WordSequence(clauses.flatMap { it.second.words })
 }
 
 

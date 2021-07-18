@@ -153,10 +153,10 @@ ask                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@forum_(place):0.05                               hear&need:0.1
                                       *help:0.1*need:0.7*smart:0.1*understand:0.1*learn:0.4*think:0.1*action:0.95*abstract:0.3
 eat                Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@market:0.08              VNAbstract@life:0.5,consumption:0.5
+                                      VNPlace@market:0.08              VNAbstract@consumption:0.5
                                       *eat:1.0*life:0.4*action:1.0
 cook               Verb        1.0    T|trans:100,intrans:1
-                                      VNPlace@market:0.08              VNAbstract@life:0.5,consumption:0.5
+                                      VNPlace@market:0.08              VNAbstract@consumption:0.5
                                       *create:0.8*eat:0.3*life:0.1*action:1.0
 know               Verb        1.0    T|trans:100,intrans:1
                                       smart:0.9*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1

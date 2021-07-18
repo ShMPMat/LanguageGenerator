@@ -13,16 +13,15 @@ import shmp.lang.language.syntax.clause.translation.CopulaSentenceType.*
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType.*
 
 
-class SentenceNode(
+data class SentenceNode(
     val word: Word,
-    categoryValues: List<CategoryValue>,
+    val _categoryValues: MutableList<CategoryValue>,
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false
 ) {
-    private val _categoryValues = categoryValues.toMutableList()
     val categoryValues: MutableList<CategoryValue>
         get() = _categoryValues
 

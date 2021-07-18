@@ -24,7 +24,7 @@ class ObliquePredicatePossessionClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(PassingArranger, SyntaxRelation.QuestionMarker)
+                            .wordToNode(SyntaxRelation.QuestionMarker)
                     )
             arranger = RelationArranger(
                 SubstitutingOrder(

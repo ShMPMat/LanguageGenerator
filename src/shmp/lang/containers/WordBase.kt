@@ -67,8 +67,11 @@ class WordBase(private val supplementPath: String) {
 
         baseWords.addAll(wordsAndDataMap.values.map { it.template }.sortedBy { it.word })
         allWords.addAll(baseWords)
+    }
 
-
+    fun addWords(words: List<SemanticsCoreTemplate>) {
+        baseWords.addAll(words)
+        allWords.addAll(words)
     }
 
     private fun parseConnotations(connotations: List<String>) = Connotations(

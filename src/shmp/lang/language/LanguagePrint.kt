@@ -5,21 +5,57 @@ import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
+import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.arranger.PassingArranger
+import shmp.lang.language.syntax.clause.realization.wordToNode
+import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
 import shmp.lang.utils.listCartesianProduct
+import kotlin.random.Random
 
 
-fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: Boolean = false) =
+fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
+    NumeralSystemBase.Restricted3 -> printNumeralsRange(1..3)
+    NumeralSystemBase.Restricted5 -> printNumeralsRange(1..5)
+    NumeralSystemBase.Restricted20 -> printNumeralsRange(1..20)
+}
+
+private fun Language.printNumeralsRange(range: IntRange) = range
+    .map { changeParadigm.numeralParadigm.constructNumeral(it, lexis) }
+    .map { n ->
+        changeParadigm.wordChangeParadigm.getDefaultState(n.word)
+            .groupBy { it.source }
+            .forEach { (s, vs) ->
+                val pureVs = vs.map { it.categoryValue }
+
+                when(s) {
+                    CategorySource.SelfStated -> n.insertCategoryValues(pureVs)
+                    is CategorySource.RelationGranted -> {
+                        val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
+                        val dummyNode = dummyWord.wordToNode(s.relation, PassingArranger, pureVs)
+
+                        dummyNode.setRelationChild(SyntaxRelation.AdNumeral, n)
+                    }
+                }
+            }
+        SentenceClauseTranslator(changeParadigm).applyNode(n, Random(0))
+    }
+    .map { listOf(it.toString(), " - " + it.getClauseInfoPrinted()) }
+    .lineUpAll()
+    .joinToString("\n")
+
+
+fun Language.getParadigmPrinted(word: Word, printOptionalCategories: Boolean = false) =
     "Base - $word\n" +
             listCartesianProduct(
-                language.changeParadigm.wordChangeParadigm
+                changeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(word.semanticsCore.speechPart)
                     .categories
                     .filter { if (printOptionalCategories) true else it.compulsoryData.isCompulsory }
                     .filter { !it.category.staticSpeechParts.contains(word.semanticsCore.speechPart.type) }
                     .map { it.actualSourcedValues }
             )
-                .map { language.changeParadigm.wordChangeParadigm.apply(word, it) to it }
+                .map { changeParadigm.wordChangeParadigm.apply(word, it) to it }
                 .map { (ws, vs) ->
                     val categoryValues = vs.map { it.categoryValue }
                     val relevantCategories = vs
@@ -35,7 +71,7 @@ fun getParadigmPrinted(language: Language, word: Word, printOptionalCategories: 
 fun getClauseAndInfoStr(wordSequence: WordSequence): String {
     val (words, infos) = wordSequence.words
         .map { it.toString() }
-        .zip(getClauseInfoPrinted(wordSequence).split(" "))
+        .zip(wordSequence.getClauseInfoPrinted().split(" "))
         .map { (s1, s2) -> lineUp(s1, s2) }
         .map { (s1, s2) -> s1 to s2 }
         .unzip()
@@ -43,24 +79,23 @@ fun getClauseAndInfoStr(wordSequence: WordSequence): String {
             infos.joinToString(" ")
 }
 
-fun lineUp(ss: List<String>): List<String> {
-    val max = ss
-        .map { it.length }
+fun List<String>.lineUp(): List<String> {
+    val max = map { it.length }
         .maxOrNull()
         ?: throw GeneratorException("String list is empty")
-    return ss.map { it + " ".repeat(max - it.length) }
+    return map { it + " ".repeat(max - it.length) }
 }
 
-fun lineUp(vararg ss: String) = lineUp(ss.toList())
+fun lineUp(vararg ss: String) = ss.toList().lineUp()
 
 fun List<List<String>>.lineUpAll(): List<String> {
     if (isEmpty())
         return emptyList()
 
     return if (maxOf { it.size } == 1)
-        lineUp(map { if (it.isEmpty()) "" else it[0] })
+        map { if (it.isEmpty()) "" else it[0] }.lineUp()
     else {
-        val linedPrefixes = lineUp(map { it.first() })
+        val linedPrefixes = map { it.first() }.lineUp()
 
         map { if (it.isEmpty()) listOf("") else it.drop(1) }
             .lineUpAll()
@@ -68,8 +103,7 @@ fun List<List<String>>.lineUpAll(): List<String> {
     }
 }
 
-fun getClauseInfoPrinted(wordSequence: WordSequence) =
-    wordSequence.words.joinToString(" ") { getWordInfoPrinted(it) }
+fun WordSequence.getClauseInfoPrinted() = words.joinToString(" ") { getWordInfoPrinted(it) }
 
 fun getWordInfoPrinted(word: Word): String {
     val semantics = getSemanticsPrinted(word)

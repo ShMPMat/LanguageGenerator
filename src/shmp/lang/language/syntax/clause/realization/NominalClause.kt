@@ -39,8 +39,8 @@ class NominalClause(
                 }
             }
             .wordToNode(
-                RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
                 SyntaxRelation.Nominal,
+                RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
                 additionalCategories
             )
 

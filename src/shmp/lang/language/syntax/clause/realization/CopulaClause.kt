@@ -1,7 +1,6 @@
 package shmp.lang.language.syntax.clause.realization
 
 import shmp.lang.language.Language
-import shmp.lang.language.category.Case
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
@@ -29,7 +28,7 @@ class VerbalCopulaClause(
 
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .wordToNode(UndefinedArranger, SyntaxRelation.Verb)
+            .wordToNode(SyntaxRelation.Verb, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             insertCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
@@ -87,8 +86,8 @@ class ParticleCopulaClause(
             )
         }
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
-            PassingSingletonArranger,
-            SyntaxRelation.CopulaParticle
+            SyntaxRelation.CopulaParticle,
+            PassingSingletonArranger
         )
 
         subj.setRelationChild(SyntaxRelation.CopulaParticle, particle)

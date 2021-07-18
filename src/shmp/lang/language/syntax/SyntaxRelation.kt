@@ -17,6 +17,7 @@ enum class SyntaxRelation(val shortName: String) {
 
     Nominal("NOMINAL"),
     Definition("DEFINITION"),
+    AdNumeral("NUM"),
 
     Possessed("POSSESED"),
     Possessor("POSSESOR");

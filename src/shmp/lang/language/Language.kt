@@ -31,17 +31,19 @@ class Language(
      |Change paradigms elaborated:
      |
      |Personal pronoun:
-     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
+     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
      |
      |Deixis pronoun:
-     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
+     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
      |
      |Noun:
-     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
+     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
      |
      |Verb:
-     |${getParadigmPrinted(this, lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
+     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
      |
+     |Numerals:
+     |${getNumeralsPrinted()}
      |
      |$derivationParadigm
      |""".trimMargin()
