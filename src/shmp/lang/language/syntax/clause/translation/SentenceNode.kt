@@ -20,7 +20,8 @@ data class SentenceNode(
     var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
-    var isDropped: Boolean = false
+    var isDropped: Boolean = false,
+    var parentPropagation: Boolean = false
 ) {
     val categoryValues: MutableList<CategoryValue>
         get() = _categoryValues
@@ -48,8 +49,13 @@ data class SentenceNode(
         child.setBackLink(this)
     }
 
-    private fun setBackLink(sentenceNode: SentenceNode) {
+    private fun setBackLink(sentenceNode: SentenceNode, propagate: Boolean = parentPropagation) {
         _relation[sentenceNode.typeForChildren] = sentenceNode
+
+        if (propagate)
+            _children.forEach {
+                it.second.setBackLink(sentenceNode, true)
+            }
     }
 
     fun extractValues(references: List<SourcedCategory>) =

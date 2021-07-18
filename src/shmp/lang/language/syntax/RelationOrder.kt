@@ -45,9 +45,7 @@ class NestedOrder(
     override fun toString() = "Order by $innerOrder as $nestedRelation and then order by $outerOrder"
 }
 
-class StaticOrder(
-    val order: List<SyntaxRelation>
-): RelationOrder {
+class StaticOrder(val order: List<SyntaxRelation>): RelationOrder {
     override val references = listOf(order.toSampleSpaceObject(1.0))
 
     override fun toString() = "Order of " + order.joinToString(", ")

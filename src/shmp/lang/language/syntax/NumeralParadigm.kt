@@ -13,20 +13,11 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
         if (n < 1)
             throw SyntaxException("No numeral for $n")
 
-//        return when (base) {
-//            NumeralSystemBase.Restricted3 -> extractRestricted(n, lexis, 3)
-//            NumeralSystemBase.Restricted5 -> extractRestricted(n, lexis, 5)
-//            NumeralSystemBase.Restricted20 -> extractRestricted(n, lexis, 20)
-//        }
-        return extract(n, lexis)
+        return extract(n, lexis).apply { parentPropagation = true }
     }
 
-//    private fun extractRestricted(n: Int, lexis: Lexis, max: Int) =
-//        if (n > max) lexis.getWord(manyMeaning).wordToNode(SyntaxRelation.AdNumeral)
-//        else lexis.getWord(n.toString()).wordToNode(SyntaxRelation.AdNumeral)
-
     private fun extract(n: Int, lexis: Lexis): SentenceNode =
-        when(val type = ranges.first { (r) -> r.contains(n) }.second) {
+        when (val type = ranges.first { (r) -> r.contains(n) }.second) {
             NumeralConstructionType.SingleWord -> lexis.getWord(n.toString()).wordToNode(SyntaxRelation.AdNumeral)
             is NumeralConstructionType.SpecialWord -> lexis.getWord(type.meaning).wordToNode(SyntaxRelation.AdNumeral)
             is NumeralConstructionType.AddWord -> {
@@ -42,15 +33,11 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
             }
         }
 
-    private fun constructBaseNode(n: Int, baseNumber: Int, lexis: Lexis): SentenceNode {
-        if (n % baseNumber != 0)
-            throw SyntaxException("$n isn't a base")
-
-        val mulNumber = n / baseNumber
-
+    private fun constructBaseNode(mulNumber: Int, baseNumber: Int, lexis: Lexis): SentenceNode {
         val baseNode = extract(baseNumber, lexis)
         val mulNode = extract(mulNumber, lexis)
-        baseNode.addStrayChild(SyntaxRelation.MulNumeral, mulNode)
+        if (mulNumber != 1)
+            baseNode.addStrayChild(SyntaxRelation.MulNumeral, mulNode)
 
         return baseNode
     }

@@ -6,6 +6,12 @@ import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.syntax.NumeralConstructionType
 import shmp.lang.language.syntax.NumeralParadigm
+import shmp.lang.language.syntax.StaticOrder
+import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.SyntaxRelation.*
+import shmp.lang.language.syntax.arranger.RelationArranger
+import shmp.random.singleton.chanceOf
+import shmp.random.singleton.otherwise
 import shmp.random.singleton.randomElement
 
 
@@ -32,8 +38,20 @@ class NumeralParadigmGenerator {
                 ranges[6..Int.MAX_VALUE] = NumeralConstructionType.SpecialWord(manyMeaning)
             }
             NumeralSystemBase.Restricted20 -> {
-                numeralMeanings += (1..20).map { it.toString() }
-                ranges[1..20] = NumeralConstructionType.SingleWord
+                0.5.chanceOf {
+                    numeralMeanings += (1..20).map { it.toString() }
+                    ranges[1..20] = NumeralConstructionType.SingleWord
+                } otherwise {
+                    numeralMeanings += (1..10).map { it.toString() }
+                    numeralMeanings += "20"
+                    ranges[1..10] = NumeralConstructionType.SingleWord
+                    ranges[20..20] = NumeralConstructionType.SingleWord
+                    ranges[11..19] = NumeralConstructionType.AddWord(
+                        RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
+                        10
+                    )
+                }
+
                 ranges[21..Int.MAX_VALUE] = NumeralConstructionType.SpecialWord(manyMeaning)
             }
         }
