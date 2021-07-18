@@ -15,12 +15,17 @@ import kotlin.random.Random
 
 
 fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
+    NumeralSystemBase.Decimal -> {
+        printNumerals((1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000))
+    }
     NumeralSystemBase.Restricted3 -> printNumeralsRange(1..4)
     NumeralSystemBase.Restricted5 -> printNumeralsRange(1..6)
     NumeralSystemBase.Restricted20 -> printNumeralsRange(1..21)
 }
 
-private fun Language.printNumeralsRange(range: IntRange) = range
+private fun Language.printNumeralsRange(range: IntRange) = printNumerals(range.toList())
+
+private fun Language.printNumerals(numbers: List<Int>) = numbers
     .map { changeParadigm.numeralParadigm.constructNumeral(it, lexis) }
     .map { n ->
         changeParadigm.wordChangeParadigm.getDefaultState(n.word)

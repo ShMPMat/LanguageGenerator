@@ -25,8 +25,10 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
                 val sumNumber = n % type.baseNumber
 
                 val baseNode = constructBaseNode(baseNumber, type.baseNumber, lexis)
-                val sumNode = extract(sumNumber, lexis)
-                baseNode.addStrayChild(SyntaxRelation.SumNumeral, sumNode)
+                if (sumNumber != 0) {
+                    val sumNode = extract(sumNumber, lexis)
+                    baseNode.addStrayChild(SyntaxRelation.SumNumeral, sumNode)
+                }
                 baseNode.arranger = type.arranger
 
                 baseNode
