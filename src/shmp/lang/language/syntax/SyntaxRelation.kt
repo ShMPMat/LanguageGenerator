@@ -18,6 +18,8 @@ enum class SyntaxRelation(val shortName: String) {
     Nominal("NOMINAL"),
     Definition("DEFINITION"),
     AdNumeral("NUM"),
+    SumNumeral("SUM.NUM"),
+    MulNumeral("MUL.NUM"),
 
     Possessed("POSSESED"),
     Possessor("POSSESOR");

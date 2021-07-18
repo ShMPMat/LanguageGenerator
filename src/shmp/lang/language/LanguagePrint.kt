@@ -15,9 +15,9 @@ import kotlin.random.Random
 
 
 fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
-    NumeralSystemBase.Restricted3 -> printNumeralsRange(1..3)
-    NumeralSystemBase.Restricted5 -> printNumeralsRange(1..5)
-    NumeralSystemBase.Restricted20 -> printNumeralsRange(1..20)
+    NumeralSystemBase.Restricted3 -> printNumeralsRange(1..4)
+    NumeralSystemBase.Restricted5 -> printNumeralsRange(1..6)
+    NumeralSystemBase.Restricted20 -> printNumeralsRange(1..21)
 }
 
 private fun Language.printNumeralsRange(range: IntRange) = range
