@@ -15,9 +15,15 @@ import kotlin.random.Random
 
 
 fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
-    NumeralSystemBase.Decimal -> {
-        printNumerals((1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000))
-    }
+    NumeralSystemBase.Decimal -> printNumerals(
+        (1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000)
+    )
+    NumeralSystemBase.Vigesimal -> printNumerals(
+        (1..421).toList() + listOf(800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000)
+    )
+    NumeralSystemBase.SixtyBased -> printNumerals(
+        (1..100).toList() + listOf(200, 300, 400, 500, 600, 1000, 3600, 36000, 40000)
+    )
     NumeralSystemBase.Restricted3 -> printNumeralsRange(1..4)
     NumeralSystemBase.Restricted5 -> printNumeralsRange(1..6)
     NumeralSystemBase.Restricted10 -> printNumeralsRange(1..11)
@@ -27,26 +33,26 @@ fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
 private fun Language.printNumeralsRange(range: IntRange) = printNumerals(range.toList())
 
 private fun Language.printNumerals(numbers: List<Int>) = numbers
-    .map { changeParadigm.numeralParadigm.constructNumeral(it, lexis) }
-    .map { n ->
-        changeParadigm.wordChangeParadigm.getDefaultState(n.word)
+    .map { it to changeParadigm.numeralParadigm.constructNumeral(it, lexis) }
+    .map { (num,node) ->
+        changeParadigm.wordChangeParadigm.getDefaultState(node.word)
             .groupBy { it.source }
             .forEach { (s, vs) ->
                 val pureVs = vs.map { it.categoryValue }
 
                 when(s) {
-                    CategorySource.SelfStated -> n.insertCategoryValues(pureVs)
+                    CategorySource.SelfStated -> node.insertCategoryValues(pureVs)
                     is CategorySource.RelationGranted -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
                         val dummyNode = dummyWord.wordToNode(s.relation, PassingArranger, pureVs)
 
-                        dummyNode.setRelationChild(SyntaxRelation.AdNumeral, n)
+                        dummyNode.setRelationChild(SyntaxRelation.AdNumeral, node)
                     }
                 }
             }
-        SentenceClauseTranslator(changeParadigm).applyNode(n, Random(0))
+        num to SentenceClauseTranslator(changeParadigm).applyNode(node, Random(0))
     }
-    .map { listOf(it.toString(), " - " + it.getClauseInfoPrinted()) }
+    .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.getClauseInfoPrinted()) }
     .lineUpAll()
     .joinToString("\n")
 

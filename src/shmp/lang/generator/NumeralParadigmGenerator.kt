@@ -28,34 +28,27 @@ class NumeralParadigmGenerator {
     fun generateNumeralParadigm(): NumeralParadigm {
         val base = NumeralSystemBase.values().randomElement()
         when (base) {
-            NumeralSystemBase.Decimal -> {
-//                generateTill20()
-//                numeralMeanings += listOf("100", "1000")
-//
-//                ranges[100..100] = NumeralConstructionType.SingleWord
-//                ranges[1000..1000] = NumeralConstructionType.SingleWord
-//                ranges[21..99] = NumeralConstructionType.AddWord(
-//                    RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-//                    10
-//                )
-//                ranges[101..999] = NumeralConstructionType.AddWord(
-//                    RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-//                    100
-//                )
-//                ranges[1001..9999] = NumeralConstructionType.AddWord(
-//                    RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-//                    1000
-//                )
-//
-//                threshold = 10000
-                generateBasedSystem(
-                    10,
-                    1.toSampleSpaceObject(1.0),
-                    2.toSampleSpaceObject(1.0),
-                    3.toSampleSpaceObject(1.0),
-                    4.toSampleSpaceObject(0.5)
-                )
-            }
+            NumeralSystemBase.Decimal -> generateBasedSystem(
+                10,
+                1.toSampleSpaceObject(1.0),
+                2.toSampleSpaceObject(1.0),
+                3.toSampleSpaceObject(1.0),
+                4.toSampleSpaceObject(0.5)
+            )
+            NumeralSystemBase.Vigesimal -> generateBasedSystem(
+                20,
+                1.toSampleSpaceObject(1.0),
+                2.toSampleSpaceObject(1.0),
+                3.toSampleSpaceObject(0.75),
+                4.toSampleSpaceObject(0.25)
+            )
+            NumeralSystemBase.SixtyBased -> generateBasedSystem(
+                60,
+                1.toSampleSpaceObject(1.0),
+                2.toSampleSpaceObject(0.9),
+                3.toSampleSpaceObject(0.70),
+                4.toSampleSpaceObject(0.15)
+            )
             NumeralSystemBase.Restricted3 -> generateRestricted(3)
             NumeralSystemBase.Restricted5 -> generateRestricted(5)
             NumeralSystemBase.Restricted10 -> generateRestricted(10)
@@ -75,23 +68,25 @@ class NumeralParadigmGenerator {
     private fun generateBasedSystem(base: Int, vararg powers: GenericSSO<Int>) {
         generateTill20()
 
-        val actualPowers = powers.takeWhile { it.probability.testProbability() }
-            .map { it.value }
+        val actualNumbers = powers.takeWhile { it.probability.testProbability() }
+            .map { base.toDouble().pow(it.value).toInt() }
 
-        for ((i, powerSSO) in actualPowers.withIndex()) {
-            val n = base.toDouble().pow(powerSSO).toInt()
+        val (firstBorder, firstBase) = if (actualNumbers[0] <= 20)
+            actualNumbers[1] to actualNumbers[0]
+        else
+            actualNumbers[0] to 20
+        ranges[21 until firstBorder] = NumeralConstructionType.AddWord(
+            RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
+            firstBase
+        )
 
-            val nextN = if (i != actualPowers.size - 1)
-                base.toDouble().pow(actualPowers[i + 1]).toInt()
-            else n * n
-
-            if (n <= 20) {
-                ranges[21 until nextN] = NumeralConstructionType.AddWord(
-                    RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-                    n
-                )
+        for ((i, n) in actualNumbers.withIndex()) {
+            if (n <= 20)
                 continue
-            }
+
+            val nextN = if (i != actualNumbers.size - 1)
+                actualNumbers[i + 1]
+            else n * n
 
             numeralMeanings += n.toString()
             ranges[n..n] = NumeralConstructionType.SingleWord
