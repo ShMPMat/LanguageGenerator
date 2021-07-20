@@ -20,6 +20,7 @@ fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
     }
     NumeralSystemBase.Restricted3 -> printNumeralsRange(1..4)
     NumeralSystemBase.Restricted5 -> printNumeralsRange(1..6)
+    NumeralSystemBase.Restricted10 -> printNumeralsRange(1..11)
     NumeralSystemBase.Restricted20 -> printNumeralsRange(1..21)
 }
 

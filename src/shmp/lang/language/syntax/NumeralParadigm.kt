@@ -3,6 +3,7 @@ package shmp.lang.language.syntax
 import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.lexis.Lexis
 import shmp.lang.language.lexis.Meaning
+import shmp.lang.language.syntax.NumeralConstructionType.*
 import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.clause.realization.wordToNode
 import shmp.lang.language.syntax.clause.translation.SentenceNode
@@ -17,10 +18,10 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
     }
 
     private fun extract(n: Int, lexis: Lexis): SentenceNode =
-        when (val type = ranges.first { (r) -> r.contains(n) }.second) {
-            NumeralConstructionType.SingleWord -> lexis.getWord(n.toString()).wordToNode(SyntaxRelation.AdNumeral)
-            is NumeralConstructionType.SpecialWord -> lexis.getWord(type.meaning).wordToNode(SyntaxRelation.AdNumeral)
-            is NumeralConstructionType.AddWord -> {
+        when (val type = getType(n)) {
+            SingleWord -> lexis.getWord(n.toString()).wordToNode(SyntaxRelation.AdNumeral)
+            is SpecialWord -> lexis.getWord(type.meaning).wordToNode(SyntaxRelation.AdNumeral)
+            is AddWord -> {
                 val baseNumber = n / type.baseNumber
                 val sumNumber = n % type.baseNumber
 
@@ -36,6 +37,10 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
         }
 
     private fun constructBaseNode(mulNumber: Int, baseNumber: Int, lexis: Lexis): SentenceNode {
+        val type = getType(mulNumber * baseNumber)
+        if (type == SingleWord || type is SpecialWord)
+            return extract(mulNumber * baseNumber, lexis)
+
         val baseNode = extract(baseNumber, lexis)
         val mulNode = extract(mulNumber, lexis)
         if (mulNumber != 1)
@@ -43,6 +48,8 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
 
         return baseNode
     }
+
+    private fun getType(n: Int) = ranges.first { (r) -> r.contains(n) }.second
 
     override fun toString() = """
          |Numeral system base: $base
