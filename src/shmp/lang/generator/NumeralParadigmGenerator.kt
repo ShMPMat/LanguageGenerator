@@ -18,6 +18,7 @@ import kotlin.math.pow
 class NumeralParadigmGenerator {
     private val manyMeaning: Meaning = "Many"
     private val uniqueTensChance = 0.5
+    private val generic20Chance = 0.5
 
     private val numeralMeanings = mutableSetOf<String>()
     private val ranges = mutableMapOf<IntRange, NumeralConstructionType>()
@@ -38,10 +39,7 @@ class NumeralParadigmGenerator {
             NumeralSystemBase.Restricted3 -> generateRestricted(3)
             NumeralSystemBase.Restricted5 -> generateRestricted(5)
             NumeralSystemBase.Restricted10 -> generateRestricted(10)
-            NumeralSystemBase.Restricted20 -> {
-                generateTill20()
-                threshold = 21
-            }
+            NumeralSystemBase.Restricted20 -> generateTill20(false)
         }
         numeralMeanings += manyMeaning
         ranges[threshold..Int.MAX_VALUE] = NumeralConstructionType.SpecialWord(manyMeaning)
@@ -62,17 +60,13 @@ class NumeralParadigmGenerator {
         val actualCap = cap ?: actualNumbers.last() * actualNumbers.last()
 
         if (!hasPrefix) {
-            generateTill20()
+            generateTill20(true)
 
-            val (firstBorder, firstBase) = if (actualNumbers[0] <= 20)
+            val (border, firstBase) = if (actualNumbers[0] <= 20)
                 (if (actualNumbers.size > 1) actualNumbers[1] else actualCap) to actualNumbers[0]
             else
                 actualNumbers[0] to 20
-            ranges[21 until firstBorder] = NumeralConstructionType.AddWord(
-                RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-                firstBase,
-                generateOneProb()
-            )
+            ranges[21 until border] = NumeralConstructionType.AddWord(generateArranger(), firstBase, generateOneProb())
         }
 
         for ((i, n) in actualNumbers.withIndex()) {
@@ -83,8 +77,7 @@ class NumeralParadigmGenerator {
                 actualNumbers[i + 1]
             else actualCap
 
-            numeralMeanings += n.toString()
-            ranges[n..n] = NumeralConstructionType.SingleWord
+            (n..n).addUniqueRange()
             ranges[n + 1 until nextN] = NumeralConstructionType.AddWord(generateArranger(), n, generateOneProb())
             threshold = nextN
         }
@@ -96,21 +89,29 @@ class NumeralParadigmGenerator {
         threshold = max + 1
     }
 
-    private fun generateTill20() {
+    private fun generateTill20(generic20Possibility: Boolean) {
+        val isGeneric20 = generic20Possibility && generic20Chance.testProbability()
         uniqueTensChance.chanceOf {
-            numeralMeanings += (1..20).map { it.toString() }
-            ranges[1..20] = NumeralConstructionType.SingleWord
+            if (isGeneric20) {
+                (1..19).addUniqueRange()
+                ranges[20..20] = NumeralConstructionType.AddWord(generateArranger(), 10, generateOneProb())
+            } else (1..20).addUniqueRange()
         } otherwise {
-            numeralMeanings += (1..10).map { it.toString() }
-            numeralMeanings += "20"
-            ranges[1..10] = NumeralConstructionType.SingleWord
-            ranges[20..20] = NumeralConstructionType.SingleWord
-            ranges[11..19] = NumeralConstructionType.AddWord(
-                RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-                10,
-                generateOneProb()
-            )
+            (1..10).addUniqueRange()
+
+            if (isGeneric20)
+                ranges[11..20] = NumeralConstructionType.AddWord(generateArranger(), 10, generateOneProb())
+            else {
+                (20..20).addUniqueRange()
+                ranges[11..19] = NumeralConstructionType.AddWord(generateArranger(), 10, generateOneProb())
+            }
         }
+        threshold = 21
+    }
+
+    private fun IntRange.addUniqueRange() {
+        numeralMeanings += map { it.toString() }
+        ranges[this] = NumeralConstructionType.SingleWord
     }
 
     private fun IntRange.zipSSO(vararg ps: Double) = zip(ps.toList())

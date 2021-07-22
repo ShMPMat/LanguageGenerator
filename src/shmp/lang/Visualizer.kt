@@ -6,7 +6,9 @@ import shmp.lang.language.Language
 import shmp.lang.language.category.DeixisValue
 import shmp.lang.language.category.InclusivityValue
 import shmp.lang.language.category.NounClassValue
+import shmp.lang.language.category.NounClassValue.*
 import shmp.lang.language.category.PersonValue
+import shmp.lang.language.category.PersonValue.*
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.clause.description.*
@@ -51,13 +53,13 @@ class Visualizer(val language: Language) {
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
-            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(1), DeixisValue.Proximal, null)
+            ActorValue(First, Female, AmountValue(1), DeixisValue.Proximal, null)
         )
         val fourthSubj = PronounDescription(
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
-            ActorValue(PersonValue.First, NounClassValue.Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
+            ActorValue(First, Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
         )
         val firstObj = NominalDescription(
             "time",
@@ -68,7 +70,7 @@ class Visualizer(val language: Language) {
             "_deixis_pronoun",
             listOf(),
             ActorType.Patient,
-            ActorValue(PersonValue.Third, NounClassValue.Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null)
+            ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null)
         )
         val thirdObj = NominalDescription(
             "hand",
@@ -163,9 +165,11 @@ class Visualizer(val language: Language) {
         print(
             """
         |Synonyms:
-        |${synonyms.joinToString("\n") { words -> 
-                "${words.joinToString { "$it (${it.semanticsCore.connotations})" }} - ${words[0].semanticsCore}" 
-            }}
+        |${
+                synonyms.joinToString("\n") { words ->
+                    "${words.joinToString { "$it (${it.semanticsCore.connotations})" }} - ${words[0].semanticsCore}"
+                }
+            }
         |
         |Lexis size - ${language.lexis.size} words
         |
