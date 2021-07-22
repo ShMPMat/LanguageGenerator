@@ -1,6 +1,7 @@
 package shmp.lang.language.syntax
 
 import shmp.lang.language.category.paradigm.WordChangeParadigm
+import shmp.lang.language.syntax.numeral.NumeralParadigm
 
 
 class ChangeParadigm(

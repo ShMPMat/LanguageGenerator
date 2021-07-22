@@ -17,7 +17,6 @@ import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.syntax.ChangeParadigm
-import shmp.lang.language.syntax.NumeralParadigm
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement

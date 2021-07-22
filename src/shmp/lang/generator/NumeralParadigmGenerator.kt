@@ -4,8 +4,8 @@ import shmp.lang.containers.SemanticsCoreTemplate
 import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.syntax.NumeralConstructionType
-import shmp.lang.language.syntax.NumeralParadigm
+import shmp.lang.language.syntax.numeral.NumeralConstructionType
+import shmp.lang.language.syntax.numeral.NumeralParadigm
 import shmp.lang.language.syntax.StaticOrder
 import shmp.lang.language.syntax.SyntaxRelation.*
 import shmp.lang.language.syntax.arranger.RelationArranger
@@ -70,7 +70,8 @@ class NumeralParadigmGenerator {
                 actualNumbers[0] to 20
             ranges[21 until firstBorder] = NumeralConstructionType.AddWord(
                 RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-                firstBase
+                firstBase,
+                generateOneProb()
             )
         }
 
@@ -84,8 +85,7 @@ class NumeralParadigmGenerator {
 
             numeralMeanings += n.toString()
             ranges[n..n] = NumeralConstructionType.SingleWord
-            val arranger = RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled()))
-            ranges[n + 1 until nextN] = NumeralConstructionType.AddWord(arranger, n)
+            ranges[n + 1 until nextN] = NumeralConstructionType.AddWord(generateArranger(), n, generateOneProb())
             threshold = nextN
         }
     }
@@ -107,11 +107,27 @@ class NumeralParadigmGenerator {
             ranges[20..20] = NumeralConstructionType.SingleWord
             ranges[11..19] = NumeralConstructionType.AddWord(
                 RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-                10
+                10,
+                generateOneProb()
             )
         }
     }
 
     private fun IntRange.zipSSO(vararg ps: Double) = zip(ps.toList())
         .map { (n, p) -> n.toSampleSpaceObject(p) }
+
+    private fun generateArranger(): RelationArranger {
+        val order = listOf(
+            listOf(MulNumeral, AdNumeral, SumNumeral),
+            listOf(AdNumeral, MulNumeral, SumNumeral),
+            listOf(SumNumeral, AdNumeral, MulNumeral),
+            listOf(SumNumeral, MulNumeral, AdNumeral),
+        ).randomElement()
+
+        return RelationArranger(StaticOrder(order))
+    }
+
+    private fun generateOneProb() = 0.1.chanceOf<Double> {
+        RandomSingleton.random.nextDouble(0.7, 1.0)
+    } ?: 0.0
 }

@@ -1,12 +1,14 @@
-package shmp.lang.language.syntax
+package shmp.lang.language.syntax.numeral
 
 import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.lexis.Lexis
-import shmp.lang.language.lexis.Meaning
-import shmp.lang.language.syntax.NumeralConstructionType.*
-import shmp.lang.language.syntax.arranger.Arranger
+import shmp.lang.language.lineUpAll
+import shmp.lang.language.syntax.SyntaxException
+import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.numeral.NumeralConstructionType.*
 import shmp.lang.language.syntax.clause.realization.wordToNode
 import shmp.lang.language.syntax.clause.translation.SentenceNode
+import shmp.random.singleton.testProbability
 
 
 data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRanges) {
@@ -25,7 +27,7 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
                 val baseNumber = n / type.baseNumber
                 val sumNumber = n % type.baseNumber
 
-                val baseNode = constructBaseNode(baseNumber, type.baseNumber, lexis)
+                val baseNode = constructBaseNode(baseNumber, type.baseNumber, type.oneProb, lexis)
                 if (sumNumber != 0) {
                     val sumNode = extract(sumNumber, lexis)
                     baseNode.addStrayChild(SyntaxRelation.SumNumeral, sumNode)
@@ -36,14 +38,14 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
             }
         }
 
-    private fun constructBaseNode(mulNumber: Int, baseNumber: Int, lexis: Lexis): SentenceNode {
+    private fun constructBaseNode(mulNumber: Int, baseNumber: Int, oneProb: Double, lexis: Lexis): SentenceNode {
         val type = getType(mulNumber * baseNumber)
         if (type == SingleWord || type is SpecialWord)
             return extract(mulNumber * baseNumber, lexis)
 
         val baseNode = extract(baseNumber, lexis)
         val mulNode = extract(mulNumber, lexis)
-        if (mulNumber != 1)
+        if (mulNumber != 1 || oneProb.testProbability())
             baseNode.addStrayChild(SyntaxRelation.MulNumeral, mulNode)
 
         return baseNode
@@ -53,13 +55,13 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
 
     override fun toString() = """
          |Numeral system base: $base
+         |${
+        ranges.map { (r, t) -> listOf("From ${r.first} to ${r.last} - ", t.toString()) }
+            .lineUpAll()
+            .joinToString("\n")
+    }
+         |
          |""".trimMargin()
-}
-
-sealed class NumeralConstructionType {
-    object SingleWord : NumeralConstructionType()
-    data class SpecialWord(val meaning: Meaning) : NumeralConstructionType()
-    data class AddWord(val arranger: Arranger, val baseNumber: Int) : NumeralConstructionType()
 }
 
 typealias NumeralRanges = List<Pair<IntRange, NumeralConstructionType>>
