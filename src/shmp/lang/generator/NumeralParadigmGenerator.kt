@@ -28,37 +28,13 @@ class NumeralParadigmGenerator {
     fun generateNumeralParadigm(): NumeralParadigm {
         val base = NumeralSystemBase.values().randomElement()
         when (base) {
-            NumeralSystemBase.Decimal -> generateBasedSystem(
-                10,
-                1.toSampleSpaceObject(1.0),
-                2.toSampleSpaceObject(1.0),
-                3.toSampleSpaceObject(1.0),
-                4.toSampleSpaceObject(0.5)
-            )
-            NumeralSystemBase.Vigesimal -> generateBasedSystem(
-                20,
-                1.toSampleSpaceObject(1.0),
-                2.toSampleSpaceObject(1.0),
-                3.toSampleSpaceObject(0.75),
-                4.toSampleSpaceObject(0.25)
-            )
+            NumeralSystemBase.Decimal -> generateBasedSystem(10, (1..4).zipSSO(1.0, 1.0, 1.0, 0.5))
+            NumeralSystemBase.Vigesimal -> generateBasedSystem(20, (1..4).zipSSO(1.0, 1.0, 0.75, 0.25))
             NumeralSystemBase.VigesimalTill100 -> {
-                generateBasedSystem(20, 1.toSampleSpaceObject(1.0), cap = 100)
-                generateBasedSystem(
-                    10,
-                    2.toSampleSpaceObject(1.0),
-                    3.toSampleSpaceObject(1.0),
-                    4.toSampleSpaceObject(0.5),
-                    hasPrefix = true
-                )
+                generateBasedSystem(20, (1..1).zipSSO(1.0), cap = 100)
+                generateBasedSystem(10, (2..4).zipSSO(1.0, 1.0, 0.5), hasPrefix = true)
             }
-            NumeralSystemBase.SixtyBased -> generateBasedSystem(
-                60,
-                1.toSampleSpaceObject(1.0),
-                2.toSampleSpaceObject(0.9),
-                3.toSampleSpaceObject(0.70),
-                4.toSampleSpaceObject(0.15)
-            )
+            NumeralSystemBase.SixtyBased -> generateBasedSystem(60, (1..4).zipSSO(1.0, 0.9, 0.7, 0.15))
             NumeralSystemBase.Restricted3 -> generateRestricted(3)
             NumeralSystemBase.Restricted5 -> generateRestricted(5)
             NumeralSystemBase.Restricted10 -> generateRestricted(10)
@@ -77,7 +53,7 @@ class NumeralParadigmGenerator {
 
     private fun generateBasedSystem(
         base: Int,
-        vararg powers: GenericSSO<Int>,
+        powers: List<GenericSSO<Int>>,
         cap: Int? = null,
         hasPrefix: Boolean = false
     ) {
@@ -135,4 +111,7 @@ class NumeralParadigmGenerator {
             )
         }
     }
+
+    private fun IntRange.zipSSO(vararg ps: Double) = zip(ps.toList())
+        .map { (n, p) -> n.toSampleSpaceObject(p) }
 }
