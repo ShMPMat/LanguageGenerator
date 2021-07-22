@@ -2,7 +2,6 @@ package shmp.lang.language.category.paradigm
 
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource.*
-import shmp.lang.language.category.InclusivityValue
 import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
@@ -29,11 +28,11 @@ class WordChangeParadigm(
 
         return speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?.apply(word, applicableValues)
-            ?.handleNewWsWords()
+            ?.handleNewWsWords(applicableValues)
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
     }
 
-    private fun Pair<WordSequence, Int>.handleNewWsWords(): Pair<WordSequence, Int> {
+    private fun Pair<WordSequence, Int>.handleNewWsWords(values: Set<SourcedCategoryValue>): Pair<WordSequence, Int> {
         val (ws, i) = this
 
         val newWs = ws.words.flatMapIndexed { j, w ->
@@ -41,7 +40,7 @@ class WordChangeParadigm(
                 val isAdnominal = w.semanticsCore.speechPart.subtype == adnominalSubtype
                 val isArticle = w.semanticsCore.speechPart.type == SpeechPart.Article
                 val newCv = if (isAdnominal || isArticle)
-                    ws[i].categoryValues.map {
+                    values.map {
                         SourcedCategoryValue(
                             it.categoryValue,
                             RelationGranted(SyntaxRelation.Agent, nominals),

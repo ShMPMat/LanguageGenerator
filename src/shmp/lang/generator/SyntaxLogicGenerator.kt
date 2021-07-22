@@ -254,6 +254,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             val definiteArticleWrapped = definitenessValues
                 .firstOrNull { it == DefinitenessValue.Definite }
                 ?.let { setOf(it) }
+            val definiteArticleOrUndefined = definiteArticleWrapped ?: setOf(Undefined)
 
             val naiveSolver = deixisValues.map {
                 it as DeixisValue
@@ -271,34 +272,15 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                     .map { it as DeixisValue }
 
                 for (deixis in absentDeixis) naiveSolver[deixis] = when (deixis) {
-                    Undefined -> definiteArticleWrapped
-                        ?: setOf()
-                    Proximal -> definiteArticleWrapped
-                        ?: setOf(Undefined)
-                    Medial -> listOf(
-                        setOf<CategoryValue>(Proximal),
-                        setOf<CategoryValue>(Distant)
-                    )
-                        .filter { it.first() in deixisValues }.randomElementOrNull()
-                        ?: definiteArticleWrapped
-                        ?: setOf(Undefined)
-                    Distant -> definiteArticleWrapped ?: setOf(Undefined)
-                    ProximalAddressee -> listOf(
-                        setOf<CategoryValue>(Proximal),
-                        setOf<CategoryValue>(Distant)
-                    )
-                        .filter { it.first() in deixisValues }.randomElementOrNull()
-                        ?: definiteArticleWrapped
-                        ?: setOf(Undefined)
-                    Unseen -> listOf(
-                        setOf<CategoryValue>(Distant),
-                        setOf<CategoryValue>(Proximal)
-                    )
-                        .filter { it.first() in deixisValues }.randomElementOrNull()
-                        ?: definiteArticleWrapped
-                        ?: setOf(Undefined)
+                    Undefined -> definiteArticleWrapped ?: setOf()
+                    Proximal -> definiteArticleOrUndefined
+                    Medial -> deixisValues.randomPresent(Proximal, Distant) ?: definiteArticleOrUndefined
+                    Distant -> definiteArticleOrUndefined
+                    ProximalAddressee -> deixisValues.randomPresent(Proximal, Distant) ?: definiteArticleOrUndefined
+                    Unseen -> deixisValues.randomPresent(Proximal, Distant) ?: definiteArticleOrUndefined
+                    DistantHigher -> deixisValues.randomPresent(Distant) ?: definiteArticleOrUndefined
+                    DistantLower -> deixisValues.randomPresent(Distant) ?: definiteArticleOrUndefined
                 }
-
             }
 
             val definitenessNecessity = changeParadigm.getSpeechPartParadigm(speechPart)
@@ -322,6 +304,10 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return deixisCategorySolver
     }
 
+    private fun List<CategoryValue>.randomPresent(vararg values: CategoryValue) = values.toList()
+        .filter { it in this }.randomElementOrNull()
+        ?.let { setOf(it) }
+
     private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
         val verbalCategories =
             changeParadigm.getSpeechPartParadigms(Verb).first().categories//TODO bullshit decision
@@ -342,7 +328,6 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })
                     .forEach { personalPronounDropSolver.add(actor to it) }
-
             } else if (relevantCategories.isNotEmpty()) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })
                     .randomElement()

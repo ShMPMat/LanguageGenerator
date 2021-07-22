@@ -73,7 +73,8 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = DeixisPresence.values().randomElement().possibilities
+    override fun randomRealization() = DeixisPresence.values().randomElement().possibilities +
+            RisePresence.values().randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> false
@@ -89,20 +90,25 @@ enum class DeixisPresence(override val probability: Double, val possibilities: L
     UnseenTwoWay(10.0, listOf(Proximal, Unseen)),
     UnseenThreeWay(15.0, listOf(Proximal, Medial, Unseen)),
     TwoWayAddressee(88.0, listOf(Proximal, ProximalAddressee, Distant)),
-    TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant)),
+    TreeWayAddressee(6.0, listOf(Proximal, ProximalAddressee, Medial, Distant))
 }
 
-sealed class DeixisValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
-    deixisName,
-    meaning,
-    alias,
-    DeixisPronoun.toAdnominal()
-) {
+enum class RisePresence(override val probability: Double, val possibilities: List<DeixisValue>) : SampleSpaceObject {
+    NotPresent(100.0, listOf()),
+    Present(5.0, listOf(DistantHigher, DistantLower));
+}
+
+sealed class DeixisValue(
+    meaning: Meaning,
+    alias: String
+) : AbstractCategoryValue(deixisName, meaning, alias, DeixisPronoun.toAdnominal()) {
     //TODO more values
     object Undefined : DeixisValue("(undefined deixis ind)", "UNDEF")
     object Proximal : DeixisValue("this", "PROX")
-    object Medial : DeixisValue("(medial deixis ind)", "MED")
+    object Medial : DeixisValue("that.medial", "MED")
     object Distant : DeixisValue("that", "DIST")
     object Unseen : DeixisValue("that", "DIST")
     object ProximalAddressee : DeixisValue("this.addr", "PROX.ADDR")
+    object DistantHigher : DeixisValue("that.high", "DIST.HIGH")
+    object DistantLower : DeixisValue("that.low", "DIST.LOW")
 }

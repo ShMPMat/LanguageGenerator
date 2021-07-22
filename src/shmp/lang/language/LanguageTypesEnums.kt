@@ -86,7 +86,11 @@ open class AbstractCategoryValue(
         return result
     }
 
-    override fun toString() = this::class.simpleName!!
+    override fun toString(): String {
+        val simpleName = this::class.simpleName!!
+
+        return if (simpleName == "AbstractCategoryValue") alias else simpleName
+    }
 }
 
 typealias CategoryValues = List<CategoryValue>
