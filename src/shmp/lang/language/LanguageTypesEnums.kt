@@ -23,7 +23,7 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
 enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObject {
     Decimal(125.0),
     Vigesimal(20.0),
-//    VigesimalTill100(22.0),
+    VigesimalTill100(22.0),
     SixtyBased(5.0),
 //    ExtendedBodyPartSystem(4.0),
     Restricted3(5.0),

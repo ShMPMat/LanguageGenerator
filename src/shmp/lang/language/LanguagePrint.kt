@@ -21,6 +21,9 @@ fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
     NumeralSystemBase.Vigesimal -> printNumerals(
         (1..421).toList() + listOf(800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000)
     )
+    NumeralSystemBase.VigesimalTill100 -> printNumerals(
+        (1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000)
+    )
     NumeralSystemBase.SixtyBased -> printNumerals(
         (1..100).toList() + listOf(200, 300, 400, 500, 600, 1000, 3600, 36000, 40000)
     )

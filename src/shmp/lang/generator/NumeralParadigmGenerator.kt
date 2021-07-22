@@ -19,7 +19,7 @@ class NumeralParadigmGenerator {
     private val manyMeaning: Meaning = "Many"
     private val uniqueTensChance = 0.5
 
-    private val numeralMeanings = mutableListOf<String>()
+    private val numeralMeanings = mutableSetOf<String>()
     private val ranges = mutableMapOf<IntRange, NumeralConstructionType>()
     private var threshold = -1
     var numeralTemplates = listOf<SemanticsCoreTemplate>()
@@ -42,6 +42,16 @@ class NumeralParadigmGenerator {
                 3.toSampleSpaceObject(0.75),
                 4.toSampleSpaceObject(0.25)
             )
+            NumeralSystemBase.VigesimalTill100 -> {
+                generateBasedSystem(20, 1.toSampleSpaceObject(1.0), cap = 100)
+                generateBasedSystem(
+                    10,
+                    2.toSampleSpaceObject(1.0),
+                    3.toSampleSpaceObject(1.0),
+                    4.toSampleSpaceObject(0.5),
+                    hasPrefix = true
+                )
+            }
             NumeralSystemBase.SixtyBased -> generateBasedSystem(
                 60,
                 1.toSampleSpaceObject(1.0),
@@ -60,25 +70,33 @@ class NumeralParadigmGenerator {
         numeralMeanings += manyMeaning
         ranges[threshold..Int.MAX_VALUE] = NumeralConstructionType.SpecialWord(manyMeaning)
 
-        numeralTemplates = numeralMeanings.map { SemanticsCoreTemplate(it, SpeechPart.Numeral) }
+        numeralTemplates = numeralMeanings.sorted().map { SemanticsCoreTemplate(it, SpeechPart.Numeral) }
 
         return NumeralParadigm(base, ranges.toList())
     }
 
-    private fun generateBasedSystem(base: Int, vararg powers: GenericSSO<Int>) {
-        generateTill20()
-
+    private fun generateBasedSystem(
+        base: Int,
+        vararg powers: GenericSSO<Int>,
+        cap: Int? = null,
+        hasPrefix: Boolean = false
+    ) {
         val actualNumbers = powers.takeWhile { it.probability.testProbability() }
             .map { base.toDouble().pow(it.value).toInt() }
+        val actualCap = cap ?: actualNumbers.last() * actualNumbers.last()
 
-        val (firstBorder, firstBase) = if (actualNumbers[0] <= 20)
-            actualNumbers[1] to actualNumbers[0]
-        else
-            actualNumbers[0] to 20
-        ranges[21 until firstBorder] = NumeralConstructionType.AddWord(
-            RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
-            firstBase
-        )
+        if (!hasPrefix) {
+            generateTill20()
+
+            val (firstBorder, firstBase) = if (actualNumbers[0] <= 20)
+                (if (actualNumbers.size > 1) actualNumbers[1] else actualCap) to actualNumbers[0]
+            else
+                actualNumbers[0] to 20
+            ranges[21 until firstBorder] = NumeralConstructionType.AddWord(
+                RelationArranger(StaticOrder(listOf(AdNumeral, SumNumeral, MulNumeral).shuffled())),
+                firstBase
+            )
+        }
 
         for ((i, n) in actualNumbers.withIndex()) {
             if (n <= 20)
@@ -86,7 +104,7 @@ class NumeralParadigmGenerator {
 
             val nextN = if (i != actualNumbers.size - 1)
                 actualNumbers[i + 1]
-            else n * n
+            else actualCap
 
             numeralMeanings += n.toString()
             ranges[n..n] = NumeralConstructionType.SingleWord
