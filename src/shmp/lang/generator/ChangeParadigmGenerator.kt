@@ -3,7 +3,7 @@ package shmp.lang.generator
 import shmp.lang.generator.util.copyForNewSpeechPart
 import shmp.lang.generator.util.substituteWith
 import shmp.lang.language.category.*
-import shmp.lang.language.category.CategorySource.RelationGranted
+import shmp.lang.language.category.CategorySource.Agreement
 import shmp.lang.language.category.paradigm.CompulsoryData
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -142,7 +142,7 @@ class ChangeParadigmGenerator(
                     compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
 
                     val source = if (speechPart.subtype == adnominalSubtype && c.outType != deixisName)
-                        RelationGranted(Agent, nominals)
+                        Agreement(Agent, nominals)
                     else it.source
 
                     SourcedCategory(c, source, compulsoryData) to s
@@ -152,7 +152,7 @@ class ChangeParadigmGenerator(
 
     private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm) =
         verbParadigm.copyForNewSpeechPart(Verb.toIntransitive(), mapOf(Agent to Argument)) { c ->
-            c.categories.none { it.source is RelationGranted && it.source.relation == Patient }
+            c.categories.none { it.source is Agreement && it.source.relation == Patient }
         }
 
     private fun checkCompulsoryConsistency(
@@ -168,7 +168,7 @@ class ChangeParadigmGenerator(
                     if (sourcedCategory.category.outType in compulsoryConsistencyExceptions)
                         continue
 
-                    if (sourcedCategory.source is RelationGranted && sourcedCategory.compulsoryData.isCompulsory) {
+                    if (sourcedCategory.source is Agreement && sourcedCategory.compulsoryData.isCompulsory) {
                         val relevantCategories = sourcedCategory.source.possibleSpeechParts
                             .flatMap { sp -> allCategoryData.filter { it.speechPart.type == sp } }
                             .map { d -> d.categories.firstOrNull { it.category == sourcedCategory.category } }

@@ -43,8 +43,8 @@ object TenseRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(SelfStated, 100.0))
-        Adjective -> listOf(SourceTemplate(SelfStated, 2.0))//TODO not an actual data
+        Verb -> listOf(SourceTemplate(Self, 100.0))
+        Adjective -> listOf(SourceTemplate(Self, 2.0))//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()

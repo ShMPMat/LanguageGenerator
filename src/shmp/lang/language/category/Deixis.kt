@@ -5,7 +5,7 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
 import shmp.lang.language.lexis.SpeechPart.*
-import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
@@ -42,7 +42,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Noun -> listOf(SourceTemplate(Self, 100.0))
         Verb -> listOf()
         Adjective -> listOf()
         Adverb -> listOf()
@@ -50,7 +50,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         Article -> listOf()
         PersonalPronoun -> listOf()
         Particle -> listOf()
-        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 100.0))
+        DeixisPronoun -> listOf(SourceTemplate(Self, 100.0))
         Adposition -> listOf()
     }
 

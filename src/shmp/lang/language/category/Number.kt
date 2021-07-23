@@ -4,8 +4,8 @@ import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.category.CategorySource.RelationGranted
-import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.CategorySource.Agreement
+import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.NumberValue.Plural
 import shmp.lang.language.category.NumberValue.Singular
 import shmp.lang.language.category.paradigm.SourcedCategory
@@ -47,19 +47,19 @@ object NumberRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, 100.0))
+        Noun -> listOf(SourceTemplate(Self, 100.0))
         Verb -> listOf(
-            SourceTemplate(RelationGranted(Agent, nominals), 99.0),
-            SourceTemplate(RelationGranted(Patient, nominals), 5.0)
+            SourceTemplate(Agreement(Agent, nominals), 99.0),
+            SourceTemplate(Agreement(Patient, nominals), 5.0)
         )
-        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 99.0))
+        Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 99.0))
         Adverb -> listOf()
-        Numeral -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 90.0))
-        Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 10.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
-        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 99.0))
+        Numeral -> listOf(SourceTemplate(Agreement(Nominal, nominals), 90.0))
+        Article -> listOf(SourceTemplate(Agreement(Agent, nominals), 10.0))
+        PersonalPronoun -> listOf(SourceTemplate(Self, 99.0))
+        DeixisPronoun -> listOf(SourceTemplate(Self, 99.0))
         Particle -> listOf()
-        Adposition -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 2.0))
+        Adposition -> listOf(SourceTemplate(Agreement(Agent, nominals), 2.0))
     }
 
     override fun specialRealization(

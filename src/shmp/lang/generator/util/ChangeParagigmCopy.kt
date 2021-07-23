@@ -19,11 +19,11 @@ fun copyApplicators(
     val newCategories = cluster.categories.map {
         it.copy(
             source = when (it.source) {
-                is CategorySource.RelationGranted ->
+                is CategorySource.Agreement ->
                     if (it.source.relation in sourceMap.keys)
                         it.source.copy(relation = sourceMap.getValue(it.source.relation))
                     else it.source.copy()
-                is CategorySource.SelfStated -> CategorySource.SelfStated
+                is CategorySource.Self -> CategorySource.Self
             }
         )
     }

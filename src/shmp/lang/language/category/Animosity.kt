@@ -43,17 +43,17 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, 200.0))//TODO no data at all
+        Noun -> listOf(SourceTemplate(Self, 200.0))//TODO no data at all
         Verb -> listOf(
-            SourceTemplate(RelationGranted(Agent, nominals), 20.0),
-            SourceTemplate(RelationGranted(Patient, nominals), 1.0)
+            SourceTemplate(Agreement(Agent, nominals), 20.0),
+            SourceTemplate(Agreement(Patient, nominals), 1.0)
         )
-        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))
+        Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 20.0))
         Adverb -> listOf()
-        Numeral -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 20.0))
-        Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 10.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
-        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 10.0))
+        Numeral -> listOf(SourceTemplate(Agreement(Nominal, nominals), 20.0))
+        Article -> listOf(SourceTemplate(Agreement(Agent, nominals), 10.0))
+        PersonalPronoun -> listOf(SourceTemplate(Self, 10.0))
+        DeixisPronoun -> listOf(SourceTemplate(Self, 10.0))
         Particle -> listOf()
         Adposition -> listOf()
     }

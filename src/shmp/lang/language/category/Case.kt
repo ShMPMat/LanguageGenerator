@@ -52,14 +52,14 @@ class CaseRandomSupplements : CategoryRandomSupplements {
     private val pronounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, nounProbability))
+        Noun -> listOf(SourceTemplate(Self, nounProbability))
         Verb -> listOf()
-        Adjective -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 80.0))
+        Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 80.0))
         Adverb -> listOf()
-        Numeral -> listOf(SourceTemplate(RelationGranted(Nominal, nominals), 80.0))
-        Article -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 1.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
-        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
+        Numeral -> listOf(SourceTemplate(Agreement(Nominal, nominals), 80.0))
+        Article -> listOf(SourceTemplate(Agreement(Agent, nominals), 1.0))
+        PersonalPronoun -> listOf(SourceTemplate(Self, pronounProbability))
+        DeixisPronoun -> listOf(SourceTemplate(Self, 90.0))
         Adposition -> listOf()
         Particle -> listOf()
     }
@@ -131,7 +131,7 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) =
         CaseRandomSupplements().speechPartProbabilities(speechPart)
-            .mapNotNull { if (it.source == SelfStated) it.copy(probability = 100.0) else null }
+            .mapNotNull { if (it.source == Self) it.copy(probability = 100.0) else null }
 
     override fun specialRealization(
         values: List<CategoryValue>,

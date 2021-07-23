@@ -44,8 +44,8 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                 val pureVs = vs.map { it.categoryValue }
 
                 when(s) {
-                    CategorySource.SelfStated -> node.insertCategoryValues(pureVs)
-                    is CategorySource.RelationGranted -> {
+                    CategorySource.Self -> node.insertCategoryValues(pureVs)
+                    is CategorySource.Agreement -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
                         val dummyNode = dummyWord.wordToNode(s.relation, PassingArranger, pureVs)
 
@@ -141,7 +141,7 @@ private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
 fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): String {
     val allSources = allValues.groupBy { it.source }
 
-    return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.SelfStated))
+    return if (allSources.size == 1 || allSources.size == 2 && allSources.containsKey(CategorySource.Self))
         categoryValue.alias
     else "$this"
 }

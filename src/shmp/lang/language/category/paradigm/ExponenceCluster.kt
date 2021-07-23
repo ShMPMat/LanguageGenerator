@@ -155,6 +155,6 @@ infix fun Boolean.withCoCategories(coCategories: List<CategoryCluster>) =
 typealias SourcedCategoryValues = List<SourcedCategoryValue>
 
 private fun getSourceString(source: CategorySource) =
-    if (source is CategorySource.RelationGranted)
+    if (source is CategorySource.Agreement)
         " ${source.relation.shortName}"
     else ""

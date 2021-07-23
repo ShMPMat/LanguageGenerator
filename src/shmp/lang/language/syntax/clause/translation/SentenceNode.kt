@@ -63,8 +63,9 @@ data class SentenceNode(
             val (category, source, compulsoryData) = sourcedCategory
 
             val res = when (source) {
-                is CategorySource.SelfStated -> categoryValues + word.semanticsCore.staticCategories
-                is CategorySource.RelationGranted -> _relation[source.relation]?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
+                is CategorySource.Self -> categoryValues + word.semanticsCore.staticCategories
+                is CategorySource.Agreement -> _relation[source.relation]
+                    ?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {

@@ -4,8 +4,8 @@ import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.category.CategorySource.RelationGranted
-import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.CategorySource.Agreement
+import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.InclusivityValue.Exclusive
 import shmp.lang.language.category.InclusivityValue.Inclusive
 import shmp.lang.language.category.PersonValue.First
@@ -49,12 +49,12 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(RelationGranted(Agent, nominals), 100.0))
+        Verb -> listOf(SourceTemplate(Agreement(Agent, nominals), 100.0))
         Adjective -> listOf()
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, 50.0))
+        PersonalPronoun -> listOf(SourceTemplate(Self, 50.0))
         DeixisPronoun -> listOf()
         Particle -> listOf()
         Adposition -> listOf()

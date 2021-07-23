@@ -43,7 +43,7 @@ class WordChangeParadigm(
                     values.map {
                         SourcedCategoryValue(
                             it.categoryValue,
-                            RelationGranted(SyntaxRelation.Agent, nominals),
+                            Agreement(SyntaxRelation.Agent, nominals),
                             it.parent
                         )
                     } else ws[i].categoryValues//.filter { it !in ws[i].categoryValues }
@@ -66,10 +66,9 @@ class WordChangeParadigm(
                 word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }
             }
             .union(word.semanticsCore.staticCategories.map { v ->
-                SourcedCategoryValue(
-                    v,
-                    SelfStated,
-                    paradigm.categories.first { it.category.outType == it.category.outType })
+                val value = paradigm.categories.first { it.category.outType == it.category.outType }
+
+                SourcedCategoryValue(v, Self, value)
             })
             .toList()
     }

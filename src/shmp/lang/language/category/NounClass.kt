@@ -49,19 +49,19 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
     private val pronounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(SelfStated, nounProbability))
+        Noun -> listOf(SourceTemplate(Self, nounProbability))
         Verb -> listOf(
-            SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 95.0),
-            SourceTemplate(RelationGranted(SyntaxRelation.Patient, nominals), 5.0)
+            SourceTemplate(Agreement(SyntaxRelation.Agent, nominals), 95.0),
+            SourceTemplate(Agreement(SyntaxRelation.Patient, nominals), 5.0)
         )
-        Adjective -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Nominal, nominals), 95.0))
+        Adjective -> listOf(SourceTemplate(Agreement(SyntaxRelation.Nominal, nominals), 95.0))
         Adverb -> listOf()
-        Numeral -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Nominal, nominals), 95.0))
-        Article -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 90.0))
-        PersonalPronoun -> listOf(SourceTemplate(SelfStated, pronounProbability))
-        DeixisPronoun -> listOf(SourceTemplate(SelfStated, 90.0))
+        Numeral -> listOf(SourceTemplate(Agreement(SyntaxRelation.Nominal, nominals), 95.0))
+        Article -> listOf(SourceTemplate(Agreement(SyntaxRelation.Agent, nominals), 90.0))
+        PersonalPronoun -> listOf(SourceTemplate(Self, pronounProbability))
+        DeixisPronoun -> listOf(SourceTemplate(Self, 90.0))
         Particle -> listOf()
-        Adposition -> listOf(SourceTemplate(RelationGranted(SyntaxRelation.Agent, nominals), 2.0))
+        Adposition -> listOf(SourceTemplate(Agreement(SyntaxRelation.Agent, nominals), 2.0))
     }
 
     override fun specialRealization(

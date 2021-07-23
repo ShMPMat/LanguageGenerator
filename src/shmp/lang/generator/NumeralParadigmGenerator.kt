@@ -23,6 +23,8 @@ class NumeralParadigmGenerator {
     private val numeralMeanings = mutableSetOf<String>()
     private val ranges = mutableMapOf<IntRange, NumeralConstructionType>()
     private var threshold = -1
+    private var newArrangerProb = 0.1
+    private var arranger = generateNewArranger()
     var numeralTemplates = listOf<SemanticsCoreTemplate>()
         private set
 
@@ -118,6 +120,15 @@ class NumeralParadigmGenerator {
         .map { (n, p) -> n.toSampleSpaceObject(p) }
 
     private fun generateArranger(): RelationArranger {
+        newArrangerProb.chanceOf {
+            arranger = generateNewArranger()
+            newArrangerProb /= 2
+        }
+
+        return arranger
+    }
+
+    private fun generateNewArranger(): RelationArranger {
         val order = listOf(
             listOf(MulNumeral, AdNumeral, SumNumeral),
             listOf(AdNumeral, MulNumeral, SumNumeral),

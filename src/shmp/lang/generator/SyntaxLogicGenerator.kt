@@ -323,7 +323,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             }
 
             val relevantCategories = verbalCategories
-                .filter { it.source is CategorySource.RelationGranted && it.source.relation == source }
+                .filter { it.source is CategorySource.Agreement && it.source.relation == source }
 
             if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })

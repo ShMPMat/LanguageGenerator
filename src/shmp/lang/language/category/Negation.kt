@@ -3,7 +3,7 @@ package shmp.lang.language.category
 import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
-import shmp.lang.language.category.CategorySource.SelfStated
+import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
 import shmp.lang.language.lexis.*
@@ -41,7 +41,7 @@ object NegationRandomSupplements : CategoryRandomSupplements {
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
-        Verb -> listOf(SourceTemplate(SelfStated, 100.0))
+        Verb -> listOf(SourceTemplate(Self, 100.0))
         Adjective -> listOf()//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
