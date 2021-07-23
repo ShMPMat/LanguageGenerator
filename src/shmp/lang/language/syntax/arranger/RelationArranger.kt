@@ -10,10 +10,10 @@ import kotlin.random.Random
 
 
 class RelationArranger(val relationOrder: RelationOrder) : Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
+    override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
         val relation = relationOrder.chooseReferenceOrder
 
-        return order(clauses, relation)
+        return order(pairs, relation)
     }
 
     override fun toString() = "In order of $relationOrder"
@@ -21,7 +21,7 @@ class RelationArranger(val relationOrder: RelationOrder) : Arranger {
 
 //Relations are listed from most to least close
 class RelationsArranger(val relationOrders: List<Pair<RelationOrder, SyntaxRelation>>) : Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
+    override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
         val relations = relationOrders
             .map { (o, r) -> o.chooseReferenceOrder to r }
 
@@ -36,18 +36,14 @@ class RelationsArranger(val relationOrders: List<Pair<RelationOrder, SyntaxRelat
                     nextOrder.takeLastWhile { it != nextRelation }
         }
 
-        return order(clauses, relation)
+        return order(pairs, relation)
     }
 }
 
-internal fun order(clauses: List<NonJoinedClause>, relation: List<SyntaxRelation>): WordSequence {
-    val resultWords = clauses
-        .sortedBy { (r) ->
-            relation.indexOf(r)
-                .takeIf { it != -1 }
-                ?: throw ChangeException("No Relation $r in a relation order $relation")
-        }
-        .flatMap { it.second.words }
-
-    return WordSequence(resultWords)
-}
+internal fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, relation: List<SyntaxRelation>) = pairs
+    .sortedBy { (r) ->
+        relation.indexOf(r)
+            .takeIf { it != -1 }
+            ?: throw ChangeException("No Relation $r in a relation order $relation")
+    }
+    .map { it.second }

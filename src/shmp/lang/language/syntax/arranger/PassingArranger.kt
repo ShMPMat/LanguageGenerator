@@ -1,22 +1,22 @@
 package shmp.lang.language.syntax.arranger
 
 import shmp.lang.language.syntax.SyntaxException
+import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.syntax.clause.translation.NonJoinedClause
 import kotlin.random.Random
 
 
 object PassingArranger: Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random) =
-        WordSequence(clauses.flatMap { it.second.words })
+    override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random) = pairs.map { it.second }
 }
 
 
 object PassingSingletonArranger: Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
-        if (clauses.size != 1)
-            throw SyntaxException("PassingSingletonOrderer got a non-singleton list of size ${clauses.size}")
+    override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
+        if (pairs.size != 1)
+            throw SyntaxException("PassingSingletonOrderer got a non-singleton list of size ${pairs.size}")
 
-        return clauses[0].second
+        return listOf(pairs[0].second)
     }
 }

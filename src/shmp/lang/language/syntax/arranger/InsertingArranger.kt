@@ -1,29 +1,31 @@
 package shmp.lang.language.syntax.arranger
 
 import shmp.lang.language.syntax.SyntaxException
+import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.syntax.clause.translation.NonJoinedClause
 import kotlin.random.Random
 
 
 abstract class InsertingArranger: Arranger {
-    override fun orderClauses(clauses: List<NonJoinedClause>, random: Random): WordSequence {
-        if (clauses.size != 2)
-            throw SyntaxException("Got clause list of size ${clauses.size}, expected size 2")
+    override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
+        if (pairs.size != 2)
+            throw SyntaxException("Got clause list of size ${pairs.size}, expected size 2")
 
-        return insert(clauses[0], clauses[1])
+        return insert(pairs[0], pairs[1])
     }
 
-    protected abstract fun insert(toInsert: NonJoinedClause, target: NonJoinedClause): WordSequence
+    protected abstract fun <E> insert(toInsert: Pair<SyntaxRelation, E>, target: Pair<SyntaxRelation, E>): List<E>
 }
 
 
 object InsertLast: InsertingArranger() {
-    override fun insert(toInsert: NonJoinedClause, target: NonJoinedClause) =
-        target.second + toInsert.second
+    override fun <E> insert(toInsert: Pair<SyntaxRelation, E>, target: Pair<SyntaxRelation, E>) =
+        listOf(target.second, toInsert.second)
+
 }
 
 object InsertFirst: InsertingArranger() {
-    override fun insert(toInsert: NonJoinedClause, target: NonJoinedClause) =
-        toInsert.second + target.second
+    override fun <E> insert(toInsert: Pair<SyntaxRelation, E>, target: Pair<SyntaxRelation, E>) =
+        listOf(toInsert.second, target.second)
 }
