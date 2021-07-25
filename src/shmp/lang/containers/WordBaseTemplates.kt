@@ -22,7 +22,7 @@ data class SemanticsCoreTemplate(
 ) : SampleSpaceObject
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>): SemanticsCore {
-    val tags = this.tagClusters
+    val tags = tagClusters
         .filter { it.shouldBeInstantiated }
         .map { SemanticsTag(it.semanticsTags.randomUnwrappedElement()) }
         .toSet()
@@ -30,19 +30,19 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>):
     return SemanticsCore(
         MeaningCluster(word),
         if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toUnspecified(),
-        this.connotations,
+        connotations,
         tags,
-        DerivationCluster(this.derivationClusterTemplate.typeToCore),
+        DerivationCluster(derivationClusterTemplate.typeToCore),
         staticCategories
     )
 }
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
-    if (this.speechPart != core.speechPart.type)
-        throw GeneratorException("Core merge error: $core and ${this.word} has different speech parts")
+    if (speechPart != core.speechPart.type)
+        throw GeneratorException("Core merge error: $core and ${word} has different speech parts")
 
     return SemanticsCore(
-        MeaningCluster(core.meaningCluster.meanings + listOf(this.word)),
+        MeaningCluster(core.meaningCluster.meanings + word),
         core.speechPart,
         connotations + core.connotations,
         tagClusters
@@ -51,13 +51,13 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
                 SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
             }
             .toSet() + core.tags,
-        core.derivationCluster.merge(this.derivationClusterTemplate.typeToCore),
+        core.derivationCluster.merge(derivationClusterTemplate.typeToCore),
         core.staticCategories
     )
 }
 
 fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>>): DerivationCluster {
-    val newMap = this.typeToCore.toMutableMap()
+    val newMap = typeToCore.toMutableMap()
     newEntries.entries.forEach { (t, ls) ->
         val old = newMap[t] ?: listOf()
         newMap[t] = old + ls

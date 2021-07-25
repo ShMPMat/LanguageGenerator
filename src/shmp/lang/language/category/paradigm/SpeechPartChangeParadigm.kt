@@ -35,7 +35,7 @@ data class SpeechPartChangeParadigm(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
-        var currentClause = WordSequence(listOf(word))
+        var currentClause = WordSequence(word)
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
@@ -109,7 +109,7 @@ data class SpeechPartChangeParadigm(
 
     private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) = WordSequence(
         wordSequence.words.subList(0, wordPosition)
-                + listOf(prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition]))
+                + prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition])
                 + wordSequence.words.subList(wordPosition + 1, wordSequence.size)
     )
 

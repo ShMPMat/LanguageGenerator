@@ -15,19 +15,23 @@ import shmp.lang.language.syntax.clause.translation.VerbSentenceType.*
 
 data class SentenceNode(
     val word: Word,
-    val _categoryValues: MutableList<CategoryValue>,
+    private val _categoryValues: MutableList<CategoryValue>,
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false,
-    var parentPropagation: Boolean = false
+    var parentPropagation: Boolean = false,
+    var nodesOrder: List<SyntaxRelation> = listOf()
 ) {
     val categoryValues: MutableList<CategoryValue>
         get() = _categoryValues
 
     val children: List<SentenceNodeChild>
         get() = _children
+
+    val allRelations: List<SyntaxRelation>
+        get() = listOf(typeForChildren) + children.map { it.first }
 
     fun insertCategoryValue(value: CategoryValue) {
         _categoryValues.add(value)

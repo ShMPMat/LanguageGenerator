@@ -178,7 +178,7 @@ class LexisGenerator(
         for ((verb, i) in verbs) {
             val newVerb = verb.copy(
                 semanticsCore = verb.semanticsCore.copy(
-                    tags = verb.semanticsCore.tags + listOf(SemanticsTag("location"))
+                    tags = verb.semanticsCore.tags + SemanticsTag("location")
                 )
             )
 

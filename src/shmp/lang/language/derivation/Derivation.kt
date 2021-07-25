@@ -34,7 +34,7 @@ class Derivation(
         ) ?: return null
 
         val derivedWord = affix.change(word)
-        val newDerivations = word.semanticsCore.appliedDerivations + listOf(this)
+        val newDerivations = word.semanticsCore.appliedDerivations + this
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(word.semanticsCore),
             resultSpeechPart
@@ -42,7 +42,7 @@ class Derivation(
         val newCore = allWords.allWords.first { it.word == chosenMeaning }
             .toSemanticsCore(newStaticCategories).let {
                 it.copy(
-                    tags = it.tags + listOf(SemanticsTag(dClass.name)),
+                    tags = it.tags + SemanticsTag(dClass.name),
                     appliedDerivations = newDerivations,
                     changeHistory = DerivationHistory(this, word)
                 )

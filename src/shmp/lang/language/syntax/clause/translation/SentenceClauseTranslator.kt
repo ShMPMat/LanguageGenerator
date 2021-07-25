@@ -8,21 +8,23 @@ import kotlin.random.Random
 
 
 class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
-    internal fun applyNode(sentenceNode: SentenceNode, random: Random): WordSequence {
-        val categoryValues = computeValues(sentenceNode)
+    internal fun applyNode(node: SentenceNode, random: Random): WordSequence {
+        node.nodesOrder = node.arranger.order(node.allRelations.map { it to it }, random)
 
-        val currentClause =
-            sentenceNode.typeForChildren to paradigm.wordChangeParadigm.apply(
-                sentenceNode.word.copy(categoryValues = listOf()),
-                categoryValues
-            )
-
-        val childrenClauses = sentenceNode.children
+        val categoryValues = computeValues(node)
+        val currentClause = node.typeForChildren to paradigm.wordChangeParadigm.apply(
+            node.word.copy(categoryValues = listOf()),
+            categoryValues
+        )
+        val childrenClauses = node.children
             .map { it to applyNode(it.second, random) }
             .filter { !it.first.second.isDropped }
             .map { it.first.first to it.second }
 
-        return sentenceNode.arranger.orderClauses(listOf(currentClause) + childrenClauses, random)
+        return (childrenClauses + currentClause)
+            .sortedBy { node.nodesOrder.indexOf(it.first) }
+            .map { it.second }
+            .reduceRight(WordSequence::plus)
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<SourcedCategoryValue> {

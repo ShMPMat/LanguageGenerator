@@ -261,10 +261,10 @@ class SpeechPartApplicatorsGenerator(
         for (newCategory in currentCategory.actualSourcedValues) {
             val recSets = constructExponenceUnionSets(
                 categories,
-                previousCategoryValues + listOf(newCategory.categoryValue),
+                previousCategoryValues + newCategory.categoryValue,
                 BoxedInt(neighbourCategories.value * currentCategory.actualSourcedValues.size)
             )
-            lists.addAll(recSets.map { it + listOf(newCategory) })
+            lists.addAll(recSets.map { it + newCategory })
         }
 
         return lists

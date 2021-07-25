@@ -173,7 +173,7 @@ class WordOrderGenerator {
         val position = RandomSingleton.random.nextInt(references.size + 1)
 
         return references.map {
-            (it.value.take(position) + listOf(SyntaxRelation.QuestionMarker) + it.value.drop(position))
+            (it.value.take(position) + SyntaxRelation.QuestionMarker + it.value.drop(position))
                 .toSampleSpaceObject(it.probability)
         }
     }

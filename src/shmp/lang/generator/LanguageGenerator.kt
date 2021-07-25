@@ -33,7 +33,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm(
-        SpeechPart.values().map { it.toUnspecified() } + listOf(DeixisPronoun.toAdnominal())
+        SpeechPart.values().map { it.toUnspecified() } + DeixisPronoun.toAdnominal()
     )
     private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(

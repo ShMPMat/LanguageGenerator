@@ -8,7 +8,7 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 
 class SuffixWordCategoryApplicator(word: Word) : WordCategoryApplicator(word, CategoryRealization.SuffixSeparateWord) {
     override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
-        WordSequence(words.words + listOf(word.copyWithValues(values)))
+        WordSequence(words.words + word.copyWithValues(values))
 
     override fun copy() = SuffixWordCategoryApplicator(word)
 
