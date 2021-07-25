@@ -8,17 +8,8 @@ import shmp.lang.language.morphem.Affix
 
 class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) : AbstractCategoryApplicator(type) {
     //TODO no guaranty for correctness
-    override fun apply(
-        words: WordSequence,
-        wordPosition: Int,
-        values: Collection<SourcedCategoryValue>
-    ) = WordSequence(
-        words.words.mapIndexed { i, w ->
-            if (i == wordPosition)
-                affix.change(words[wordPosition]).copyAndAddValues(values)
-            else w
-        }
-    )
+    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
+        words.swapWord(wordPosition) { affix.change(it).copyAndAddValues(values) }
 
     override fun copy() = AffixCategoryApplicator(affix, type)
 

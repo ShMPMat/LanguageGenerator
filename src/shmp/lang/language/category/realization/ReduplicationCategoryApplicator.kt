@@ -7,6 +7,7 @@ import shmp.lang.language.syntax.WordSequence
 class ReduplicationCategoryApplicator : CategoryApplicator {
     override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence {
         val newWord = words[wordPosition].copyAndAddValues(values)
+
         return WordSequence(
             words.words.take(wordPosition)
                     + newWord

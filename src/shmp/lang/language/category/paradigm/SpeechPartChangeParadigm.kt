@@ -7,6 +7,7 @@ import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.toWordSequence
 
 
 data class SpeechPartChangeParadigm(
@@ -72,13 +73,7 @@ data class SpeechPartChangeParadigm(
             currentClause = newClause
         }
 
-        currentClause = WordSequence(
-            currentClause.words.mapIndexed { i, w ->
-                if (i == wordPosition)
-                    w.copy(syntaxRole = word.syntaxRole)
-                else w
-            }
-        )
+        currentClause = currentClause.swapWord(wordPosition) { it.copy(syntaxRole = word.syntaxRole) }
 
         return applyProsodyParadigm(currentClause, wordPosition, word) to wordPosition
     }
@@ -99,7 +94,7 @@ data class SpeechPartChangeParadigm(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"
                 )
-        else WordSequence(wordSequence.words.map { it.copy() })
+        else wordSequence.words.map { it.copy() }.toWordSequence()
     }
 
     private fun getExponenceUnion(
@@ -107,11 +102,12 @@ data class SpeechPartChangeParadigm(
         exponenceCluster: ExponenceCluster
     ) = exponenceCluster.filterExponenceUnion(categoryValues)
 
-    private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) = WordSequence(
-        wordSequence.words.subList(0, wordPosition)
-                + prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition])
-                + wordSequence.words.subList(wordPosition + 1, wordSequence.size)
-    )
+    private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) =
+        WordSequence(
+            wordSequence.words.subList(0, wordPosition)
+                    + prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition])
+                    + wordSequence.words.subList(wordPosition + 1, wordSequence.size)
+        )
 
     fun hasChanges() = applicators.any { it.value.isNotEmpty() }
 

@@ -5,14 +5,8 @@ import shmp.lang.language.syntax.WordSequence
 
 
 object PassingCategoryApplicator : CategoryApplicator {
-    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence =
-        WordSequence(
-            words.words.mapIndexed { i, w ->
-                if (i == wordPosition)
-                    w.copyAndAddValues(values)
-                else w
-            }
-        )
+    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
+        words.swapWord(wordPosition) { it.copyAndAddValues(values) }
 
     override fun copy() = PassingCategoryApplicator
 

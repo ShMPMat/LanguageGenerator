@@ -8,13 +8,7 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 
 class NewWordCategoryApplicator(word: Word) : WordCategoryApplicator(word, CategoryRealization.NewWord) {
     override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
-        WordSequence(
-            words.words.mapIndexed { i, w ->
-                if (i == wordPosition)
-                    word.copyAndAddValues(w.categoryValues + values)
-                else w
-            }
-        )
+        words.swapWord(wordPosition) { w -> word.copyAndAddValues(w.categoryValues + values) }
 
     override fun copy() = NewWordCategoryApplicator(word)
 
