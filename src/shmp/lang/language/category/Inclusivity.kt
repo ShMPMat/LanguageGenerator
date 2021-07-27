@@ -3,7 +3,7 @@ package shmp.lang.language.category
 import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategorySource.Agreement
 import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.InclusivityValue.Exclusive
@@ -11,8 +11,10 @@ import shmp.lang.language.category.InclusivityValue.Inclusive
 import shmp.lang.language.category.PersonValue.First
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
-import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.Meaning
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
+import shmp.lang.language.lexis.nominals
 import shmp.lang.language.syntax.SyntaxRelation.Agent
 import shmp.lang.utils.values
 import shmp.lang.utils.valuesSet
@@ -61,7 +63,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(
-        values: List<CategoryValue>,
+        values: CategoryValues,
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ) = if (speechPart == PersonalPronoun) setOf(//TODO no actual data

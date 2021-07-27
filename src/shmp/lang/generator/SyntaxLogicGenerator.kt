@@ -79,7 +79,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return copulaCaseSolver
     }
 
-    private fun generateNonCoreCasesSolver(): Map<Pair<CaseValue, TypedSpeechPart>, List<CategoryValue>> {
+    private fun generateNonCoreCasesSolver(): Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> {
         val nonCoreCaseSolver: MutableMap<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mutableMapOf()
 
         for (speechPartParadigm in nominalParadigms) {
@@ -304,7 +304,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return deixisCategorySolver
     }
 
-    private fun List<CategoryValue>.randomPresent(vararg values: CategoryValue) = values.toList()
+    private fun CategoryValues.randomPresent(vararg values: CategoryValue) = values.toList()
         .filter { it in this }.randomElementOrNull()
         ?.let { setOf(it) }
 

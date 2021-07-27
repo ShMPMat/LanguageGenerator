@@ -19,6 +19,7 @@ import shmp.random.SampleSpaceObject
 import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
 import shmp.random.singleton.randomUnwrappedElement
+import shmp.random.singleton.randomUnwrappedElementOrNull
 
 
 class SpeechPartApplicatorsGenerator(
@@ -45,7 +46,7 @@ class SpeechPartApplicatorsGenerator(
         for (i in realizationTypes.indices) {
             val (cluster, realization) = realizationTypes[i]
 
-            cluster.exponenceCluster.possibleValues.forEach { exponenceValue ->
+            for (exponenceValue in cluster.exponenceCluster.possibleValues) {
                 val cores = exponenceValue.categoryValues
                     .map { it.categoryValue.semanticsCore }
                 val semanticsCore = combineSemanticCores(cores)
@@ -55,9 +56,7 @@ class SpeechPartApplicatorsGenerator(
                     semanticsCore
                 )
                 map.getValue(cluster.exponenceCluster)[exponenceValue] = applicator
-                word?.let {
-                    words.add(it)
-                }
+                word?.let { words += it }
             }
         }
         return Result(words, map)
@@ -92,7 +91,7 @@ class SpeechPartApplicatorsGenerator(
         val finalVariants = uniteMutualProbabilities(variants) { copy(probability = it) }
             .filter { position == 0 || it.realization != NewWord }
 
-        return finalVariants.randomUnwrappedElement()
+        return finalVariants.randomUnwrappedElementOrNull()
             ?: categoryRealization
     }
 

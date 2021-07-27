@@ -1,13 +1,13 @@
 package shmp.lang.language.syntax.clause.realization
 
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.arranger.RelationArranger
+import shmp.lang.language.syntax.clause.translation.SentenceNode
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
@@ -16,7 +16,7 @@ import kotlin.random.Random
 class NominalClause(
     val nominal: Word,
     val definitions: List<NounDefinerClause>,
-    val additionalCategories: List<CategoryValue> = listOf(),
+    val additionalCategories: CategoryValues = listOf(),
     private val actorType: ActorType?
 ) : SyntaxClause {
     init {

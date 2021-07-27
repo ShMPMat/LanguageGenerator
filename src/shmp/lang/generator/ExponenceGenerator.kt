@@ -1,8 +1,8 @@
 package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryRealization.*
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryRealization.NewWord
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.SourcedCategory
@@ -17,9 +17,9 @@ class ExponenceGenerator {
 
     internal fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
-            .let {
-                val nonCompulsory = it.filter { (c) -> !c.compulsoryData.isCompulsory }
-                val compulsory = it.filter { (c) -> c.compulsoryData.isCompulsory }
+            .let { cs ->
+                val nonCompulsory = cs.filter { (c) -> !c.compulsoryData.isCompulsory }
+                val compulsory = cs.filter { (c) -> c.compulsoryData.isCompulsory }
                 nonCompulsory + compulsory
             }
         val clusters = ArrayList<ExponenceTemplate>()
@@ -68,7 +68,7 @@ class ExponenceGenerator {
 
     private fun constructExponenceUnionSets(
         categories: List<SupplementedSourcedCategory>,
-        previousCategoryValues: List<CategoryValue> = listOf(),
+        previousCategoryValues: CategoryValues = listOf(),
         neighbourCategories: BoxedInt = BoxedInt(1)
     ): Set<List<SourcedCategoryValue>> = if (categories.size == 1)
         makeTrivialExponenceUnionSets(categories.first(), neighbourCategories, previousCategoryValues)
@@ -78,7 +78,7 @@ class ExponenceGenerator {
     private fun makeTrivialExponenceUnionSets(
         category: SupplementedSourcedCategory,
         neighbourCategories: BoxedInt,
-        previousCategoryValues: List<CategoryValue>
+        previousCategoryValues: CategoryValues
     ) =
         if (neighbourCategories.value > 1 && testCollapse(category.second, previousCategoryValues)) {
             neighbourCategories.value--
@@ -89,7 +89,7 @@ class ExponenceGenerator {
     private fun makeRecursiveExponenceUnionSets(
         categories: List<SupplementedSourcedCategory>,
         neighbourCategories: BoxedInt,
-        previousCategoryValues: List<CategoryValue>
+        previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
         val (currentCategory, currentSupplement) = categories.last()
         val leftCategories = categories.dropLast(1)
@@ -114,7 +114,7 @@ class ExponenceGenerator {
         currentCategory: SourcedCategory,
         categories: List<SupplementedSourcedCategory>,
         neighbourCategories: BoxedInt,
-        previousCategoryValues: List<CategoryValue>
+        previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
         neighbourCategories.value--
         val existingPaths = BoxedInt(neighbourCategories.value * currentCategory.actualSourcedValues.size)
@@ -131,7 +131,7 @@ class ExponenceGenerator {
         currentCategory: SourcedCategory,
         categories: List<SupplementedSourcedCategory>,
         neighbourCategories: BoxedInt,
-        previousCategoryValues: List<CategoryValue>
+        previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
         val lists = mutableSetOf<List<SourcedCategoryValue>>()
 
@@ -147,7 +147,7 @@ class ExponenceGenerator {
         return lists
     }
 
-    private fun testCollapse(supplements: CategoryRandomSupplements, otherCategories: List<CategoryValue>): Boolean {
+    private fun testCollapse(supplements: CategoryRandomSupplements, otherCategories: CategoryValues): Boolean {
         val collapseProbability = categoryCollapseProbability /
                 supplements.getCollapseCoefficient(otherCategories)
 

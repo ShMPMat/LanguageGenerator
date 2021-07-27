@@ -1,6 +1,7 @@
 package shmp.lang.language.category.paradigm
 
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.LanguageException
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource
@@ -140,13 +141,13 @@ data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: Ca
 
 
 data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster>) {
-    fun isApplicable(values: List<CategoryValue>) = compulsoryCoCategories
+    fun isApplicable(values: CategoryValues) = compulsoryCoCategories
         .all { it.any { cc -> values.contains(cc) } }
 
-    fun mustExist(values: List<CategoryValue>) = isCompulsory && isApplicable(values)
+    fun mustExist(values: CategoryValues) = isCompulsory && isApplicable(values)
 }
 
-typealias CategoryCluster = List<CategoryValue>
+typealias CategoryCluster = CategoryValues
 
 infix fun Boolean.withCoCategories(coCategories: List<CategoryCluster>) =
     CompulsoryData(this, coCategories)

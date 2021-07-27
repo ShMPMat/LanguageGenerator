@@ -2,11 +2,12 @@ package shmp.lang.language.category
 
 import shmp.lang.language.AbstractCategoryValue
 import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
-import shmp.lang.language.lexis.*
+import shmp.lang.language.lexis.Meaning
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.utils.valuesSet
 import shmp.random.SampleSpaceObject
@@ -53,7 +54,7 @@ object NegationRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun specialRealization(
-        values: List<CategoryValue>,
+        values: CategoryValues,
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {

@@ -2,6 +2,7 @@ package shmp.lang.language.category
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.paradigm.CompulsoryData
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.lexis.SpeechPart
@@ -11,7 +12,7 @@ import shmp.random.UnwrappableSSO
 
 
 interface Category {
-    val actualValues: List<CategoryValue>
+    val actualValues: CategoryValues
     val allPossibleValues: Set<CategoryValue>
     val affected: Set<PSpeechPart>
     val speechParts: Set<SpeechPart>
@@ -22,11 +23,11 @@ interface Category {
 interface CategoryRandomSupplements {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): List<SourceTemplate>
-    fun specialRealization(values: List<CategoryValue>, speechPart: SpeechPart, categories: List<SourcedCategory>): Set<RealizationBox>
-    fun randomRealization(): List<CategoryValue>
+    fun specialRealization(values: CategoryValues, speechPart: SpeechPart, categories: List<SourcedCategory>): Set<RealizationBox>
+    fun randomRealization(): CategoryValues
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
     fun randomIsCompulsory(speechPart: SpeechPart): CompulsoryData
-    fun getCollapseCoefficient(previousCategoryValues: List<CategoryValue>): Double = 1.0
+    fun getCollapseCoefficient(previousCategoryValues: CategoryValues): Double = 1.0
 }
 
 data class RealizationBox(

@@ -1,13 +1,14 @@
 package shmp.lang.language.category
 
 import shmp.lang.language.CategoryValue
+import shmp.lang.language.CategoryValues
 import shmp.lang.language.LanguageException
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.utils.notEqualsByElement
 
 
 open class AbstractChangeCategory(
-    final override val actualValues: List<CategoryValue>,
+    final override val actualValues: CategoryValues,
     final override val allPossibleValues: Set<CategoryValue>,
     final override val affected: Set<PSpeechPart>,
     final override val staticSpeechParts: Set<SpeechPart>,
