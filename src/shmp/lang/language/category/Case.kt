@@ -76,7 +76,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
             RealizationBox(CategoryRealization.Prefix, 1.5)
         ) else emptyRealization
 
-        return when(speechPart) {
+        return when (speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
                 RealizationBox(CategoryRealization.NewWord, 2.0)
@@ -95,13 +95,12 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         if (coreCases.isNotEmpty())
             0.3.chanceOf { coreCases.add(Topic) }
 
-        val nonCoreCases = if (coreCases.isEmpty()) {
+        val nonCoreCases = if (coreCases.isEmpty())
             0.25.chanceOf<List<CaseValue>> {
                 NonCoreCasePresence.ObliqueOnly.possibilities
             } ?: listOf()
-        } else {
+        else
             NonCoreCasePresence.values().randomElement().possibilities
-        }
 
         return coreCases + nonCoreCases
     }
@@ -145,13 +144,14 @@ object AdpositionRandomSupplements : CategoryRandomSupplements {
 }
 
 
-enum class NonCoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
+enum class NonCoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>) :
+    SampleSpaceObject {
     None(100.0, listOf()),
     All(100.0, listOf(Genitive, Dative, Instrumental, Locative)),
     ObliqueOnly(25.0, listOf(Oblique))
 }
 
-enum class CoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>): SampleSpaceObject {
+enum class CoreCasePresence(override val probability: Double, val possibilities: List<CaseValue>) : SampleSpaceObject {
     None(145.0, listOf()),
     NA(145.0, listOf(Nominative, Accusative)),
     NAEA(145.0, listOf(Nominative, Accusative, Ergative, Absolutive)),

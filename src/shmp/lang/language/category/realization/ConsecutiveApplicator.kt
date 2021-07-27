@@ -20,7 +20,7 @@ class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : Categor
                         break
                     }
             currentWord = newClause[i]
-            currentClause = newClause.swapWord(i) { it.copyWithValues(it.categoryValues.subtract(values)) }
+            currentClause = newClause.swapWord(i) { it.copyWithValues(it.categoryValues subtract values) }
         }
 
         return currentClause.swapWord(i) { it.copyAndAddValues(values) }
