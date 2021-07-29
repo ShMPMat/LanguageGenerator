@@ -5,6 +5,8 @@ import shmp.lang.language.syntax.WordSequence
 
 
 class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : CategoryApplicator {
+    constructor(vararg applicators: CategoryApplicator) : this(applicators.toList())
+
     override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence {
         var currentClause = words
         var currentWord = words[wordPosition]

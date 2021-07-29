@@ -73,7 +73,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         val acceptableValues = values.filter { it.parentClassName == definitenessName }
         if (acceptableValues.size != 1) return emptyRealization
 
-        return when(values.first()) {
+        return when(acceptableValues.first()) {
             else -> emptyRealization
         }
     }

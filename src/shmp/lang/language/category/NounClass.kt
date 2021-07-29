@@ -74,7 +74,7 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
         if (acceptableValues.size != 1) return emptyRealization
-        val value = values.first()
+        val value = acceptableValues.first()
         return when (speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),

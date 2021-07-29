@@ -71,7 +71,7 @@ object NumberRandomSupplements : CategoryRandomSupplements {
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == numberName }
         if (acceptableValues.size != 1) return emptyRealization
-        return when (values.first()) {
+        return when (acceptableValues.first()) {
             Singular -> setOf(
                 noValue(1.0),
                 RealizationBox(Passing, 1.0)

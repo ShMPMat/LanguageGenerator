@@ -63,7 +63,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == deixisName }
         if (acceptableValues.size != 1) return emptyRealization
-        return when (values.first()) {
+        return when (acceptableValues.first()) {
             else -> when (speechPart) {
                 DeixisPronoun -> setOf(//TODO no actual data
                     RealizationBox(NewWord, 100.0),

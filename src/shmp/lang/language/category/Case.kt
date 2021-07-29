@@ -77,7 +77,10 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         val defaultRealization = if (nonCoreCases.all { it !in acceptableValues }) setOf(
             RealizationBox(CategoryRealization.Suffix, 1.5),
             RealizationBox(CategoryRealization.Prefix, 1.5)
-        ) else emptyRealization
+        ) else setOf(
+            noValue(1.0),
+            RealizationBox(CategoryRealization.Passing, 0.25)
+        )
 
         return when (speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data

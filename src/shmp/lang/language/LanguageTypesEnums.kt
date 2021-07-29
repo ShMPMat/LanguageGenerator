@@ -33,7 +33,7 @@ enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObje
 }
 
 enum class CategoryRealization {
-    NewWord,
+    NewWord,//TODO suppletion
     PrefixSeparateWord,
     SuffixSeparateWord,
     Prefix,

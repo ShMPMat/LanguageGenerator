@@ -68,8 +68,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == animosityName }
         if (acceptableValues.size != 1) return emptyRealization
-        val value = values.first()
-        return when (value) {
+        return when (acceptableValues.first()) {
             AnimosityValue.Inanimate -> setOf(
                 RealizationBox(CategoryRealization.Passing, 1.0),
                 noValue(1.0)

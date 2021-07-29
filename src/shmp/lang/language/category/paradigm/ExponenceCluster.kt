@@ -5,15 +5,16 @@ import shmp.lang.language.CategoryValues
 import shmp.lang.language.LanguageException
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource
+import shmp.lang.language.lexis.SemanticsCore
+import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.utils.notEqualsByElement
 
 
-class ExponenceCluster(
-    val categories: List<SourcedCategory>,
-    possibleValuesSets: Set<List<SourcedCategoryValue>>
-) {
+class ExponenceCluster(val categories: List<SourcedCategory>, possibleValuesSets: Set<List<SourcedCategoryValue>>) {
     val possibleValues: List<ExponenceValue> = possibleValuesSets
         .map { ExponenceValue(it, this) }
+
+    val isCompulsory = categories.all { it.compulsoryData.isCompulsory }
 
     fun contains(exponenceValue: ExponenceValue) = possibleValues.contains(exponenceValue)
 
@@ -52,7 +53,6 @@ class ExponenceCluster(
     }
 
 
-
     override fun toString() = categories.joinToString("\n")
 }
 
@@ -76,6 +76,24 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
                 )
     }
 
+    val core: SemanticsCore
+        get() {
+            val semanticsCores = categoryValues.map { it.categoryValue.semanticsCore }
+            var semanticsCore = semanticsCores[0]
+
+            for (core in semanticsCores.drop(1))
+                semanticsCore = SemanticsCore(
+                    semanticsCore.meaningCluster + core.meaningCluster,
+                    if (core.speechPart.type != SpeechPart.Particle) core.speechPart else semanticsCore.speechPart,
+                    semanticsCore.connotations + core.connotations,
+                    semanticsCore.tags + core.tags,
+                    semanticsCore.derivationCluster,
+                    semanticsCore.staticCategories + core.staticCategories
+                )
+
+            return semanticsCore
+        }
+
     override fun toString() = categoryValues.joinToString()
 
     override fun equals(other: Any?): Boolean {
@@ -85,7 +103,7 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
         other as ExponenceValue
 
         if (categoryValues != other.categoryValues) return false
-        if (parentCluster.categories!= other.parentCluster.categories) return false
+        if (parentCluster.categories != other.parentCluster.categories) return false
 
         return true
     }
@@ -117,7 +135,11 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
     }
 }
 
-data class SourcedCategoryValue(val categoryValue: CategoryValue, val source: CategorySource, val parent: SourcedCategory) {
+data class SourcedCategoryValue(
+    val categoryValue: CategoryValue,
+    val source: CategorySource,
+    val parent: SourcedCategory
+) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -62,8 +62,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == tenseName }
         if (acceptableValues.size != 1) return emptyRealization
-        val value = values.first()
-        return when (value) {
+        return when (acceptableValues.first()) {
             Present -> setOf(
                 noValue(1.0),
                 RealizationBox(CategoryRealization.Passing, 1.0)

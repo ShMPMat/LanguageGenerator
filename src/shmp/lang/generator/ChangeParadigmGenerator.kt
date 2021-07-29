@@ -29,7 +29,7 @@ class ChangeParadigmGenerator(
     changeGenerator: ChangeGenerator,
     private val restrictionsParadigm: RestrictionsParadigm
 ) {
-    private val speechPartApplicatorsGenerator = SpeechPartApplicatorsGenerator(lexisGenerator, changeGenerator)
+    private val applicatorsGenerator = ApplicatorsGenerator(lexisGenerator, changeGenerator)
     private val wordOrderGenerator = WordOrderGenerator()
     private val syntaxParadigmGenerator = SyntaxParadigmGenerator()
     val numeralParadigmGenerator = NumeralParadigmGenerator()
@@ -60,17 +60,15 @@ class ChangeParadigmGenerator(
             checkCompulsoryConsistency(categoryData, oldCategoryData)
 
             categoryData.map { (speechPart, restrictions, categoriesAndSupply) ->
-                val (words, applicators) = speechPartApplicatorsGenerator
-                    .randomApplicatorsForSpeechPart(
-                        speechPart,
-                        restrictions,
-                        categoriesAndSupply
-                    )
+                val (words, applicators, orderedClusters) = applicatorsGenerator.randomApplicatorsForSpeechPart(
+                    speechPart,
+                    restrictions,
+                    categoriesAndSupply
+                )
                 for (word in words)
                     if (word.semanticsCore.speechPart !in oldSpeechParts)
                         newSpeechParts.add(word.semanticsCore.speechPart)
 
-                val orderedClusters = speechPartApplicatorsGenerator.randomApplicatorsOrder(applicators)
                 val changeParadigm = SpeechPartChangeParadigm(
                     speechPart,
                     orderedClusters,
