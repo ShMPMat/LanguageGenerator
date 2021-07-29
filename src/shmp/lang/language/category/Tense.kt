@@ -33,13 +33,13 @@ class Tense(
 object TenseRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        CategoryRealization.PrefixSeparateWord -> 10.0
-        CategoryRealization.SuffixSeparateWord -> 10.0
+        CategoryRealization.PrefixWord -> 10.0
+        CategoryRealization.SuffixWord -> 10.0
         CategoryRealization.Prefix -> 100.0
         CategoryRealization.Suffix -> 100.0
         CategoryRealization.Reduplication -> 0.0
         CategoryRealization.Passing -> 0.0
-        CategoryRealization.NewWord -> 0.0
+        CategoryRealization.Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {

@@ -20,13 +20,7 @@ import kotlin.collections.HashMap
 import kotlin.random.Random
 
 
-class LanguageGenerator(val supplementPath: String, seed: Long) {
-    private val random = Random(seed)
-
-    init {
-        RandomSingleton.safeRandom = random
-    }
-
+class LanguageGenerator(private val supplementPath: String) {
     private val phonemeBase = PhonemeBase(supplementPath)
     private val phonemeGenerator = PhonemeGenerator(phonemeBase)
     private val phonemeContainer = phonemeGenerator.generate()
@@ -42,7 +36,7 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
         restrictionsParadigm,
         phonemeContainer,
         stressPattern,
-        random
+        RandomSingleton.random
     )
     private val changeGenerator = ChangeGenerator(lexisGenerator)
     private val categoryGenerator = CategoryGenerator()
@@ -135,10 +129,9 @@ class LanguageGenerator(val supplementPath: String, seed: Long) {
             }
         }
 
-        return SyllableValenceGenerator(
-            syllableTemplates.keys
-                .sortedBy { it.toString() }
-                .randomElement { syllableTemplates[it] ?: 0.0 }
-        )
+        val finalTemplate = syllableTemplates.keys.sortedBy { it.toString() }
+            .randomElement { syllableTemplates[it] ?: 0.0 }
+
+        return SyllableValenceGenerator(finalTemplate)
     }
 }

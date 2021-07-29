@@ -74,7 +74,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
     private fun findFirstMorphemeCluster(realizations: MutableList<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>): Int? {
         for ((i, map) in realizations.withIndex()) {
-            val isFullyOuter = map.all { it.value.first in listOf(SuffixSeparateWord, PrefixSeparateWord) }
+            val isFullyOuter = map.all { it.value.first in listOf(SuffixWord, PrefixWord) }
             if (isFullyOuter)
                 continue
 
@@ -97,19 +97,19 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         }
 
         return uniteMutualProbabilities(variants) { copy(probability = it) }
-            .filter { position == 0 || it.realization != NewWord }
+            .filter { position == 0 || it.realization != Suppletion }
     }
 
     private fun randomCategoryApplicator(
         realizationType: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
         semanticsCore: SemanticsCore
-    ): Pair<CategoryApplicator, Word?> = when (realizationType) {
-        PrefixSeparateWord -> {
+    ) = when (realizationType) {
+        PrefixWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             PrefixWordCategoryApplicator(word) to word
         }
-        SuffixSeparateWord -> {
+        SuffixWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
             SuffixWordCategoryApplicator(word) to word
         }
@@ -129,9 +129,9 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         }
         Reduplication -> ReduplicationCategoryApplicator() to null
         Passing -> PassingCategoryApplicator to null
-        NewWord -> {
+        Suppletion -> {
             val word = lexisGenerator.generateWord(semanticsCore)
-            NewWordCategoryApplicator(word) to word
+            SuppletionCategoryApplicator(word) to word
         }
     }
 

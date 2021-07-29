@@ -40,13 +40,13 @@ class Inclusivity(
 object InclusivityRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        PrefixSeparateWord -> 10.0
-        SuffixSeparateWord -> 10.0
+        PrefixWord -> 10.0
+        SuffixWord -> 10.0
         Prefix -> 100.0
         Suffix -> 100.0
         Reduplication -> 0.0
         Passing -> 0.0
-        NewWord -> 0.0
+        Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -68,7 +68,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         categories: List<SourcedCategory>
     ) = if (speechPart == PersonalPronoun) setOf(//TODO no actual data
         noValue(1.0),
-        RealizationBox(NewWord, 3.0)
+        RealizationBox(Suppletion, 3.0)
     ) else emptyRealization
 
     override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities

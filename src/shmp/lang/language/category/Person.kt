@@ -38,13 +38,13 @@ class Person(
 object PersonRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        PrefixSeparateWord -> 0.0
-        SuffixSeparateWord -> 0.0
+        PrefixWord -> 0.0
+        SuffixWord -> 0.0
         Prefix -> 1.0
         Suffix -> 1.0
         Reduplication -> 0.0
         Passing -> 0.0
-        NewWord -> 0.0
+        Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -74,12 +74,12 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         return when(speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
-                RealizationBox(NewWord, 200.0)
+                RealizationBox(Suppletion, 200.0)
             )
             Verb -> setOf(
                 noValue(10.0),
-                RealizationBox(PrefixSeparateWord, 2.0),
-                RealizationBox(SuffixSeparateWord, 2.0)
+                RealizationBox(PrefixWord, 2.0),
+                RealizationBox(SuffixWord, 2.0)
             )
             else -> emptyRealization
         }

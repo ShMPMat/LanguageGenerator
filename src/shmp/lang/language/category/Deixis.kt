@@ -34,13 +34,13 @@ class Deixis(
 object DeixisRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        PrefixSeparateWord -> 542.0
-        SuffixSeparateWord -> 562.0
+        PrefixWord -> 542.0
+        SuffixWord -> 562.0
         Prefix -> 9.0
         Suffix -> 28.0
         Reduplication -> 0.0
         Passing -> 0.0
-        NewWord -> 0.0
+        Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -66,7 +66,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         return when (acceptableValues.first()) {
             else -> when (speechPart) {
                 DeixisPronoun -> setOf(//TODO no actual data
-                    RealizationBox(NewWord, 100.0),
+                    RealizationBox(Suppletion, 100.0),
                     RealizationBox(Suffix, 50.0),
                     RealizationBox(Prefix, 50.0)
                 )

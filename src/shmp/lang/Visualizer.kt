@@ -20,6 +20,7 @@ import shmp.lang.language.syntax.context.ContextValue.TimeContext.*
 import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
 import shmp.lang.language.syntax.context.Priority.Explicit
 import shmp.lang.language.syntax.context.Priority.Implicit
+import shmp.random.singleton.RandomSingleton
 import kotlin.random.Random
 
 
@@ -197,7 +198,9 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    val generator = LanguageGenerator("SupplementFiles", 216 + 79)
+    RandomSingleton.safeRandom = Random(216 + 80)
+
+    val generator = LanguageGenerator("SupplementFiles")
     val wordAmount = WordBase("SupplementFiles").baseWords.size
     val language = generator.generateLanguage(wordAmount)
 

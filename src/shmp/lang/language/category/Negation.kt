@@ -31,13 +31,13 @@ class Negation(
 object NegationRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        CategoryRealization.PrefixSeparateWord -> 502.0
-        CategoryRealization.SuffixSeparateWord -> 502.0
+        CategoryRealization.PrefixWord -> 502.0
+        CategoryRealization.SuffixWord -> 502.0
         CategoryRealization.Prefix -> 395.0
         CategoryRealization.Suffix -> 395.0
         CategoryRealization.Reduplication -> 0.0
         CategoryRealization.Passing -> 0.0
-        CategoryRealization.NewWord -> 0.0
+        CategoryRealization.Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {

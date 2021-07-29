@@ -1,7 +1,7 @@
 package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryRealization.NewWord
+import shmp.lang.language.CategoryRealization.Suppletion
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategoryRandomSupplements
 import shmp.lang.language.category.paradigm.ExponenceCluster
@@ -50,7 +50,7 @@ class ExponenceGenerator {
 
             data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
             val mapper = { i: Int, c: CategoryRealization ->
-                if (i == 0 || c != NewWord)
+                if (i == 0 || c != Suppletion)
                     data[i].map { it(c) }.sum()
                 else
                     0.0

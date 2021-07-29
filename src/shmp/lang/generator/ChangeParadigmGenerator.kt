@@ -139,7 +139,7 @@ class ChangeParadigmGenerator(
                     }
                     compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
 
-                    val source = if (speechPart.subtype == adnominalSubtype && c.outType != deixisName)
+                    val source = if (speechPart.subtype == adnominalSubtype /*&& c.outType != deixisName*/)
                         Agreement(Agent, nominals)
                     else it.source
 

@@ -36,13 +36,13 @@ class Animosity(
 object AnimosityRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not an actual data
-            CategoryRealization.PrefixSeparateWord -> 20.0
-            CategoryRealization.SuffixSeparateWord -> 20.0
+            CategoryRealization.PrefixWord -> 20.0
+            CategoryRealization.SuffixWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 100.0
             CategoryRealization.Reduplication -> 0.0
             CategoryRealization.Passing -> 0.0
-            CategoryRealization.NewWord -> 0.0
+            CategoryRealization.Suppletion -> 0.0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -76,7 +76,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
             else -> return when(speechPart) {
                 PersonalPronoun -> setOf(//TODO no actual data
                     noValue(1.0),
-                    RealizationBox(CategoryRealization.NewWord, 2.0)
+                    RealizationBox(CategoryRealization.Suppletion, 2.0)
                 )
                 DeixisPronoun -> setOf(//TODO no actual data
                     RealizationBox(CategoryRealization.Suffix, 1.5),

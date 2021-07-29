@@ -39,13 +39,13 @@ class Number(
 object NumberRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
         //TODO not actual data
-        PrefixSeparateWord -> 10.0
-        SuffixSeparateWord -> 10.0
+        PrefixWord -> 10.0
+        SuffixWord -> 10.0
         Prefix -> 100.0
         Suffix -> 100.0
         Reduplication -> 0.0
         Passing -> 0.0
-        NewWord -> 0.0
+        Suppletion -> 0.0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -86,7 +86,7 @@ object NumberRandomSupplements : CategoryRandomSupplements {
             else -> when (speechPart) {
                 PersonalPronoun -> setOf(//TODO no actual data
                     noValue(1.0),
-                    RealizationBox(NewWord, 1.3)
+                    RealizationBox(Suppletion, 1.3)
                 )
                 DeixisPronoun -> setOf(//TODO no actual data
                     RealizationBox(Suffix, 1.5),

@@ -37,13 +37,13 @@ class Definiteness(
 object DefinitenessRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {//TODO not an actual data
-            CategoryRealization.PrefixSeparateWord -> 400.0
-            CategoryRealization.SuffixSeparateWord -> 20.0
+            CategoryRealization.PrefixWord -> 400.0
+            CategoryRealization.SuffixWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 30.0
             CategoryRealization.Reduplication -> 0.0
             CategoryRealization.Passing -> 0.0
-            CategoryRealization.NewWord -> 0.0
+            CategoryRealization.Suppletion -> 0.0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {

@@ -33,11 +33,11 @@ enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObje
 }
 
 enum class CategoryRealization {
-    NewWord,//TODO suppletion
-    PrefixSeparateWord,
-    SuffixSeparateWord,
+    Suppletion,
     Prefix,
     Suffix,
+    PrefixWord,
+    SuffixWord,
     Reduplication,
     Passing
 }
@@ -86,10 +86,10 @@ open class AbstractCategoryValue(
         return result
     }
 
-    override fun toString(): String {
-        val simpleName = this::class.simpleName!!
-
-        return if (simpleName == "AbstractCategoryValue") alias else simpleName
+    override fun toString() = this::class.simpleName.let { name ->
+        if (name == "AbstractCategoryValue" || name == null)
+            alias
+        else name
     }
 }
 
