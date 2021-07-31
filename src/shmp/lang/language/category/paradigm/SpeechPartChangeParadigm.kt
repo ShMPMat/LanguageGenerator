@@ -6,6 +6,9 @@ import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
 import shmp.lang.language.syntax.*
+import shmp.lang.language.syntax.sequence.FoldedWordSequence
+import shmp.lang.language.syntax.sequence.LatchType
+import shmp.lang.language.syntax.sequence.toFoldedWordSequence
 
 
 data class SpeechPartChangeParadigm(

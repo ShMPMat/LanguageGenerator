@@ -87,11 +87,5 @@ private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: Word, 
         .toSet()
 
     categoryValues.removeIf { it is CaseValue }
-    categoryValues.addAll(
-        syntaxLogic.resolveVerbCase(
-            verb.semanticsCore.speechPart,
-            syntaxRelation,
-            caseRelevantCategories
-        )
-    )
+    categoryValues += syntaxLogic.resolveVerbCase(verb.semanticsCore.speechPart, syntaxRelation, caseRelevantCategories)
 }

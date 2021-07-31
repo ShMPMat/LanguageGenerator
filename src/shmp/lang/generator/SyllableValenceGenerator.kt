@@ -76,9 +76,9 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 val phoneme = restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType)
                     .randomElement()
                 if (i == ADD_TESTS)
-                    phonemes.add(phoneme)
+                    phonemes += phoneme
                 else if (checker(phonemes, phoneme)) {
-                    phonemes.add(phoneme)
+                    phonemes += phoneme
                     break
                 }
             }
@@ -93,7 +93,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 && template.nucleusIndex != 0
 
         val startValencies = if (restrictions.hasInitial == true || compulsoryOnset) {
-            syllable.add(template.valencies[template.nucleusIndex - 1])
+            syllable += template.valencies[template.nucleusIndex - 1]
 
             template.valencies.take(template.nucleusIndex - 1)
         } else template.valencies.take(template.nucleusIndex)
@@ -101,13 +101,13 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         if (restrictions.hasInitial != false)
             for (valency in startValencies.reversed())
                 if (valency.realizationProbability.testProbability())
-                    syllable.add(valency)
+                    syllable += valency
                 else break
 
         syllable.reverse()
 
         val endValencies = if (restrictions.hasFinal == true) {
-            template.valencies.getOrNull(template.nucleusIndex + 1)?.let { syllable.add(it) }
+            template.valencies.getOrNull(template.nucleusIndex + 1)?.let { syllable += it }
 
             template.valencies.drop(template.nucleusIndex + 2)
         } else template.valencies.drop(template.nucleusIndex + 1)
@@ -120,7 +120,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 lastType = valency.phonemeType
                 if (shouldTest)
                     if (valency.realizationProbability.testProbability())
-                        syllable.add(valency)
+                        syllable += valency
                     else
                         shouldTest = false
             }

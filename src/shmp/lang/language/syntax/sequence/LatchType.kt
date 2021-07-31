@@ -1,7 +1,7 @@
-package shmp.lang.language.syntax
+package shmp.lang.language.syntax.sequence
 
 import shmp.lang.language.lexis.Word
-import shmp.lang.language.syntax.LatchType.*
+import shmp.lang.language.syntax.sequence.LatchType.*
 
 
 enum class LatchType {

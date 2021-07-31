@@ -116,12 +116,7 @@ class LanguageGenerator(private val supplementPath: String) {
                     } else
                         i++
 
-                    valencies.add(
-                        ValencyPlace(
-                            char.toPhonemeType(),
-                            probability
-                        )
-                    )
+                    valencies += ValencyPlace(char.toPhonemeType(), probability)
                 }
                 syllableTemplates[SyllableValenceTemplate(valencies)] = syllableProbability.toDouble()
             }

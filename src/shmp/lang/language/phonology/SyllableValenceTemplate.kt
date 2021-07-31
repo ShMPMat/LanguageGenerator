@@ -41,15 +41,9 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         while (lastIndex < currentPhonemes.length) {
             val range = regex.find(currentPhonemes, lastIndex)?.range
                 ?: return null
-            if (range.first != lastIndex) return null
-            syllables.add(
-                Syllable(
-                    phonemes.phonemes.subList(
-                        range.first,
-                        range.last + 1
-                    )
-                )
-            )
+            if (range.first != lastIndex)
+                return null
+            syllables += Syllable(phonemes.phonemes.subList(range.first, range.last + 1))
             lastIndex = range.last + 1
         }
 

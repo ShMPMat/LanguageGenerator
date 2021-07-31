@@ -327,11 +327,11 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
             if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })
-                    .forEach { personalPronounDropSolver.add(actor to it) }
+                    .forEach { personalPronounDropSolver += actor to it }
             } else if (relevantCategories.isNotEmpty()) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })
                     .randomElement()
-                    .let { personalPronounDropSolver.add(actor to it) }
+                    .let { personalPronounDropSolver += actor to it }
             }
         }
 

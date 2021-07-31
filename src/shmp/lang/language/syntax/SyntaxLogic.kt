@@ -31,16 +31,16 @@ class SyntaxLogic(
         val (person, gender, amount, deixis, inclusivity) =
             actorValue
 
-        resultCategories.add(person)
-        resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
+        resultCategories += person
+        resultCategories += deixisCategorySolver.getOrDefault(deixis to speechPart, listOf())
         resultCategories.addNumber(amount)
 
         if (nounClassCategorySolver != null)
-            resultCategories.add(nounClassCategorySolver.getValue(gender))
+            resultCategories += nounClassCategorySolver.getValue(gender)
 
-        inclusivity?.let { resultCategories.add(it) } ?: run {
+        inclusivity?.let { resultCategories += it } ?: run {
             if (personalPronounInclusivity?.compulsoryData?.isApplicable(resultCategories) == true) {
-                resultCategories.add(InclusivityValue.Exclusive)
+                resultCategories += InclusivityValue.Exclusive
             }
         }
 
@@ -54,7 +54,7 @@ class SyntaxLogic(
         val resultCategories = mutableListOf<CategoryValue>()
         val (amount, deixis) = actorCompliment
 
-        resultCategories.addAll(deixisCategorySolver.getOrDefault(deixis to speechPart, listOf()))
+        resultCategories += deixisCategorySolver.getOrDefault(deixis to speechPart, listOf())
         resultCategories.addNumber(amount)
 
         return resultCategories

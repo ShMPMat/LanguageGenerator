@@ -4,9 +4,8 @@ import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.FoldedWordSequence
-import shmp.lang.language.syntax.LatchType
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.FoldedWordSequence
+import shmp.lang.language.syntax.sequence.LatchType
 
 
 class WordChangeParadigm(

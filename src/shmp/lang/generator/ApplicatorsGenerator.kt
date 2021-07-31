@@ -13,7 +13,7 @@ import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
-import shmp.lang.language.syntax.LatchType
+import shmp.lang.language.syntax.sequence.LatchType
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.*
 import shmp.random.toSampleSpaceObject

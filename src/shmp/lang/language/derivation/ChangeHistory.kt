@@ -67,7 +67,7 @@ private fun getIndexes(maxDepthString: String): List<Int> {
         if (index == -1)
             break
 
-        indexes.add(index + 3)
+        indexes += index + 3
     }
 
     return indexes

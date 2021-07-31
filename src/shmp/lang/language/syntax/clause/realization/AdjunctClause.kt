@@ -17,14 +17,12 @@ class CaseAdjunctClause(
     override val relation: SyntaxRelation
 ) : AdjunctClause {
     override fun toNode(language: Language, random: Random): SentenceNode {
+        val speechPart = nominal.nominal.semanticsCore.speechPart
         val node = nominal.toNode(language, random)
 
         node.categoryValues.removeIf { it is CaseValue }
-        node.categoryValues.addAll(
-            language.changeParadigm.syntaxLogic.resolveNonCoreCase(case, nominal.nominal.semanticsCore.speechPart)
-        )
+        node.categoryValues += language.changeParadigm.syntaxLogic.resolveNonCoreCase(case, speechPart)
 
         return node
     }
 }
-

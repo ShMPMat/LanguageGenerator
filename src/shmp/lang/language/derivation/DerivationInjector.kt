@@ -46,7 +46,7 @@ data class DerivationInjector(
         )
         val link = DerivationLink(template.word, probability)
         val existingLinks = core.derivationClusterTemplate.typeToCore[type] ?: mutableListOf()
-        existingLinks.add(link)
+        existingLinks += link
         core.derivationClusterTemplate.typeToCore[type] = existingLinks
 
         return template

@@ -61,17 +61,18 @@ class WordBase(private val supplementPath: String) {
 
         for (data in wordsAndDataMap.values)
             for (compound in data.compounds)
-                data.template.derivationClusterTemplate.possibleCompounds.add(
-                    parseCompoundTemplate(compound, wordsAndDataMap)
+                data.template.derivationClusterTemplate.possibleCompounds += parseCompoundTemplate(
+                    compound,
+                    wordsAndDataMap
                 )
 
-        baseWords.addAll(wordsAndDataMap.values.map { it.template }.sortedBy { it.word })
-        allWords.addAll(baseWords)
+        baseWords += wordsAndDataMap.values.map { it.template }.sortedBy { it.word }
+        allWords += baseWords
     }
 
     fun addWords(words: List<SemanticsCoreTemplate>) {
-        baseWords.addAll(words)
-        allWords.addAll(words)
+        baseWords += words
+        allWords += words
     }
 
     private fun parseConnotations(connotations: List<String>) = Connotations(
@@ -92,13 +93,11 @@ class WordBase(private val supplementPath: String) {
         val lines = mutableListOf<String>()
 
         for (line in semiLines)
-            lines.add(
-                if (line[0].isWhitespace()) {
-                    val last = lines.last()
-                    lines.removeAt(lines.lastIndex)
-                    last + line
-                } else line
-            )
+            lines += if (line[0].isWhitespace()) {
+                val last = lines.last()
+                lines.removeAt(lines.lastIndex)
+                last + line
+            } else line
         return lines
     }
 }

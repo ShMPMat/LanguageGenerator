@@ -10,13 +10,13 @@ fun <E> List<List<E>>.joinToList(
 
     val iterator = iterator()
     while (iterator.hasNext()) {
-        result.addAll(iterator.next())
+        result += iterator.next()
 
         if (iterator.hasNext())
-            result.addAll(separator)
+            result += separator
     }
 
-    result.addAll(postfix)
+    result += postfix
 
     return result
 }

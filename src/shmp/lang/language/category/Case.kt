@@ -99,7 +99,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         val coreCases = CoreCasePresence.values().randomElement().possibilities.toMutableList()
 
         if (coreCases.isNotEmpty())
-            0.3.chanceOf { coreCases.add(Topic) }
+            0.3.chanceOf { coreCases += Topic }
 
         val nonCoreCases = if (coreCases.isEmpty())
             0.25.chanceOf<List<CaseValue>> {

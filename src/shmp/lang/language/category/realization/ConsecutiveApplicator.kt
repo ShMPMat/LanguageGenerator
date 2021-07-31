@@ -1,8 +1,7 @@
 package shmp.lang.language.category.realization
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
-import shmp.lang.language.syntax.FoldedWordSequence
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
 class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : CategoryApplicator {

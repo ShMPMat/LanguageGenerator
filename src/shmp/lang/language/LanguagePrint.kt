@@ -6,11 +6,11 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.WordSequence
 import shmp.lang.language.syntax.arranger.PassingArranger
 import shmp.lang.language.syntax.clause.realization.wordToNode
 import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
-import shmp.lang.language.syntax.unfold
+import shmp.lang.language.syntax.sequence.unfold
 import shmp.lang.utils.listCartesianProduct
 import kotlin.random.Random
 

@@ -27,7 +27,7 @@ class CategoryGenerator {
             { l: List<CaseValue>, s, ss -> Case(l, s, ss) },
             CaseRandomSupplements()
         )
-        defaults.add(caseCategory)
+        defaults += caseCategory
 
         val absentScenarios = caseCategory.first.allPossibleValues
             .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
@@ -49,7 +49,7 @@ class CategoryGenerator {
                 adpositionName
             )
 
-            defaults.add(adpositionCategory to AdpositionRandomSupplements)
+            defaults += adpositionCategory to AdpositionRandomSupplements
         }
 
         return defaults

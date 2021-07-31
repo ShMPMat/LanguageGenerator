@@ -2,7 +2,7 @@ package shmp.lang.language.syntax.arranger
 
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.NonJoinedClause
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.WordSequence
 import kotlin.random.Random
 
 

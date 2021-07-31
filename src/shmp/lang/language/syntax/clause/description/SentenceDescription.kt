@@ -1,12 +1,11 @@
 package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.Language
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.WordSequence
 import shmp.lang.language.syntax.clause.realization.*
 import shmp.lang.language.syntax.clause.translation.CopulaSentenceType
 import shmp.lang.language.syntax.clause.translation.VerbSentenceType
 import shmp.lang.language.syntax.context.Context
-import shmp.lang.language.syntax.context.ContextValue
 import shmp.lang.language.syntax.context.ContextValue.TypeContext.*
 import kotlin.random.Random
 

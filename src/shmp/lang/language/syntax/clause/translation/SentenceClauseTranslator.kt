@@ -2,6 +2,10 @@ package shmp.lang.language.syntax.clause.translation
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.syntax.*
+import shmp.lang.language.syntax.sequence.FoldedWordSequence
+import shmp.lang.language.syntax.sequence.WordSequence
+import shmp.lang.language.syntax.sequence.setInPlace
+import shmp.lang.language.syntax.sequence.unfold
 import kotlin.random.Random
 
 

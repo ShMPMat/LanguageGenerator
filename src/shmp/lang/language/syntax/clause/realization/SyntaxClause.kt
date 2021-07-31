@@ -5,7 +5,7 @@ import shmp.lang.language.Language
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.lang.language.syntax.clause.translation.SentenceNode
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.sequence.WordSequence
 import shmp.lang.language.syntax.arranger.Arranger
 import shmp.lang.language.syntax.arranger.PassingArranger
 import kotlin.random.Random

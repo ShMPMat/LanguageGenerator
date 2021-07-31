@@ -48,18 +48,14 @@ class ExponenceGenerator {
                 constructExponenceUnionSets(currentCategoriesWithSupplement)
             )
 
-            data.add(currentCategoriesWithSupplement.map { it.second::realizationTypeProbability })
+            data += currentCategoriesWithSupplement.map { it.second::realizationTypeProbability }
             val mapper = { i: Int, c: CategoryRealization ->
                 if (i == 0 || c != Suppletion)
                     data[i].map { it(c) }.sum()
                 else
                     0.0
             }
-            clusters.add(ExponenceTemplate(
-                cluster,
-                mapper,
-                currentCategoriesWithSupplement.map { it.second }
-            ))
+            clusters += ExponenceTemplate(cluster, mapper, currentCategoriesWithSupplement.map { it.second })
             l = r
         }
 
@@ -141,7 +137,7 @@ class ExponenceGenerator {
                 previousCategoryValues + newCategory.categoryValue,
                 BoxedInt(neighbourCategories.value * currentCategory.actualSourcedValues.size)
             )
-            lists.addAll(recSets.map { it + newCategory })
+            lists += recSets.map { it + newCategory }
         }
 
         return lists

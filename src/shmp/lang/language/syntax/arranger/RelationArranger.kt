@@ -1,11 +1,9 @@
 package shmp.lang.language.syntax.arranger
 
 import shmp.lang.language.category.paradigm.ChangeException
-import shmp.lang.language.syntax.clause.translation.NonJoinedClause
 import shmp.lang.language.syntax.RelationOrder
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.WordSequence
 import kotlin.random.Random
 
 

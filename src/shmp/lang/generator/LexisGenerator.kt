@@ -61,7 +61,7 @@ class LexisGenerator(
         }
 
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
-        wordBase.allWords.addAll(newWords)
+        wordBase.allWords += newWords
     }
 
     private val wordClusters = readWordClusters(supplementPath)
@@ -121,7 +121,7 @@ class LexisGenerator(
             val newWords = mutableListOf(generateWord(extendedCore))
 
             derivationGenerator.makeDerivations(newWords, wordBase)
-            words.addAll(newWords)
+            words += newWords
         }
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
@@ -142,7 +142,7 @@ class LexisGenerator(
                 )
             )
 
-            words.add(particle)
+            words += particle
 
             copula[CopulaType.Particle] = particle
         }
@@ -156,7 +156,7 @@ class LexisGenerator(
                 )
             )
 
-            words.add(particle)
+            words += particle
 
             questionMarker[QuestionMarker] = particle
         }
@@ -226,10 +226,10 @@ class LexisGenerator(
 
             category.actualValues.forEach { v ->
                 if (values.none { it.value == v })
-                    values.add(v.toSampleSpaceObject(10.0))
+                    values += v.toSampleSpaceObject(10.0)
             }
 
-            resultCategories.add(values.randomUnwrappedElement())
+            resultCategories += values.randomUnwrappedElement()
         }
         return resultCategories
     }
@@ -265,10 +265,10 @@ class LexisGenerator(
                 else -> SyllablePosition.Middle
             }
             val syllable = makeSyllable(syllablePosition)
-            syllables.add(syllable)
+            syllables += syllable
         }
         syllables.removeAt(syllables.lastIndex)
-        syllables.add(makeSyllable(SyllablePosition.End))
+        syllables += makeSyllable(SyllablePosition.End)
 
         return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }

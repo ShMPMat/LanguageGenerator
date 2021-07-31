@@ -39,7 +39,7 @@ class TransitiveVerbSentenceClause(
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
-                categoryValues.add(NegationValue.Negative)
+                categoryValues += NegationValue.Negative
 
             arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
@@ -61,7 +61,7 @@ class IntransitiveVerbSentenceClause(
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
-                categoryValues.add(NegationValue.Negative)
+                categoryValues += NegationValue.Negative
 
             arranger = RelationArranger(SubstitutingOrder(
                 language.changeParadigm.wordOrder.sovOrder.getValue(type)
@@ -91,7 +91,7 @@ class CopulaSentenceClause(
                     )
 
             if (type == CopulaSentenceType.NegatedCopulaClause)
-                categoryValues.add(NegationValue.Negative)
+                categoryValues += NegationValue.Negative
 
             arranger =
                 language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))

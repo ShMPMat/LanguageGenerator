@@ -54,8 +54,8 @@ class ChangeParadigmGenerator(
         while (speechParts.isNotEmpty()) {
             val categoryData = generateCategoryData(speechParts, categoriesWithMappers)
 
-            oldSpeechParts.addAll(speechParts)
-            oldCategoryData.addAll(categoryData)
+            oldSpeechParts += speechParts
+            oldCategoryData += categoryData
 
             checkCompulsoryConsistency(categoryData, oldCategoryData)
 
@@ -67,7 +67,7 @@ class ChangeParadigmGenerator(
                 )
                 for (word in words)
                     if (word.semanticsCore.speechPart !in oldSpeechParts)
-                        newSpeechParts.add(word.semanticsCore.speechPart)
+                        newSpeechParts += word.semanticsCore.speechPart
 
                 val changeParadigm = SpeechPartChangeParadigm(
                     speechPart,
@@ -83,7 +83,7 @@ class ChangeParadigmGenerator(
             }
             println(newSpeechParts)
             speechParts.clear()
-            speechParts.addAll(newSpeechParts)
+            speechParts += newSpeechParts
             newSpeechParts.clear()
         }
 

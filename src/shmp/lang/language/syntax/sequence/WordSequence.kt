@@ -1,4 +1,4 @@
-package shmp.lang.language.syntax
+package shmp.lang.language.syntax.sequence
 
 import shmp.lang.language.lexis.Word
 

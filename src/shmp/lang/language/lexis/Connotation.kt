@@ -40,9 +40,9 @@ data class Connotations(val values: Set<Connotation> = setOf()) {
             if (value in values) {
                 val newConnotation = value + values.first { it == value }
                 values.remove(value)
-                values.add(newConnotation)
+                values += newConnotation
             } else
-                values.add(value)
+                values += value
         }
 
         return Connotations(values)
@@ -66,7 +66,6 @@ infix fun Connotations.distance(that: Connotations): Double {
         return 0.0
 
     return mutualConnotations
-//        .map { (c1, c2) -> 1 - abs(c1.strength - c2.strength) }
         .map { (c1, c2) -> c1.strength * c2.strength }
         .toMutableList()
         .apply { addAll(List(otherElementsAmount) { 0.0 }) }

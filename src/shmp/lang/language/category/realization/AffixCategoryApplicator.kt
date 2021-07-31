@@ -1,10 +1,9 @@
 package shmp.lang.language.category.realization
 
-import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.morphem.Affix
-import shmp.lang.language.syntax.FoldedWordSequence
+import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
 class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) : AbstractCategoryApplicator(type) {

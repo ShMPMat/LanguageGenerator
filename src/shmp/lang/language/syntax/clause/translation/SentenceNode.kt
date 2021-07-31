@@ -34,11 +34,11 @@ data class SentenceNode(
         get() = listOf(typeForChildren) + children.map { it.first }
 
     fun insertCategoryValue(value: CategoryValue) {
-        _categoryValues.add(value)
+        _categoryValues += value
     }
 
     fun insertCategoryValues(values: CategoryValues) {
-        _categoryValues.addAll(values)
+        _categoryValues += values
     }
 
     fun setRelationChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
@@ -48,7 +48,7 @@ data class SentenceNode(
     }
 
     fun addStrayChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
-        _children.add(syntaxRelation to child)
+        _children += syntaxRelation to child
 
         child.setBackLink(this)
     }

@@ -38,7 +38,7 @@ class DerivationGenerator(
 
         injectionByConnotations(newWords + words)
 
-        newWords.addAll(internalInjectDerivationOptions(words, additionalInjectors))
+        newWords += internalInjectDerivationOptions(words, additionalInjectors)
 
         return newWords
     }
@@ -133,8 +133,9 @@ class DerivationGenerator(
                             continue
                         }
 //                        println("${left.word} + ${right.word} = ${target.word} $distance")
-                        target.derivationClusterTemplate.possibleCompounds.add(
-                            CompoundLink(listOf(left.word, right.word), distance)
+                        target.derivationClusterTemplate.possibleCompounds += CompoundLink(
+                            listOf(left.word, right.word),
+                            distance
                         )
                     }
                 }
@@ -229,13 +230,13 @@ class DerivationGenerator(
                 if (compound in compounds)
                     continue
 
-                compounds.add(compound)
+                compounds += compound
             }
 
             0.5.chanceOf {
                 val changer = PassingCategoryChanger(random.nextInt(2))
                 val prosodyRule = generateCompoundProsodyRule()
-                compounds.add(Compound(speechPart, PhonemeSequence(), changer, prosodyRule))
+                compounds += Compound(speechPart, PhonemeSequence(), changer, prosodyRule)
             }
         }
         return compounds
@@ -260,7 +261,7 @@ class DerivationGenerator(
         ))
 
         if (derivationClass.fromSpeechPart == derivationClass.toSpeechPart)
-            possibleCategoryMakers.add(PassingCategoryChanger(0))
+            possibleCategoryMakers += PassingCategoryChanger(0)
 
         return randomElement(possibleCategoryMakers, random)
     }
@@ -272,7 +273,7 @@ class DerivationGenerator(
             for (derivation in derivationParadigm.derivations) {
                 val derivedWord = derivation.derive(word, wordBase, random)
                     ?: continue
-                words.add(derivedWord)
+                words += derivedWord
             }
             i++
         }
@@ -284,7 +285,7 @@ class DerivationGenerator(
                 val derivedWord = compound.compose(availableWords, template, random)
                     ?: continue
 
-                availableWords.add(derivedWord)
+                availableWords += derivedWord
                 break
             }
     }

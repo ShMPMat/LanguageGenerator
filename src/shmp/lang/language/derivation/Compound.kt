@@ -83,15 +83,15 @@ data class Compound(
 
         for ((wordInd, word) in sourceWords.withIndex()) {
             for (syllable in word.syllables) {
-                prosodySyllables.add(syllables[syllableInd].copy(
-                    prosodicEnums = prosodyRule.changeProsody(wordInd, syllable.prosodicEnums))
+                prosodySyllables += syllables[syllableInd].copy(
+                    prosodicEnums = prosodyRule.changeProsody(wordInd, syllable.prosodicEnums)
                 )
 
                 syllableInd++
             }
 
             if (syllables.size != syllableInd) {
-                prosodySyllables.addAll(syllables.drop(syllableInd).take(wordGap))
+                prosodySyllables += syllables.drop(syllableInd).take(wordGap)
                 syllableInd += wordGap
             }
         }

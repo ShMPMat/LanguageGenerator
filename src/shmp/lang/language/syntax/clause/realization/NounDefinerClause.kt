@@ -40,6 +40,6 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause(Synt
                 CaseValue.Genitive,
                 word.semanticsCore.speechPart
             )
-            categoryValues.addAll(newCaseMarkers)
+            categoryValues += newCaseMarkers
         }
 }
