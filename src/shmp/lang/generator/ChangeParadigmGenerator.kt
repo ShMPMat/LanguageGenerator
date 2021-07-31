@@ -35,7 +35,7 @@ class ChangeParadigmGenerator(
     val numeralParadigmGenerator = NumeralParadigmGenerator()
 
     private val emptyArticleParadigm = SpeechPartChangeParadigm(
-        Article.toUnspecified(),
+        Article.toDefault(),
         listOf(),
         mapOf(),
         ProsodyChangeParadigm(StressType.None)
@@ -46,7 +46,7 @@ class ChangeParadigmGenerator(
 
         val oldCategoryData = mutableListOf<SpeechPartCategoryData>()
         val oldSpeechParts = mutableListOf<TypedSpeechPart>()
-        val speechParts = SpeechPart.values().map { it.toUnspecified() }.toMutableList()
+        val speechParts = SpeechPart.values().map { it.toDefault() }.toMutableList()
         val newSpeechParts = mutableSetOf<TypedSpeechPart>()
 
         val speechPartChangesMap = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
@@ -87,15 +87,15 @@ class ChangeParadigmGenerator(
             newSpeechParts.clear()
         }
 
-        val verbParadigm = speechPartChangesMap.getValue(Verb.toUnspecified())
-        val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toUnspecified())
+        val verbParadigm = speechPartChangesMap.getValue(Verb.toDefault())
+        val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
         speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(verbParadigm)
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
 
         simplifyParadigm(speechPartChangesMap)
 
         if (!articlePresent(categories, speechPartChangesMap))
-            speechPartChangesMap[Article.toUnspecified()] = emptyArticleParadigm
+            speechPartChangesMap[Article.toDefault()] = emptyArticleParadigm
 
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)

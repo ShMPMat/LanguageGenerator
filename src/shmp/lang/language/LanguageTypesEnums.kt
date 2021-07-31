@@ -59,7 +59,7 @@ open class AbstractCategoryValue(
         parentClassName,
         meaning,
         shortName,
-        speechPart.toUnspecified()
+        speechPart.toDefault()
     )
 
     constructor(parentClassName: String, meaning: Meaning, shortName: String, speechPart: TypedSpeechPart) : this(

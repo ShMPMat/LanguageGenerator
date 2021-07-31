@@ -65,8 +65,9 @@ class CategoryGenerator {
         val staticSpeechParts = supplements.randomStaticSpeechParts()
             .filter { it in affectedSpeechParts }
             .toSet()
-        return try {
-            constructor(presentElements as List<E>, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
+
+        try {
+            return constructor(presentElements as List<E>, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
         } catch (e: Exception) {
             throw DataConsistencyException("Wrong supplements with name ${supplements.javaClass.name}")
         }

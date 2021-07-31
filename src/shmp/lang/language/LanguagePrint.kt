@@ -10,6 +10,7 @@ import shmp.lang.language.syntax.WordSequence
 import shmp.lang.language.syntax.arranger.PassingArranger
 import shmp.lang.language.syntax.clause.realization.wordToNode
 import shmp.lang.language.syntax.clause.translation.SentenceClauseTranslator
+import shmp.lang.language.syntax.unfold
 import shmp.lang.utils.listCartesianProduct
 import kotlin.random.Random
 
@@ -70,7 +71,7 @@ fun Language.getParadigmPrinted(word: Word, printOptionalCategories: Boolean = f
                     .filter { !it.category.staticSpeechParts.contains(word.semanticsCore.speechPart.type) }
                     .map { it.actualSourcedValues }
             )
-                .map { changeParadigm.wordChangeParadigm.apply(word, it) to it }
+                .map { changeParadigm.wordChangeParadigm.apply(word, categoryValues = it).unfold() to it }
                 .map { (ws, vs) ->
                     val categoryValues = vs.map { it.categoryValue }
                     val relevantCategories = vs

@@ -2,13 +2,12 @@ package shmp.lang.generator
 
 import shmp.lang.containers.PhonemeBase
 import shmp.lang.language.Language
-import shmp.lang.language.NumeralSystemBase
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.toAdnominal
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.toDefault
 import shmp.lang.language.phonology.*
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.random.singleton.RandomSingleton
@@ -17,7 +16,6 @@ import java.io.File
 import java.text.ParseException
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.random.Random
 
 
 class LanguageGenerator(private val supplementPath: String) {
@@ -27,7 +25,7 @@ class LanguageGenerator(private val supplementPath: String) {
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm(
-        SpeechPart.values().map { it.toUnspecified() } + DeixisPronoun.toAdnominal()
+        SpeechPart.values().map { it.toDefault() } + DeixisPronoun.toAdnominal()
     )
     private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(

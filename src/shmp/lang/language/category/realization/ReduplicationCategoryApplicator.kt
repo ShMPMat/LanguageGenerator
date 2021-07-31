@@ -1,17 +1,23 @@
 package shmp.lang.language.category.realization
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
+import shmp.lang.language.syntax.FoldedWordSequence
 import shmp.lang.language.syntax.WordSequence
 
 
 class ReduplicationCategoryApplicator : CategoryApplicator {
-    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence {
-        val newWord = words[wordPosition].copyAndAddValues(values)
+    override fun apply(
+        words: FoldedWordSequence,
+        wordPosition: Int,
+        values: Collection<SourcedCategoryValue>
+    ): FoldedWordSequence {
+        val newWord = words[wordPosition].first.copyAndAddValues(values)
+        val latchType = words[wordPosition].second
 
-        return WordSequence(
+        return FoldedWordSequence(
             words.words.take(wordPosition)
-                    + newWord
-                    + newWord.copy()
+                    + (newWord to latchType)
+                    + (newWord.copy() to latchType)
                     + words.words.drop(wordPosition + 1)
         )
     }

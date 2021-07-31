@@ -7,6 +7,7 @@ import shmp.lang.language.derivation.DerivationParadigm
 import shmp.lang.language.lexis.Lexis
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.prosody.StressType
+import shmp.lang.language.syntax.unfold
 
 
 class Language(
@@ -23,7 +24,7 @@ class Language(
      |Stress pattern: $stressType
      |$lexis
      |words:
-     |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it)} - ${it.semanticsCore}" }}
+     |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it).unfold()} - ${it.semanticsCore}" }}
      |
      |$changeParadigm
      |

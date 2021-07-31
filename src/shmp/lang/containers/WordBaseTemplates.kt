@@ -29,7 +29,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>):
 
     return SemanticsCore(
         MeaningCluster(word),
-        if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toUnspecified(),
+        if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toDefault(),
         connotations,
         tags,
         DerivationCluster(derivationClusterTemplate.typeToCore),

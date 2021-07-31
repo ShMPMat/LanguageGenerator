@@ -4,6 +4,8 @@ import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.syntax.SyntaxRelation
+import shmp.lang.language.syntax.FoldedWordSequence
+import shmp.lang.language.syntax.LatchType
 import shmp.lang.language.syntax.WordSequence
 
 
@@ -11,31 +13,38 @@ class WordChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
 ) {
-    fun apply(word: Word, categoryValues: List<SourcedCategoryValue> = getDefaultState(word)): WordSequence {
-        val (startClause, _) = innerApply(word, categoryValues)
+    fun apply(
+        word: Word,
+        latchType: LatchType = LatchType.Center,
+        categoryValues: List<SourcedCategoryValue> = getDefaultState(word)
+    ): FoldedWordSequence {
+        val (startClause, _) = innerApply(word, latchType, categoryValues)
 
         return startClause
     }
 
     private fun innerApply(
         word: Word,
+        latchType: LatchType,
         categoryValues: List<SourcedCategoryValue>
-    ): Pair<WordSequence, Int> {
+    ): Pair<FoldedWordSequence, Int> {
         val simpleCategoryValues = categoryValues.map { it.categoryValue }
         val applicableValues = categoryValues
             .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
             .toSet()
 
         return speechPartChangeParadigms[word.semanticsCore.speechPart]
-            ?.apply(word, applicableValues)
+            ?.apply(word, latchType, applicableValues)
             ?.handleNewWsWords(applicableValues)
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
     }
 
-    private fun Pair<WordSequence, Int>.handleNewWsWords(values: Set<SourcedCategoryValue>): Pair<WordSequence, Int> {
+    private fun Pair<FoldedWordSequence, Int>.handleNewWsWords(
+        values: Set<SourcedCategoryValue>
+    ): Pair<FoldedWordSequence, Int> {
         val (ws, i) = this
 
-        val newWs = ws.words.flatMapIndexed { j, w ->
+        val newWs = ws.words.flatMapIndexed { j, (w, l) ->
             if (i != j && w.semanticsCore.speechPart.type != SpeechPart.Particle) {
                 val isAdnominal = w.semanticsCore.speechPart.subtype == adnominalSubtype
                 val isArticle = w.semanticsCore.speechPart.type == SpeechPart.Article
@@ -46,12 +55,12 @@ class WordChangeParadigm(
                             Agreement(SyntaxRelation.Agent, nominals),
                             it.parent
                         )
-                    } else ws[i].categoryValues//.filter { it !in ws[i].categoryValues }
+                    } else ws[i].first.categoryValues//.filter { it !in ws[i].categoryValues }
 
-                apply(w, newCv).words
-            } else listOf(w)
+                apply(w, l, newCv).words
+            } else listOf(w to l)
         }
-        return WordSequence(newWs) to i
+        return FoldedWordSequence(newWs) to i
     }
 
     internal fun getDefaultState(word: Word): List<SourcedCategoryValue> {

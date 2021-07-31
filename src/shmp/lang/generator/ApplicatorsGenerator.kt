@@ -13,11 +13,9 @@ import shmp.lang.language.morphem.Prefix
 import shmp.lang.language.morphem.Suffix
 import shmp.lang.language.morphem.change.Position
 import shmp.lang.language.phonology.PhoneticRestrictions
+import shmp.lang.language.syntax.LatchType
 import shmp.random.SampleSpaceObject
-import shmp.random.singleton.RandomSingleton
-import shmp.random.singleton.randomElement
-import shmp.random.singleton.randomUnwrappedElementOrNull
-import shmp.random.singleton.testProbability
+import shmp.random.singleton.*
 import shmp.random.toSampleSpaceObject
 
 
@@ -25,6 +23,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     private val exponenceGenerator = ExponenceGenerator()
     private val words = mutableListOf<Word>()
     private val derivativeStemProb = 0.1
+    private val clauseLatchProb = 0.9
 
     internal fun randomApplicatorsForSpeechPart(
         speechPart: TypedSpeechPart,
@@ -107,11 +106,15 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     ) = when (realizationType) {
         PrefixWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
-            PrefixWordCategoryApplicator(word) to word
+            val latch = clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
+
+            PrefixWordCategoryApplicator(word, latch) to word
         }
         SuffixWord -> {
             val word = lexisGenerator.generateWord(semanticsCore)
-            SuffixWordCategoryApplicator(word) to word
+            val latch = clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
+
+            SuffixWordCategoryApplicator(word, latch) to word
         }
         Prefix -> {
             val changes = changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)
@@ -178,7 +181,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
                 val derivationApplicator = getApplicator(
                     derivationRealization,
                     phoneticRestrictions,
-                    SemanticsCore("(OBL root)", SpeechPart.Particle.toUnspecified())
+                    SemanticsCore("(OBL root)", SpeechPart.Particle.toDefault())
                 )
 
                 for (value in exponenceCluster.possibleValues subtract defaultValues) {

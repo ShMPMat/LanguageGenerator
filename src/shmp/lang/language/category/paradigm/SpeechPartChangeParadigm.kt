@@ -5,9 +5,7 @@ import shmp.lang.language.category.CategorySource
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.phonology.prosody.ProsodyChangeParadigm
-import shmp.lang.language.syntax.SyntaxException
-import shmp.lang.language.syntax.WordSequence
-import shmp.lang.language.syntax.toWordSequence
+import shmp.lang.language.syntax.*
 
 
 data class SpeechPartChangeParadigm(
@@ -31,12 +29,12 @@ data class SpeechPartChangeParadigm(
         ?.actualValues
         ?: emptyList()
 
-    fun apply(word: Word, categoryValues: Set<SourcedCategoryValue>): Pair<WordSequence, Int> {
+    fun apply(word: Word, latchType: LatchType, categoryValues: Set<SourcedCategoryValue>): Pair<FoldedWordSequence, Int> {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
-        var currentClause = WordSequence(word)
+        var currentClause = FoldedWordSequence(word to latchType)
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
@@ -65,11 +63,11 @@ data class SpeechPartChangeParadigm(
             )
             if (currentClause.size != newClause.size)
                 for (i in wordPosition until newClause.size)
-                    if (currentWord == newClause[i]) {
+                    if (currentWord == newClause[i].first) {
                         wordPosition = i
                         break
                     }
-            currentWord = newClause[wordPosition]
+            currentWord = newClause[wordPosition].first
             currentClause = newClause
         }
 
@@ -79,12 +77,12 @@ data class SpeechPartChangeParadigm(
     }
 
     private fun useCategoryApplicator(
-        wordSequence: WordSequence,
+        wordSequence: FoldedWordSequence,
         wordPosition: Int,
         exponenceCluster: ExponenceCluster,
         exponenceValue: ExponenceValue,
         actualValues: List<SourcedCategoryValue>
-    ): WordSequence {
+    ): FoldedWordSequence {
         val word = wordSequence[wordPosition]
         return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
             applicators[exponenceCluster]
@@ -94,7 +92,7 @@ data class SpeechPartChangeParadigm(
                     "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
                             "but such Exponence Cluster isn't defined in Language"
                 )
-        else wordSequence.words.map { it.copy() }.toWordSequence()
+        else wordSequence.words.map { (w, l) -> w.copy() to l }.toFoldedWordSequence()
     }
 
     private fun getExponenceUnion(
@@ -102,12 +100,15 @@ data class SpeechPartChangeParadigm(
         exponenceCluster: ExponenceCluster
     ) = exponenceCluster.filterExponenceUnion(categoryValues)
 
-    private fun applyProsodyParadigm(wordSequence: WordSequence, wordPosition: Int, oldWord: Word) =
-        WordSequence(
+    private fun applyProsodyParadigm(wordSequence: FoldedWordSequence, wordPosition: Int, oldWord: Word): FoldedWordSequence {
+        val (word, latch) = wordSequence[wordPosition]
+
+        return FoldedWordSequence(
             wordSequence.words.subList(0, wordPosition)
-                    + prosodyChangeParadigm.apply(oldWord, wordSequence[wordPosition])
-                    + wordSequence.words.subList(wordPosition + 1, wordSequence.size)
+                    + (prosodyChangeParadigm.apply(oldWord, word) to latch)
+                    + wordSequence.words.subList(wordPosition + 1, wordSequence.words.size)
         )
+    }
 
     fun hasChanges() = applicators.any { it.value.isNotEmpty() }
 

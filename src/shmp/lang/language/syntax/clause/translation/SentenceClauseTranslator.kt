@@ -1,9 +1,7 @@
 package shmp.lang.language.syntax.clause.translation
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
-import shmp.lang.language.syntax.ChangeParadigm
-import shmp.lang.language.syntax.SyntaxRelation
-import shmp.lang.language.syntax.WordSequence
+import shmp.lang.language.syntax.*
 import kotlin.random.Random
 
 
@@ -14,17 +12,18 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
         val categoryValues = computeValues(node)
         val currentClause = node.typeForChildren to paradigm.wordChangeParadigm.apply(
             node.word.copy(categoryValues = listOf()),
-            categoryValues
+            categoryValues = categoryValues
         )
         val childrenClauses = node.children
             .map { it to applyNode(it.second, random) }
             .filter { !it.first.second.isDropped }
-            .map { it.first.first to it.second }
+            .map { it.first.first to it.second.setInPlace() }
 
         return (childrenClauses + currentClause)
             .sortedBy { node.nodesOrder.indexOf(it.first) }
             .map { it.second }
-            .reduceRight(WordSequence::plus)
+            .reduceRight(FoldedWordSequence::plus)
+            .unfold()
     }
 
     private fun computeValues(sentenceNode: SentenceNode): List<SourcedCategoryValue> {

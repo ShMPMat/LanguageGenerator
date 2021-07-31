@@ -3,12 +3,12 @@ package shmp.lang.language.syntax
 import shmp.lang.language.lexis.Word
 
 
-data class WordSequence constructor(val words: List<Word> = listOf()) {
+data class WordSequence(val words: List<Word> = listOf()) {
     constructor(word: Word): this(listOf(word))
 
-    val size: Int = words.size
+    val size = words.size
 
-    operator fun get(position: Int): Word = words[position]
+    operator fun get(position: Int) = words[position]
 
     operator fun plus(that: WordSequence) = WordSequence(this.words + that.words)
 

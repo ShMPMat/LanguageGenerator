@@ -11,7 +11,7 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValues
 import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.lexis.SpeechPart.*
 import shmp.lang.language.lexis.TypedSpeechPart
-import shmp.lang.language.lexis.toUnspecified
+import shmp.lang.language.lexis.toDefault
 import shmp.lang.language.syntax.*
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.ActorType.Agent
@@ -38,7 +38,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver(),
-        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).getCategoryOrNull(inclusivityName)
+        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName)
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -312,7 +312,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         val verbalCategories =
             changeParadigm.getSpeechPartParadigms(Verb).first().categories//TODO bullshit decision
         val pronounCategories =
-            changeParadigm.getSpeechPartParadigm(PersonalPronoun.toUnspecified()).categories
+            changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).categories
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 

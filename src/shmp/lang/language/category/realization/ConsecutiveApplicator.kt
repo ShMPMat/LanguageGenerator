@@ -1,13 +1,14 @@
 package shmp.lang.language.category.realization
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
+import shmp.lang.language.syntax.FoldedWordSequence
 import shmp.lang.language.syntax.WordSequence
 
 
 class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : CategoryApplicator {
     constructor(vararg applicators: CategoryApplicator) : this(applicators.toList())
 
-    override fun apply(words: WordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): WordSequence {
+    override fun apply(words: FoldedWordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): FoldedWordSequence {
         var currentClause = words
         var currentWord = words[wordPosition]
         var i = wordPosition

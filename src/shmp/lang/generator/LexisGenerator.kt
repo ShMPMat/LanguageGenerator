@@ -138,7 +138,7 @@ class LexisGenerator(
             val particle = generateWord(
                 SemanticsCore(
                     MeaningCluster("copula_particle"),
-                    SpeechPart.Particle.toUnspecified()
+                    SpeechPart.Particle.toDefault()
                 )
             )
 
@@ -152,7 +152,7 @@ class LexisGenerator(
             val particle = generateWord(
                 SemanticsCore(
                     MeaningCluster("question_marker"),
-                    SpeechPart.Particle.toUnspecified()
+                    SpeechPart.Particle.toDefault()
                 )
             )
 

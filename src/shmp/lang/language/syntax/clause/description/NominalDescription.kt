@@ -2,8 +2,6 @@ package shmp.lang.language.syntax.clause.description
 
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.Meaning
-import shmp.lang.language.lexis.SpeechPart
-import shmp.lang.language.lexis.toUnspecified
 import shmp.lang.language.syntax.SyntaxException
 import shmp.lang.language.syntax.clause.realization.NominalClause
 import shmp.lang.language.syntax.context.ActorType
