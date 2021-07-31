@@ -25,5 +25,23 @@ data class Word(
     fun copyWithValues(values: Collection<SourcedCategoryValue>) =
         copy(categoryValues = values.toList())
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Word
+
+        if (syllables != other.syllables) return false
+        if (semanticsCore != other.semanticsCore) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = syllables.hashCode()
+        result = 31 * result + semanticsCore.hashCode()
+        return result
+    }
+
     override fun toString() = syllables.joinToString("")
 }

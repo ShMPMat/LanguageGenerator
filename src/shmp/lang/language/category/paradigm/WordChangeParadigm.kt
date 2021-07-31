@@ -8,7 +8,7 @@ import shmp.lang.language.syntax.sequence.FoldedWordSequence
 import shmp.lang.language.syntax.sequence.LatchType
 
 
-class WordChangeParadigm(
+data class WordChangeParadigm(
     val categories: List<Category>,
     private val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
 ) {

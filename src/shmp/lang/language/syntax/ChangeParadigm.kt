@@ -4,7 +4,7 @@ import shmp.lang.language.category.paradigm.WordChangeParadigm
 import shmp.lang.language.syntax.numeral.NumeralParadigm
 
 
-class ChangeParadigm(
+data class ChangeParadigm(
     val wordOrder: WordOrder,
     val wordChangeParadigm: WordChangeParadigm,
     val syntaxParadigm: SyntaxParadigm,

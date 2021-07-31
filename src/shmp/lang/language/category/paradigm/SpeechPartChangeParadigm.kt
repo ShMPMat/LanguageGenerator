@@ -85,18 +85,15 @@ data class SpeechPartChangeParadigm(
         exponenceCluster: ExponenceCluster,
         exponenceValue: ExponenceValue,
         actualValues: List<SourcedCategoryValue>
-    ): FoldedWordSequence {
-        val word = wordSequence[wordPosition]
-        return if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
-            applicators[exponenceCluster]
-                ?.get(exponenceValue)
-                ?.apply(wordSequence, wordPosition, actualValues)
-                ?: throw ChangeException(
-                    "Tried to change word \"$word\" for categories ${exponenceValue.categoryValues.joinToString()} " +
-                            "but such Exponence Cluster isn't defined in Language"
-                )
-        else wordSequence.words.map { (w, l) -> w.copy() to l }.toFoldedWordSequence()
-    }
+    ) = if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
+        applicators[exponenceCluster]
+            ?.get(exponenceValue)
+            ?.apply(wordSequence, wordPosition, actualValues)
+            ?: throw ChangeException(
+                "Tried to change word \"${wordSequence[wordPosition].first}\" for categories $exponenceValue " +
+                        "but such Exponence Cluster isn't defined"
+            )
+    else wordSequence.words.map { (w, l) -> w.copy() to l }.toFoldedWordSequence()
 
     private fun getExponenceUnion(
         categoryValues: Set<SourcedCategoryValue>,
