@@ -136,10 +136,7 @@ class LexisGenerator(
             copula[CopulaType.Verb] = words.first { it.semanticsCore.hasMeaning("be") }
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
             val particle = generateWord(
-                SemanticsCore(
-                    MeaningCluster("copula_particle"),
-                    SpeechPart.Particle.toDefault()
-                )
+                SemanticsCore("copula_particle", SpeechPart.Particle.toDefault())
             )
 
             words += particle
@@ -150,10 +147,7 @@ class LexisGenerator(
         val questionMarker = mutableMapOf<QuestionMarker, Word>()
         if (syntaxParadigm.questionMarkerPresence.questionMarker != null) {
             val particle = generateWord(
-                SemanticsCore(
-                    MeaningCluster("question_marker"),
-                    SpeechPart.Particle.toDefault()
-                )
+                SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
             )
 
             words += particle

@@ -30,6 +30,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>):
     return SemanticsCore(
         MeaningCluster(word),
         if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toDefault(),
+        probability,
         connotations,
         tags,
         DerivationCluster(derivationClusterTemplate.typeToCore),
@@ -44,6 +45,7 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
     return SemanticsCore(
         MeaningCluster(core.meaningCluster.meanings + word),
         core.speechPart,
+        (probability + core.commonness) / 2,
         connotations + core.connotations,
         tagClusters
             .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }

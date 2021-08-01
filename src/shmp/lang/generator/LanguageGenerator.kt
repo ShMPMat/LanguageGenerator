@@ -48,7 +48,7 @@ class LanguageGenerator(private val supplementPath: String) {
     fun generateLanguage(wordAmount: Int): Language {
         val categoriesWithMappers = categoryGenerator.randomCategories()
         val categories = CategoryPool(categoriesWithMappers.map { it.first })
-        val changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
+        var changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
         val derivationParadigm = lexisGenerator.derivationGenerator.generateDerivationParadigm(
             changeGenerator,
             categories
@@ -59,6 +59,8 @@ class LanguageGenerator(private val supplementPath: String) {
             changeParadigm.syntaxParadigm,
             changeParadigmGenerator.numeralParadigmGenerator.numeralTemplates
         )
+
+//        changeParadigm = changeGenerator.injectIrregularity(lexis)
 
         return Language(
             lexis,

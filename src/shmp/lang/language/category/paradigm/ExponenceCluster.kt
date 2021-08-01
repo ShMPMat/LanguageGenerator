@@ -85,6 +85,7 @@ class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentC
                 semanticsCore = SemanticsCore(
                     semanticsCore.meaningCluster + core.meaningCluster,
                     if (core.speechPart.type != SpeechPart.Particle) core.speechPart else semanticsCore.speechPart,
+                    (semanticsCore.commonness + core.commonness) / 2,
                     semanticsCore.connotations + core.connotations,
                     semanticsCore.tags + core.tags,
                     semanticsCore.derivationCluster,

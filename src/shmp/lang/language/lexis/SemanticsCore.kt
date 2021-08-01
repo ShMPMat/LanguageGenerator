@@ -11,6 +11,7 @@ import shmp.random.UnwrappableSSO
 data class SemanticsCore(
     val meaningCluster: MeaningCluster,
     val speechPart: TypedSpeechPart,
+    val commonness: Double,
     val connotations: Connotations = Connotations(setOf()),
     val tags: Set<SemanticsTag> = setOf(),
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
@@ -18,7 +19,7 @@ data class SemanticsCore(
     val appliedDerivations: List<Derivation> = listOf(),
     val changeHistory: ChangeHistory? = null
 ) {
-    constructor(meaning: Meaning, speechPart: TypedSpeechPart): this(meaning.toCluster(), speechPart)
+    constructor(meaning: Meaning, speechPart: TypedSpeechPart): this(meaning.toCluster(), speechPart, 1.0)
 
     init {
         if (speechPart.type == SpeechPart.Verb && (tags.none { it.name.contains("trans") } || tags.isEmpty()))
