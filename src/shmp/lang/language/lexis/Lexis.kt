@@ -16,6 +16,9 @@ class Lexis(
     fun getWord(meaning: Meaning) = getWordOrNull(meaning)
         ?: throw LanguageException("No word with meaning '$meaning' in Language")
 
+    fun getBySpeechPart(speechPart: TypedSpeechPart) = words
+        .filter { it.semanticsCore.speechPart == speechPart }
+
     fun getCopulaWord(type: CopulaType) = copula[type]
         ?: throw LanguageException("No copula in Language for type $type")
 

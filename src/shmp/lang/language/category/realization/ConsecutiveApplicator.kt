@@ -4,7 +4,7 @@ import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
-class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : CategoryApplicator {
+class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : AbstractCategoryApplicator(null) {
     constructor(vararg applicators: CategoryApplicator) : this(applicators.toList())
 
     override fun apply(words: FoldedWordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>): FoldedWordSequence {

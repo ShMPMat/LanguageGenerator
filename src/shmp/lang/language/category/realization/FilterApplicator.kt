@@ -6,7 +6,7 @@ import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
-class FilterApplicator(private val applicators: List<Pair<CategoryApplicator, List<Word>>>) : CategoryApplicator {
+class FilterApplicator(val applicators: List<Pair<CategoryApplicator, List<Word>>>) : AbstractCategoryApplicator(null) {
     constructor(vararg applicators: Pair<CategoryApplicator, List<Word>>) : this(applicators.toList())
 
     init {

@@ -6,7 +6,7 @@ import shmp.lang.language.morphem.Affix
 import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
-class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization) : AbstractCategoryApplicator(type) {
+class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization?) : AbstractCategoryApplicator(type) {
     //TODO no guaranty for correctness
     override fun apply(words: FoldedWordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
         words.swapWord(wordPosition) { affix.change(it).copyAndAddValues(values) }

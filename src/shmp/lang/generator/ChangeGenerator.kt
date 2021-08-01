@@ -2,12 +2,20 @@ package shmp.lang.generator
 
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
+import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
+import shmp.lang.language.category.realization.CategoryApplicator
+import shmp.lang.language.lexis.Lexis
+import shmp.lang.language.lexis.TypedSpeechPart
+import shmp.lang.language.lexis.Word
 import shmp.lang.language.morphem.change.*
 import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.phonology.PhoneticRestrictions
 import shmp.lang.language.phonology.doesPhonemesCollide
+import shmp.lang.language.syntax.ChangeParadigm
 import shmp.random.SampleSpaceObject
+import shmp.random.singleton.RandomSingleton
+import shmp.random.singleton.chanceOf
 import shmp.random.singleton.randomElement
 
 
@@ -18,7 +26,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         position: Position,
         restrictions: PhoneticRestrictions
     ): TemplateSequenceChange {
-        val (hasInitial, hasFinal)  = when (position) {
+        val (hasInitial, hasFinal) = when (position) {
             Position.Beginning -> null to true
             Position.End -> true to null
         }
@@ -153,6 +161,62 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         )
     ).phonemeSequence.phonemes
         .map { PhonemePositionSubstitution(it) }
+
+
+    fun injectIrregularity(paradigm: ChangeParadigm, lexis: Lexis): ChangeParadigm {
+        val irregularityBias = RandomSingleton.random.nextDouble(0.1, 1.0)
+        val biasDecrease = 0.975
+        val newChangeParadigms = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
+
+        for (speechPart in paradigm.wordChangeParadigm.speechParts) {
+            val speechPartParadigm = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart)
+            val newApplicators = speechPartParadigm.orderedApplicators
+                .mapIndexed { i, (c, m) ->
+                    val newValueMap = m.map { (v, a) ->
+                        val spWords = lexis.getBySpeechPart(speechPart)
+                            .groupBy { it.semanticsCore.commonness }
+                            .map { (c, ws) -> c to ws.shuffled(RandomSingleton.random) }
+                            .sortedByDescending { (c) -> c }
+                            .flatMap { it.second }
+
+                        var currentBias = irregularityBias
+                        val irregularWords = spWords.takeWhile {
+                            (currentBias * it.semanticsCore.commonness).chanceOf<Boolean> {
+                                currentBias *= biasDecrease
+
+                                true
+                            } ?: false
+                        }
+
+                        v to generateIrregularApplicator(irregularWords, a, i)
+                    }.toMap()
+
+                    c to newValueMap
+                }.toMap()
+
+            newChangeParadigms[speechPart] = speechPartParadigm.copy(applicators = newApplicators)
+        }
+
+        return paradigm.copy(
+            wordChangeParadigm = paradigm.wordChangeParadigm.copy(speechPartChangeParadigms = newChangeParadigms)
+        )
+    }
+
+    private fun generateIrregularApplicator(
+        words: List<Word>,
+        oldApplicator: CategoryApplicator,
+        applicatorIndex: Int
+    ): CategoryApplicator {
+        if (words.isEmpty())
+            return oldApplicator
+        else return oldApplicator
+
+//        //TODO many new applicators
+//        //TODO only few remains
+//        val applicatorSequence = listOf(generateIrregularApplicator())
+//
+//        return FilterApplicator(applicatorSequence + (oldApplicator to listOf()))
+    }
 }
 
 

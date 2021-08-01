@@ -60,7 +60,7 @@ class LanguageGenerator(private val supplementPath: String) {
             changeParadigmGenerator.numeralParadigmGenerator.numeralTemplates
         )
 
-//        changeParadigm = changeGenerator.injectIrregularity(lexis)
+        changeParadigm = changeGenerator.injectIrregularity(changeParadigm, lexis)
 
         return Language(
             lexis,

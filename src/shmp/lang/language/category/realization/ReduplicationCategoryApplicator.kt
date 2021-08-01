@@ -1,10 +1,11 @@
 package shmp.lang.language.category.realization
 
+import shmp.lang.language.CategoryRealization
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.syntax.sequence.FoldedWordSequence
 
 
-class ReduplicationCategoryApplicator : CategoryApplicator {
+class ReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryRealization.Reduplication) {
     override fun apply(
         words: FoldedWordSequence,
         wordPosition: Int,

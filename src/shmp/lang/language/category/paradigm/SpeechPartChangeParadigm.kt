@@ -19,6 +19,9 @@ data class SpeechPartChangeParadigm(
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
+    val orderedApplicators = exponenceClusters
+        .map { it to applicators.getValue(it) }
+
     fun getCategory(name: String) = categories
         .first { it.category.outType == name }
 
