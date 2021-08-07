@@ -35,21 +35,18 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         val categories = categoriesAndSupply.map { it.first }
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
 
-        val exponenceTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply)
-        exponenceTemplates.forEach { map[it.exponenceCluster] = mutableMapOf() }
+        val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply)
+        orderedTemplates.forEach { map[it.cluster] = mutableMapOf() }
 
-        val orderedRealizationTypes = exponenceTemplates
-            .map { t -> t to values().randomElement { t.mapper(it) } }
-//        val orderedRealizationTypes = randomApplicatorsOrder(realizationTypes) //TODO I think it shuffled already
         val realizations = mutableListOf<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>()
 
-        for (i in orderedRealizationTypes.indices) {
-            val (cluster, startType) = orderedRealizationTypes[i]
-            val clusterMap = map.getValue(cluster.exponenceCluster)
+        for (i in orderedTemplates.indices) {
+            val (cluster, startType, supplements) = orderedTemplates[i]
+            val clusterMap = map.getValue(cluster)
             val currentRealizations = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
 
-            for (value in cluster.exponenceCluster.possibleValues) {
-                val types = getRealizationTypes(value, cluster.supplements, speechPart, categories, i)
+            for (value in cluster.possibleValues) {
+                val types = getRealizationTypes(value, supplements, speechPart, categories, i)
                 val type = types.randomUnwrappedElementOrNull()
                     ?: startType
 
@@ -62,13 +59,13 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
         val i = findFirstMorphemeCluster(realizations)
         if (i != null) {
-            val exponenceCluster = orderedRealizationTypes[i].first.exponenceCluster
+            val exponenceCluster = orderedTemplates[i].cluster
             val clusterMap = map.getValue(exponenceCluster)
             val currentRealizations = realizations[i]
 
             injectDerivationMorpheme(exponenceCluster, clusterMap, phoneticRestrictions, currentRealizations)
         }
-        return Result(words, map, orderedRealizationTypes.map { it.first.exponenceCluster })
+        return Result(words, map, orderedTemplates.map { it.cluster })
     }
 
     private fun findFirstMorphemeCluster(realizations: MutableList<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>): Int? {
@@ -151,7 +148,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     }
 
     private fun randomApplicatorsOrder(realizations: List<Pair<ExponenceTemplate, CategoryRealization>>) =
-        realizations.sortedBy { r -> r.first.exponenceCluster.categories.joinToString { it.category.outType } }
+        realizations.sortedBy { r -> r.first.cluster.categories.joinToString { it.category.outType } }
             .shuffled(RandomSingleton.random)
 
     private fun injectDerivationMorpheme(

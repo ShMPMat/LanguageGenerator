@@ -48,7 +48,8 @@ class ExponenceGenerator {
             )
 
             val mapper = makeMapper(currentCategoriesWithSupplement, clusters.size)
-            clusters += ExponenceTemplate(cluster, mapper, currentCategoriesWithSupplement.map { it.second })
+            val realization =  CategoryRealization.values().randomElement { mapper(it) }
+            clusters += ExponenceTemplate(cluster, realization, currentCategoriesWithSupplement.map { it.second })
             l = r
         }
 
@@ -159,7 +160,7 @@ class ExponenceGenerator {
 internal data class BoxedInt(var value: Int)
 
 data class ExponenceTemplate(
-    val exponenceCluster: ExponenceCluster,
-    val mapper: (CategoryRealization) -> Double,
+    val cluster: ExponenceCluster,
+    val realization: CategoryRealization,
     val supplements: List<CategoryRandomSupplements>
 )
