@@ -22,13 +22,7 @@ class Tense(
     categories: List<TenseValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory(
-    categories,
-    TenseValue::class.valuesSet(),
-    affected,
-    staticSpeechParts,
-    tenseName
-)
+) : AbstractChangeCategory(categories, TenseValue::class.valuesSet(), affected, staticSpeechParts, tenseName)
 
 object TenseRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {

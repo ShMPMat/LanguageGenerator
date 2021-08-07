@@ -4,6 +4,7 @@ import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.realization.CategoryApplicator
+import shmp.lang.language.category.realization.FilterApplicator
 import shmp.lang.language.lexis.Lexis
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
@@ -22,10 +23,7 @@ import shmp.random.singleton.randomElement
 class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private val generationAttempts = 10
 
-    internal fun generateChanges(
-        position: Position,
-        restrictions: PhoneticRestrictions
-    ): TemplateSequenceChange {
+    internal fun generateChanges(position: Position, restrictions: PhoneticRestrictions): TemplateSequenceChange {
         val (hasInitial, hasFinal) = when (position) {
             Position.Beginning -> null to true
             Position.End -> true to null
@@ -120,32 +118,23 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         val singleSubstitution = listOf(PassingPositionSubstitution())
         var phonemeMatcher = oldChange.phonemeMatchers
         var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
-        phonemeMatcher = if (phonemeMatcher.size <= 1) {
-            singleMatcher
-        } else when (oldChange.position) {
+
+        phonemeMatcher = if (phonemeMatcher.size > 1) when (oldChange.position) {
             Position.Beginning -> singleMatcher + phonemeMatcher.drop(1)
             Position.End -> phonemeMatcher.dropLast(1) + singleMatcher
-        }
-        matchedPhonemeSubstitution = if (matchedPhonemeSubstitution.size <= 1) {
-            singleSubstitution
-        } else when (oldChange.position) {
+        } else singleMatcher
+        matchedPhonemeSubstitution = if (matchedPhonemeSubstitution.size > 1) when (oldChange.position) {
             Position.Beginning -> singleSubstitution + matchedPhonemeSubstitution.drop(1)
             Position.End -> matchedPhonemeSubstitution.dropLast(1) + singleSubstitution
-        }
-        return TemplateSingleChange(
-            oldChange.position,
-            phonemeMatcher,
-            matchedPhonemeSubstitution,
-            newAffix
-        )
+        } else singleSubstitution
+
+        return TemplateSingleChange(oldChange.position, phonemeMatcher, matchedPhonemeSubstitution, newAffix)
     }
 
-    private fun getBorderPhoneme(singleChange: TemplateSingleChange): Phoneme? = when (singleChange.position) {
+    private fun getBorderPhoneme(singleChange: TemplateSingleChange) = when (singleChange.position) {
         Position.Beginning -> singleChange.affix.last()
-            .getSubstitutePhoneme()
-        Position.End -> singleChange.affix[0]
-            .getSubstitutePhoneme()
-    }
+        Position.End -> singleChange.affix.first()
+    }.getSubstitutePhoneme()
 
     private fun generateSyllableAffix(
         phoneticRestrictions: PhoneticRestrictions,
@@ -211,9 +200,11 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             return oldApplicator
         else return oldApplicator
 
+
 //        //TODO many new applicators
 //        //TODO only few remains
-//        val applicatorSequence = listOf(generateIrregularApplicator())
+////        val applicatorSequence = listOf(generateIrregularApplicator(app))
+//        val applicatorSequence = listOf(applica)
 //
 //        return FilterApplicator(applicatorSequence + (oldApplicator to listOf()))
     }

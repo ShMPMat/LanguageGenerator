@@ -22,9 +22,8 @@ class ExponenceGenerator {
                 val compulsory = cs.filter { (c) -> c.compulsoryData.isCompulsory }
                 nonCompulsory + compulsory
             }
-        val clusters = ArrayList<ExponenceTemplate>()
+        val clusters = mutableListOf<ExponenceTemplate>()
         var l = 0
-        val data = mutableListOf<List<RealizationMapper>>()
 
         while (l < shuffledCategories.size) {
             val r = if (shuffledCategories[l].first.compulsoryData.isCompulsory)
@@ -48,19 +47,25 @@ class ExponenceGenerator {
                 constructExponenceUnionSets(currentCategoriesWithSupplement)
             )
 
-            data += currentCategoriesWithSupplement.map { it.second::realizationTypeProbability }
-            val mapper = { i: Int, c: CategoryRealization ->
-                if (i == 0 || c != Suppletion)
-                    data[i].map { it(c) }.sum()
-                else
-                    0.0
-            }
+            val mapper = makeMapper(currentCategoriesWithSupplement, clusters.size)
             clusters += ExponenceTemplate(cluster, mapper, currentCategoriesWithSupplement.map { it.second })
             l = r
         }
 
         return clusters
     }
+
+    internal fun makeMapper(
+        currentCategoriesWithSupplement: List<SupplementedSourcedCategory>,
+        i: Int
+    ) : (CategoryRealization) -> Double {
+        return { c: CategoryRealization ->
+            if (i == 0 || c != Suppletion)
+                currentCategoriesWithSupplement.sumByDouble { it.second.realizationTypeProbability(c) }
+            else 0.0
+        }
+    }
+
 
     private fun constructExponenceUnionSets(
         categories: List<SupplementedSourcedCategory>,
@@ -155,6 +160,6 @@ internal data class BoxedInt(var value: Int)
 
 data class ExponenceTemplate(
     val exponenceCluster: ExponenceCluster,
-    val mapper: (Int, CategoryRealization) -> Double,
+    val mapper: (CategoryRealization) -> Double,
     val supplements: List<CategoryRandomSupplements>
 )

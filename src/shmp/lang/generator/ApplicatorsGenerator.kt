@@ -38,9 +38,9 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         val exponenceTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply)
         exponenceTemplates.forEach { map[it.exponenceCluster] = mutableMapOf() }
 
-        val realizationTypes = exponenceTemplates
-            .mapIndexed { i, t -> t to values().randomElement { c -> t.mapper(i, c) } }
-        val orderedRealizationTypes = randomApplicatorsOrder(realizationTypes)
+        val orderedRealizationTypes = exponenceTemplates
+            .map { t -> t to values().randomElement { t.mapper(it) } }
+//        val orderedRealizationTypes = randomApplicatorsOrder(realizationTypes) //TODO I think it shuffled already
         val realizations = mutableListOf<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>()
 
         for (i in orderedRealizationTypes.indices) {
@@ -99,6 +99,18 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
             .filter { position == 0 || it.realization != Suppletion }
     }
 
+    private fun getApplicator(
+        type: CategoryRealization,
+        phoneticRestrictions: PhoneticRestrictions,
+        core: SemanticsCore
+    ): CategoryApplicator {
+        val (applicator, word) = randomCategoryApplicator(type, phoneticRestrictions, core)
+
+        word?.let { words += it }
+
+        return applicator
+    }
+
     private fun randomCategoryApplicator(
         realizationType: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
@@ -136,18 +148,6 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
             val word = lexisGenerator.generateWord(semanticsCore)
             SuppletionCategoryApplicator(word) to word
         }
-    }
-
-    private fun getApplicator(
-        type: CategoryRealization,
-        phoneticRestrictions: PhoneticRestrictions,
-        core: SemanticsCore
-    ): CategoryApplicator {
-        val (applicator, word) = randomCategoryApplicator(type, phoneticRestrictions, core)
-
-        word?.let { words += it }
-
-        return applicator
     }
 
     private fun randomApplicatorsOrder(realizations: List<Pair<ExponenceTemplate, CategoryRealization>>) =
