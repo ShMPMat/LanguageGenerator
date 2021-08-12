@@ -4,18 +4,22 @@ import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.Suppletion
 import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.CategoryRandomSupplements
+import shmp.lang.language.category.RealizationBox
 import shmp.lang.language.category.paradigm.ExponenceCluster
+import shmp.lang.language.category.paradigm.ExponenceValue
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
+import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
+import shmp.random.singleton.randomUnwrappedElementOrNull
 import shmp.random.singleton.testProbability
 
 
 class ExponenceGenerator {
     private val categoryCollapseProbability = 0.5
 
-    internal fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>): List<ExponenceTemplate> {
+    internal fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>, speechPart: TypedSpeechPart): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
             .let { cs ->
                 val nonCompulsory = cs.filter { (c) -> !c.compulsoryData.isCompulsory }
@@ -39,24 +43,67 @@ class ExponenceGenerator {
                 }
                 .sortedBy { it.second }
                 .map { it.first }
-
+            val supplements = currentCategoriesWithSupplement.map { it.second }
             val currentCategories = currentCategoriesWithSupplement.map { it.first }
 
             val cluster = ExponenceCluster(
                 currentCategories,
                 constructExponenceUnionSets(currentCategoriesWithSupplement)
             )
+            val realizations = generateRealizationTemplate(
+                currentCategoriesWithSupplement,
+                cluster,
+                speechPart,
+                clusters.size
+            )
 
-            val mapper = makeMapper(currentCategoriesWithSupplement, clusters.size)
-            val realization =  CategoryRealization.values().randomElement { mapper(it) }
-            clusters += ExponenceTemplate(cluster, realization, currentCategoriesWithSupplement.map { it.second })
+            clusters += ExponenceTemplate(cluster, realizations, supplements)
             l = r
         }
 
         return clusters
     }
 
-    internal fun makeMapper(
+    internal fun generateRealizationTemplate(
+        currentCategoriesWithSupplement: List<SupplementedSourcedCategory>,
+        cluster: ExponenceCluster,
+        speechPart: TypedSpeechPart,
+        order: Int
+    ): RealizationTemplate {
+        val supplements = currentCategoriesWithSupplement.map { it.second }
+        val currentCategories = currentCategoriesWithSupplement.map { it.first }
+
+        val mapper = makeMapper(currentCategoriesWithSupplement, order)
+        val realization =  CategoryRealization.values().randomElement { mapper(it) }
+        val realizationTemplate = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
+        for (value in cluster.possibleValues) {
+            val types = getRealizationTypes(value, supplements, speechPart, currentCategories, order)
+            val type = types.randomUnwrappedElementOrNull()
+                ?: realization
+
+            realizationTemplate[value] = type to types
+        }
+
+        return realizationTemplate
+    }
+
+    private fun getRealizationTypes(
+        value: ExponenceValue,
+        supplements: List<CategoryRandomSupplements>,
+        speechPart: TypedSpeechPart,
+        categories: List<SourcedCategory>,
+        position: Int
+    ): List<RealizationBox> {
+        val categoryValues = value.categoryValues.map { it.categoryValue }
+        val variants = supplements.map {
+            it.specialRealization(categoryValues, speechPart.type, categories)
+        }
+
+        return uniteMutualProbabilities(variants) { copy(probability = it) }
+            .filter { position == 0 || it.realization != Suppletion }
+    }
+
+    private fun makeMapper(
         currentCategoriesWithSupplement: List<SupplementedSourcedCategory>,
         i: Int
     ) : (CategoryRealization) -> Double {
@@ -161,6 +208,8 @@ internal data class BoxedInt(var value: Int)
 
 data class ExponenceTemplate(
     val cluster: ExponenceCluster,
-    val realization: CategoryRealization,
+    val realizations: RealizationTemplate,
     val supplements: List<CategoryRandomSupplements>
 )
+
+typealias RealizationTemplate = Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>

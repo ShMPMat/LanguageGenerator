@@ -2,11 +2,8 @@ package shmp.lang.generator
 
 import shmp.lang.language.CategoryRealization
 import shmp.lang.language.CategoryRealization.*
-import shmp.lang.language.category.CategoryRandomSupplements
-import shmp.lang.language.category.RealizationBox
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
-import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.realization.*
 import shmp.lang.language.lexis.*
 import shmp.lang.language.morphem.Prefix
@@ -32,29 +29,21 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     ): Result {
         words.clear()
 
-        val categories = categoriesAndSupply.map { it.first }
         val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
 
-        val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply)
+        val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
         orderedTemplates.forEach { map[it.cluster] = mutableMapOf() }
 
-        val realizations = mutableListOf<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>()
+        val realizations = mutableListOf<RealizationTemplate>()
 
         for (i in orderedTemplates.indices) {
-            val (cluster, startType, supplements) = orderedTemplates[i]
+            val (cluster, allRealizations) = orderedTemplates[i]
             val clusterMap = map.getValue(cluster)
-            val currentRealizations = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
 
-            for (value in cluster.possibleValues) {
-                val types = getRealizationTypes(value, supplements, speechPart, categories, i)
-                val type = types.randomUnwrappedElementOrNull()
-                    ?: startType
-
-                clusterMap[value] = getApplicator(type, phoneticRestrictions, value.core)
-
-                currentRealizations[value] = type to types
+            for ((value, pair) in allRealizations) {
+                clusterMap[value] = getApplicator(pair.first, phoneticRestrictions, value.core)
             }
-            realizations += currentRealizations
+            realizations += allRealizations
         }
 
         val i = findFirstMorphemeCluster(realizations)
@@ -68,7 +57,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         return Result(words, map, orderedTemplates.map { it.cluster })
     }
 
-    private fun findFirstMorphemeCluster(realizations: MutableList<Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>>): Int? {
+    private fun findFirstMorphemeCluster(realizations: MutableList<RealizationTemplate>): Int? {
         for ((i, map) in realizations.withIndex()) {
             val isFullyOuter = map.all { it.value.first in listOf(SuffixWord, PrefixWord) }
             if (isFullyOuter)
@@ -78,22 +67,6 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         }
 
         return null
-    }
-
-    private fun getRealizationTypes(
-        value: ExponenceValue,
-        supplements: List<CategoryRandomSupplements>,
-        speechPart: TypedSpeechPart,
-        categories: List<SourcedCategory>,
-        position: Int
-    ): List<RealizationBox> {
-        val categoryValues = value.categoryValues.map { it.categoryValue }
-        val variants = supplements.map {
-            it.specialRealization(categoryValues, speechPart.type, categories)
-        }
-
-        return uniteMutualProbabilities(variants) { copy(probability = it) }
-            .filter { position == 0 || it.realization != Suppletion }
     }
 
     private fun getApplicator(
@@ -147,15 +120,11 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         }
     }
 
-    private fun randomApplicatorsOrder(realizations: List<Pair<ExponenceTemplate, CategoryRealization>>) =
-        realizations.sortedBy { r -> r.first.cluster.categories.joinToString { it.category.outType } }
-            .shuffled(RandomSingleton.random)
-
     private fun injectDerivationMorpheme(
         exponenceCluster: ExponenceCluster,
         clusterMap: MutableMap<ExponenceValue, CategoryApplicator>,
         phoneticRestrictions: PhoneticRestrictions,
-        realizations: Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>
+        realizations: RealizationTemplate
     ) {
         if (exponenceCluster.isCompulsory && exponenceCluster.possibleValues.size > 2) {
             val distinctRealizations = realizations.map { it.value.first }
@@ -164,7 +133,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
             if (distinctRealizations.size == 1 && derivativeStemProb.testProbability()) {
                 val realizationType = distinctRealizations.first()
-                val defaultValues = constructDefaultValues(realizations)
+                val defaultValues = constructUnderivedValues(realizations)
 
                 if (defaultValues.isEmpty())
                     return
@@ -190,7 +159,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         }
     }
 
-    private fun constructDefaultValues(realizations: Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>): List<ExponenceValue> {
+    private fun constructUnderivedValues(realizations: RealizationTemplate): List<ExponenceValue> {
         val passingValues = realizations.filter { it.value.first == Passing }
             .map { it.key }
         val probablePassingValues = realizations.mapNotNull { (e, p) ->
@@ -219,7 +188,6 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 }
 
 
-typealias RealizationMapper = (CategoryRealization) -> Double
 typealias ApplicatorMap = Map<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>>
 
 data class Result(val words: List<Word>, val solver: ApplicatorMap, val orderedClusters: List<ExponenceCluster>)
