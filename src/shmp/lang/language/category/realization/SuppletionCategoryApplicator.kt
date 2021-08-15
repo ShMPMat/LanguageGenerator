@@ -1,6 +1,6 @@
 package shmp.lang.language.category.realization
 
-import shmp.lang.language.CategoryRealization.Suppletion
+import shmp.lang.language.category.realization.CategoryRealization.Suppletion
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.sequence.FoldedWordSequence

@@ -1,14 +1,15 @@
 package shmp.lang.language.category
 
-import shmp.lang.language.AbstractCategoryValue
-import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryRealization.*
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.value.AbstractCategoryValue
+import shmp.lang.language.category.realization.CategoryRealization
+import shmp.lang.language.category.realization.CategoryRealization.*
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.category.CategorySource.Agreement
 import shmp.lang.language.category.CategorySource.Self
 import shmp.lang.language.category.PersonValue.*
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.withCoCategories
+import shmp.lang.language.category.value.RealizationBox
 import shmp.lang.language.lexis.Meaning
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.lexis.SpeechPart.*

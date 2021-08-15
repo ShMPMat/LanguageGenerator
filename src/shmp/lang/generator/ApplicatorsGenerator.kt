@@ -1,7 +1,7 @@
 package shmp.lang.generator
 
-import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryRealization.*
+import shmp.lang.language.category.realization.CategoryRealization
+import shmp.lang.language.category.realization.CategoryRealization.*
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
 import shmp.lang.language.category.realization.*

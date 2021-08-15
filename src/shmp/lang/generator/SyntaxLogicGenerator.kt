@@ -1,7 +1,7 @@
 package shmp.lang.generator
 
-import shmp.lang.language.CategoryValue
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.value.CategoryValue
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.category.*
 import shmp.lang.language.category.DeixisValue.*
 import shmp.lang.language.category.NounClassValue.*

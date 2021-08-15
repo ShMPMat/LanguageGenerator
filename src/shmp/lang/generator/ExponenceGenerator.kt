@@ -1,14 +1,15 @@
 package shmp.lang.generator
 
-import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryRealization.Suppletion
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.realization.CategoryRealization
+import shmp.lang.language.category.realization.CategoryRealization.Suppletion
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.category.CategoryRandomSupplements
-import shmp.lang.language.category.RealizationBox
+import shmp.lang.language.category.value.RealizationBox
 import shmp.lang.language.category.paradigm.ExponenceCluster
 import shmp.lang.language.category.paradigm.ExponenceValue
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
+import shmp.lang.language.category.realization.categoryRealizationClusters
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.random.singleton.RandomSingleton
 import shmp.random.singleton.randomElement
@@ -18,6 +19,10 @@ import shmp.random.singleton.testProbability
 
 class ExponenceGenerator {
     private val categoryCollapseProbability = 0.5
+    private val rawRealizationProb = 0.01
+
+    private val categoryClusterPriority = categoryRealizationClusters
+        .map { it to it.randomElement() }
 
     internal fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>, speechPart: TypedSpeechPart): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
@@ -74,12 +79,16 @@ class ExponenceGenerator {
         val currentCategories = currentCategoriesWithSupplement.map { it.first }
 
         val mapper = makeMapper(currentCategoriesWithSupplement, order)
-        val realization =  CategoryRealization.values().randomElement { mapper(it) }
+        val default =  CategoryRealization.values().randomElement { mapper(it) }
         val realizationTemplate = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
         for (value in cluster.possibleValues) {
             val types = getRealizationTypes(value, supplements, speechPart, currentCategories, order)
-            val type = types.randomUnwrappedElementOrNull()
-                ?: realization
+            val rawType = types.randomUnwrappedElementOrNull()
+                ?: default
+            val type = categoryClusterPriority.firstOrNull { rawType in it.first }
+                ?.second
+                ?.takeIf { (1 - rawRealizationProb).testProbability() }
+                ?: rawType
 
             realizationTemplate[value] = type to types
         }

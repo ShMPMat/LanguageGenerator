@@ -1,6 +1,5 @@
 package shmp.lang.language.category.realization
 
-import shmp.lang.language.CategoryRealization
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.syntax.sequence.FoldedWordSequence
 

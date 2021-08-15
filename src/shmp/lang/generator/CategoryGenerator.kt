@@ -1,9 +1,9 @@
 package shmp.lang.generator
 
 import shmp.lang.generator.util.DataConsistencyException
-import shmp.lang.language.AbstractCategoryValue
+import shmp.lang.language.category.value.AbstractCategoryValue
 import shmp.lang.language.category.*
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.category.value.CategoryValue
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.lexis.SpeechPart
 import shmp.random.singleton.chanceOf

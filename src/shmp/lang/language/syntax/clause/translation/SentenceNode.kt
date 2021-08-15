@@ -1,7 +1,7 @@
 package shmp.lang.language.syntax.clause.translation
 
-import shmp.lang.language.CategoryValue
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.value.CategoryValue
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.category.CategorySource
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValue

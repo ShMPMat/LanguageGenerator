@@ -5,7 +5,7 @@ import shmp.lang.generator.util.DataConsistencyException
 import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.generator.util.readWordClusters
-import shmp.lang.language.CategoryValue
+import shmp.lang.language.category.value.CategoryValue
 import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.category.CategoryPool

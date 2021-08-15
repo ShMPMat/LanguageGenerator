@@ -1,14 +1,14 @@
 package shmp.lang.language.category
 
-import shmp.lang.language.CategoryRealization
-import shmp.lang.language.CategoryValue
-import shmp.lang.language.CategoryValues
 import shmp.lang.language.category.paradigm.CompulsoryData
 import shmp.lang.language.category.paradigm.SourcedCategory
+import shmp.lang.language.category.realization.CategoryRealization
+import shmp.lang.language.category.value.CategoryValue
+import shmp.lang.language.category.value.CategoryValues
+import shmp.lang.language.category.value.RealizationBox
 import shmp.lang.language.lexis.SpeechPart
 import shmp.lang.language.syntax.SyntaxRelation
 import shmp.random.SampleSpaceObject
-import shmp.random.UnwrappableSSO
 
 
 interface Category {
@@ -28,24 +28,6 @@ interface CategoryRandomSupplements {
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
     fun randomIsCompulsory(speechPart: SpeechPart): CompulsoryData
     fun getCollapseCoefficient(previousCategoryValues: CategoryValues): Double = 1.0
-}
-
-data class RealizationBox(
-    val realization: CategoryRealization?,
-    override val probability: Double
-) : UnwrappableSSO<CategoryRealization?>(realization) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as RealizationBox
-
-        if (realization != other.realization) return false
-
-        return true
-    }
-
-    override fun hashCode() = realization?.hashCode() ?: 0
 }
 
 internal fun noValue(probability: Double) = RealizationBox(null, probability)

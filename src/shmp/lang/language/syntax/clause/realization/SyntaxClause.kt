@@ -1,6 +1,6 @@
 package shmp.lang.language.syntax.clause.realization
 
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.Language
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.syntax.SyntaxRelation

@@ -4,6 +4,8 @@ import shmp.lang.language.*
 import shmp.lang.language.category.*
 import shmp.lang.language.category.paradigm.SourcedCategory
 import shmp.lang.language.category.paradigm.SourcedCategoryValues
+import shmp.lang.language.category.value.CategoryValue
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.syntax.context.ActorType
 import shmp.lang.language.syntax.context.Context

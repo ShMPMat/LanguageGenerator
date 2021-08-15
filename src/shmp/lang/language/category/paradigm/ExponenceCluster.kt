@@ -1,7 +1,7 @@
 package shmp.lang.language.category.paradigm
 
-import shmp.lang.language.CategoryValue
-import shmp.lang.language.CategoryValues
+import shmp.lang.language.category.value.CategoryValue
+import shmp.lang.language.category.value.CategoryValues
 import shmp.lang.language.LanguageException
 import shmp.lang.language.category.Category
 import shmp.lang.language.category.CategorySource
