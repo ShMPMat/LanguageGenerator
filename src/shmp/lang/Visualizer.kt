@@ -198,7 +198,7 @@ class Visualizer(val language: Language) {
 }
 
 fun main() {
-    RandomSingleton.safeRandom = Random(216 + 84)
+    RandomSingleton.safeRandom = Random(216 + 85)
 
     val generator = LanguageGenerator("SupplementFiles")
     val wordAmount = WordBase("SupplementFiles").baseWords.size

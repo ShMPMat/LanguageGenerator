@@ -2,6 +2,7 @@ package shmp.lang.language.morphem.change
 
 import shmp.lang.language.lexis.Word
 
+
 class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange {
     constructor(vararg changes: WordChange) : this(changes.toList())
 
@@ -26,7 +27,5 @@ class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange
         return word.copy()
     }
 
-    override fun toString(): String {
-        return changes.joinToString()
-    }
+    override fun toString() = changes.joinToString()
 }

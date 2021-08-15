@@ -4,11 +4,16 @@ import shmp.lang.generator.util.SyllablePosition
 import shmp.lang.generator.util.SyllableRestrictions
 import shmp.lang.language.category.paradigm.SpeechPartChangeParadigm
 import shmp.lang.language.category.realization.CategoryApplicator
-import shmp.lang.language.category.realization.FilterApplicator
 import shmp.lang.language.lexis.Lexis
 import shmp.lang.language.lexis.TypedSpeechPart
 import shmp.lang.language.lexis.Word
 import shmp.lang.language.morphem.change.*
+import shmp.lang.language.morphem.change.matcher.PassingMatcher
+import shmp.lang.language.morphem.change.matcher.PhonemeMatcher
+import shmp.lang.language.morphem.change.matcher.TypePositionMatcher
+import shmp.lang.language.morphem.change.substitution.PassingPositionSubstitution
+import shmp.lang.language.morphem.change.substitution.PhonemePositionSubstitution
+import shmp.lang.language.morphem.change.substitution.PositionSubstitution
 import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.phonology.PhoneticRestrictions
@@ -70,7 +75,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 val borderAffixMatcher = when (it.position) {
                     Position.Beginning -> it.phonemeMatchers.firstOrNull()
                     Position.End -> it.phonemeMatchers.lastOrNull()
-                } ?: PassingMatcher()
+                } ?: PassingMatcher
                 val hasCollision = when (it.position) {
                     Position.Beginning -> restrictions.initialWordPhonemes
                     Position.End -> restrictions.finalWordPhonemes

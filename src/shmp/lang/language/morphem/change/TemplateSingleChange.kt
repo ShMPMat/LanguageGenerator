@@ -1,9 +1,9 @@
 package shmp.lang.language.morphem.change
 
 import shmp.lang.language.LanguageException
-import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.lexis.Word
-import shmp.lang.language.phonology.Phoneme
+import shmp.lang.language.morphem.change.matcher.PositionMatcher
+import shmp.lang.language.morphem.change.substitution.PositionSubstitution
 import shmp.lang.language.phonology.PhonemeSequence
 
 
@@ -91,58 +91,10 @@ class TemplateSingleChange(
     }
 
     override fun toString(): String {
-        return "$position ${if (phonemeMatchers.isEmpty()) "with any phonemes" else phonemeMatchers.joinToString("")} " +
-                "changes to ${getFullChange().joinToString("")}"
+        val matcherString = if (phonemeMatchers.isNotEmpty())
+            phonemeMatchers.joinToString("")
+        else "with any phonemes"
+
+        return "$position $matcherString changes to ${getFullChange().joinToString("")}"
     }
-}
-
-interface PositionMatcher {
-    fun test(phoneme: Phoneme): Boolean
-}
-
-class PhonemeMatcher(val phoneme: Phoneme) : PositionMatcher {
-    override fun test(phoneme: Phoneme) = this.phoneme == phoneme
-
-    override fun toString(): String {
-        return phoneme.toString()
-    }
-}
-
-class TypePositionMatcher(val type: PhonemeType) : PositionMatcher {
-    override fun test(phoneme: Phoneme) = type == phoneme.type
-
-    override fun toString(): String {
-        return type.char.toString()
-    }
-}
-
-class PassingMatcher() : PositionMatcher {
-    override fun test(phoneme: Phoneme): Boolean = true
-
-    override fun toString() = "*"
-}
-
-interface PositionSubstitution {
-    fun substitute(word: Word, position: Int): Phoneme
-    fun getSubstitutePhoneme(): Phoneme?
-}
-
-class PhonemePositionSubstitution(val phoneme: Phoneme) :
-    PositionSubstitution {
-    override fun substitute(word: Word, position: Int) = phoneme
-    override fun getSubstitutePhoneme(): Phoneme? = phoneme
-
-    override fun toString(): String {
-        return phoneme.toString()
-    }
-}
-
-class PassingPositionSubstitution : PositionSubstitution {
-    override fun substitute(word: Word, position: Int) =
-        if (position < word.size && position >= 0) word[position]
-        else throw LanguageException("Tried to change nonexistent phoneme on position $position in the word $word")
-
-    override fun getSubstitutePhoneme(): Phoneme? = null
-
-    override fun toString() = "_"
 }
