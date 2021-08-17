@@ -14,7 +14,7 @@ import shmp.random.singleton.testProbability
 class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private val ADD_TESTS = 10
 
-//    private val syllableMapper = mutableMapOf<PhonemeContainer, List<Syllable>>()
+//    private val syllableMapper = mutableMapOf<PhonemeContainer, Syllables>()
 
     fun generateSyllable(restrictions: SyllableRestrictions): Syllable {
         for (i in 0 until ADD_TESTS) {

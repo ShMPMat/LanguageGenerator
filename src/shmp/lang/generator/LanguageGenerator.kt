@@ -74,6 +74,7 @@ class LanguageGenerator(private val supplementPath: String) {
 
     private fun generateRestrictionParadigm(speechParts: List<TypedSpeechPart>): RestrictionsParadigm {//TODO make smth meaningful
         val generalAvgWordLength = 5
+        val syllable = syllableGenerator.template
 
         val map = mutableMapOf<TypedSpeechPart, PhoneticRestrictions>()
         val allInitial = syllableGenerator.template.initialPhonemeTypes
@@ -88,11 +89,11 @@ class LanguageGenerator(private val supplementPath: String) {
 
         for (speechPart in speechParts) {
             val actualAvgWordLength =
-                if (speechPart.type in listOf(Article, Particle, Adposition, PersonalPronoun, DeixisPronoun))
-                    2
-                else generalAvgWordLength
+                if (speechPart.type !in listOf(Article, Particle, Adposition, PersonalPronoun, DeixisPronoun))
+                    generalAvgWordLength
+                else 2
 
-            map[speechPart] = PhoneticRestrictions(actualAvgWordLength, allInitial, allNucleus, allFinals)
+            map[speechPart] = PhoneticRestrictions(syllable, actualAvgWordLength, allInitial, allNucleus, allFinals)
         }
 
         return RestrictionsParadigm(map)

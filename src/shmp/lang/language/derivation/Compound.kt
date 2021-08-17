@@ -5,6 +5,7 @@ import shmp.lang.containers.toSemanticsCore
 import shmp.lang.language.lexis.*
 import shmp.lang.language.phonology.PhonemeSequence
 import shmp.lang.language.phonology.Syllable
+import shmp.lang.language.phonology.Syllables
 import shmp.random.*
 import shmp.lang.utils.joinToList
 import shmp.random.singleton.chanceOfNot
@@ -77,7 +78,7 @@ data class Compound(
         ?.takeIf { o -> o.all { it.isNotEmpty() } }
         ?.let { CompoundOptions(it, template.probability) }
 
-    private fun putProsodies(syllables: List<Syllable>, sourceWords: List<Word>, wordGap: Int): List<Syllable> {
+    private fun putProsodies(syllables: Syllables, sourceWords: List<Word>, wordGap: Int): Syllables {
         val prosodySyllables = mutableListOf<Syllable>()
         var syllableInd = 0
 

@@ -35,28 +35,23 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         }
         val rawSubstitutions = when (AffixTypes.values().randomElement()) {
             AffixTypes.UniversalAffix -> {
+                val affix = generateSyllableAffix(restrictions, hasInitial, hasFinal)
                 val templates = listOf(
-                    TemplateSingleChange(
-                        position,
-                        listOf(),
-                        listOf(),
-                        generateSyllableAffix(restrictions, hasInitial, hasFinal)
-                    )
+                    TemplateSingleChange(position, listOf(), listOf(), affix)
                 )
+
                 randomDoubleEdgeLettersElimination(templates, restrictions)
             }
             AffixTypes.PhonemeTypeAffix -> {
                 val templates = PhonemeType.values().map {
-                    TemplateSingleChange(
-                        position,
-                        listOf(TypePositionMatcher(it)),
-                        listOf(PassingPositionSubstitution()),
-                        generateSyllableAffix(
-                            restrictions,
-                            hasInitial == true || it == PhonemeType.Vowel,
-                            it == PhonemeType.Vowel && position == Position.End
-                        )
+                    val affix = generateSyllableAffix(
+                        restrictions,
+                        hasInitial == true || it == PhonemeType.Vowel,
+                        it == PhonemeType.Vowel && position == Position.End
                     )
+                    val substitutions = listOf(PassingPositionSubstitution())
+
+                    TemplateSingleChange(position, listOf(TypePositionMatcher(it)), substitutions, affix)
                 }
                 randomDoubleEdgeLettersElimination(templates, restrictions)
             }
@@ -68,24 +63,25 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
     ): List<WordChange> {
-        return templateChanges
-            .map {
-                var result: WordChange = it
-                val borderPhoneme = getBorderPhoneme(it) ?: return@map result
-                val borderAffixMatcher = when (it.position) {
-                    Position.Beginning -> it.phonemeMatchers.firstOrNull()
-                    Position.End -> it.phonemeMatchers.lastOrNull()
-                } ?: PassingMatcher
-                val hasCollision = when (it.position) {
-                    Position.Beginning -> restrictions.initialWordPhonemes
-                    Position.End -> restrictions.finalWordPhonemes
-                }.filter { phoneme -> borderAffixMatcher.test(phoneme) }
-                    .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
-                if (hasCollision) {
-                    result = removeCollision(it, restrictions, borderPhoneme) ?: result
-                }
-                result
-            }
+        return templateChanges.map { change ->
+            var result: WordChange = change
+            val borderPhoneme = getBorderPhoneme(change)
+                ?: return@map result
+            val borderAffixMatcher = when (change.position) {
+                Position.Beginning -> change.phonemeMatchers.firstOrNull()
+                Position.End -> change.phonemeMatchers.lastOrNull()
+            } ?: PassingMatcher
+            val hasCollision = when (change.position) {
+                Position.Beginning -> restrictions.initialWordPhonemes
+                Position.End -> restrictions.finalWordPhonemes
+            }.filter { phoneme -> borderAffixMatcher.test(phoneme) }
+                .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
+
+            if (hasCollision)
+                result = removeCollision(change, restrictions, borderPhoneme) ?: result
+
+            result
+        }
     }
 
     private fun removeCollision(
@@ -102,11 +98,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             }.phoneme
             if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                 return TemplateSequenceChange(
-                    makeTemplateChangeWithBorderPhoneme(
-                        wordChange,
-                        newChange,
-                        borderPhoneme
-                    ),
+                    makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme),
                     wordChange
                 )
             }

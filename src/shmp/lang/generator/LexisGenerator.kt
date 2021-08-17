@@ -12,6 +12,7 @@ import shmp.lang.language.category.CategoryPool
 import shmp.lang.language.lexis.*
 import shmp.lang.language.phonology.RestrictionsParadigm
 import shmp.lang.language.phonology.Syllable
+import shmp.lang.language.phonology.Syllables
 import shmp.lang.language.phonology.prosody.StressType
 import shmp.lang.language.phonology.prosody.generateStress
 import shmp.lang.language.syntax.SyntaxParadigm
@@ -267,9 +268,9 @@ class LexisGenerator(
         return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }
 
-    fun checkSyllable(syllable: Syllable, prefix: List<Syllable>) = checkBorderCoherency(syllable, prefix)
+    fun checkSyllable(syllable: Syllable, prefix: Syllables) = checkBorderCoherency(syllable, prefix)
 
-    private fun checkBorderCoherency(syllable: Syllable, prefix: List<Syllable>): Boolean {
+    private fun checkBorderCoherency(syllable: Syllable, prefix: Syllables): Boolean {
         if (prefix.isEmpty()) return true
         val leftBorder = prefix.last().phonemeSequence.last()
         val rightBorder = syllable[0]

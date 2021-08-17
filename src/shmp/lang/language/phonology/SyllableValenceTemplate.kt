@@ -3,12 +3,10 @@ package shmp.lang.language.phonology
 
 class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
     val nucleusIndex: Int
-        get() = valencies
-                .zip(valencies.indices)
-                .filter { it.first.realizationProbability == 1.0 }
-                .lastOrNull()
-                ?.second
-                ?: throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
+        get() = valencies.zip(valencies.indices)
+            .lastOrNull { it.first.realizationProbability == 1.0 }
+            ?.second
+            ?: throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
     override val nucleusPhonemeTypes: Set<PhonemeType> = setOf(valencies[nucleusIndex].phonemeType)
 
     override val initialPhonemeTypes: Set<PhonemeType> =
@@ -32,7 +30,7 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         return getRegexp().containsMatchIn(string)
     }
 
-    override fun splitOnSyllables(phonemes: PhonemeSequence): List<Syllable>? {
+    override fun splitOnSyllables(phonemes: PhonemeSequence): Syllables? {
         val syllables = mutableListOf<Syllable>()
         val regex = getRegexp()
         val currentPhonemes = phonemes.getTypeRepresentation()
@@ -72,6 +70,7 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
     override fun toString() = valencies
         .joinToString("")
 }
+
 
 data class ValencyPlace(val phonemeType: PhonemeType, val realizationProbability: Double) {
     override fun toString() = if (realizationProbability == 1.0)

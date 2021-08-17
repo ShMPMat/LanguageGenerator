@@ -10,6 +10,7 @@ class RestrictionsParadigm(val restrictionsMapper: MutableMap<TypedSpeechPart, P
 
 
 data class PhoneticRestrictions(
+    val syllableTemplate: SyllableTemplate,
     val avgWordLength: Int,
     val initialSyllablePhonemes: Set<Phoneme>,
     val nucleusSyllablePhonemes: Set<Phoneme>,

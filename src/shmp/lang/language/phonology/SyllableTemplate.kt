@@ -11,7 +11,7 @@ interface SyllableTemplate {
 
     fun test(phonemes: PhonemeSequence): Boolean
 
-    fun splitOnSyllables(phonemes: PhonemeSequence): List<Syllable>?
+    fun splitOnSyllables(phonemes: PhonemeSequence): Syllables?
 
     fun createWord(phonemes: PhonemeSequence, semanticsCore: SemanticsCore): Word? =
         splitOnSyllables(phonemes)?.let { syllables ->

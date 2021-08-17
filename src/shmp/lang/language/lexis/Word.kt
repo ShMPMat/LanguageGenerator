@@ -3,11 +3,12 @@ package shmp.lang.language.lexis
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
 import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.SyllableTemplate
+import shmp.lang.language.phonology.Syllables
 import shmp.lang.language.syntax.features.WordSyntaxRole
 
 
 data class Word(
-    val syllables: List<Syllable>,
+    val syllables: Syllables,
     val syllableTemplate: SyllableTemplate,
     val semanticsCore: SemanticsCore,
     val categoryValues: List<SourcedCategoryValue> = listOf(),
