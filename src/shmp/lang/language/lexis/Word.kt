@@ -1,7 +1,6 @@
 package shmp.lang.language.lexis
 
 import shmp.lang.language.category.paradigm.SourcedCategoryValue
-import shmp.lang.language.phonology.Syllable
 import shmp.lang.language.phonology.SyllableTemplate
 import shmp.lang.language.phonology.Syllables
 import shmp.lang.language.syntax.features.WordSyntaxRole
@@ -16,7 +15,7 @@ data class Word(
 ) {
     val size: Int = toPhonemes().size
 
-    fun toPhonemes() = syllables.flatMap { it.phonemeSequence.phonemes }
+    fun toPhonemes() = syllables.flatMap { it.phonemes.phonemes }
 
     operator fun get(position: Int) = toPhonemes()[position]
 

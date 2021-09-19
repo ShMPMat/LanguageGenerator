@@ -13,25 +13,31 @@ class TemplateSingleChange(
     val matchedPhonemesSubstitution: List<PositionSubstitution>,
     val affix: List<PositionSubstitution>//TODO split on two parts
 ) : WordChange {
+    init {
+        if (phonemeMatchers.size > 1) {
+            val k = 0//TODO delete
+        }
+    }
+
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
             Position.Beginning ->
-                if (testFromPosition(word, 0))
+                if (testFromPosition(word))
                     phonemeMatchers.size
                 else null
             Position.End -> {
                 val sublistStart = word.size - phonemeMatchers.size
-                if (testFromPosition(word, sublistStart)) sublistStart else null
+                if (testFromPosition(word)) sublistStart else null
             }
         }
     }
 
-    override fun test(word: Word): Boolean = findGoodIndex(word) != null
+    override fun test(word: Word) = findGoodIndex(word) != null
 
-    private fun testFromPosition(word: Word, position: Int) =
-        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers)
-            .all { it.second.test(it.first) }
+    private fun testFromPosition(word: Word) = phonemeMatchers.all { it.test(word.syllables) }
+//        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers)
+//            .all { it.second.test(it.first) }
 
     fun getFullChange() = when (position) {
         Position.Beginning -> affix + matchedPhonemesSubstitution

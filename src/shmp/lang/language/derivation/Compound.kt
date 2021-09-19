@@ -40,7 +40,7 @@ data class Compound(
         val chosenWords = chosenCompound.map { it.randomElement() }
 
         val newPhonemeList = chosenWords
-            .map { w -> w.syllables.flatMap { it.phonemeSequence.phonemes } }
+            .map { w -> w.syllables.flatMap { it.phonemes.phonemes } }
             .joinToList(separator = infix.phonemes)
         val syllableTemplate = words[0].syllableTemplate
         val newCategories = categoriesChanger.makeStaticCategories(words.map { it.semanticsCore }, speechPart)

@@ -1,8 +1,8 @@
 package shmp.lang.language.morphem.change.matcher
 
-import shmp.lang.language.phonology.Phoneme
+import shmp.lang.language.phonology.Syllables
 
 
 interface PositionMatcher {
-    fun test(phoneme: Phoneme): Boolean
+    fun test(syllables: Syllables): Boolean
 }

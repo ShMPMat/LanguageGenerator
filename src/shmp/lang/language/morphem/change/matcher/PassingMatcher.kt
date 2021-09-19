@@ -1,10 +1,10 @@
 package shmp.lang.language.morphem.change.matcher
 
-import shmp.lang.language.phonology.Phoneme
+import shmp.lang.language.phonology.Syllables
 
 
 object PassingMatcher : PositionMatcher {
-    override fun test(phoneme: Phoneme) = true
+    override fun test(syllables: Syllables) = true
 
     override fun toString() = "*"
 }

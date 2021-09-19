@@ -5,7 +5,7 @@ import shmp.lang.language.phonology.Phoneme
 import shmp.lang.language.phonology.SyllableTemplate
 
 
-//class SyllableMatcher(val template: SyllableTemplate, val position: Position, val range: IntRange) : PositionMatcher {
+//class SyllableMatcher(val template: SyllableTemplate, val range: IntRange, val isBeginning: Boolean) : PositionMatcher {
 //    override fun test(phoneme: Phoneme) = this.phoneme == phoneme
 //
 //    override fun toString() = ""

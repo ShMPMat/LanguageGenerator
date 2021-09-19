@@ -3,14 +3,17 @@ package shmp.lang.language.phonology
 import shmp.lang.language.phonology.prosody.Prosody
 
 
-data class Syllable(val phonemeSequence: PhonemeSequence, var prosodicEnums: List<Prosody>) {
-    constructor(phonemeList: List<Phoneme>) : this(PhonemeSequence(phonemeList), listOf())
+data class Syllable(val phonemes: PhonemeSequence, var prosodicEnums: List<Prosody>) {
+    constructor(phonemes: List<Phoneme>) : this(PhonemeSequence(phonemes), listOf())
+    constructor(vararg phonemes: Phoneme) : this(phonemes.toList())
 
-    val size = phonemeSequence.size
+    val size = phonemes.size
 
-    operator fun get(i: Int) = phonemeSequence[i]
+    operator fun get(i: Int) = phonemes[i]
 
-    override fun toString() = phonemeSequence.getRawString() + prosodicEnums.joinToString("") { it.mark }
+    fun last() = phonemes.last()
+
+    override fun toString() = phonemes.getRawString() + prosodicEnums.joinToString("") { it.mark }
 }
 
 

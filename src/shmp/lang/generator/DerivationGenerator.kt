@@ -222,7 +222,7 @@ class DerivationGenerator(
                                 .copy(avgWordLength = 1),
                             SyllablePosition.Middle
                         )
-                    ).phonemeSequence,
+                    ).phonemes,
                     changer,
                     prosodyRule
                 )

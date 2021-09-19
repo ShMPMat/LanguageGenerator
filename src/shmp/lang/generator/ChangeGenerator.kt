@@ -14,10 +14,7 @@ import shmp.lang.language.morphem.change.matcher.TypePositionMatcher
 import shmp.lang.language.morphem.change.substitution.PassingPositionSubstitution
 import shmp.lang.language.morphem.change.substitution.PhonemePositionSubstitution
 import shmp.lang.language.morphem.change.substitution.PositionSubstitution
-import shmp.lang.language.phonology.Phoneme
-import shmp.lang.language.phonology.PhonemeType
-import shmp.lang.language.phonology.PhoneticRestrictions
-import shmp.lang.language.phonology.doesPhonemesCollide
+import shmp.lang.language.phonology.*
 import shmp.lang.language.syntax.ChangeParadigm
 import shmp.random.SampleSpaceObject
 import shmp.random.singleton.RandomSingleton
@@ -50,8 +47,9 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                         it == PhonemeType.Vowel && position == Position.End
                     )
                     val substitutions = listOf(PassingPositionSubstitution())
+                    val isBeginning = position == Position.Beginning
 
-                    TemplateSingleChange(position, listOf(TypePositionMatcher(it)), substitutions, affix)
+                    TemplateSingleChange(position, listOf(TypePositionMatcher(it, isBeginning)), substitutions, affix)
                 }
                 randomDoubleEdgeLettersElimination(templates, restrictions)
             }
@@ -74,7 +72,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             val hasCollision = when (change.position) {
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
-            }.filter { phoneme -> borderAffixMatcher.test(phoneme) }
+            }.filter { phoneme -> borderAffixMatcher.test(listOf(Syllable(phoneme))) }
                 .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
 
             if (hasCollision)
@@ -111,7 +109,8 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         newAffix: List<PositionSubstitution>,
         neededPhoneme: Phoneme
     ): TemplateSingleChange {
-        val singleMatcher = listOf(PhonemeMatcher(neededPhoneme))
+        val isBeginning = oldChange.position == Position.Beginning
+        val singleMatcher = listOf(PhonemeMatcher(neededPhoneme, isBeginning))
         val singleSubstitution = listOf(PassingPositionSubstitution())
         var phonemeMatcher = oldChange.phonemeMatchers
         var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
@@ -145,7 +144,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             hasInitial = hasInitial,
             hasFinal = hasFinal
         )
-    ).phonemeSequence.phonemes
+    ).phonemes.phonemes
         .map { PhonemePositionSubstitution(it) }
 
 

@@ -252,7 +252,7 @@ class LexisGenerator(
         }
 
         for (j in 0..length) {
-            if (syllables.flatMap { it.phonemeSequence.phonemes }.size >= length)
+            if (syllables.flatMap { it.phonemes.phonemes }.size >= length)
                 break
 
             val syllablePosition = when (j) {
@@ -272,7 +272,7 @@ class LexisGenerator(
 
     private fun checkBorderCoherency(syllable: Syllable, prefix: Syllables): Boolean {
         if (prefix.isEmpty()) return true
-        val leftBorder = prefix.last().phonemeSequence.last()
+        val leftBorder = prefix.last().phonemes.last()
         val rightBorder = syllable[0]
         return leftBorder != rightBorder
                 && (leftBorder.type != PhonemeType.Vowel || rightBorder.type != PhonemeType.Vowel)

@@ -21,7 +21,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
             val syllable = generateOneSyllable(restrictions)
             if (syllable.size != 1 || restrictions.prefix.isEmpty() || syllable != restrictions.prefix.last())
                 if (restrictions.prefix.lastOrNull()
-                        ?.let { it.phonemeSequence.last().type != syllable.phonemeSequence[0].type } != false
+                        ?.let { it.phonemes.last().type != syllable.phonemes[0].type } != false
                 )
                     return syllable
         }
