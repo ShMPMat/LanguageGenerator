@@ -5,9 +5,7 @@ import shmp.lang.generator.LanguageGenerator
 import shmp.lang.language.Language
 import shmp.lang.language.category.DeixisValue
 import shmp.lang.language.category.InclusivityValue
-import shmp.lang.language.category.NounClassValue
 import shmp.lang.language.category.NounClassValue.*
-import shmp.lang.language.category.PersonValue
 import shmp.lang.language.category.PersonValue.*
 import shmp.lang.language.getClauseAndInfoStr
 import shmp.lang.language.lexis.Word
@@ -197,8 +195,23 @@ class Visualizer(val language: Language) {
         ?: "No derivations"
 }
 
-fun main() {
-    RandomSingleton.safeRandom = Random(216 + 85)
+
+private const val DEFAULT_SEED = 216 + 85
+private fun extractSeed(args: Array<String>): Int =
+    args.getOrNull(0)
+        ?.toIntOrNull()
+        ?: run {
+            println("No generation seed provided, Using the default seed $DEFAULT_SEED")
+
+            DEFAULT_SEED
+        }
+
+/**
+ * One parameter expected: a generator seed in the Int range
+ */
+fun main(args: Array<String>) {
+    val seed = extractSeed(args)
+    RandomSingleton.safeRandom = Random(seed)
 
     val generator = LanguageGenerator("SupplementFiles")
     val wordAmount = WordBase("SupplementFiles").baseWords.size
