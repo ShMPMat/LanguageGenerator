@@ -33,3 +33,9 @@ jar {
 
     duplicatesStrategy 'exclude'
 }
+
+task run(type: Exec) {
+    dependsOn build
+    group = "Execution"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "shmp.lang.VisualizerKt"
+}
