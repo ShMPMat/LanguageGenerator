@@ -2,7 +2,7 @@ package shmp.lang.generator
 
 import shmp.lang.containers.PhonemeBase
 import shmp.lang.containers.PhonemeContainer
-import shmp.lang.containers.PhonemeImmutableContainer
+import shmp.lang.containers.ImmutablePhonemeContainer
 import shmp.lang.language.phonology.PhonemeType
 import shmp.lang.language.VowelQualityAmount
 import shmp.lang.language.phonology.Phoneme
@@ -41,6 +41,6 @@ class PhonemeGenerator(private val phonemeBase: PhonemeBase) {
             consonantAmount + 1
         )
 
-        return PhonemeImmutableContainer(vowels + consonants)
+        return ImmutablePhonemeContainer(vowels + consonants)
     }
 }
