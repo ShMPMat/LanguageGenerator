@@ -24,7 +24,7 @@ repositories {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'shmp.lang.VisualizerKt'
+                'Main-Class': 'io.tashtabash.lang.VisualizerKt'
         )
     }
     from {
@@ -37,5 +37,5 @@ jar {
 task run(type: Exec) {
     dependsOn build
     group = "Execution"
-    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "shmp.lang.VisualizerKt"
+    commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "io.tashtabash.lang.VisualizerKt"
 }
