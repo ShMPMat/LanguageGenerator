@@ -3,6 +3,7 @@ package io.tashtabash.lang.language
 import io.tashtabash.random.SampleSpaceObject
 
 
+// Other values are possible and can be generated after choosing one of these start options.
 enum class VowelQualityAmount(val amount: Int, override val probability: Double) : SampleSpaceObject {
     Two(2, 4.0),
     Three(3, 30.0),//No actual data
@@ -13,9 +14,6 @@ enum class VowelQualityAmount(val amount: Int, override val probability: Double)
     Eight(8, 31.0),//No actual data
     Nine(9, 20.0),//No actual data
     Ten(10, 10.0),//No actual data
-    Eleven(11, 6.0),//No actual data
-    Twenty(12, 4.0),//No actual data
-    Thirteen(13, 2.0)
 }
 
 enum class NumeralSystemBase(override val probability: Double) : SampleSpaceObject {

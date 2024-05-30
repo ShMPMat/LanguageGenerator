@@ -18,38 +18,39 @@ Ck  Velar       Stop
 Ch  Velar       NonSibilantFricative
 
 
-Va  Front       Open
 Vi  Front       Close
-Vu  Back        Close
-Vo  Back        CloseMid
-Ve  Front       CloseMid
-
+Vy  Front       Close
 Vɨ  Central     Close
 Vʉ  Central     Close
-Vy  Front       Close
+Vɯ  Back        Close
+Vu  Back        Close
 
 Vɪ  Front       NearClose
 Vʏ  Front       NearClose
-Vɯ  Back        Close
 Vʊ  Back        NearClose
+
+Ve  Front       CloseMid
 Vø  Front       CloseMid
+Vɘ  Central     CloseMid
+Vɵ  Central     CloseMid
+Vɤ  Back        CloseMid
+Vo  Back        CloseMid
+
+Və  Central     Mid
+
+Vɛ  Front       OpenMid
+Vœ  Front       OpenMid
+Vɜ  Central     OpenMid
+Vɞ  Central     OpenMid
+Vʌ  Back        OpenMid
+Vɔ  Back        OpenMid
 
 
+Væ  Front       NearOpen
+Vɐ  Central     NearOpen
 
--Vi  Front       Close
--Vy  Front       Close
--Vɨ  Central     Close
--Vʉ  Central     Close
--Vɯ  Back        Close
--Vu  Back        Close
--
--Vɪ  Front       NearClose
--Vʏ  Front       NearClose
--Vʊ  Back        NearClose
--
--Ve  Front       CloseMid
--Vø  Front       CloseMid
--
--Vo  Back        CloseMid
--
--Va  Front       Open
+Va  Front       Open
+Vɶ  Front       Open
+Vä  Central     Open
+Vɑ  Back        Open
+Vɒ  Back        Open

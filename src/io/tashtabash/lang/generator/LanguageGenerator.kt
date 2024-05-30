@@ -1,6 +1,7 @@
 package io.tashtabash.lang.generator
 
-import io.tashtabash.lang.containers.PhonemeBase
+import io.tashtabash.lang.containers.PhonemePool
+import io.tashtabash.lang.generator.phoneme.PhonemeGenerator
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.SpeechPart.*
@@ -19,8 +20,8 @@ import kotlin.collections.HashMap
 
 
 class LanguageGenerator(private val supplementPath: String) {
-    private val phonemeBase = PhonemeBase(supplementPath)
-    private val phonemeGenerator = PhonemeGenerator(phonemeBase)
+    private val phonemePool = PhonemePool(supplementPath)
+    private val phonemeGenerator = PhonemeGenerator(phonemePool)
     private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
@@ -78,13 +79,13 @@ class LanguageGenerator(private val supplementPath: String) {
 
         val map = mutableMapOf<TypedSpeechPart, PhoneticRestrictions>()
         val allInitial = syllableGenerator.template.initialPhonemeTypes
-            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .flatMap { phonemeContainer.getPhonemes(it) }
             .toSet()
         val allNucleus = syllableGenerator.template.nucleusPhonemeTypes
-            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .flatMap { phonemeContainer.getPhonemes(it) }
             .toSet()
         val allFinals = syllableGenerator.template.finalPhonemeTypes
-            .flatMap { phonemeContainer.getPhonemesByType(it) }
+            .flatMap { phonemeContainer.getPhonemes(it) }
             .toSet()
 
         for (speechPart in speechParts) {

@@ -73,7 +73,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         val phonemes = ArrayList<Phoneme>()
         for (valency in sequence) {
             for (i in 1..ADD_TESTS) {
-                val phoneme = restrictions.phonemeContainer.getPhonemesByType(valency.phonemeType)
+                val phoneme = restrictions.phonemeContainer.getPhonemes(valency.phonemeType)
                     .randomElement()
                 if (i == ADD_TESTS)
                     phonemes += phoneme

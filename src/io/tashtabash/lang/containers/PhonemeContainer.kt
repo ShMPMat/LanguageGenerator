@@ -6,5 +6,8 @@ import io.tashtabash.lang.language.phonology.PhonemeType
 interface PhonemeContainer {
     val phonemes: List<Phoneme>
 
-    fun getPhonemesByType(phonemeType: PhonemeType): List<Phoneme>
+    val size: Int
+        get() = phonemes.size
+
+    fun getPhonemes(phonemeType: PhonemeType): List<Phoneme>
 }
