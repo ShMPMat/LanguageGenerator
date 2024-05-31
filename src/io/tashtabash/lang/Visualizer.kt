@@ -32,15 +32,20 @@ class Visualizer(val language: Language) {
     }
 
     private fun printTestSentences() {
-        val firstSubj = NominalDescription(
+        val lightPossessor = NominalDescription(
+            "light",
+            listOf(),
+            ActorComplimentValue(AmountValue(1), null)
+        )
+        val mothersSubj = NominalDescription(
             "mother",
             listOf(
                 AdjectiveDescription("new"),
-                PossessorDescription(NominalDescription("light", listOf(), ActorComplimentValue(AmountValue(1), null)))
+                PossessorDescription(lightPossessor)
             ),
             ActorComplimentValue(AmountValue(4), DeixisValue.Proximal)
         )
-        val secondSubj = NominalDescription(
+        val fathersSubj = NominalDescription(
             "father",
             listOf(
                 AdjectiveDescription("new"),
@@ -48,77 +53,77 @@ class Visualizer(val language: Language) {
             ),
             ActorComplimentValue(AmountValue(2), DeixisValue.Undefined)
         )
-        val thirdSubj = PronounDescription(
+        val iSubj = PronounDescription(
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
             ActorValue(First, Female, AmountValue(1), DeixisValue.Proximal, null)
         )
-        val fourthSubj = PronounDescription(
+        val weSubj = PronounDescription(
             "_personal_pronoun",
             listOf(),
             ActorType.Agent,
             ActorValue(First, Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
         )
-        val firstObj = NominalDescription(
+        val timeObj = NominalDescription(
             "time",
             listOf(AdjectiveDescription("small")),
             ActorComplimentValue(AmountValue(1), DeixisValue.Medial)
         )
-        val secondObj = PronounDescription(
+        val theseObj = PronounDescription(
             "_deixis_pronoun",
             listOf(),
             ActorType.Patient,
             ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null)
         )
-        val thirdObj = NominalDescription(
+        val handsObj = NominalDescription(
             "hand",
             listOf(),
             ActorComplimentValue(AmountValue(2), DeixisValue.Proximal)
         )
-        val fourthObj = NominalDescription(
+        val homeObj = NominalDescription(
             "home",
             listOf(),
             ActorComplimentValue(AmountValue(1), null)
         )
-        val firstVerb = TransitiveVerbDescription("see", firstSubj, firstObj)
-        val secondVerb = TransitiveVerbDescription("see", secondSubj, firstObj)
-        val thirdVerb = TransitiveVerbDescription("see", thirdSubj, firstObj)
-        val fourthVerb = TransitiveVerbDescription(
+        val firstSeeVerb = TransitiveVerbDescription("see", mothersSubj, timeObj)
+        val secondSeeVerb = TransitiveVerbDescription("see", fathersSubj, timeObj)
+        val thirdSeeVerb = TransitiveVerbDescription("see", iSubj, timeObj)
+        val fourthSeeVerb = TransitiveVerbDescription(
             "see",
-            thirdSubj,
-            secondObj,
-            listOf(IndirectObjectDescription(fourthObj, IndirectObjectType.Location))
+            iSubj,
+            theseObj,
+            listOf(IndirectObjectDescription(homeObj, IndirectObjectType.Location))
         )
-        val fifthVerb = SimpleIntransitiveVerbDescription("exist", thirdSubj)
-        val sixthVerb = TransitiveVerbDescription(
+        val existVerb = SimpleIntransitiveVerbDescription("exist", iSubj)
+        val firstBuildVerb = TransitiveVerbDescription(
             "build",
-            thirdSubj,
-            fourthObj,
-            listOf(IndirectObjectDescription(thirdObj, IndirectObjectType.Instrument))
+            iSubj,
+            homeObj,
+            listOf(IndirectObjectDescription(handsObj, IndirectObjectType.Instrument))
         )
-        val seventhVerb = TransitiveVerbDescription(
+        val secondBuildVerb = TransitiveVerbDescription(
             "build",
-            fourthSubj,
-            fourthObj,
-            listOf(IndirectObjectDescription(secondObj, IndirectObjectType.Instrument))
+            weSubj,
+            homeObj,
+            listOf(IndirectObjectDescription(theseObj, IndirectObjectType.Instrument))
         )
 
         val testSentencesMain = listOf(
-            TransitiveVerbMainClauseDescription(firstVerb),
-            TransitiveVerbMainClauseDescription(secondVerb),
-            TransitiveVerbMainClauseDescription(thirdVerb),
-            TransitiveVerbMainClauseDescription(fourthVerb),
-            IntransitiveVerbMainClauseDescription(fifthVerb),
-            TransitiveVerbMainClauseDescription(sixthVerb),
-            TransitiveVerbMainClauseDescription(seventhVerb)
+            TransitiveVerbMainClauseDescription(firstSeeVerb),
+            TransitiveVerbMainClauseDescription(secondSeeVerb),
+            TransitiveVerbMainClauseDescription(thirdSeeVerb),
+            TransitiveVerbMainClauseDescription(fourthSeeVerb),
+            IntransitiveVerbMainClauseDescription(existVerb),
+            TransitiveVerbMainClauseDescription(firstBuildVerb),
+            TransitiveVerbMainClauseDescription(secondBuildVerb)
         )
         val testSentencesCopula = listOf(
-            CopulaMainClauseDescription(CopulaDescription(firstSubj, firstObj)),
-            CopulaMainClauseDescription(CopulaDescription(secondSubj, firstObj)),
-            CopulaMainClauseDescription(CopulaDescription(thirdSubj, firstObj)),
-            PredicatePossessionDescription(thirdSubj, secondObj),
-            PredicatePossessionDescription(firstSubj, firstObj)
+            CopulaMainClauseDescription(CopulaDescription(mothersSubj, timeObj)),
+            CopulaMainClauseDescription(CopulaDescription(fathersSubj, timeObj)),
+            CopulaMainClauseDescription(CopulaDescription(iSubj, timeObj)),
+            PredicatePossessionDescription(iSubj, theseObj),
+            PredicatePossessionDescription(mothersSubj, timeObj)
         )
 
         val firstContext = Context(

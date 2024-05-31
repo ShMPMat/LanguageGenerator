@@ -32,31 +32,35 @@ data class WordChangeParadigm(
             .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
             .toSet()
 
-        return speechPartChangeParadigms[word.semanticsCore.speechPart]
-            ?.apply(word, latchType, applicableValues)
-            ?.handleNewWsWords(applicableValues)
-            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
+        return handleNewWsWords(
+            speechPartChangeParadigms[word.semanticsCore.speechPart]
+                ?.apply(word, latchType, applicableValues)
+                ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}"),
+            applicableValues
+        )
     }
 
-    private fun Pair<FoldedWordSequence, Int>.handleNewWsWords(
-        values: Set<SourcedCategoryValue>
-    ): Pair<FoldedWordSequence, Int> {
-        val (ws, i) = this
+
+    fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int) =
+        mainWordIdx == curIdx || word.semanticsCore.speechPart.type == SpeechPart.Particle
+
+    private fun handleNewWsWords(wordsPair: Pair<FoldedWordSequence, Int>, values: Set<SourcedCategoryValue>): Pair<FoldedWordSequence, Int> {
+        val (ws, i) = wordsPair
 
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
-            if (i != j && w.semanticsCore.speechPart.type != SpeechPart.Particle) {
+            if (!isAlreadyProcessed(w, j, i)) {
                 val isAdnominal = w.semanticsCore.speechPart.subtype == adnominalSubtype
                 val isArticle = w.semanticsCore.speechPart.type == SpeechPart.Article
-                val newCv = if (isAdnominal || isArticle)
-                    values.map {
+                if (isAdnominal || isArticle) {
+                    val newCv = values.map {
                         SourcedCategoryValue(
                             it.categoryValue,
                             Agreement(SyntaxRelation.Agent, nominals),
                             it.parent
                         )
-                    } else ws[i].first.categoryValues//.filter { it !in ws[i].categoryValues }
-
-                apply(w, l, newCv).words
+                    }
+                    apply(w, l, newCv).words
+                } else listOf(w to l)
             } else listOf(w to l)
         }
         return FoldedWordSequence(newWs) to i

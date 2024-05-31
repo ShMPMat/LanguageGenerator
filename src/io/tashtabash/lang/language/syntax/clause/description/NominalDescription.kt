@@ -6,14 +6,14 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.clause.realization.NominalClause
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
-import io.tashtabash.lang.language.syntax.context.ContextValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import kotlin.random.Random
 
 
 open class NominalDescription(
     val noun: Meaning,
     val definitions: List<NounDefinerDescription>,
-    val actorCompliment: ContextValue.ActorComplimentValue
+    val actorCompliment: ActorComplimentValue
 ) : ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(noun)?.let { word ->
@@ -37,8 +37,8 @@ class PronounDescription(
     type: String,
     definitions: List<NounDefinerDescription>,
     private val actorType: ActorType,
-    private val actor: ContextValue.ActorValue
-): NominalDescription(type, definitions, ContextValue.ActorComplimentValue(actor.number, actor.deixis)) {
+    private val actor: ActorValue
+): NominalDescription(type, definitions, ActorComplimentValue(actor.number, actor.deixis)) {
     override fun toClause(language: Language, context: Context, random: Random): NominalClause {
         val clause = super.toClause(language, context, random)
 

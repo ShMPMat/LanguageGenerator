@@ -22,7 +22,7 @@ class SyntaxLogic(
     private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
     private val numberCategorySolver: NumberCategorySolver?,
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
-    private val deixisCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
+    private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
     private val personalPronounDropSolver: PersonalPronounDropSolver,
     private val personalPronounInclusivity: SourcedCategory? // WALS only knows about separate inclusive
 ) {
@@ -34,7 +34,7 @@ class SyntaxLogic(
             actorValue
 
         resultCategories += person
-        resultCategories += deixisCategorySolver.getOrDefault(deixis to speechPart, listOf())
+        resultCategories += deixisDefinitenessCategorySolver.getOrDefault(deixis to speechPart, listOf())
         resultCategories.addNumber(amount)
 
         if (nounClassCategorySolver != null)
@@ -56,7 +56,7 @@ class SyntaxLogic(
         val resultCategories = mutableListOf<CategoryValue>()
         val (amount, deixis) = actorCompliment
 
-        resultCategories += deixisCategorySolver.getOrDefault(deixis to speechPart, listOf())
+        resultCategories += deixisDefinitenessCategorySolver.getOrDefault(deixis to speechPart, listOf())
         resultCategories.addNumber(amount)
 
         return resultCategories
@@ -194,7 +194,7 @@ class SyntaxLogic(
     }
         | 
         |${
-        deixisCategorySolver.entries.map { (g1, g2) ->
+        deixisDefinitenessCategorySolver.entries.map { (g1, g2) ->
             listOf("${g1.first}, ", "${g1.second} ", " is expressed as $g2")
         }
             .lineUpAll()
