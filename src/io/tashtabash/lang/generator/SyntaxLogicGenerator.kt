@@ -79,6 +79,15 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return copulaCaseSolver
     }
 
+    private fun findCaseWrapped(caseValues: List<CategoryValue>, caseValue: CaseValue) = caseValues
+        .firstOrNull { it == caseValue }
+        ?.let { listOf(it) }
+
+    private fun findAdpositionForCase(adpositionValues: List<CategoryValue>, caseValue: CaseValue) = adpositionValues
+        .firstOrNull { it.semanticsCore.meaningCluster == caseValue.semanticsCore.meaningCluster }
+        ?.let { listOf(it) }
+        ?: emptyList()
+
     private fun generateNonCoreCasesSolver(): Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> {
         val nonCoreCaseSolver: MutableMap<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mutableMapOf()
 
@@ -86,23 +95,13 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             val caseValues = speechPartParadigm.getCategoryValues(caseName)
             val adpositionValues = speechPartParadigm.getCategoryValues(adpositionName)
 
-            val obliqueCaseWrapped = caseValues
-                .firstOrNull { it == CaseValue.Oblique }
-                ?.let { listOf(it) }
-                ?: caseValues
-                    .firstOrNull { it == CaseValue.Nominative }
-                    ?.let { listOf(it) }
+            val obliqueCaseWrapped = findCaseWrapped(caseValues, CaseValue.Oblique)
+                ?: findCaseWrapped(caseValues, CaseValue.Nominative)
                 ?: emptyList()
 
             for (caseValue in nonCoreCases) {
-                nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = caseValues
-                    .firstOrNull { it == caseValue }?.let { listOf(it) }
-                    ?: obliqueCaseWrapped + (
-                            adpositionValues
-                                .firstOrNull { it.semanticsCore == caseValue.semanticsCore }
-                                ?.let { listOf(it) }
-                                ?: emptyList()
-                            )
+                nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, caseValue)
+                    ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, caseValue))
 
 //                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
 //                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
