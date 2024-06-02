@@ -13,10 +13,15 @@ import kotlin.math.log2
 
 
 class PhonemeGenerator(private val phonemePool: PhonemePool) {
+    private val MAX_VOWEL_QUALITIES = 20
+
     private val vowelApplicators = listOf<PhonemeGenerationCondition>(
         AddRandomVowelApplicator(phonemePool)
-            .withCondition { (1.0 / log2(it.size.toDouble())).testProbability() }
-            .repeat { it.size >= 5 }
+            .withProbability { 1.0 / log2(it.size.toDouble()) }
+            .repeat { it.size >= 5 },
+        RemoveRandomVowelApplicator
+            .withProbability { (it.size - 2.0) / (MAX_VOWEL_QUALITIES - 1) }
+            .repeat { true },
     )
 
     private fun generateStartVowels(vowelQualityAmount: VowelQualityAmount) = when (vowelQualityAmount) {

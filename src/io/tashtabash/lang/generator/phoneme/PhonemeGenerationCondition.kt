@@ -1,6 +1,7 @@
 package io.tashtabash.lang.generator.phoneme
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
+import io.tashtabash.random.singleton.testProbability
 
 
 interface PhonemeGenerationCondition {
@@ -38,6 +39,9 @@ class LoopPhonemeGenerationCondition(
 
 fun GenerationApplicator.withCondition(condition: (ImmutablePhonemeContainer) -> Boolean) =
     SimplePhonemeGenerationCondition(this, condition)
+
+fun GenerationApplicator.withProbability(probabilityFun: (ImmutablePhonemeContainer) -> Double) =
+    withCondition { probabilityFun(it).testProbability() }
 
 fun PhonemeGenerationCondition.repeat(stopCondition: ((ImmutablePhonemeContainer) -> Boolean)?) =
     LoopPhonemeGenerationCondition(this, stopCondition)

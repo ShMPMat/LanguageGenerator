@@ -3,6 +3,7 @@ package io.tashtabash.lang.generator.phoneme
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.language.phonology.PhonemeType
+import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomElementOrNull
 
 
@@ -23,5 +24,14 @@ class AddRandomVowelApplicator(val phonemePool: PhonemePool): GenerationApplicat
             return ImmutablePhonemeContainer(phonemeContainer.phonemes + listOf(newPhoneme))
 
         return phonemeContainer
+    }
+}
+
+
+object RemoveRandomVowelApplicator: GenerationApplicator {
+    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
+        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+
+        return ImmutablePhonemeContainer(phonemeContainer.phonemes - vowels.randomElement())
     }
 }
