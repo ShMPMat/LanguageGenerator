@@ -7,18 +7,20 @@ data class Phoneme(
     val symbol : String,
     val type: PhonemeType,
     val articulationPlace: ArticulationPlace,
-    val articulationManner: ArticulationManner
+    val articulationManner: ArticulationManner,
+    val modifiers: List<PhonemeModifier>
 ) {
     override fun toString() = symbol
-
-    fun calculateDistance(other: Phoneme) =
-        abs(articulationPlace.positionIndex - other.articulationPlace.positionIndex) +
-        abs(articulationManner.positionIndex - other.articulationManner.positionIndex)
 }
 
 
-fun doesPhonemesCollide(firstPhoneme: Phoneme, secondPhoneme: Phoneme) =
-    firstPhoneme == secondPhoneme
+fun doPhonemesCollide(first: Phoneme, second: Phoneme) =
+    first == second
+
+fun calculateDistance(first: Phoneme, second: Phoneme) =
+    abs(first.articulationPlace.positionIndex - second.articulationPlace.positionIndex) +
+            abs(first.articulationManner.positionIndex - second.articulationManner.positionIndex) +
+            (first.modifiers - second.modifiers).size + (second.modifiers - first.modifiers).size
 
 enum class ArticulationPlace(val positionIndex: Int) {
     Bilabial(0),
@@ -62,4 +64,14 @@ enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int) {
     OpenMid(0, 4),
     NearOpen(0, 5),
     Open(0, 6)
+}
+
+enum class PhonemeModifier {
+    Nasalized,
+
+    Long,
+
+    Palatilized,
+    Labialized,
+    Velarization
 }

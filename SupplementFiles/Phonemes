@@ -19,38 +19,38 @@ Ch  Velar       NonSibilantFricative
 
 
 Vi  Front       Close
-Vy  Front       Close
+Vy  Front       Close      Labialized
 Vɨ  Central     Close
-Vʉ  Central     Close
+Vʉ  Central     Close      Labialized
 Vɯ  Back        Close
-Vu  Back        Close
+Vu  Back        Close      Labialized
 
 Vɪ  Front       NearClose
-Vʏ  Front       NearClose
-Vʊ  Back        NearClose
+Vʏ  Front       NearClose  Labialized
+Vʊ  Back        NearClose  Labialized
 
 Ve  Front       CloseMid
-Vø  Front       CloseMid
+Vø  Front       CloseMid   Labialized
 Vɘ  Central     CloseMid
-Vɵ  Central     CloseMid
+Vɵ  Central     CloseMid   Labialized
 Vɤ  Back        CloseMid
-Vo  Back        CloseMid
+Vo  Back        CloseMid   Labialized
 
 Və  Central     Mid
 
 Vɛ  Front       OpenMid
-Vœ  Front       OpenMid
+Vœ  Front       OpenMid    Labialized
 Vɜ  Central     OpenMid
-Vɞ  Central     OpenMid
+Vɞ  Central     OpenMid    Labialized
 Vʌ  Back        OpenMid
-Vɔ  Back        OpenMid
+Vɔ  Back        OpenMid    Labialized
 
 
 Væ  Front       NearOpen
 Vɐ  Central     NearOpen
 
 Va  Front       Open
-Vɶ  Front       Open
+Vɶ  Front       Open       Labialized
 Vä  Central     Open
 Vɑ  Back        Open
-Vɒ  Back        Open
+Vɒ  Back        Open       Labialized
