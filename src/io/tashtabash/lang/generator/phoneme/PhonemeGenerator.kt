@@ -22,6 +22,16 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
         RemoveRandomVowelApplicator
             .withProbability { (it.size - 2.0) / (MAX_VOWEL_QUALITIES - 1) }
             .repeat { true },
+        VowelLengthApplicator
+            .withProbability { 1.0 - it.size.toDouble() / (MAX_VOWEL_QUALITIES + 1) },
+
+        // Delete/add vowels again for more possible vowel system asymmetry.
+        AddRandomVowelApplicator(phonemePool)
+            .withProbability { 1.0 / log2(it.size.toDouble()) }
+            .repeat { it.size >= 5 },
+        RemoveRandomVowelApplicator
+            .withProbability { (it.size - 2.0) / (MAX_VOWEL_QUALITIES - 1) }
+            .repeat { true },
     )
 
     private fun generateStartVowels(vowelQualityAmount: VowelQualityAmount) = when (vowelQualityAmount) {

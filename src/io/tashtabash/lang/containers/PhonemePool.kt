@@ -19,6 +19,7 @@ class PhonemePool(supplementPath: String) : PhonemeContainer {
             val place = ArticulationPlace.valueOf(placeString)
             val manner = ArticulationManner.valueOf(mannerString)
             val modifiers = modifierStrings.map { PhonemeModifier.valueOf(it) }
+                .toSet()
 
             phonemes += Phoneme(sound, line[0].toPhonemeType(), place, manner, modifiers)
         }

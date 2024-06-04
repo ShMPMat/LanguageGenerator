@@ -2,6 +2,7 @@ package io.tashtabash.lang.generator.phoneme
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemePool
+import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.calculateDistance
 import io.tashtabash.random.singleton.randomElement
@@ -34,5 +35,16 @@ object RemoveRandomVowelApplicator: GenerationApplicator {
         val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
 
         return ImmutablePhonemeContainer(phonemeContainer.phonemes - vowels.randomElement())
+    }
+}
+
+object VowelLengthApplicator: GenerationApplicator {
+    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
+        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+        val longVowels = vowels.map {
+            it.copy(symbol = it.symbol + it.symbol, modifiers = it.modifiers + listOf(PhonemeModifier.Long))
+        }
+
+        return ImmutablePhonemeContainer(vowels + longVowels)
     }
 }

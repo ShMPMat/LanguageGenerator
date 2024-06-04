@@ -8,7 +8,7 @@ data class Phoneme(
     val type: PhonemeType,
     val articulationPlace: ArticulationPlace,
     val articulationManner: ArticulationManner,
-    val modifiers: List<PhonemeModifier>
+    val modifiers: Set<PhonemeModifier>
 ) {
     override fun toString() = symbol
 }
