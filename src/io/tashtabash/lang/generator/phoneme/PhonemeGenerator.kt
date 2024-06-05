@@ -10,6 +10,7 @@ import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.*
 import io.tashtabash.random.singleton.RandomSingleton.random
 import kotlin.math.log2
+import kotlin.math.pow
 
 
 class PhonemeGenerator(private val phonemePool: PhonemePool) {
@@ -24,6 +25,8 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
             .repeat { true },
         VowelLengthApplicator
             .withProbability { 1.0 - it.size.toDouble() / (MAX_VOWEL_QUALITIES + 1) },
+        VowelNasalizationApplicator
+            .withProbability { 1.0 - (it.size.toDouble() / (MAX_VOWEL_QUALITIES * 2 + 1)).pow(0.2) },
 
         // Delete/add vowels again for more possible vowel system asymmetry.
         AddRandomVowelApplicator(phonemePool)

@@ -48,3 +48,17 @@ object VowelLengthApplicator: GenerationApplicator {
         return ImmutablePhonemeContainer(vowels + longVowels)
     }
 }
+
+object VowelNasalizationApplicator: GenerationApplicator {
+    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
+        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+        val nasalizedVowels = vowels.map {
+            it.copy(
+                symbol = it.symbol.map { c -> c.toString() + '̃'  }.joinToString(""),
+                modifiers = it.modifiers + listOf(PhonemeModifier.Nasalized)
+            )
+        }
+
+        return ImmutablePhonemeContainer(vowels + nasalizedVowels)
+    }
+}
