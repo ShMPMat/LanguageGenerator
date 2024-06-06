@@ -73,7 +73,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
             }.filter { phoneme -> borderAffixMatcher.test(listOf(Syllable(phoneme))) }
-                .any { phoneme -> doesPhonemesCollide(phoneme, borderPhoneme) }
+                .any { phoneme -> doPhonemesCollide(phoneme, borderPhoneme) }
 
             if (hasCollision)
                 result = removeCollision(change, restrictions, borderPhoneme) ?: result
@@ -94,7 +94,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 Position.Beginning -> newChange.last()
                 Position.End -> newChange[0]
             }.phoneme
-            if (!doesPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
+            if (!doPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                 return TemplateSequenceChange(
                     makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme),
                     wordChange
