@@ -2,6 +2,7 @@ package io.tashtabash.lang.generator.phoneme
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemePool
+import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.calculateDistance
@@ -14,44 +15,51 @@ interface GenerationApplicator {
 }
 
 
-class AddRandomVowelApplicator(val phonemePool: PhonemePool): GenerationApplicator {
+abstract class VowelGenerationApplicator: GenerationApplicator {
+    abstract fun changeVowels(vowels: List<Phoneme>): List<Phoneme>
+
     override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
         val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+        val changedVowels = changeVowels(vowels)
 
+        return ImmutablePhonemeContainer(changedVowels + phonemeContainer.getPhonemesNot(PhonemeType.Vowel))
+    }
+}
+
+
+class AddRandomVowelApplicator(private val phonemePool: PhonemePool): VowelGenerationApplicator() {
+    override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val newPhoneme = phonemePool.getPhonemes(PhonemeType.Vowel)
             .filter { it !in vowels }
             .randomElementOrNull { newVowel -> vowels.sumBy { calculateDistance(newVowel, it) }.toDouble() }
 
         if (newPhoneme != null)
-            return ImmutablePhonemeContainer(phonemeContainer.phonemes + listOf(newPhoneme))
+            return vowels + listOf(newPhoneme)
 
-        return phonemeContainer
+        return vowels
     }
 }
 
 
-object RemoveRandomVowelApplicator: GenerationApplicator {
-    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
-        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
-
-        return ImmutablePhonemeContainer(phonemeContainer.phonemes - vowels.randomElement())
-    }
+object RemoveRandomVowelApplicator: VowelGenerationApplicator() {
+    override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> =
+        vowels - vowels.randomElement()
 }
 
-object VowelLengthApplicator: GenerationApplicator {
-    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
-        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+
+object VowelLengthApplicator: VowelGenerationApplicator() {
+    override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val longVowels = vowels.map {
             it.copy(symbol = it.symbol + it.symbol, modifiers = it.modifiers + listOf(PhonemeModifier.Long))
         }
 
-        return ImmutablePhonemeContainer(vowels + longVowels)
+        return vowels + longVowels
     }
 }
 
-object VowelNasalizationApplicator: GenerationApplicator {
-    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
-        val vowels = phonemeContainer.getPhonemes(PhonemeType.Vowel)
+
+object VowelNasalizationApplicator: VowelGenerationApplicator() {
+    override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val nasalizedVowels = vowels.map {
             it.copy(
                 symbol = it.symbol.map { c -> c.toString() + '̃'  }.joinToString(""),
@@ -59,6 +67,6 @@ object VowelNasalizationApplicator: GenerationApplicator {
             )
         }
 
-        return ImmutablePhonemeContainer(vowels + nasalizedVowels)
+        return vowels + nasalizedVowels
     }
 }

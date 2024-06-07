@@ -24,6 +24,4 @@ class PhonemePool(supplementPath: String) : PhonemeContainer {
             phonemes += Phoneme(sound, line[0].toPhonemeType(), place, manner, modifiers)
         }
     }
-
-    override fun getPhonemes(phonemeType: PhonemeType) = phonemes.filter { it.type == phonemeType }
 }

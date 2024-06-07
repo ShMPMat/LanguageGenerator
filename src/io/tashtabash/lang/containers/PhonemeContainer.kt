@@ -9,5 +9,7 @@ interface PhonemeContainer {
     val size: Int
         get() = phonemes.size
 
-    fun getPhonemes(phonemeType: PhonemeType): List<Phoneme>
+    fun getPhonemes(phonemeType: PhonemeType): List<Phoneme> = phonemes.filter { it.type == phonemeType }
+
+    fun getPhonemesNot(phonemeType: PhonemeType): List<Phoneme> = phonemes.filter { it.type != phonemeType }
 }
