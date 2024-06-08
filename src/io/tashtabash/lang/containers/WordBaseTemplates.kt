@@ -40,7 +40,7 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>):
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
     if (speechPart != core.speechPart.type)
-        throw GeneratorException("Core merge error: $core and ${word} has different speech parts")
+        throw GeneratorException("Core merge error: $core and $word has different speech parts")
 
     return SemanticsCore(
         MeaningCluster(core.meaningCluster.meanings + word),

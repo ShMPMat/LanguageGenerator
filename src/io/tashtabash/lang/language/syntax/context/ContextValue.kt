@@ -1,9 +1,6 @@
 package io.tashtabash.lang.language.syntax.context
 
-import io.tashtabash.lang.language.category.DeixisValue
-import io.tashtabash.lang.language.category.InclusivityValue
-import io.tashtabash.lang.language.category.NounClassValue
-import io.tashtabash.lang.language.category.PersonValue
+import io.tashtabash.lang.language.category.*
 
 
 sealed class ContextValue {
