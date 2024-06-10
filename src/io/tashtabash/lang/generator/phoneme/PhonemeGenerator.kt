@@ -24,8 +24,10 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
             .withProbability { (it.size - 2.0) / (MAX_VOWEL_QUALITIES - 1) }
             .repeat { true },
         VowelLengthApplicator
+            .withFeatureFilter(0.2)
             .withProbability { 1.0 - it.size.toDouble() / (MAX_VOWEL_QUALITIES + 1) },
         VowelNasalizationApplicator
+            .withFeatureFilter(0.3)
             .withProbability { 1.0 - (it.size.toDouble() / (MAX_VOWEL_QUALITIES * 2 + 1)).pow(0.2) },
 
         // Delete/add vowels again for more possible vowel system asymmetry.
