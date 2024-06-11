@@ -16,13 +16,16 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
 
 //    private val syllableMapper = mutableMapOf<PhonemeContainer, Syllables>()
 
+    private fun hasPhonemeTypeClash(previousSyllable: Syllable?, nextSyllable: Syllable?): Boolean =
+        previousSyllable != null
+                && nextSyllable != null
+                && previousSyllable.phonemes.last().type == nextSyllable.phonemes[0].type
+
     fun generateSyllable(restrictions: SyllableRestrictions): Syllable {
-        for (i in 0 until ADD_TESTS) {
+        for (i in 1..ADD_TESTS) {
             val syllable = generateOneSyllable(restrictions)
             if (syllable.size != 1 || restrictions.prefix.isEmpty() || syllable != restrictions.prefix.last())
-                if (restrictions.prefix.lastOrNull()
-                        ?.let { it.phonemes.last().type != syllable.phonemes[0].type } != false
-                )
+                if (!hasPhonemeTypeClash(restrictions.prefix.lastOrNull(), syllable))
                     return syllable
         }
         return generateOneSyllable(restrictions)
