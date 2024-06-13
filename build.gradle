@@ -5,20 +5,25 @@ plugins {
 apply plugin: 'idea'
 apply plugin: 'java'
 
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
 sourceSets {
     main.kotlin.srcDirs += 'src/'
     main.java.srcDirs += 'src/'
     main.resources.srcDirs += 'SupplementFiles'
+    test.java.srcDirs += 'test/'
 }
 
 dependencies {
     implementation 'com.github.ShMPMat:Random:master-SNAPSHOT' changing true
     runtimeOnly group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.4.31'
-}
 
-repositories {
-    mavenCentral()
-    maven { url "https://jitpack.io" }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 jar {
@@ -32,6 +37,10 @@ jar {
     }
 
     duplicatesStrategy 'exclude'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task run(type: Exec) {

@@ -1,14 +1,18 @@
-package io.tashtabash.language.morphem
+package io.tashtabash.language.morpheme
 
+import io.tashtabash.lang.language.lexis.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.opentest4j.TestAbortedException
+import io.tashtabash.lang.language.morphem.change.Position
+import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
+import io.tashtabash.lang.language.morphem.change.matcher.PhonemeMatcher
+import io.tashtabash.lang.language.morphem.change.matcher.TypePositionMatcher
+import io.tashtabash.lang.language.morphem.change.substitution.PassingPositionSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemePositionSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PositionSubstitution
+import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.language.*
-import io.tashtabash.language.lexis.MeaningCluster
-import io.tashtabash.language.lexis.SemanticsCore
-import io.tashtabash.language.lexis.Word
-import io.tashtabash.language.morphem.change.*
-import io.tashtabash.language.phonology.*
 
 
 internal class WordTemplateSingleChangeTest {
@@ -70,7 +74,7 @@ internal class WordTemplateSingleChangeTest {
         val affix = prefix.map { PhonemePositionSubstitution(it) }
         val substitution = listOf(PassingPositionSubstitution())
         val condition = listOf(
-            TypePositionMatcher(PhonemeType.Consonant)
+            TypePositionMatcher(PhonemeType.Consonant, true)
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
@@ -120,7 +124,7 @@ internal class WordTemplateSingleChangeTest {
         val affix = prefix.map { PhonemePositionSubstitution(it) }
         val substitution = listOf(PassingPositionSubstitution())
         val condition = listOf(
-            PhonemeMatcher(makePhoneme("b", PhonemeType.Consonant))
+            PhonemeMatcher(makePhoneme("b", PhonemeType.Consonant), true)
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
@@ -178,8 +182,8 @@ internal class WordTemplateSingleChangeTest {
         )
 
     private fun makePhoneme(name: String, type: PhonemeType) =
-        Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close)
+        Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close, setOf())
 
     private fun makeSemanticsCore() =
-        SemanticsCore(MeaningCluster("phony"), SpeechPart.Noun, setOf())
+        SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(SpeechPart.Noun), 1.0)
 }

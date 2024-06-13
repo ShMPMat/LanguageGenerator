@@ -18,7 +18,7 @@ enum class SpeechPart {
 
 val nominals = listOf(Noun, PersonalPronoun, DeixisPronoun)
 
-data class TypedSpeechPart(val type: SpeechPart, val subtype: String) {
+data class TypedSpeechPart(val type: SpeechPart, val subtype: String = defaultSubtype) {
     override fun toString() = if (subtype == defaultSubtype)
         type.toString()
     else "$subtype $type"
