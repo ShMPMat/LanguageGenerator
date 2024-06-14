@@ -7,7 +7,7 @@ import io.tashtabash.lang.language.morphem.change.substitution.PositionSubstitut
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 
 
-class TemplateSingleChange(
+data class TemplateSingleChange(
     override val position: Position,
     val phonemeMatchers: List<PositionMatcher>,
     val matchedPhonemesSubstitution: List<PositionSubstitution>,

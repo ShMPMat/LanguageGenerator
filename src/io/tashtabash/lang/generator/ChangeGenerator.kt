@@ -37,7 +37,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                     TemplateSingleChange(position, listOf(), listOf(), affix)
                 )
 
-                randomDoubleEdgeLettersElimination(templates, restrictions)
+                eliminateCollisionsByEpenthesis(templates, restrictions)
             }
             AffixTypes.PhonemeTypeAffix -> {
                 val templates = PhonemeType.values().map {
@@ -51,13 +51,41 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
                     TemplateSingleChange(position, listOf(TypePositionMatcher(it, isBeginning)), substitutions, affix)
                 }
-                randomDoubleEdgeLettersElimination(templates, restrictions)
+                randomCollisionElimination(templates, restrictions)
             }
         }
         return TemplateSequenceChange(rawSubstitutions)
     }
 
-    private fun randomDoubleEdgeLettersElimination(
+    private fun eliminateCollisionsByEpenthesis(
+        templateChanges: List<TemplateSingleChange>,
+        restrictions: PhoneticRestrictions
+    ): List<WordChange> {
+        return templateChanges.flatMap { change ->
+            if (change.affix.size == 1)
+                return@flatMap randomCollisionElimination(templateChanges, restrictions)
+
+            val isBeginning = change.position == Position.Beginning
+            val vowelAdjacentAffix = if (isBeginning)
+                change.affix.dropLastWhile { it.getSubstitutePhoneme()?.type == PhonemeType.Vowel }
+            else
+                change.affix.dropWhile { it.getSubstitutePhoneme()?.type == PhonemeType.Vowel }
+
+            listOf(
+                change.copy(
+                    phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Consonant, isBeginning)),
+                    matchedPhonemesSubstitution = listOf(PassingPositionSubstitution()),
+                ),
+                change.copy(
+                    phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Vowel, isBeginning)),
+                    matchedPhonemesSubstitution = listOf(PassingPositionSubstitution()),
+                    affix = vowelAdjacentAffix
+                ),
+            )
+        }
+    }
+
+    private fun randomCollisionElimination(
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
     ): List<WordChange> {
