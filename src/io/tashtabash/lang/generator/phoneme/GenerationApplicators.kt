@@ -46,6 +46,9 @@ class FeatureFilterApplicator(
         abstract fun filter(phonemes: List<Phoneme>, modifierPresencePredicate: (Phoneme, F) -> Boolean): List<Phoneme>
     }
 
+    private fun <E> createPresenceOptions(feature: E): List<FeaturePresence<E>> =
+        listOf(FeaturePresence.Has(feature), FeaturePresence.None(feature))
+
     private fun <F> chooseFilterValue(rawFeatures: List<F>): F? {
         (1 - filterChance).chanceOf {
             return null
@@ -59,28 +62,31 @@ class FeatureFilterApplicator(
         var resultPhonemes = phonemeContainer.phonemes
 
         chooseFilterValue(
-            phonemeContainer.phonemes.map { it.articulationPlace }
-        )?.let { articulationPlace ->
-            resultPhonemes = resultPhonemes.filter { it.articulationPlace == articulationPlace }
+            phonemeContainer.phonemes.flatMap { createPresenceOptions(it.articulationPlace) }
+        )?.let { articulationPlaceCondition ->
+            resultPhonemes = articulationPlaceCondition.filter(resultPhonemes) { phoneme, articulationPlace ->
+                phoneme.articulationPlace == articulationPlace
+            }
         }
 
         chooseFilterValue(
-            phonemeContainer.phonemes.map { it.articulationManner }
-        )?.let { articulationManner ->
-            resultPhonemes = resultPhonemes.filter { it.articulationManner == articulationManner }
+            phonemeContainer.phonemes.flatMap { createPresenceOptions(it.articulationManner) }
+        )?.let { articulationMannerCondition ->
+            resultPhonemes = articulationMannerCondition.filter(resultPhonemes) { phoneme, articulationManner ->
+                phoneme.articulationManner == articulationManner
+            }
         }
 
         val possibleModifiers = phonemeContainer.phonemes
             .flatMap { it.modifiers }
             .distinct()
         for (possibleModifier in possibleModifiers)
-            chooseFilterValue(
-                listOf(FeaturePresence.Has(possibleModifier), FeaturePresence.None(possibleModifier))
-            )?.let { modifierCondition ->
-                resultPhonemes = modifierCondition.filter(resultPhonemes) { phoneme, feature ->
-                    feature in phoneme.modifiers
+            chooseFilterValue(createPresenceOptions(possibleModifier))
+                ?.let { modifierCondition ->
+                    resultPhonemes = modifierCondition.filter(resultPhonemes) { phoneme, feature ->
+                        feature in phoneme.modifiers
+                    }
                 }
-            }
 
         return resultPhonemes
     }

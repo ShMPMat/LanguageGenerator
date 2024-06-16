@@ -72,9 +72,9 @@ class IntransitiveVerbClause(
 
 internal fun SentenceNode.addThirdPerson(): SentenceNode {
     if (categoryValues.none { it.parentClassName == personName })
-        apply { insertCategoryValue(PersonValue.Third) }
+        apply { addCategoryValue(PersonValue.Third) }
     if (categoryValues.none { it.parentClassName == inclusivityName })
-        apply { insertCategoryValue(InclusivityValue.Exclusive) }
+        apply { addCategoryValue(InclusivityValue.Exclusive) }
 
     return this
 }

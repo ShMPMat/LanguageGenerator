@@ -45,7 +45,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                 val pureVs = vs.map { it.categoryValue }
 
                 when(s) {
-                    CategorySource.Self -> node.insertCategoryValues(pureVs)
+                    CategorySource.Self -> node.addCategoryValues(pureVs)
                     is CategorySource.Agreement -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
                         val dummyNode = dummyWord.wordToNode(s.relation, PassingArranger, pureVs)

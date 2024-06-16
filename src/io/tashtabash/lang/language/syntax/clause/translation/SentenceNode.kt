@@ -33,11 +33,11 @@ data class SentenceNode(
     val allRelations: List<SyntaxRelation>
         get() = listOf(typeForChildren) + children.map { it.first }
 
-    fun insertCategoryValue(value: CategoryValue) {
+    fun addCategoryValue(value: CategoryValue) {
         _categoryValues += value
     }
 
-    fun insertCategoryValues(values: CategoryValues) {
+    fun addCategoryValues(values: CategoryValues) {
         _categoryValues += values
     }
 
@@ -62,7 +62,7 @@ data class SentenceNode(
             }
     }
 
-    fun extractValues(references: List<SourcedCategory>) =
+    fun extractValues(references: List<SourcedCategory>): List<SourcedCategoryValue> =
         references.mapNotNull { sourcedCategory ->
             val (category, source, compulsoryData) = sourcedCategory
 

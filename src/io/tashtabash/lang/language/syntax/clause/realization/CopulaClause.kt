@@ -30,7 +30,7 @@ class VerbalCopulaClause(
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
             .wordToNode(SyntaxRelation.Verb, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.Verb,
                     SyntaxRelation.Agent,
@@ -39,7 +39,7 @@ class VerbalCopulaClause(
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.Verb,
                     SyntaxRelation.SubjectCompliment,
@@ -68,7 +68,7 @@ class ParticleCopulaClause(
 
     override fun toNode(language: Language, random: Random): SentenceNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.Particle,
                     SyntaxRelation.Agent,
@@ -77,7 +77,7 @@ class ParticleCopulaClause(
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.Particle,
                     SyntaxRelation.SubjectCompliment,
@@ -104,7 +104,7 @@ class NullCopulaClause(
 ) : CopulaClause(SyntaxRelation.Agent, CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.None,
                     SyntaxRelation.SubjectCompliment,
@@ -113,7 +113,7 @@ class NullCopulaClause(
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            insertCategoryValues(
+            addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
                     CopulaType.None,
                     SyntaxRelation.Agent,
