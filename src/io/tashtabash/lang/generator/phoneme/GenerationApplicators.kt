@@ -28,7 +28,7 @@ abstract class VowelGenerationApplicator : GenerationApplicator {
 }
 
 
-class FeatureFilterApplicator(
+class RandomFeatureFilterApplicator(
     private val applicator: GenerationApplicator,
     private val filterChance: Double
 ) : GenerationApplicator {
@@ -146,5 +146,5 @@ object VowelNasalizationApplicator : VowelGenerationApplicator() {
 }
 
 
-fun GenerationApplicator.withFeatureFilter(probability: Double) =
-    FeatureFilterApplicator(this, probability)
+fun GenerationApplicator.withRandomFeatureFilter(probability: Double) =
+    RandomFeatureFilterApplicator(this, probability)
