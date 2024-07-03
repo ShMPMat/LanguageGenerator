@@ -70,8 +70,9 @@ enum class PhonemeModifier {
     Nasalized,
 
     Long,
+    Voiced,
 
     Palatilized,
     Labialized,
-    Velarization
+    Velarized
 }

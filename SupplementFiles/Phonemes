@@ -1,21 +1,65 @@
-Cm  Bilabial    Nasal
+Cm  Bilabial    Nasal                 Voiced
 Cp  Bilabial    Stop
-Cb  Bilabial    Stop
+Cb  Bilabial    Stop                  Voiced
+Cɸ  Bilabial    NonSibilantFricative
+Cβ  Bilabial    NonSibilantFricative  Voiced
 
 Cf  LabioDental NonSibilantFricative
-Cv  LabioDental NonSibilantFricative
+Cv  LabioDental NonSibilantFricative  Voiced
+Cʋ  LabioDental Approximant           Voiced
 
-Cn  Alveolar    Nasal
+Cθ  Dental      NonSibilantFricative
+Cð  Dental      NonSibilantFricative  Voiced
+
+Cn  Alveolar    Nasal                 Voiced
 Ct  Alveolar    Stop
+Cd  Alveolar    Stop                  Voiced
 Cs  Alveolar    SibilantFricative
-Cz  Alveolar    SibilantFricative
-Cd  Alveolar    Stop
-Cr  Alveolar    Trill
-Cl  Alveolar    LateralApproximant
+Cz  Alveolar    SibilantFricative     Voiced
+Cr  Alveolar    Trill                 Voiced
+Cɾ  Alveolar    Tap                   Voiced
+Cɹ  Alveolar    Approximant           Voiced
+Cl  Alveolar    LateralApproximant    Voiced
+Cɬ  Alveolar    LateralFricative
 
-Cg  Velar       Stop
+Cɳ  Retroflex   Nasal                 Voiced
+Cʈ  Retroflex   Stop
+Cɖ  Retroflex   Stop                  Voiced
+Cʂ  Retroflex   SibilantFricative
+Cʐ  Retroflex   SibilantFricative     Voiced
+Cɽ  Retroflex   Tap                   Voiced
+Cɻ  Retroflex   Approximant           Voiced
+Cɭ  Retroflex   LateralApproximant    Voiced
+Cꞎ  Retroflex   LateralFricative
+
+Cɲ  Palatal   Nasal                 Voiced
+Cc  Palatal   Stop
+Cɟ  Palatal   Stop                  Voiced
+Cɕ  Palatal   SibilantFricative
+Cʑ  Palatal   SibilantFricative     Voiced
+Cj  Palatal   Approximant           Voiced
+Cʎ  Palatal   LateralApproximant    Voiced
+
+Cŋ  Velar       Nasal                 Voiced
 Ck  Velar       Stop
-Ch  Velar       NonSibilantFricative
+Cg  Velar       Stop                  Voiced
+Cx  Velar       NonSibilantFricative
+Cɣ  Velar       NonSibilantFricative  Voiced
+Cɰ  Velar       Approximant           Voiced
+
+Cq  Uvular      Stop
+Cɢ  Uvular      Stop                  Voiced
+Cχ  Uvular      NonSibilantFricative
+Cʁ  Uvular      NonSibilantFricative  Voiced
+Cʀ  Uvular      Trill                 Voiced
+
+Cʔ  Glottal     Stop
+Cɦ  Glottal     NonSibilantFricative  Voiced
+Ch  Glottal     NonSibilantFricative
+
+Cʡ  Pharyngeal  Stop
+Cʕ  Pharyngeal  NonSibilantFricative  Voiced
+Cħ  Pharyngeal  NonSibilantFricative
 
 
 Vi  Front       Close
