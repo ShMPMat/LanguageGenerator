@@ -43,6 +43,9 @@ fun GenerationApplicator.withCondition(condition: (ImmutablePhonemeContainer) ->
 fun GenerationApplicator.withProbability(probabilityFun: (ImmutablePhonemeContainer) -> Double) =
     withCondition { probabilityFun(it).testProbability() }
 
+fun GenerationApplicator.always() =
+    withProbability { 1.0 }
+
 fun PhonemeGenerationCondition.repeat(stopCondition: ((ImmutablePhonemeContainer) -> Boolean)?) =
     LoopPhonemeGenerationCondition(this, stopCondition)
 
