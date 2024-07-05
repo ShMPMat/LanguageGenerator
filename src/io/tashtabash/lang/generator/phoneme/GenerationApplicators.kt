@@ -28,6 +28,20 @@ abstract class VowelGenerationApplicator : GenerationApplicator {
 }
 
 
+abstract class ConsonantGenerationApplicator : GenerationApplicator {
+    abstract fun changeConsonants(consonants: List<Phoneme>): List<Phoneme>
+
+    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
+        val consonants = phonemeContainer.getPhonemes(PhonemeType.Consonant)
+        val changedConsonants = changeConsonants(consonants)
+
+        return ImmutablePhonemeContainer(
+            changedConsonants + phonemeContainer.getPhonemesNot(PhonemeType.Consonant)
+        )
+    }
+}
+
+
 class RandomFeatureFilterApplicator(
     private val applicator: GenerationApplicator,
     private val filterChance: Double
@@ -142,6 +156,39 @@ object VowelNasalizationApplicator : VowelGenerationApplicator() {
         }
 
         return vowels + nasalizedVowels
+    }
+}
+
+
+class AddRandomConsonantApplicator(private val phonemePool: PhonemePool) : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val newPhoneme = phonemePool.getPhonemes(PhonemeType.Consonant)
+            .filter { it !in consonants }
+            .randomElementOrNull { newVowel -> consonants.sumBy { calculateDistance(newVowel, it) }.toDouble() }
+
+        if (newPhoneme != null)
+            return consonants + listOf(newPhoneme)
+
+        return consonants
+    }
+}
+
+
+object RemoveRandomConsonantApplicator : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> =
+        consonants - consonants.randomElement()
+}
+
+
+class AddPhonemeApplicator(
+    private val phonemePool: PhonemePool,
+    private vararg val phonemeSymbols: String
+) : GenerationApplicator {
+    override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
+        val newPhonemes = phonemeSymbols.map { symbol -> phonemePool.phonemes.first { it.symbol == symbol } }
+        val phonemeSet = phonemeContainer.phonemes.toSet() + newPhonemes
+
+        return ImmutablePhonemeContainer(phonemeSet.toList())
     }
 }
 
