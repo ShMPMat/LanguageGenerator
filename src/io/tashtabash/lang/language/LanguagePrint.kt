@@ -10,8 +10,6 @@ import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.arranger.PassingArranger
 import io.tashtabash.lang.language.syntax.clause.realization.wordToNode
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTranslator
-import io.tashtabash.lang.language.syntax.sequence.unfold
-import io.tashtabash.lang.utils.listCartesianProduct
 import kotlin.random.Random
 
 
@@ -61,17 +59,11 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
     .joinToString("\n")
 
 
-fun Language.getParadigmPrinted(word: Word, printOptionalCategories: Boolean = false) =
-    "Base - $word\n" +
-            listCartesianProduct(
-                changeParadigm.wordChangeParadigm
-                    .getSpeechPartParadigm(word.semanticsCore.speechPart)
-                    .categories
-                    .filter { if (printOptionalCategories) true else it.compulsoryData.isCompulsory }
-                    .filter { !it.category.staticSpeechParts.contains(word.semanticsCore.speechPart.type) }
-                    .map { it.actualSourcedValues }
-            )
-                .map { changeParadigm.wordChangeParadigm.apply(word, categoryValues = it).unfold() to it }
+fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = false): String {
+    val allWordForms = changeParadigm.wordChangeParadigm.getAllWordForms(word, printOptionalCategories)
+
+    return "Base - $word\n" +
+            allWordForms
                 .map { (ws, vs) ->
                     val categoryValues = vs.map { it.categoryValue }
                     val relevantCategories = vs
@@ -83,6 +75,7 @@ fun Language.getParadigmPrinted(word: Word, printOptionalCategories: Boolean = f
                 .sorted()
                 .distinct()
                 .joinToString("\n")
+}
 
 fun getClauseAndInfoStr(wordSequence: WordSequence): String {
     val (words, infos) = wordSequence.words

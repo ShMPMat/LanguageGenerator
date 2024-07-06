@@ -32,16 +32,16 @@ class Language(
      |Change paradigms elaborated:
      |
      |Personal pronoun:
-     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
+     |${printParadigm(lexis.words.first { it.semanticsCore.hasMeaning("_personal_pronoun") })}
      |
      |Deixis pronoun:
-     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
+     |${printParadigm(lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
      |
      |Noun:
-     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
+     |${printParadigm(lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
      |
      |Verb:
-     |${getParadigmPrinted(lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
+     |${printParadigm(lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
      |
      |Numerals:
      |${getNumeralsPrinted()}

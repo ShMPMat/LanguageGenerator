@@ -6,6 +6,9 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
 import io.tashtabash.lang.language.syntax.sequence.LatchType
+import io.tashtabash.lang.language.syntax.sequence.WordSequence
+import io.tashtabash.lang.language.syntax.sequence.unfold
+import io.tashtabash.lang.utils.listCartesianProduct
 
 
 data class WordChangeParadigm(
@@ -92,6 +95,22 @@ data class WordChangeParadigm(
 
     fun getSpeechParts(speechPart: SpeechPart) = speechPartChangeParadigms
         .keys.filter { it.type == speechPart }
+
+    fun getAllCategoryValueCombinations(
+        speechPart: TypedSpeechPart,
+        includeOptionalCategories: Boolean,
+    ): List<SourcedCategoryValues> =
+        listCartesianProduct(
+            getSpeechPartParadigm(speechPart)
+                .categories
+                .filter { if (includeOptionalCategories) true else it.compulsoryData.isCompulsory }
+                .filter { !it.category.staticSpeechParts.contains(speechPart.type) }
+                .map { it.actualSourcedValues }
+        )
+
+    fun getAllWordForms(word: Word, includeOptionalCategories: Boolean): List<Pair<WordSequence, SourcedCategoryValues>> =
+        getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
+            .map { apply(word, categoryValues = it).unfold() to it }
 
     val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
 
