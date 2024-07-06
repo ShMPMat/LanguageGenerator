@@ -32,14 +32,19 @@ enum class ArticulationPlace(val positionIndex: Int) {
     Retroflex(6),
     Palatal(7),
     Velar(8),
-    Uvular(9),
-    Pharyngeal(10),
-    Glottal(11),
+    LabialVelar(9),
+    Uvular(10),
+    Pharyngeal(11),
+    Glottal(12),
 
     Front(0),
     Central(3),
     Back(5)
 }
+
+val vowelArticulationPlaces = listOf(ArticulationPlace.Front, ArticulationPlace.Central, ArticulationPlace.Back)
+val consonantArticulationPlaces = ArticulationPlace.values()
+    .filter { it !in vowelArticulationPlaces }
 
 //TODO positions for consonants aren't final
 enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int) {

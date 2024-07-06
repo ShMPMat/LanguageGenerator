@@ -2,13 +2,11 @@ package io.tashtabash.lang.generator.phoneme
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemePool
-import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.lang.language.phonology.PhonemeModifier
-import io.tashtabash.lang.language.phonology.PhonemeType
-import io.tashtabash.lang.language.phonology.calculateDistance
+import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomElementOrNull
+import io.tashtabash.random.singleton.testProbability
 
 
 interface GenerationApplicator {
@@ -170,6 +168,40 @@ class AddRandomConsonantApplicator(private val phonemePool: PhonemePool) : Conso
             return consonants + listOf(newPhoneme)
 
         return consonants
+    }
+}
+
+
+class AddRandomConsonantMannerRowApplicator(
+    private val phonemePool: PhonemePool,
+    private val gapProbability: Double = 0.2,
+) : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val articulationManner = ArticulationManner.values()
+            .filter { it.sonorityLevel > 0 }
+            .randomElement()
+        val newPhonemes = phonemePool.getPhonemes(PhonemeType.Consonant)
+            .filter { it.articulationManner == articulationManner }
+            .filter { it !in consonants }
+            .filter { (1 - gapProbability).testProbability() }
+
+        return consonants + newPhonemes
+    }
+}
+
+
+class AddRandomConsonantPlaceRowApplicator(
+    private val phonemePool: PhonemePool,
+    private val gapProbability: Double = 0.2,
+) : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val articulationPlace = consonantArticulationPlaces.randomElement()
+        val newPhonemes = phonemePool.getPhonemes(PhonemeType.Consonant)
+            .filter { it.articulationPlace == articulationPlace }
+            .filter { it !in consonants }
+            .filter { (1 - gapProbability).testProbability() }
+
+        return consonants + newPhonemes
     }
 }
 

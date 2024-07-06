@@ -47,6 +47,9 @@ Cx  Velar       NonSibilantFricative
 Cɣ  Velar       NonSibilantFricative  Voiced
 Cɰ  Velar       Approximant           Voiced
 
+Cʍ LabialVelar Approximant
+Cw LabialVelar Approximant           Voiced
+
 Cq  Uvular      Stop
 Cɢ  Uvular      Stop                  Voiced
 Cχ  Uvular      NonSibilantFricative

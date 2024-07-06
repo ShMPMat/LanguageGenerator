@@ -3,18 +3,17 @@ package io.tashtabash.lang.generator.phoneme
 import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
-import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.VowelQualityAmount
 import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.*
-import io.tashtabash.random.singleton.RandomSingleton.random
 import kotlin.math.log2
 import kotlin.math.pow
 
 
 class PhonemeGenerator(private val phonemePool: PhonemePool) {
     private val MAX_VOWEL_QUALITIES = 20
+    private val MAX_VOWELS = MAX_VOWEL_QUALITIES * 6
+    private val MAX_CONSONANTS = 120
 
     private val vowelApplicators = listOf<PhonemeGenerationCondition>(
         AddRandomVowelApplicator(phonemePool)
@@ -35,7 +34,24 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
             .withProbability { 1.0 / log2(it.size.toDouble()) }
             .repeat { it.size >= 5 },
         RemoveRandomVowelApplicator
-            .withProbability { (it.size - 2.0) / (MAX_VOWEL_QUALITIES - 1) }
+            .withProbability { (it.size - 2.0) / (MAX_VOWELS - 1) }
+            .repeat { true },
+    )
+
+    private val consonantApplicators = listOf<PhonemeGenerationCondition>(
+        AddPhonemeApplicator(phonemePool, "m", "k", "j", "p", "w", "n", "t")
+            .always(),
+        AddRandomConsonantApplicator(phonemePool)
+            .withProbability { 1.0 / log2(it.size.toDouble() / 2) }
+            .repeat { true },
+        AddRandomConsonantMannerRowApplicator(phonemePool)
+            .withProbability { 1.0 - it.size * 2.0 / MAX_CONSONANTS }
+            .repeat { true },
+        AddRandomConsonantPlaceRowApplicator(phonemePool)
+            .withProbability { 1.0 - it.size * 2.0 / MAX_CONSONANTS }
+            .repeat { true },
+        RemoveRandomConsonantApplicator
+            .withProbability { (it.size - 6.0) / (MAX_CONSONANTS - 7.0) }
             .repeat { true },
     )
 
@@ -95,14 +111,12 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
     }
 
     private fun generateConsonants(): List<Phoneme> {
-        val consonantAmount = random.nextInt(6, 16)
+        var consonants = ImmutablePhonemeContainer(listOf())
 
-        return randomSublist(
-            phonemePool.getPhonemes(PhonemeType.Consonant),
-            random,
-            consonantAmount,
-            consonantAmount + 1
-        )
+        for (applicator in consonantApplicators)
+            consonants = applicator.run(consonants) ?: consonants
+
+        return consonants.phonemes
     }
 
     fun generate(): PhonemeContainer =
