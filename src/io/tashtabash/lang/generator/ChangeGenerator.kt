@@ -11,9 +11,9 @@ import io.tashtabash.lang.language.morphem.change.*
 import io.tashtabash.lang.language.morphem.change.matcher.PassingMatcher
 import io.tashtabash.lang.language.morphem.change.matcher.PhonemeMatcher
 import io.tashtabash.lang.language.morphem.change.matcher.TypePositionMatcher
-import io.tashtabash.lang.language.morphem.change.substitution.PassingPositionSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemePositionSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PositionSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.random.SampleSpaceObject
@@ -46,7 +46,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                         hasInitial == true || it == PhonemeType.Vowel,
                         it == PhonemeType.Vowel && position == Position.End
                     )
-                    val substitutions = listOf(PassingPositionSubstitution())
+                    val substitutions = listOf(PassingPhonemeSubstitution())
                     val isBeginning = position == Position.Beginning
 
                     TemplateSingleChange(position, listOf(TypePositionMatcher(it, isBeginning)), substitutions, affix)
@@ -74,11 +74,11 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             listOf(
                 change.copy(
                     phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Consonant, isBeginning)),
-                    matchedPhonemesSubstitution = listOf(PassingPositionSubstitution()),
+                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
                 ),
                 change.copy(
                     phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Vowel, isBeginning)),
-                    matchedPhonemesSubstitution = listOf(PassingPositionSubstitution()),
+                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
                     affix = vowelAdjacentAffix
                 ),
             )
@@ -134,12 +134,12 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
     private fun makeTemplateChangeWithBorderPhoneme(
         oldChange: TemplateSingleChange,
-        newAffix: List<PositionSubstitution>,
+        newAffix: List<PhonemeSubstitution>,
         neededPhoneme: Phoneme
     ): TemplateSingleChange {
         val isBeginning = oldChange.position == Position.Beginning
         val singleMatcher = listOf(PhonemeMatcher(neededPhoneme, isBeginning))
-        val singleSubstitution = listOf(PassingPositionSubstitution())
+        val singleSubstitution = listOf(PassingPhonemeSubstitution())
         var phonemeMatcher = oldChange.phonemeMatchers
         var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
 
@@ -173,7 +173,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             hasFinal = hasFinal
         )
     ).phonemes.phonemes
-        .map { PhonemePositionSubstitution(it) }
+        .map { ExactPhonemeSubstitution(it) }
 
 
     fun injectIrregularity(paradigm: ChangeParadigm, lexis: Lexis): ChangeParadigm {

@@ -3,15 +3,15 @@ package io.tashtabash.lang.language.morphem.change
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.change.matcher.PositionMatcher
-import io.tashtabash.lang.language.morphem.change.substitution.PositionSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 
 
 data class TemplateSingleChange(
     override val position: Position,
     val phonemeMatchers: List<PositionMatcher>,
-    val matchedPhonemesSubstitution: List<PositionSubstitution>,
-    val affix: List<PositionSubstitution>//TODO split on two parts
+    val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
+    val affix: List<PhonemeSubstitution>//TODO split on two parts
 ) : WordChange {
     init {
         if (phonemeMatchers.size > 1) {

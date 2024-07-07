@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.phonology.Phoneme
 
 
-interface PositionSubstitution {
+interface PhonemeSubstitution {
     fun substitute(word: Word, position: Int): Phoneme
     fun getSubstitutePhoneme(): Phoneme?
 }

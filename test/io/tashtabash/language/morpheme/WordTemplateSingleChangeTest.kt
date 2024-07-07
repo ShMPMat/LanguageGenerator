@@ -8,11 +8,10 @@ import io.tashtabash.lang.language.morphem.change.Position
 import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
 import io.tashtabash.lang.language.morphem.change.matcher.PhonemeMatcher
 import io.tashtabash.lang.language.morphem.change.matcher.TypePositionMatcher
-import io.tashtabash.lang.language.morphem.change.substitution.PassingPositionSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemePositionSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PositionSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.*
-import io.tashtabash.language.*
 
 
 internal class WordTemplateSingleChangeTest {
@@ -22,9 +21,9 @@ internal class WordTemplateSingleChangeTest {
             makePhoneme("b", PhonemeType.Consonant),
             makePhoneme("a", PhonemeType.Vowel)
         )
-        val affix = prefix.map { PhonemePositionSubstitution(it) }
+        val affix = prefix.map { ExactPhonemeSubstitution(it) }
         val condition = listOf<PhonemeMatcher>()
-        val substitution = listOf<PositionSubstitution>()
+        val substitution = listOf<PhonemeSubstitution>()
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
             condition,
@@ -71,8 +70,8 @@ internal class WordTemplateSingleChangeTest {
             makePhoneme("b", PhonemeType.Consonant),
             makePhoneme("a", PhonemeType.Vowel)
         )
-        val affix = prefix.map { PhonemePositionSubstitution(it) }
-        val substitution = listOf(PassingPositionSubstitution())
+        val affix = prefix.map { ExactPhonemeSubstitution(it) }
+        val substitution = listOf(PassingPhonemeSubstitution())
         val condition = listOf(
             TypePositionMatcher(PhonemeType.Consonant, true)
         )
@@ -121,8 +120,8 @@ internal class WordTemplateSingleChangeTest {
             makePhoneme("b", PhonemeType.Consonant),
             makePhoneme("a", PhonemeType.Vowel)
         )
-        val affix = prefix.map { PhonemePositionSubstitution(it) }
-        val substitution = listOf(PassingPositionSubstitution())
+        val affix = prefix.map { ExactPhonemeSubstitution(it) }
+        val substitution = listOf(PassingPhonemeSubstitution())
         val condition = listOf(
             PhonemeMatcher(makePhoneme("b", PhonemeType.Consonant), true)
         )
