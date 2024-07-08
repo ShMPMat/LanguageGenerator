@@ -19,17 +19,7 @@ data class WordChangeParadigm(
         word: Word,
         latchType: LatchType = LatchType.Center,
         categoryValues: List<SourcedCategoryValue> = getDefaultState(word)
-    ): FoldedWordSequence {
-        val (startClause, _) = applyToWord(word, latchType, categoryValues)
-
-        return startClause
-    }
-
-    private fun applyToWord(
-        word: Word,
-        latchType: LatchType,
-        categoryValues: List<SourcedCategoryValue>
-    ): Pair<FoldedWordSequence, Int> {
+    ): WordClauseResult {
         val simpleCategoryValues = categoryValues.map { it.categoryValue }
         val applicableValues = categoryValues
             .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
@@ -46,7 +36,7 @@ data class WordChangeParadigm(
     private fun applyToNewWords(
         wordPair: Pair<FoldedWordSequence, Int>,
         values: Set<SourcedCategoryValue>
-    ): Pair<FoldedWordSequence, Int> {
+    ): WordClauseResult {
         val (ws, i) = wordPair
 
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
@@ -54,7 +44,7 @@ data class WordChangeParadigm(
                 applyToNewWord(w, l, values)
             } else listOf(w to l)
         }
-        return FoldedWordSequence(newWs) to i
+        return WordClauseResult(FoldedWordSequence(newWs), i)
     }
 
     private fun applyToNewWord(
@@ -72,7 +62,7 @@ data class WordChangeParadigm(
                     it.parent
                 )
             }
-            apply(word, latchType, newCv).words
+            apply(word, latchType, newCv).words.words
         } else
             listOf(word to latchType)
     }
