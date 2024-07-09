@@ -15,31 +15,34 @@ fun List<FoldedWordSequence>.unfold(center: Int): WordSequence {
     val prefixWords = mutableListOf<Word>()
     val suffixWords = mutableListOf<Word>()
 
-    for ((i, sequence) in this.withIndex())
-        if (i == center) {
-            var isPrefix = true
+    for ((i, sequence) in this.withIndex()) {
+        if (i != center) {
+            resultWords += sequence.words.map { it.word }
+            continue
+        }
 
-            for ((word, type) in sequence.words)
-                when (type) {
-                    Center -> {
-                        isPrefix = false
-                        resultWords += word
-                    }
-                    InPlace -> resultWords += word
-                    ClauseLatch ->
-                        if (isPrefix)
-                            prefixWords += word
-                        else
-                            suffixWords += word
+        var isPrefix = true
+
+        for ((word, type) in sequence.words)
+            when (type) {
+                Center -> {
+                    isPrefix = false
+                    resultWords += word
                 }
-        } else
-            resultWords += sequence.words.map { it.first }
+                InPlace -> resultWords += word
+                ClauseLatch ->
+                    if (isPrefix)
+                        prefixWords += word
+                    else
+                        suffixWords += word
+            }
+    }
 
     return WordSequence(prefixWords + resultWords + suffixWords)
 }
 
 
-fun List<Pair<Word, LatchType>>.toFoldedWordSequence() = FoldedWordSequence(this)
-fun WordSequence.setInPlace() = FoldedWordSequence(words.map { it to InPlace })
+fun List<LatchedWord>.toFoldedWordSequence() = FoldedWordSequence(this)
+fun WordSequence.setInPlace() = FoldedWordSequence(words.map { LatchedWord(it, InPlace) })
 
 fun FoldedWordSequence.unfold() = listOf(this).unfold(0)

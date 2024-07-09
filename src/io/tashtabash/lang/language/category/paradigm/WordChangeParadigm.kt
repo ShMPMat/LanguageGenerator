@@ -4,10 +4,7 @@ import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
-import io.tashtabash.lang.language.syntax.sequence.LatchType
-import io.tashtabash.lang.language.syntax.sequence.WordSequence
-import io.tashtabash.lang.language.syntax.sequence.unfold
+import io.tashtabash.lang.language.syntax.sequence.*
 import io.tashtabash.lang.utils.listCartesianProduct
 
 
@@ -42,7 +39,7 @@ data class WordChangeParadigm(
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
             if (!isAlreadyProcessed(w, j, i)) {
                 applyToNewWord(w, l, values)
-            } else listOf(w to l)
+            } else listOf(LatchedWord(w, l))
         }
         return WordClauseResult(FoldedWordSequence(newWs), i)
     }
@@ -51,7 +48,7 @@ data class WordChangeParadigm(
         word: Word,
         latchType: LatchType,
         values: Set<SourcedCategoryValue>
-    ): List<Pair<Word, LatchType>> {
+    ): List<LatchedWord> {
         val isAdnominal = word.semanticsCore.speechPart.subtype == adnominalSubtype
         val isArticle = word.semanticsCore.speechPart.type == SpeechPart.Article
         return if (isAdnominal || isArticle) {
@@ -64,7 +61,7 @@ data class WordChangeParadigm(
             }
             apply(word, latchType, newCv).words.words
         } else
-            listOf(word to latchType)
+            listOf(LatchedWord(word, latchType))
     }
 
     private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int) =

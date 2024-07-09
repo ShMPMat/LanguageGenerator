@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.category.realization
 
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
+import io.tashtabash.lang.language.syntax.sequence.LatchedWord
 
 
 class ReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryRealization.Reduplication) {
@@ -10,13 +11,13 @@ class ReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryReali
         wordPosition: Int,
         values: Collection<SourcedCategoryValue>
     ): FoldedWordSequence {
-        val newWord = words[wordPosition].first.copyAndAddValues(values)
-        val latchType = words[wordPosition].second
+        val newWord = words[wordPosition].word.copyAndAddValues(values)
+        val latchType = words[wordPosition].latchType
 
         return FoldedWordSequence(
             words.words.take(wordPosition)
-                    + (newWord to latchType)
-                    + (newWord.copy() to latchType)
+                    + (LatchedWord(newWord, latchType))
+                    + (LatchedWord(newWord.copy(), latchType))
                     + words.words.drop(wordPosition + 1)
         )
     }

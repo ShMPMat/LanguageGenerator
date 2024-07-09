@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
 import io.tashtabash.lang.language.syntax.sequence.LatchType
+import io.tashtabash.lang.language.syntax.sequence.LatchedWord
 import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 
@@ -40,7 +41,7 @@ data class SpeechPartChangeParadigm(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
 
-        var currentClause = FoldedWordSequence(word to latchType)
+        var currentClause = FoldedWordSequence(LatchedWord(word, latchType))
         var currentWord = word
         var wordPosition = 0
         for (exponenceCluster in exponenceClusters) {
@@ -69,11 +70,11 @@ data class SpeechPartChangeParadigm(
             )
             if (currentClause.size != newClause.size)
                 for (i in wordPosition until newClause.size)
-                    if (currentWord == newClause[i].first) {
+                    if (currentWord == newClause[i].word) {
                         wordPosition = i
                         break
                     }
-            currentWord = newClause[wordPosition].first
+            currentWord = newClause[wordPosition].word
             currentClause = newClause
         }
 
@@ -93,10 +94,10 @@ data class SpeechPartChangeParadigm(
             ?.get(exponenceValue)
             ?.apply(wordSequence, wordPosition, actualValues)
             ?: throw ChangeException(
-                "Tried to change word \"${wordSequence[wordPosition].first}\" for categories $exponenceValue " +
+                "Tried to change word \"${wordSequence[wordPosition].word}\" for categories $exponenceValue " +
                         "but such Exponence Cluster isn't defined"
             )
-    else wordSequence.words.map { (w, l) -> w.copy() to l }.toFoldedWordSequence()
+    else wordSequence.words.map { (w, l) -> LatchedWord(w.copy(), l) }.toFoldedWordSequence()
 
     private fun getExponenceUnion(
         categoryValues: Set<SourcedCategoryValue>,
@@ -108,7 +109,7 @@ data class SpeechPartChangeParadigm(
 
         return FoldedWordSequence(
             wordSequence.words.subList(0, wordPosition)
-                    + (prosodyChangeParadigm.apply(oldWord, word) to latch)
+                    + LatchedWord(prosodyChangeParadigm.apply(oldWord, word), latch)
                     + wordSequence.words.subList(wordPosition + 1, wordSequence.words.size)
         )
     }
