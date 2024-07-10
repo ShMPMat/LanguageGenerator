@@ -31,10 +31,10 @@ data class WordChangeParadigm(
     }
 
     private fun applyToNewWords(
-        wordPair: Pair<FoldedWordSequence, Int>,
+        wordClause: WordClauseResult,
         values: Set<SourcedCategoryValue>
     ): WordClauseResult {
-        val (ws, i) = wordPair
+        val (ws, i) = wordClause
 
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
             if (!isAlreadyProcessed(w, j, i)) {

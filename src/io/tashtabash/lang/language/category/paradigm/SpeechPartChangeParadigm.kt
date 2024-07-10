@@ -36,7 +36,7 @@ data class SpeechPartChangeParadigm(
         ?.actualValues
         ?: emptyList()
 
-    fun apply(word: Word, latchType: LatchType, categoryValues: Set<SourcedCategoryValue>): Pair<FoldedWordSequence, Int> {
+    fun apply(word: Word, latchType: LatchType, categoryValues: Set<SourcedCategoryValue>): WordClauseResult {
         if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
             "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
         )
@@ -80,7 +80,7 @@ data class SpeechPartChangeParadigm(
 
         currentClause = currentClause.swapWord(wordPosition) { it.copy(syntaxRole = word.syntaxRole) }
 
-        return applyProsodyParadigm(currentClause, wordPosition, word) to wordPosition
+        return WordClauseResult(applyProsodyParadigm(currentClause, wordPosition, word), wordPosition)
     }
 
     private fun useCategoryApplicator(
