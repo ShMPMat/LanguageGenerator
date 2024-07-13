@@ -26,7 +26,11 @@ class TransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(SyntaxRelation.Verb, UndefinedArranger)
+        val node = verb.wordToNode(
+            SyntaxRelation.Verb,
+            verb.categoryValues.map { it.categoryValue },
+            UndefinedArranger
+        )
         val agent = subjectClause.toNode(language, random).addThirdPerson()
         val patient = objectClause.toNode(language, random).addThirdPerson()
 
@@ -56,7 +60,7 @@ class IntransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(SyntaxRelation.Verb, UndefinedArranger)
+        val node = verb.wordToNode(SyntaxRelation.Verb, verb.categoryValues.map { it.categoryValue }, UndefinedArranger)
         val argument = argumentClause.toNode(language, random).addThirdPerson()
 
         argument.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Argument)

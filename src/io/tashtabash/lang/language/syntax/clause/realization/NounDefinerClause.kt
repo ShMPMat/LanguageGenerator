@@ -22,6 +22,7 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause(SyntaxRelation.De
     override fun toNode(language: Language, random: Random) =
         adjective.wordToNode(
             SyntaxRelation.Definition,
+            adjective.categoryValues.map { it.categoryValue },
             PassingSingletonArranger
         )
 }

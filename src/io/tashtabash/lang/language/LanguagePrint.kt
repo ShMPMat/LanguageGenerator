@@ -46,7 +46,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                     CategorySource.Self -> node.addCategoryValues(pureVs)
                     is CategorySource.Agreement -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
-                        val dummyNode = dummyWord.wordToNode(s.relation, PassingArranger, pureVs)
+                        val dummyNode = dummyWord.wordToNode(s.relation, pureVs, PassingArranger)
 
                         dummyNode.setRelationChild(SyntaxRelation.AdNumeral, node)
                     }

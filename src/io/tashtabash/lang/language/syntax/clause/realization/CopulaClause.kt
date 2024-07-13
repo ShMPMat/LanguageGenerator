@@ -28,7 +28,11 @@ class VerbalCopulaClause(
 
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .wordToNode(SyntaxRelation.Verb, UndefinedArranger)
+            .wordToNode(
+                SyntaxRelation.Verb,
+                copula.categoryValues.map { it.categoryValue },
+                UndefinedArranger
+            )
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
@@ -87,6 +91,7 @@ class ParticleCopulaClause(
         }
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
             SyntaxRelation.CopulaParticle,
+            copula.categoryValues.map { it.categoryValue },
             PassingSingletonArranger
         )
 

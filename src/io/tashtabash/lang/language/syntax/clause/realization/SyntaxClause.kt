@@ -22,6 +22,6 @@ interface UnfoldableClause: SyntaxClause {
 
 internal fun Word.wordToNode(
     generalType: SyntaxRelation,
-    arranger: Arranger = PassingArranger,
-    presetCategories: CategoryValues = categoryValues.map { it.categoryValue }
+    presetCategories: CategoryValues = listOf(),
+    arranger: Arranger = PassingArranger
 ) = SentenceNode(this, presetCategories.toMutableList(), arranger, generalType)

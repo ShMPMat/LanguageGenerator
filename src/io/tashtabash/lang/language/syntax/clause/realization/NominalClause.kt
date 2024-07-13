@@ -40,8 +40,8 @@ class NominalClause(
             }
             .wordToNode(
                 SyntaxRelation.Nominal,
-                RelationArranger(changeParadigm.wordOrder.nominalGroupOrder),
-                additionalCategories
+                nominal.categoryValues.map { it.categoryValue } + additionalCategories,
+                RelationArranger(changeParadigm.wordOrder.nominalGroupOrder)
             )
 
         definitions
