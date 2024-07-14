@@ -70,6 +70,12 @@ class Visualizer(val language: Language) {
             listOf(AdjectiveDescription("small")),
             ActorComplimentValue(AmountValue(1), DeixisValue.Medial)
         )
+        val youPlObj = PronounDescription(
+            "_personal_pronoun",
+            listOf(),
+            ActorType.Agent,
+            ActorValue(Second, Neutral, AmountValue(2), DeixisValue.ProximalAddressee, null)
+        )
         val theseObj = PronounDescription(
             "_deixis_pronoun",
             listOf(),
@@ -95,6 +101,7 @@ class Visualizer(val language: Language) {
             theseObj,
             listOf(IndirectObjectDescription(homeObj, IndirectObjectType.Location))
         )
+        val firstHearVerb = TransitiveVerbDescription("hear", iSubj, youPlObj)
         val existVerb = SimpleIntransitiveVerbDescription("exist", iSubj)
         val firstBuildVerb = TransitiveVerbDescription(
             "build",
@@ -114,6 +121,7 @@ class Visualizer(val language: Language) {
             TransitiveVerbMainClauseDescription(secondSeeVerb),
             TransitiveVerbMainClauseDescription(thirdSeeVerb),
             TransitiveVerbMainClauseDescription(fourthSeeVerb),
+            TransitiveVerbMainClauseDescription(firstHearVerb),
             IntransitiveVerbMainClauseDescription(existVerb),
             TransitiveVerbMainClauseDescription(firstBuildVerb),
             TransitiveVerbMainClauseDescription(secondBuildVerb)
