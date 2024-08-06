@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.CaseValue
+import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
@@ -13,7 +14,10 @@ import kotlin.random.Random
 abstract class NounDefinerClause(val relationFromNoun: SyntaxRelation) : SyntaxClause
 
 
-class AdjectiveClause(val adjective: Word) : NounDefinerClause(SyntaxRelation.Definition) {
+class AdjectiveClause(
+    val adjective: Word,
+    val additionalCategories: SourcedCategoryValues = listOf()
+) : NounDefinerClause(SyntaxRelation.Definition) {
     init {
         if (adjective.semanticsCore.speechPart.type != SpeechPart.Adjective)
             throw SyntaxException("$adjective is not an adjective")
@@ -22,7 +26,7 @@ class AdjectiveClause(val adjective: Word) : NounDefinerClause(SyntaxRelation.De
     override fun toNode(language: Language, random: Random) =
         adjective.wordToNode(
             SyntaxRelation.Definition,
-            adjective.categoryValues.map { it.categoryValue },
+            additionalCategories.map { it.categoryValue },
             PassingSingletonArranger
         )
 }

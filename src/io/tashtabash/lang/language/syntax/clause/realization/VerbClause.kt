@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.*
+import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
@@ -14,6 +15,7 @@ import kotlin.random.Random
 
 class TransitiveVerbClause(
     val verb: Word,
+    val additionalCategories: SourcedCategoryValues,
     val subjectClause: NominalClause,
     val objectClause: NominalClause,
     val adjuncts: List<AdjunctClause> = listOf()
@@ -28,14 +30,14 @@ class TransitiveVerbClause(
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = verb.wordToNode(
             SyntaxRelation.Verb,
-            verb.categoryValues.map { it.categoryValue },
+            additionalCategories.map { it.categoryValue },
             UndefinedArranger
         )
         val agent = subjectClause.toNode(language, random).addThirdPerson()
         val patient = objectClause.toNode(language, random).addThirdPerson()
 
-        agent.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Agent)
-        patient.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Patient)
+        agent.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Agent)
+        patient.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Patient)
 
         node.setRelationChild(SyntaxRelation.Agent, agent)
         node.setRelationChild(SyntaxRelation.Patient, patient)
@@ -49,6 +51,7 @@ class TransitiveVerbClause(
 
 class IntransitiveVerbClause(
     val verb: Word,
+    val additionalCategories: SourcedCategoryValues,
     val argumentClause: NominalClause,
     val adjuncts: List<AdjunctClause> = listOf()
 ) : SyntaxClause {
@@ -60,10 +63,14 @@ class IntransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(SyntaxRelation.Verb, verb.categoryValues.map { it.categoryValue }, UndefinedArranger)
+        val node = verb.wordToNode(
+            SyntaxRelation.Verb,
+            additionalCategories.map { it.categoryValue },
+            UndefinedArranger
+        )
         val argument = argumentClause.toNode(language, random).addThirdPerson()
 
-        argument.addRelevantCases(language.changeParadigm.syntaxLogic, verb, SyntaxRelation.Argument)
+        argument.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Argument)
 
         node.setRelationChild(SyntaxRelation.Argument, argument)
 
@@ -84,12 +91,12 @@ internal fun SentenceNode.addThirdPerson(): SentenceNode {
 }
 
 
-private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: Word, syntaxRelation: SyntaxRelation) {
+private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: SentenceNode, relation: SyntaxRelation) {
     val caseRelevantCategories = verb.categoryValues
-        .map { it.categoryValue }
         .filterIsInstance<TenseValue>()
         .toSet()
+    val verbSpeechPart = verb.word.semanticsCore.speechPart
 
     categoryValues.removeIf { it is CaseValue }
-    categoryValues += syntaxLogic.resolveVerbCase(verb.semanticsCore.speechPart, syntaxRelation, caseRelevantCategories)
+    categoryValues += syntaxLogic.resolveVerbCase(verbSpeechPart, relation, caseRelevantCategories)
 }

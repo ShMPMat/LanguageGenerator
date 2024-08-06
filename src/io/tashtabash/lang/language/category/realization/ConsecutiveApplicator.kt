@@ -22,10 +22,10 @@ class ConsecutiveApplicator(val applicators: List<CategoryApplicator>) : Abstrac
                         break
                     }
             currentWord = newClause[i]
-            currentClause = newClause.swapWord(i) { it.copyWithValues(it.categoryValues subtract values) }
+            currentClause = newClause
         }
 
-        return currentClause.swapWord(i) { it.copyAndAddValues(values) }
+        return currentClause
     }
 
     override fun copy() = ConsecutiveApplicator(applicators)

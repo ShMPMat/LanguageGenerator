@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.morphem.change
 
+import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.Word
 
 
@@ -18,9 +19,9 @@ class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange
 
     override fun test(word: Word) = changes.any { it.test(word) }
 
-    override fun change(word: Word): Word {
+    override fun change(word: Word, categoryValues: SourcedCategoryValues): Word {
         for (changeTemplate in changes) {
-            val changedWord = changeTemplate.change(word)
+            val changedWord = changeTemplate.change(word, categoryValues)
             if (changedWord.toString() != word.toString())
                 return changedWord
         }

@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
+import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
@@ -18,6 +19,7 @@ abstract class CopulaClause(val topType: SyntaxRelation, val copulaType: CopulaT
 
 class VerbalCopulaClause(
     val copula: Word,
+    val additionalCategories: SourcedCategoryValues,
     val subject: NominalClause,
     val complement: NominalClause
 ) : CopulaClause(SyntaxRelation.Verb, CopulaType.Verb) {
@@ -28,11 +30,7 @@ class VerbalCopulaClause(
 
     override fun toNode(language: Language, random: Random): SentenceNode {
         val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .wordToNode(
-                SyntaxRelation.Verb,
-                copula.categoryValues.map { it.categoryValue },
-                UndefinedArranger
-            )
+            .wordToNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
@@ -89,11 +87,8 @@ class ParticleCopulaClause(
                 )
             )
         }
-        val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula).wordToNode(
-            SyntaxRelation.CopulaParticle,
-            copula.categoryValues.map { it.categoryValue },
-            PassingSingletonArranger
-        )
+        val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula)
+            .wordToNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
 
         subj.setRelationChild(SyntaxRelation.CopulaParticle, particle)
         subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)

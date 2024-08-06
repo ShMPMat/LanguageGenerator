@@ -18,9 +18,8 @@ class TransitiveVerbDescription(
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
             TransitiveVerbClause(
-                word.copyWithValues(
-                    language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context)
-                ),
+                word,
+                language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context),
                 actorDescription.toClause(language, context, random),
                 patientDescription.toClause(language, context, random),
                 indirectObjectDescriptions.map { obj ->
@@ -46,9 +45,8 @@ class SimpleIntransitiveVerbDescription(
     override fun toClause(language: Language, context: Context, random: Random) =
         language.lexis.getWordOrNull(verb)?.let { word ->
             IntransitiveVerbClause(
-                word.copyWithValues(
-                    language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context)
-                ),
+                word,
+                language.changeParadigm.syntaxLogic.resolveVerbForm(language, word.semanticsCore.speechPart, context),
                 argumentDescription.toClause(language, context, random),
                 indirectObjectDescriptions.map { obj ->
                     if (word.semanticsCore.tags.none { it.name == obj.type.name.toLowerCase() })

@@ -33,7 +33,7 @@ class Derivation(
             random
         ) ?: return null
 
-        val derivedWord = affix.change(word)
+        val derivedWord = affix.change(word, listOf())
         val newDerivations = word.semanticsCore.appliedDerivations + this
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(word.semanticsCore),

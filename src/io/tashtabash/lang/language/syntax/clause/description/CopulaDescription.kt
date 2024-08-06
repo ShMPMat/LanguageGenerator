@@ -20,19 +20,20 @@ class CopulaDescription(
             .randomUnwrappedElement()
             .let { copulaType ->
                 when (copulaType) {
-                    CopulaType.Verb -> VerbalCopulaClause(
-                        language.lexis.getCopulaWord(CopulaType.Verb).let {
-                            it.copyWithValues(
-                                language.changeParadigm.syntaxLogic.resolveVerbForm(
-                                    language,
-                                    it.semanticsCore.speechPart,
-                                    context
-                                )
-                            )
-                        },
-                        subjectClause,
-                        complementClause
-                    )
+                    CopulaType.Verb -> {
+                        val verb = language.lexis.getCopulaWord(CopulaType.Verb)
+
+                        VerbalCopulaClause(
+                            verb,
+                            language.changeParadigm.syntaxLogic.resolveVerbForm(
+                                language,
+                                verb.semanticsCore.speechPart,
+                                context
+                            ),
+                            subjectClause,
+                            complementClause
+                        )
+                    }
                     CopulaType.Particle -> ParticleCopulaClause(
                         language.lexis.getCopulaWord(CopulaType.Particle),
                         subjectClause,

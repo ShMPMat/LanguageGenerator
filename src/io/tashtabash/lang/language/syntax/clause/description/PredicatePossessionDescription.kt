@@ -62,12 +62,11 @@ class ObliquePredicatePossessionDescription(
         ObliquePredicatePossessionClause(
             language.lexis.getWordOrNull("exist")?.let { word ->
                 IntransitiveVerbClause(
-                    word.copyWithValues(
-                        language.changeParadigm.syntaxLogic.resolveVerbForm(
-                            language,
-                            word.semanticsCore.speechPart,
-                            context
-                        )
+                    word,
+                    language.changeParadigm.syntaxLogic.resolveVerbForm(
+                        language,
+                        word.semanticsCore.speechPart,
+                        context
                     ),
                     ownedDescription.toClause(language, context, random),
                     listOf(

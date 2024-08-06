@@ -40,7 +40,7 @@ class NominalClause(
             }
             .wordToNode(
                 SyntaxRelation.Nominal,
-                nominal.categoryValues.map { it.categoryValue } + additionalCategories,
+                additionalCategories,
                 RelationArranger(changeParadigm.wordOrder.nominalGroupOrder)
             )
 

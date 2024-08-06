@@ -44,6 +44,7 @@ class PronounDescription(
 
         context.actors[actorType] = actor
 
+        // additionalCategories from clause are skipped because resolvePronounCategories resolves them anew
         return NominalClause(
             clause.nominal,
             clause.definitions,
