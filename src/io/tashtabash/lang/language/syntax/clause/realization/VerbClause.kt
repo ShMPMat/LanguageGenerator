@@ -28,7 +28,7 @@ class TransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(
+        val node = verb.toNode(
             SyntaxRelation.Verb,
             additionalCategories.map { it.categoryValue },
             UndefinedArranger
@@ -63,7 +63,7 @@ class IntransitiveVerbClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = verb.wordToNode(
+        val node = verb.toNode(
             SyntaxRelation.Verb,
             additionalCategories.map { it.categoryValue },
             UndefinedArranger

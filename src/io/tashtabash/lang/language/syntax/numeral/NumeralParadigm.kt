@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.lineUpAll
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.numeral.NumeralConstructionType.*
-import io.tashtabash.lang.language.syntax.clause.realization.wordToNode
+import io.tashtabash.lang.language.syntax.clause.realization.toNode
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
 import io.tashtabash.random.singleton.testProbability
 
@@ -21,8 +21,8 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
 
     private fun extract(n: Int, lexis: Lexis): SentenceNode =
         when (val type = getType(n)) {
-            SingleWord -> lexis.getWord(n.toString()).wordToNode(SyntaxRelation.AdNumeral)
-            is SpecialWord -> lexis.getWord(type.meaning).wordToNode(SyntaxRelation.AdNumeral)
+            SingleWord -> lexis.getWord(n.toString()).toNode(SyntaxRelation.AdNumeral)
+            is SpecialWord -> lexis.getWord(type.meaning).toNode(SyntaxRelation.AdNumeral)
             is AddWord -> {
                 val baseNumber = n / type.baseNumber
                 val sumNumber = n % type.baseNumber

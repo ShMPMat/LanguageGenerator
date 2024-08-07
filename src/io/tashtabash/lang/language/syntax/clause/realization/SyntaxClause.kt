@@ -20,7 +20,7 @@ interface UnfoldableClause: SyntaxClause {
 }
 
 
-internal fun Word.wordToNode(
+internal fun Word.toNode(
     generalType: SyntaxRelation,
     presetCategories: CategoryValues = listOf(),
     arranger: Arranger = PassingArranger

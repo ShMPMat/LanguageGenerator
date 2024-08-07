@@ -24,7 +24,7 @@ class AdjectiveClause(
     }
 
     override fun toNode(language: Language, random: Random) =
-        adjective.wordToNode(
+        adjective.toNode(
             SyntaxRelation.Definition,
             additionalCategories.map { it.categoryValue },
             PassingSingletonArranger

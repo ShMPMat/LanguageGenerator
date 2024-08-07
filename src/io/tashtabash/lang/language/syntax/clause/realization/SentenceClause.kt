@@ -8,7 +8,6 @@ import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTrans
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
 import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.arranger.PassingArranger
 import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
@@ -35,7 +34,7 @@ class TransitiveVerbSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(SyntaxRelation.QuestionMarker)
+                            .toNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
@@ -57,7 +56,7 @@ class IntransitiveVerbSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(SyntaxRelation.QuestionMarker)
+                            .toNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == VerbSentenceType.NegatedVerbClause)
@@ -87,7 +86,7 @@ class CopulaSentenceClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(SyntaxRelation.QuestionMarker)
+                            .toNode(SyntaxRelation.QuestionMarker)
                     )
 
             if (type == CopulaSentenceType.NegatedCopulaClause)

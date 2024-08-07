@@ -4,7 +4,6 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
-import io.tashtabash.lang.language.syntax.arranger.PassingArranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
@@ -24,7 +23,7 @@ class ObliquePredicatePossessionClause(
                         SyntaxRelation.QuestionMarker,
                         language.lexis.getQuestionMarkerWord(QuestionMarker)
                             .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .wordToNode(SyntaxRelation.QuestionMarker)
+                            .toNode(SyntaxRelation.QuestionMarker)
                     )
             arranger = RelationArranger(
                 SubstitutingOrder(

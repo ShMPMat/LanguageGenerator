@@ -8,7 +8,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.arranger.PassingArranger
-import io.tashtabash.lang.language.syntax.clause.realization.wordToNode
+import io.tashtabash.lang.language.syntax.clause.realization.toNode
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTranslator
 import kotlin.random.Random
 
@@ -46,7 +46,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                     CategorySource.Self -> node.addCategoryValues(pureVs)
                     is CategorySource.Agreement -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
-                        val dummyNode = dummyWord.wordToNode(s.relation, pureVs, PassingArranger)
+                        val dummyNode = dummyWord.toNode(s.relation, pureVs, PassingArranger)
 
                         dummyNode.setRelationChild(SyntaxRelation.AdNumeral, node)
                     }
