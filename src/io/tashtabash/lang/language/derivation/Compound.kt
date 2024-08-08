@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.derivation
 import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.containers.toSemanticsCore
 import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.Syllable
 import io.tashtabash.lang.language.phonology.Syllables
@@ -39,7 +40,11 @@ data class Compound(
 
         val chosenWords = chosenCompound.map { it.randomElement() }
 
-        val newPhonemeList = chosenWords
+        return createCompound(chosenWords, resultCore)
+    }
+
+    private fun createCompound(words: List<Word>, core: SemanticsCoreTemplate): Word? {
+        val newPhonemeList = words
             .map { w -> w.syllables.flatMap { it.phonemes.phonemes } }
             .joinToList(separator = infix.phonemes)
         val syllableTemplate = words[0].syllableTemplate
@@ -48,16 +53,20 @@ data class Compound(
 
         val syllables = syllableTemplate.splitOnSyllables(PhonemeSequence(newPhonemeList))
             ?: return null
+        val morphemes = words.flatMap { it.morphemes + MorphemeData(infix.size, listOf(), false) }
+            .dropLast(1)
 
         return Word(
             putProsodies(
                 syllables,
-                chosenWords,
+                words,
                 if (infix.size == 0 || syllableTemplate.splitOnSyllables(infix) == null) 0 else 1
             ),
             syllableTemplate,
-            resultCore.toSemanticsCore(newCategories)
-                .copy(changeHistory = CompoundHistory(this, chosenWords))
+            core.toSemanticsCore(newCategories)
+                .copy(changeHistory = CompoundHistory(this, words)),
+            listOf(),
+            morphemes
         )
     }
 
