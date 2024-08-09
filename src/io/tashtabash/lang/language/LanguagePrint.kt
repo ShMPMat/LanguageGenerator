@@ -54,7 +54,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
             }
         num to SentenceClauseTranslator(changeParadigm).applyNode(node, Random(0))
     }
-    .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.getClauseInfoPrinted()) }
+    .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.printClauseInfo()) }
     .lineUpAll()
     .joinToString("\n")
 
@@ -78,21 +78,26 @@ fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = false)
 }
 
 fun getClauseAndInfoStr(wordSequence: WordSequence): String {
-    val (words, infos) = wordSequence.words
+    val glosses = wordSequence.printClauseInfo()
+        .split(" ")
+        .map { "$it " }
+    val morphemes = wordSequence.printClauseMorphemes()
+        .split(" ")
+        .map { "$it " }
+    val words = wordSequence.words
         .map { it.toString() }
-        .zip(wordSequence.getClauseInfoPrinted().split(" "))
-        .map { (s1, s2) -> lineUp(s1, s2) }
-        .map { (s1, s2) -> s1 to s2 }
-        .unzip()
-    return words.joinToString(" ") + "\n" +
-            infos.joinToString(" ")
+        .map { "$it " }
+
+    return listOf(words, morphemes, glosses).lineUpAll()
+        .joinToString("\n")
 }
 
 fun List<String>.lineUp(): List<String> {
-    val max = map { it.length }
+    val max = map { countStringWidth(it) }
         .maxOrNull()
         ?: throw GeneratorException("String list is empty")
-    return map { it + " ".repeat(max - it.length) }
+
+    return map { it + " ".repeat(max - countStringWidth(it)) }
 }
 
 fun lineUp(vararg ss: String) = ss.toList().lineUp()
@@ -112,9 +117,15 @@ fun List<List<String>>.lineUpAll(): List<String> {
     }
 }
 
-fun WordSequence.getClauseInfoPrinted() = words.joinToString(" ") { getWordInfoPrinted(it) }
+fun countStringWidth(str: String): Int = str
+    .replace("\\p{M}".toRegex(), "")
+    .length
 
-fun getWordInfoPrinted(word: Word): String {
+fun WordSequence.printClauseInfo() = words.joinToString(" ") { printMorphemeInfo(it) }
+
+fun WordSequence.printClauseMorphemes() = words.joinToString(" ") { printWordMorphemes(it) }
+
+fun printWordInfo(word: Word): String {
     val semantics = getSemanticsPrinted(word)
     val categories =  word.categoryValues
         .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
@@ -124,7 +135,37 @@ fun getWordInfoPrinted(word: Word): String {
         categories.drop(1)
     else
         semantics + categories
+}
 
+fun printWordMorphemes(word: Word): String {
+    var morphemeStartIdx = 0
+    val phonemes = word.toPhonemes()
+
+    return word.morphemes.joinToString("-") { (size, _, _) ->
+        morphemeStartIdx += size
+
+        phonemes.subList(morphemeStartIdx - size, morphemeStartIdx)
+            .joinToString("")
+    }
+}
+
+fun printMorphemeInfo(word: Word): String = word.morphemes.joinToString("-") { (_, categoryValues, isRoot) ->
+    val printedCategoryValues = categoryValues
+        .joinToString(".") { it.smartPrint(word.categoryValues).replace(".", "_") }
+
+    val printedSemantics = getSemanticsPrinted(word)
+
+    val rootCategories = if (printedCategoryValues.isEmpty())
+        ""
+    else if (printedSemantics.isEmpty())
+        printedCategoryValues
+    else
+        "($printedCategoryValues)"
+
+    if (isRoot)
+        printedSemantics + rootCategories
+    else
+        printedCategoryValues
 }
 
 private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
