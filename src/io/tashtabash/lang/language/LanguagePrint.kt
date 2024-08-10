@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTrans
 import kotlin.random.Random
 
 
-fun Language.getNumeralsPrinted() = when(changeParadigm.numeralParadigm.base) {
+fun Language.getNumeralsPrinted() = when (changeParadigm.numeralParadigm.base) {
     NumeralSystemBase.Decimal -> printNumerals(
         (1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000)
     )
@@ -36,13 +36,13 @@ private fun Language.printNumeralsRange(range: IntRange) = printNumerals(range.t
 
 private fun Language.printNumerals(numbers: List<Int>) = numbers
     .map { it to changeParadigm.numeralParadigm.constructNumeral(it, lexis) }
-    .map { (num,node) ->
+    .map { (num, node) ->
         changeParadigm.wordChangeParadigm.getDefaultState(node.word)
             .groupBy { it.source }
             .forEach { (s, vs) ->
                 val pureVs = vs.map { it.categoryValue }
 
-                when(s) {
+                when (s) {
                     CategorySource.Self -> node.addCategoryValues(pureVs)
                     is CategorySource.Agreement -> {
                         val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
@@ -54,7 +54,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
             }
         num to SentenceClauseTranslator(changeParadigm).applyNode(node, Random(0))
     }
-    .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.printClauseInfo()) }
+    .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.printClauseInfo(true)) }
     .lineUpAll()
     .joinToString("\n")
 
@@ -77,11 +77,11 @@ fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = false)
                 .joinToString("\n")
 }
 
-fun getClauseAndInfoStr(wordSequence: WordSequence): String {
-    val glosses = wordSequence.printClauseInfo()
+fun getClauseAndInfoStr(wordSequence: WordSequence, printDerivation: Boolean = true): String {
+    val glosses = wordSequence.printClauseInfo(printDerivation)
         .split(" ")
         .map { "$it " }
-    val morphemes = wordSequence.printClauseMorphemes()
+    val morphemes = wordSequence.printClauseMorphemes(printDerivation)
         .split(" ")
         .map { "$it " }
     val words = wordSequence.words
@@ -121,13 +121,17 @@ fun countStringWidth(str: String): Int = str
     .replace("\\p{M}".toRegex(), "")
     .length
 
-fun WordSequence.printClauseInfo() = words.joinToString(" ") { printMorphemeInfo(it) }
+fun WordSequence.printClauseInfo(printDerivation: Boolean) = words.joinToString(" ") {
+    printMorphemeInfo(it, printDerivation)
+}
 
-fun WordSequence.printClauseMorphemes() = words.joinToString(" ") { printWordMorphemes(it) }
+fun WordSequence.printClauseMorphemes(printDerivation: Boolean) = words.joinToString(" ") {
+    printWordMorphemes(it, printDerivation)
+}
 
 fun printWordInfo(word: Word): String {
     val semantics = getSemanticsPrinted(word)
-    val categories =  word.categoryValues
+    val categories = word.categoryValues
         .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
         .replace(" ", ".")
 
@@ -137,7 +141,7 @@ fun printWordInfo(word: Word): String {
         semantics + categories
 }
 
-fun printWordMorphemes(word: Word): String {
+fun printWordMorphemes(word: Word, printDerivation: Boolean): String {
     var morphemeStartIdx = 0
     val phonemes = word.toPhonemes()
 
@@ -149,29 +153,39 @@ fun printWordMorphemes(word: Word): String {
     }
 }
 
-fun printMorphemeInfo(word: Word): String = word.morphemes.joinToString("-") { (_, categoryValues, isRoot) ->
-    val printedCategoryValues = categoryValues
-        .joinToString(".") { it.smartPrint(word.categoryValues).replace(".", "_") }
+fun printMorphemeInfo(word: Word, printDerivation: Boolean): String = word.morphemes
+    .joinToString("-") { (_, categoryValues, isRoot, derivationValues) ->
+        var printedMorphemeData = categoryValues
+            .joinToString(".") { it.smartPrint(word.categoryValues).replace(".", "_") }
 
-    val printedSemantics = getSemanticsPrinted(word)
+        if (printDerivation) {
+            if (printedMorphemeData.isNotEmpty() && derivationValues.isNotEmpty())
+                printedMorphemeData += "."
 
-    val rootCategories = if (printedCategoryValues.isEmpty())
-        ""
-    else if (printedSemantics.isEmpty())
-        printedCategoryValues
-    else
-        "($printedCategoryValues)"
+            printedMorphemeData += derivationValues
+                .joinToString { it.shortName }
+        }
 
-    if (isRoot)
-        printedSemantics + rootCategories
-    else
-        printedCategoryValues
-}
+        val printedSemantics = getSemanticsPrinted(word)
 
-private fun getSemanticsPrinted(word: Word) = word.syntaxRole?.short ?:
-    if (word.semanticsCore.speechPart.type !in listOf(SpeechPart.Particle, SpeechPart.Article, SpeechPart.DeixisPronoun, SpeechPart.Adposition))
-        word.semanticsCore.toString()
-    else ""
+        val printedRootData = if (printedMorphemeData.isEmpty())
+            ""
+        else if (printedSemantics.isEmpty())
+            printedMorphemeData
+        else
+            "($printedMorphemeData)"
+
+        if (isRoot)
+            printedSemantics + printedRootData
+        else
+            printedMorphemeData
+    }
+
+private fun getSemanticsPrinted(word: Word) =
+    word.syntaxRole?.short
+        ?: if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts)
+            word.semanticsCore.toString()
+        else ""
 
 fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): String {
     val allSources = allValues.groupBy { it.source }
@@ -180,3 +194,10 @@ fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): Stri
         categoryValue.alias
     else "$this"
 }
+
+private val nonSemanticSpeechParts = listOf(
+    SpeechPart.Particle,
+    SpeechPart.Article,
+    SpeechPart.DeixisPronoun,
+    SpeechPart.Adposition
+)

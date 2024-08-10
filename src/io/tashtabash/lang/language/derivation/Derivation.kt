@@ -13,7 +13,7 @@ import kotlin.random.Random
 
 class Derivation(
     private val affix: Affix,
-    val dClass: DerivationClass,
+    val derivationClass: DerivationClass,
     val resultSpeechPart: TypedSpeechPart,
     val strength: Double,
     private val categoriesChanger: CategoryChanger
@@ -22,7 +22,7 @@ class Derivation(
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 
-        val applicableTypes = dClass.possibilities
+        val applicableTypes = derivationClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.type) }
 
         val chosenType = randomUnwrappedElement(applicableTypes + makeNoType(1.0 / strength), random)
@@ -33,7 +33,7 @@ class Derivation(
             random
         ) ?: return null
 
-        val derivedWord = affix.change(word, listOf())
+        val derivedWord = affix.change(word, listOf(), listOf(derivationClass))
         val newDerivations = word.semanticsCore.appliedDerivations + this
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(word.semanticsCore),
@@ -42,7 +42,7 @@ class Derivation(
         val newCore = allWords.allWords.first { it.word == chosenMeaning }
             .toSemanticsCore(newStaticCategories).let {
                 it.copy(
-                    tags = it.tags + SemanticsTag(dClass.name),
+                    tags = it.tags + SemanticsTag(derivationClass.name),
                     appliedDerivations = newDerivations,
                     changeHistory = DerivationHistory(this, word)
                 )
@@ -61,7 +61,7 @@ class Derivation(
 
         if (affix.toString() != other.affix.toString())
             return false
-        if (dClass != other.dClass)
+        if (derivationClass != other.derivationClass)
             return false
 
         return true
@@ -69,9 +69,9 @@ class Derivation(
 
     override fun hashCode(): Int {
         var result = affix.toString().hashCode()
-        result = 31 * result + dClass.hashCode()
+        result = 31 * result + derivationClass.hashCode()
         return result
     }
 
-    override fun toString() = "Class - $dClass; $affix; $categoriesChanger; strength = %.2f".format(strength)
+    override fun toString() = "Class - $derivationClass; $affix; $categoriesChanger; strength = %.2f".format(strength)
 }

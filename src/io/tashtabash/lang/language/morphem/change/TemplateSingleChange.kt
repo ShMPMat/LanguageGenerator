@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.morphem.change
 
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
+import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.matcher.PositionMatcher
@@ -46,7 +47,7 @@ data class TemplateSingleChange(
         Position.End -> matchedPhonemesSubstitution + affix
     }
 
-    override fun change(word: Word, categoryValues: SourcedCategoryValues): Word {
+    override fun change(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Word {
         fun Word.takeProsody(i: Int) = this.syllables
             .getOrNull(i)
             ?.prosodicEnums
@@ -55,6 +56,7 @@ data class TemplateSingleChange(
 
         val testResult = findGoodIndex(word)
         if (testResult != null) {
+            val newMorpheme = MorphemeData(affix.size, categoryValues, false, derivationValues)
             val (prosodicSyllables, morphemes) = when (position) {
                 Position.End -> {
                     val change = getFullChange()
@@ -68,7 +70,7 @@ data class TemplateSingleChange(
                             ) + change
                         )
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val morphemes = word.morphemes + listOf(MorphemeData(affix.size, categoryValues, false))
+                    val morphemes = word.morphemes + listOf(newMorpheme)
 
                     noProsodyWord.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i))
@@ -87,7 +89,7 @@ data class TemplateSingleChange(
                         )
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                     val shift = noProsodyWord.size - word.syllables.size
-                    val morphemes = listOf(MorphemeData(affix.size, categoryValues, false)) + word.morphemes
+                    val morphemes = listOf(newMorpheme) + word.morphemes
 
                     noProsodyWord.mapIndexed { i, s ->
                         s.copy(prosodicEnums = word.takeProsody(i - shift))

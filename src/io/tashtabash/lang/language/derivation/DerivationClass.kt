@@ -8,22 +8,27 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.random.UnwrappableSSO
 
 
-enum class DerivationClass(val possibilities: List<Box>, val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart) {
-    Diminutive(listOf(Box(Smallness, 1.0), Box(Young, 1.0)), Noun, Noun),
-    Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), Noun, Noun),
+enum class DerivationClass(
+    val possibilities: List<Box>,
+    val fromSpeechPart: SpeechPart,
+    val toSpeechPart: SpeechPart,
+    val shortName: String
+) {
+    Diminutive(listOf(Box(Smallness, 1.0), Box(Young, 1.0)), Noun, Noun, "Dim"),
+    Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), Noun, Noun, "Aug"),
 
-    PlaceFromNoun(listOf(Box(NNPlace, 1.0)), Noun, Noun),
-    PersonFromNoun(listOf(Box(NNPerson, 1.0)), Noun, Noun),
-    AbstractNounFromNoun(listOf(Box(NNAbstract, 1.0)), Noun, Noun),
+    PlaceFromNoun(listOf(Box(NNPlace, 1.0)), Noun, Noun, "Plc"),
+    PersonFromNoun(listOf(Box(NNPerson, 1.0)), Noun, Noun, "Prs"),
+    AbstractNounFromNoun(listOf(Box(NNAbstract, 1.0)), Noun, Noun, "Nom"),
 
-    AbstractNounFromAdjective(listOf(Box(ANAbstract, 1.0)), Adjective, Noun),
-    PlaceFromAdjective(listOf(Box(ANPlace, 1.0)), Adjective, Noun),
+    AbstractNounFromAdjective(listOf(Box(ANAbstract, 1.0)), Adjective, Noun, "Nom"),
+    PlaceFromAdjective(listOf(Box(ANPlace, 1.0)), Adjective, Noun, "Plc"),
 
-    BeingStateFromAdjective(listOf(Box(AVBeingState, 1.0)), Adjective, Verb),
+    BeingStateFromAdjective(listOf(Box(AVBeingState, 1.0)), Adjective, Verb, "Pred"),
 
-    PlaceFromVerb(listOf(Box(VNPlace, 1.0)), Verb, Noun),
-    PersonFromVerb(listOf(Box(VNPerson, 1.0)), Verb, Noun),
-    AbstractNounFromVerb(listOf(Box(VNAbstract, 1.0)), Verb, Noun)
+    PlaceFromVerb(listOf(Box(VNPlace, 1.0)), Verb, Noun, "Pls"),
+    PersonFromVerb(listOf(Box(VNPerson, 1.0)), Verb, Noun, "Prs"),
+    AbstractNounFromVerb(listOf(Box(VNAbstract, 1.0)), Verb, Noun, "Nom")
 }
 
 enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart, val connotations: Connotations) {

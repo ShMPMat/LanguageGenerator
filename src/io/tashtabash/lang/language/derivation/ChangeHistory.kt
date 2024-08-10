@@ -14,7 +14,7 @@ interface ChangeHistory {
 
 data class DerivationHistory(val derivation: Derivation, val previous: Word) : ChangeHistory {
     override fun printHistory(parent: Word) =
-        constructChangeTree(listOf(previous), parent, derivation.dClass.toString())
+        constructChangeTree(listOf(previous), parent, derivation.derivationClass.toString())
 
     override val changeDepth: Int
         get() = 1 + (previous.semanticsCore.changeHistory?.changeDepth ?: 0)
@@ -26,7 +26,7 @@ data class CompoundHistory(val compound: Compound, val previous: List<Word>) : C
         constructChangeTree(previous, parent, compound.infix.toString())
 
     override val changeDepth: Int
-        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.max() ?: 0)
+        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.maxOrNull() ?: 0)
 }
 
 
