@@ -9,4 +9,11 @@ data class MorphemeData(
     val categoryValues: List<SourcedCategoryValue>,
     val isRoot: Boolean,
     val derivationValues: List<DerivationClass> = listOf()
-)
+) {
+    operator fun plus(other: MorphemeData) = MorphemeData(
+        size + other.size,
+        (categoryValues + other.categoryValues).distinct(),
+        isRoot || other.isRoot,
+        (derivationValues + other.derivationValues).distinct()
+    )
+}

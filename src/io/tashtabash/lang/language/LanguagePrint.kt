@@ -5,6 +5,7 @@ import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
+import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.arranger.PassingArranger
@@ -142,44 +143,86 @@ fun printWordInfo(word: Word): String {
 }
 
 fun printWordMorphemes(word: Word, printDerivation: Boolean): String {
+    val morphemes =
+        if (printDerivation)
+            word.morphemes
+        else
+            mergeDerivationMorphemes(word.morphemes)
     var morphemeStartIdx = 0
     val phonemes = word.toPhonemes()
 
-    return word.morphemes.joinToString("-") { (size, _, _) ->
+    return morphemes.joinToString("-") { (size, categoryValues) ->
         morphemeStartIdx += size
 
-        phonemes.subList(morphemeStartIdx - size, morphemeStartIdx)
+        val symbols = phonemes.subList(morphemeStartIdx - size, morphemeStartIdx)
             .joinToString("")
+
+        if (symbols.isEmpty() && categoryValues.isNotEmpty())
+            "Ø"
+        else
+            symbols
     }
 }
 
-fun printMorphemeInfo(word: Word, printDerivation: Boolean): String = word.morphemes
-    .joinToString("-") { (_, categoryValues, isRoot, derivationValues) ->
-        var printedMorphemeData = categoryValues
-            .joinToString(".") { it.smartPrint(word.categoryValues).replace(".", "_") }
+fun printMorphemeInfo(word: Word, printDerivation: Boolean): String {
+    val morphemes =
+        if (printDerivation)
+            word.morphemes
+        else
+            mergeDerivationMorphemes(word.morphemes)
 
-        if (printDerivation) {
-            if (printedMorphemeData.isNotEmpty() && derivationValues.isNotEmpty())
-                printedMorphemeData += "."
+    return morphemes
+        .joinToString("-") { (_, categoryValues, isRoot, derivationValues) ->
+            var printedMorphemeData = categoryValues
+                .joinToString(".") { it.smartPrint(word.categoryValues).replace(".", "_") }
 
-            printedMorphemeData += derivationValues
-                .joinToString { it.shortName }
+            if (printDerivation) {
+                if (printedMorphemeData.isNotEmpty() && derivationValues.isNotEmpty())
+                    printedMorphemeData += "."
+
+                printedMorphemeData += derivationValues
+                    .joinToString { it.shortName }
+            }
+
+            val printedSemantics = getSemanticsPrinted(word)
+
+            val printedRootData = if (printedMorphemeData.isEmpty())
+                ""
+            else if (printedSemantics.isEmpty())
+                printedMorphemeData
+            else
+                "($printedMorphemeData)"
+
+            if (isRoot)
+                printedSemantics + printedRootData
+            else
+                printedMorphemeData
         }
+}
 
-        val printedSemantics = getSemanticsPrinted(word)
+private fun mergeDerivationMorphemes(morphemes: List<MorphemeData>): List<MorphemeData> {
+    var i = 1
+    val resultMorphemes = morphemes.map { it }
+        .toMutableList()
 
-        val printedRootData = if (printedMorphemeData.isEmpty())
-            ""
-        else if (printedSemantics.isEmpty())
-            printedMorphemeData
-        else
-            "($printedMorphemeData)"
+    while (i < resultMorphemes.size) {
+        val curMorpheme = resultMorphemes[i]
+        val prevMorpheme = resultMorphemes[i - 1]
 
-        if (isRoot)
-            printedSemantics + printedRootData
-        else
-            printedMorphemeData
+        if (isMorphemeMergeable(curMorpheme) && isMorphemeMergeable(prevMorpheme)) {
+            val newMorpheme = prevMorpheme + curMorpheme
+            resultMorphemes.removeAt(i)
+            resultMorphemes[i - 1] = newMorpheme
+        } else
+            i++
     }
+
+    return resultMorphemes
+}
+
+private fun isMorphemeMergeable(morpheme: MorphemeData): Boolean =
+    morpheme.categoryValues.isEmpty() && morpheme.derivationValues.isNotEmpty()
+            || morpheme.isRoot
 
 private fun getSemanticsPrinted(word: Word) =
     word.syntaxRole?.short
