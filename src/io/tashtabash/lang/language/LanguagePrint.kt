@@ -60,7 +60,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
     .joinToString("\n")
 
 
-fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = false): String {
+fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = true): String {
     val allWordForms = changeParadigm.wordChangeParadigm.getAllWordForms(word, printOptionalCategories)
 
     return "Base - $word\n" +
