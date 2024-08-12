@@ -100,7 +100,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             val hasCollision = when (change.position) {
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
-            }.filter { phoneme -> borderAffixMatcher.test(listOf(Syllable(phoneme))) }
+            }.filter { phoneme -> borderAffixMatcher.test(listOf(Syllable(0, phoneme))) }
                 .any { phoneme -> doPhonemesCollide(phoneme, borderPhoneme) }
 
             if (hasCollision)

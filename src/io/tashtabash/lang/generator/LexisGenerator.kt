@@ -235,7 +235,7 @@ class LexisGenerator(
         val length = (1..10).toList().randomElement { 1 / (1 + abs(it - avgWordLength).pow(4)) }
 
         fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
-            var syllable = Syllable(listOf())
+            var syllable = Syllable(listOf(), 0)
             for (i in 1..syllableTests) {
                 syllable = syllableGenerator.generateSyllable(
                     SyllableRestrictions(

@@ -32,7 +32,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     }
 
     private fun generateOneSyllable(restrictions: SyllableRestrictions): Syllable {
-        var syllable = Syllable(listOf())
+        var syllable = Syllable(listOf(), 0)
 
         for (i in 1..ADD_TESTS) {
             val actualSyllable = chooseSyllableStructure(restrictions)
@@ -59,7 +59,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                 actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel }
             )
 
-            syllable = Syllable(onset + nucleus + coda)
+            syllable = Syllable(onset + nucleus + coda, onset.size)
 
             if (syllable.size <= restrictions.phoneticRestrictions.avgWordLength)
                 break

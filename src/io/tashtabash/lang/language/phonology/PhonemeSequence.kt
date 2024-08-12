@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.phonology
 
+
 data class PhonemeSequence(val phonemes: List<Phoneme>) {
     constructor(vararg phoneme: Phoneme) : this(phoneme.toList())
 

@@ -5,5 +5,5 @@ interface Prosody{
 }
 
 class Stress : Prosody {
-    override val mark = "'"
+    override val mark = "\u0301"
 }

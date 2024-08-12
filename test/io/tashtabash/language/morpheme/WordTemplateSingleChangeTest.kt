@@ -44,7 +44,7 @@ internal class WordTemplateSingleChangeTest {
             firstWord,
             Word(
                 listOf(
-                    Syllable(prefix)
+                    Syllable(prefix, 1)
                 ) + firstWord.syllables,
                 syllableTemplate,
                 makeSemanticsCore()
@@ -55,7 +55,7 @@ internal class WordTemplateSingleChangeTest {
             secondWord,
             Word(
                 listOf(
-                    Syllable(prefix)
+                    Syllable(prefix, 1)
                 ) + secondWord.syllables,
                 syllableTemplate,
                 makeSemanticsCore()
@@ -96,7 +96,7 @@ internal class WordTemplateSingleChangeTest {
             correctWord,
             Word(
                 listOf(
-                    Syllable(prefix)
+                    Syllable(prefix, 1)
                 ) + correctWord.syllables,
                 syllableTemplate,
                 makeSemanticsCore()
@@ -145,7 +145,7 @@ internal class WordTemplateSingleChangeTest {
             correctWord,
             Word(
                 listOf(
-                    Syllable(prefix)
+                    Syllable(prefix, 1)
                 ) + correctWord.syllables,
                 syllableTemplate,
                 makeSemanticsCore()
@@ -164,7 +164,7 @@ internal class WordTemplateSingleChangeTest {
     }
 
     private fun checkForWord(word: Word, result: Word, change: TemplateSingleChange) {
-        assertEquals(result.toPhonemes(), change.change(word).toPhonemes())
+        assertEquals(result.toPhonemes(), change.change(word, listOf(), listOf()).toPhonemes())
     }
 
     private fun createNoun(vararg phonemes: Phoneme) = getPhonySyllableTemplate().createWord(

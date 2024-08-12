@@ -41,14 +41,18 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
                 ?: return null
             if (range.first != lastIndex)
                 return null
-            syllables += Syllable(phonemes.phonemes.subList(range.first, range.last + 1))
+            val nucleusIdx = findNucleus(phonemes.phonemes.drop(lastIndex))
+            syllables += Syllable(phonemes.phonemes.subList(range.first, range.last + 1), nucleusIdx)
             lastIndex = range.last + 1
         }
 
         return syllables
     }
 
-    fun getRegexp(): Regex {
+    private fun findNucleus(phonemes: List<Phoneme>): Int = phonemes
+        .indexOfFirst { it.type == PhonemeType.Vowel }
+
+    private fun getRegexp(): Regex {
         var maxSymbols = 1
         var minSymbols = if (valencies[0].realizationProbability == 1.0) 1 else 0
         var resultString = ""

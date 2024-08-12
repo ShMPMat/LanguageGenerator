@@ -180,5 +180,5 @@ typealias SourcedCategoryValues = List<SourcedCategoryValue>
 
 private fun getSourceString(source: CategorySource) =
     if (source is CategorySource.Agreement)
-        " ${source.relation.shortName}"
+        "_${source.relation.shortName}"
     else ""
