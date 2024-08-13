@@ -94,11 +94,11 @@ fun getClauseAndInfoStr(wordSequence: WordSequence, printDerivation: Boolean = t
 }
 
 fun List<String>.lineUp(): List<String> {
-    val max = map { countStringWidth(it) }
+    val max = map { getStrWidth(it) }
         .maxOrNull()
         ?: throw GeneratorException("String list is empty")
 
-    return map { it + " ".repeat(max - countStringWidth(it)) }
+    return map { it + " ".repeat(max - getStrWidth(it)) }
 }
 
 fun lineUp(vararg ss: String) = ss.toList().lineUp()
@@ -118,7 +118,7 @@ fun List<List<String>>.lineUpAll(): List<String> {
     }
 }
 
-fun countStringWidth(str: String): Int = str
+fun getStrWidth(str: String): Int = str
     .replace("\\p{M}".toRegex(), "")
     .length
 
@@ -148,19 +148,30 @@ fun printWordMorphemes(word: Word, printDerivation: Boolean): String {
             word.morphemes
         else
             mergeDerivationMorphemes(word.morphemes)
-    var morphemeStartIdx = 0
+    var morphemeEndIdx = 0
+    var symbolEndIdx = 0
     val phonemes = word.toPhonemes()
+    val symbols = word.toString()
 
     return morphemes.joinToString("-") { (size, categoryValues) ->
-        morphemeStartIdx += size
+        morphemeEndIdx += size
 
-        val symbols = phonemes.subList(morphemeStartIdx - size, morphemeStartIdx)
+        val morphemeSymbols = phonemes.subList(morphemeEndIdx - size, morphemeEndIdx)
             .joinToString("")
+        val symbolStartIdx = symbolEndIdx
+        symbolEndIdx += morphemeSymbols.length
+        var resultSymbols = symbols.substring(symbolStartIdx, symbolEndIdx)
 
-        if (symbols.isEmpty() && categoryValues.isNotEmpty())
+        while (symbols.length != symbolEndIdx
+            && getStrWidth(symbols.substring(symbolStartIdx, symbolEndIdx + 1)) <= getStrWidth(morphemeSymbols)) {
+            symbolEndIdx++
+            resultSymbols = symbols.substring(symbolStartIdx, symbolEndIdx)
+        }
+
+        if (morphemeSymbols.isEmpty() && categoryValues.isNotEmpty())
             "Ø"
         else
-            symbols
+            resultSymbols
     }
 }
 
