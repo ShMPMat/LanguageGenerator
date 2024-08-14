@@ -22,6 +22,17 @@ abstract class SentenceClause : UnfoldableClause {
 }
 
 
+fun SentenceNode.addQuestionMarker(language: Language) {
+    if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
+        setRelationChild(
+            SyntaxRelation.QuestionMarker,
+            language.lexis.getQuestionMarkerWord(QuestionMarker)
+                .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
+                .toNode(SyntaxRelation.QuestionMarker)
+        )
+}
+
+
 class TransitiveVerbSentenceClause(
     private val verbClause: TransitiveVerbClause,
     val type: VerbSentenceType
@@ -29,13 +40,7 @@ class TransitiveVerbSentenceClause(
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
-                if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
-                    setRelationChild(
-                        SyntaxRelation.QuestionMarker,
-                        language.lexis.getQuestionMarkerWord(QuestionMarker)
-                            .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .toNode(SyntaxRelation.QuestionMarker)
-                    )
+                addQuestionMarker(language)
 
             if (type == VerbSentenceType.NegatedVerbClause)
                 categoryValues += NegationValue.Negative
@@ -51,13 +56,7 @@ class IntransitiveVerbSentenceClause(
     override fun toNode(language: Language, random: Random): SentenceNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
-                if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
-                    setRelationChild(
-                        SyntaxRelation.QuestionMarker,
-                        language.lexis.getQuestionMarkerWord(QuestionMarker)
-                            .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .toNode(SyntaxRelation.QuestionMarker)
-                    )
+                addQuestionMarker(language)
 
             if (type == VerbSentenceType.NegatedVerbClause)
                 categoryValues += NegationValue.Negative
@@ -81,13 +80,7 @@ class CopulaSentenceClause(
     override fun toNode(language: Language, random: Random): SentenceNode =
         copulaClause.toNode(language, random).apply {
             if (type == CopulaSentenceType.QuestionCopulaClause)
-                if (language.changeParadigm.syntaxParadigm.questionMarkerPresence.questionMarker != null)
-                    setRelationChild(
-                        SyntaxRelation.QuestionMarker,
-                        language.lexis.getQuestionMarkerWord(QuestionMarker)
-                            .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
-                            .toNode(SyntaxRelation.QuestionMarker)
-                    )
+                addQuestionMarker(language)
 
             if (type == CopulaSentenceType.NegatedCopulaClause)
                 categoryValues += NegationValue.Negative
