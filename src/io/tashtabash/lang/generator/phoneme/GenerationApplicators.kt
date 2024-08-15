@@ -148,7 +148,7 @@ object VowelNasalizationApplicator : VowelGenerationApplicator() {
     override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val nasalizedVowels = vowels.map {
             it.copy(
-                symbol = it.symbol.map { c -> c.toString() + '̃' }.joinToString(""),
+                symbol = it.symbol.map { c -> c.toString() + '\u0303' }.joinToString(""),
                 modifiers = it.modifiers + listOf(PhonemeModifier.Nasalized)
             )
         }
