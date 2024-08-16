@@ -11,7 +11,7 @@ import io.tashtabash.random.randomUnwrappedElement
 import kotlin.random.Random
 
 
-class Derivation(
+data class Derivation(
     private val affix: Affix,
     val derivationClass: DerivationClass,
     val resultSpeechPart: TypedSpeechPart,
