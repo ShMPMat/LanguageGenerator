@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.lexis.Word
 
 
-class TemplateSequenceChange(private val changes: List<WordChange>) : WordChange {
+class TemplateSequenceChange(private val changes: List<WordChange>) : TemplateChange() {
     constructor(vararg changes: WordChange) : this(changes.toList())
 
     override val position: Position?

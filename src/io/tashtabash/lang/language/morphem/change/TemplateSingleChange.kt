@@ -15,13 +15,7 @@ data class TemplateSingleChange(
     val phonemeMatchers: List<PositionMatcher>,
     val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
     val affix: List<PhonemeSubstitution>//TODO split on two parts
-) : WordChange {
-    init {
-        if (phonemeMatchers.size > 1) {
-            val k = 0//TODO delete
-        }
-    }
-
+) : TemplateChange() {
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
