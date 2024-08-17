@@ -30,7 +30,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             Position.Beginning -> null to true
             Position.End -> true to null
         }
-        val rawSubstitutions = when (AffixTypes.values().randomElement()) {
+        val rawSubstitutions: List<TemplateChange> = when (AffixTypes.values().randomElement()) {
             AffixTypes.UniversalAffix -> {
                 val affix = generateSyllableAffix(restrictions, hasInitial, hasFinal)
                 val templates = listOf(
@@ -60,7 +60,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private fun eliminateCollisionsByEpenthesis(
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
-    ): List<WordChange> {
+    ): List<TemplateChange> {
         return templateChanges.flatMap { change ->
             if (change.affix.size == 1)
                 return@flatMap randomCollisionElimination(templateChanges, restrictions)
@@ -88,9 +88,9 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private fun randomCollisionElimination(
         templateChanges: List<TemplateSingleChange>,
         restrictions: PhoneticRestrictions
-    ): List<WordChange> {
+    ): List<TemplateChange> {
         return templateChanges.map { change ->
-            var result: WordChange = change
+            var result: TemplateChange = change
             val borderPhoneme = getBorderPhoneme(change)
                 ?: return@map result
             val borderAffixMatcher = when (change.position) {
@@ -114,7 +114,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         wordChange: TemplateSingleChange,
         restrictions: PhoneticRestrictions,
         borderPhoneme: Phoneme
-    ): WordChange? {
+    ): TemplateChange? {
         for (i in 1..generationAttempts) {
             val newChange =
                 generateSyllableAffix(restrictions, null, null)
@@ -134,7 +134,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
     private fun makeTemplateChangeWithBorderPhoneme(
         oldChange: TemplateSingleChange,
-        newAffix: List<PhonemeSubstitution>,
+        newAffix: List<ExactPhonemeSubstitution>,
         neededPhoneme: Phoneme
     ): TemplateSingleChange {
         val isBeginning = oldChange.position == Position.Beginning

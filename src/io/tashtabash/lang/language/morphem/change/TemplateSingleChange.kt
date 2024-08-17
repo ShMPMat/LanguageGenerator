@@ -6,6 +6,7 @@ import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.matcher.PositionMatcher
+import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 
@@ -14,7 +15,7 @@ data class TemplateSingleChange(
     override val position: Position,
     val phonemeMatchers: List<PositionMatcher>,
     val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
-    val affix: List<PhonemeSubstitution>//TODO split on two parts
+    val affix: List<ExactPhonemeSubstitution>
 ) : TemplateChange() {
     //TODO make an interface
     fun findGoodIndex(word: Word): Int? {
@@ -100,9 +101,11 @@ data class TemplateSingleChange(
     }
 
     override fun toString(): String {
-        val matcherString = if (phonemeMatchers.isNotEmpty())
-            phonemeMatchers.joinToString("")
-        else "with any phonemes"
+        val matcherString =
+            if (phonemeMatchers.isNotEmpty())
+                phonemeMatchers.joinToString("")
+            else
+                "with any phonemes"
 
         return "$position $matcherString changes to ${getFullChange().joinToString("")}"
     }
