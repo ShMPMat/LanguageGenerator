@@ -5,15 +5,15 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
-import io.tashtabash.lang.language.morphem.change.matcher.PositionMatcher
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.PhonemeSequence
+import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 
 
 data class TemplateSingleChange(
     override val position: Position,
-    val phonemeMatchers: List<PositionMatcher>,
+    val phonemeMatchers: List<PhonemeMatcher>,
     val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
     val affix: List<ExactPhonemeSubstitution>
 ) : TemplateChange() {
@@ -33,9 +33,14 @@ data class TemplateSingleChange(
 
     override fun test(word: Word) = findGoodIndex(word) != null
 
-    private fun testFromPosition(word: Word) = phonemeMatchers.all { it.test(word.syllables) }
-//        word.toPhonemes().subList(position, position + phonemeMatchers.size).zip(phonemeMatchers)
-//            .all { it.second.test(it.first) }
+    private fun getTestedPhonemes(word: Word) = when (position) {
+        Position.Beginning -> word.toPhonemes().take(phonemeMatchers.size)
+        Position.End -> word.toPhonemes().takeLast(phonemeMatchers.size)
+    }
+
+    private fun testFromPosition(word: Word) = phonemeMatchers
+        .zip(getTestedPhonemes(word))
+        .all { (matcher, phoneme) -> matcher.match(phoneme) }
 
     fun getFullChange() = when (position) {
         Position.Beginning -> affix + matchedPhonemesSubstitution

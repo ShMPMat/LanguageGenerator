@@ -8,13 +8,12 @@ import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.change.*
-import io.tashtabash.lang.language.morphem.change.matcher.PassingMatcher
-import io.tashtabash.lang.language.morphem.change.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.morphem.change.matcher.TypePositionMatcher
 import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.*
+import io.tashtabash.lang.language.phonology.matcher.ExactPhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.PassingPhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.TypePhonemeMatcher
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.random.SampleSpaceObject
 import io.tashtabash.random.singleton.RandomSingleton
@@ -47,9 +46,8 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                         it == PhonemeType.Vowel && position == Position.End
                     )
                     val substitutions = listOf(PassingPhonemeSubstitution())
-                    val isBeginning = position == Position.Beginning
 
-                    TemplateSingleChange(position, listOf(TypePositionMatcher(it, isBeginning)), substitutions, affix)
+                    TemplateSingleChange(position, listOf(TypePhonemeMatcher(it)), substitutions, affix)
                 }
                 randomCollisionElimination(templates, restrictions)
             }
@@ -67,17 +65,17 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
             val isBeginning = change.position == Position.Beginning
             val vowelAdjacentAffix = if (isBeginning)
-                change.affix.dropLastWhile { it.getSubstitutePhoneme()?.type == PhonemeType.Vowel }
+                change.affix.dropLastWhile { it.getSubstitutePhoneme().type == PhonemeType.Vowel }
             else
-                change.affix.dropWhile { it.getSubstitutePhoneme()?.type == PhonemeType.Vowel }
+                change.affix.dropWhile { it.getSubstitutePhoneme().type == PhonemeType.Vowel }
 
             listOf(
                 change.copy(
-                    phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Consonant, isBeginning)),
+                    phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Consonant)),
                     matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
                 ),
                 change.copy(
-                    phonemeMatchers = listOf(TypePositionMatcher(PhonemeType.Vowel, isBeginning)),
+                    phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Vowel)),
                     matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
                     affix = vowelAdjacentAffix
                 ),
@@ -92,15 +90,14 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         return templateChanges.map { change ->
             var result: TemplateChange = change
             val borderPhoneme = getBorderPhoneme(change)
-                ?: return@map result
             val borderAffixMatcher = when (change.position) {
                 Position.Beginning -> change.phonemeMatchers.firstOrNull()
                 Position.End -> change.phonemeMatchers.lastOrNull()
-            } ?: PassingMatcher
+            } ?: PassingPhonemeMatcher
             val hasCollision = when (change.position) {
                 Position.Beginning -> restrictions.initialWordPhonemes
                 Position.End -> restrictions.finalWordPhonemes
-            }.filter { phoneme -> borderAffixMatcher.test(listOf(Syllable(0, phoneme))) }
+            }.filter { phoneme -> borderAffixMatcher.match(phoneme) }
                 .any { phoneme -> doPhonemesCollide(phoneme, borderPhoneme) }
 
             if (hasCollision)
@@ -137,8 +134,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         newAffix: List<ExactPhonemeSubstitution>,
         neededPhoneme: Phoneme
     ): TemplateSingleChange {
-        val isBeginning = oldChange.position == Position.Beginning
-        val singleMatcher = listOf(PhonemeMatcher(neededPhoneme, isBeginning))
+        val singleMatcher = listOf(ExactPhonemeMatcher(neededPhoneme))
         val singleSubstitution = listOf(PassingPhonemeSubstitution())
         var phonemeMatcher = oldChange.phonemeMatchers
         var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
