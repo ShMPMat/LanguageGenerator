@@ -29,5 +29,9 @@ class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateChange
         return word.copy()
     }
 
+    override fun mirror() = TemplateSequenceChange(
+        changes.map { it.mirror() }
+    )
+
     override fun toString() = changes.joinToString()
 }

@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
+import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 
@@ -59,15 +60,15 @@ data class TemplateSingleChange(
             val newMorpheme = MorphemeData(affix.size, categoryValues, false, derivationValues)
             val (prosodicSyllables, morphemes) = when (position) {
                 Position.End -> {
-                    val change = getFullChange()
+                    val change: List<Phoneme?> = getFullChange()
                         .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                        .map { it.first.substitute(word, it.second) }
+                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
                     val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
                             word.toPhonemes().subList(
                                 0,
                                 word.size - phonemeMatchers.size
-                            ) + change
+                            ) + change.filterNotNull()
                         )
                     ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
                     val morphemes = word.morphemes + listOf(newMorpheme)
@@ -77,12 +78,12 @@ data class TemplateSingleChange(
                     } to morphemes
                 }
                 Position.Beginning -> {
-                    val change = getFullChange()
+                    val change: List<Phoneme?> = getFullChange()
                         .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                        .map { it.first.substitute(word, it.second) }
+                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
                     val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
-                            change + word.toPhonemes().subList(
+                            change.filterNotNull() + word.toPhonemes().subList(
                                 phonemeMatchers.size,
                                 word.size
                             )
@@ -104,6 +105,13 @@ data class TemplateSingleChange(
             return word.copy()
         }
     }
+
+    override fun mirror() = TemplateSingleChange(
+        if (position == Position.Beginning) Position.End else Position.Beginning,
+        phonemeMatchers.reversed(),
+        matchedPhonemesSubstitution.reversed(),
+        affix.reversed()
+    )
 
     override fun toString(): String {
         val matcherString =
