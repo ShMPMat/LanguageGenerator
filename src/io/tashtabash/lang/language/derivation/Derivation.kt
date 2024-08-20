@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 
 data class Derivation(
-    private val affix: Affix,
+    val affix: Affix,
     val derivationClass: DerivationClass,
     val resultSpeechPart: TypedSpeechPart,
     val strength: Double,
