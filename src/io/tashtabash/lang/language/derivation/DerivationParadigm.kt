@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.derivation
 
-class DerivationParadigm(val derivations: List<Derivation>, val compounds: List<Compound>) {
+
+data class DerivationParadigm(val derivations: List<Derivation>, val compounds: List<Compound>) {
     override fun toString() = """
         |Derivations:
         |
