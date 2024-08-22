@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeType
 
 
-data class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
+class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
     override val name =
         phonemeType.name.take(1)
 
