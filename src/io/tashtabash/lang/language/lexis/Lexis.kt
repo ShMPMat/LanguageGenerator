@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 
 
-class Lexis(
+data class Lexis(
     val words: List<Word>,
     private val copula: WordMap<CopulaType>,
     val questionMarker: WordMap<QuestionMarker>
