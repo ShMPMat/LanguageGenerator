@@ -10,7 +10,7 @@ import io.tashtabash.lang.utils.listCartesianProduct
 
 data class WordChangeParadigm(
     val categories: List<Category>,
-    private val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
+    val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
 ) {
     fun apply(
         word: Word,
