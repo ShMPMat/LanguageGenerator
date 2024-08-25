@@ -118,7 +118,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             val newBorderPhoneme = when (wordChange.position) {
                 Position.Beginning -> newChange.last()
                 Position.End -> newChange[0]
-            }.phoneme
+            }.exactPhoneme
             if (!doPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                 return TemplateSequenceChange(
                     makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme),
