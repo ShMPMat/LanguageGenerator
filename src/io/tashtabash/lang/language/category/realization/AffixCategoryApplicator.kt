@@ -12,5 +12,20 @@ class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization?) : Ab
 
     override fun copy() = AffixCategoryApplicator(affix, type)
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AffixCategoryApplicator
+
+        if (affix != other.affix) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return affix.hashCode()
+    }
+
     override fun toString() = affix.toString()
 }
