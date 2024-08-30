@@ -56,7 +56,7 @@ class ExponenceCluster(val categories: List<SourcedCategory>, possibleValuesSets
     override fun toString() = categories.joinToString("\n")
 }
 
-class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentCluster: ExponenceCluster) {
+data class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val parentCluster: ExponenceCluster) {
     init {
         val valueTypesAmount = categoryValues.groupBy { it.categoryValue.parentClassName to it.source }.size
 
@@ -163,7 +163,7 @@ data class SourcedCategoryValue(
 }
 
 
-data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster>) {
+data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster> = listOf()) {
     fun isApplicable(values: CategoryValues) = compulsoryCoCategories
         .all { it.any { cc -> values.contains(cc) } }
 
