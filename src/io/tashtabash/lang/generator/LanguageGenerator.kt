@@ -20,13 +20,14 @@ import kotlin.collections.HashMap
 
 
 class LanguageGenerator(private val supplementPath: String) {
-    private val phonemePool = PhonemePool(supplementPath)
+    val phonemePool = PhonemePool(supplementPath)
     private val phonemeGenerator = PhonemeGenerator(phonemePool)
     private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm(
-        SpeechPart.values().map { it.toDefault() } + DeixisPronoun.toAdnominal()
+        SpeechPart.values()
+            .map { it.toDefault() } + DeixisPronoun.toAdnominal()
     )
     private val stressPattern = StressType.values().randomElement()
     private val lexisGenerator = LexisGenerator(
