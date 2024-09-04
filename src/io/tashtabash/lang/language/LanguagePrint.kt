@@ -142,7 +142,7 @@ fun printWordInfo(word: Word): String {
         semantics + categories
 }
 
-fun printWordMorphemes(word: Word, printDerivation: Boolean): String {
+fun printWordMorphemes(word: Word, printDerivation: Boolean = false): String {
     val morphemes =
         if (printDerivation)
             word.morphemes
