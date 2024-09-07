@@ -1,17 +1,21 @@
-package io.tashtabash.language.morpheme
+package io.tashtabash.lang.language.morpheme
 
+import io.tashtabash.lang.language.util.createNoun
+import io.tashtabash.lang.language.util.getPhonySyllableTemplate
 import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.util.makePhoneme
+import io.tashtabash.lang.language.util.makeSemanticsCore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.opentest4j.TestAbortedException
 import io.tashtabash.lang.language.morphem.change.Position
 import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
-import io.tashtabash.lang.language.morphem.change.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.morphem.change.matcher.TypePositionMatcher
 import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.*
+import io.tashtabash.lang.language.phonology.matcher.ExactPhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.TypePhonemeMatcher
 
 
 internal class WordTemplateSingleChangeTest {
@@ -71,9 +75,9 @@ internal class WordTemplateSingleChangeTest {
             makePhoneme("a", PhonemeType.Vowel)
         )
         val affix = prefix.map { ExactPhonemeSubstitution(it) }
-        val substitution = listOf(PassingPhonemeSubstitution())
+        val substitution = listOf(PassingPhonemeSubstitution)
         val condition = listOf(
-            TypePositionMatcher(PhonemeType.Consonant, true)
+            TypePhonemeMatcher(PhonemeType.Consonant)
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
@@ -121,9 +125,9 @@ internal class WordTemplateSingleChangeTest {
             makePhoneme("a", PhonemeType.Vowel)
         )
         val affix = prefix.map { ExactPhonemeSubstitution(it) }
-        val substitution = listOf(PassingPhonemeSubstitution())
+        val substitution = listOf(PassingPhonemeSubstitution)
         val condition = listOf(
-            PhonemeMatcher(makePhoneme("b", PhonemeType.Consonant), true)
+            ExactPhonemeMatcher(makePhoneme("b", PhonemeType.Consonant))
         )
         val changeTemplate = TemplateSingleChange(
             Position.Beginning,
@@ -166,23 +170,4 @@ internal class WordTemplateSingleChangeTest {
     private fun checkForWord(word: Word, result: Word, change: TemplateSingleChange) {
         assertEquals(result.toPhonemes(), change.change(word, listOf(), listOf()).toPhonemes())
     }
-
-    private fun createNoun(vararg phonemes: Phoneme) = getPhonySyllableTemplate().createWord(
-        PhonemeSequence(phonemes.toList()),
-        makeSemanticsCore()
-    ) ?: throw TestAbortedException("Wrong word creation")
-
-    private fun getPhonySyllableTemplate(): SyllableTemplate =
-        SyllableValenceTemplate(
-            listOf(
-                ValencyPlace(PhonemeType.Consonant, 0.5),
-                ValencyPlace(PhonemeType.Vowel, 1.0)
-            )
-        )
-
-    private fun makePhoneme(name: String, type: PhonemeType) =
-        Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close, setOf())
-
-    private fun makeSemanticsCore() =
-        SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(SpeechPart.Noun), 1.0)
 }

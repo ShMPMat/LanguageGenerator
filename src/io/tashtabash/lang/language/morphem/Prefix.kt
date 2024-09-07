@@ -1,10 +1,10 @@
 package io.tashtabash.lang.language.morphem
 
 import io.tashtabash.lang.language.morphem.change.Position
-import io.tashtabash.lang.language.morphem.change.TemplateSequenceChange
+import io.tashtabash.lang.language.morphem.change.TemplateChange
 
 
-class Prefix(override val templateChange: TemplateSequenceChange) : Affix {
+data class Prefix(override val templateChange: TemplateChange) : Affix {
     override val position = Position.Beginning
 
     init {

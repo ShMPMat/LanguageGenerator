@@ -7,6 +7,8 @@ import io.tashtabash.lang.language.category.DeixisValue
 import io.tashtabash.lang.language.category.InclusivityValue
 import io.tashtabash.lang.language.category.NounClassValue.*
 import io.tashtabash.lang.language.category.PersonValue.*
+import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
+import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.clause.description.*
@@ -158,9 +160,12 @@ class Visualizer(val language: Language) {
     private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
         println("$comment:")
 
-        for (it in clauses)
+        for (it in clauses) {
             printSampleClause(it, context)
+            println("=")
+        }
 
+        println()
         println()
     }
 
@@ -209,7 +214,7 @@ class Visualizer(val language: Language) {
 }
 
 
-private const val DEFAULT_SEED = 216 + 85
+private const val DEFAULT_SEED = 216 + 53
 private fun extractSeed(args: Array<String>): Int =
     args.getOrNull(0)
         ?.toIntOrNull()
@@ -218,6 +223,8 @@ private fun extractSeed(args: Array<String>): Int =
 
             DEFAULT_SEED
         }
+
+val CHANGES_NUMBER = 4
 
 /**
  * One parameter expected: a generator seed in the Int range
@@ -228,7 +235,13 @@ fun main(args: Array<String>) {
 
     val generator = LanguageGenerator("SupplementFiles")
     val wordAmount = WordBase("SupplementFiles").baseWords.size
-    val language = generator.generateLanguage(wordAmount)
+    var language = generator.generateLanguage(wordAmount)
+
+    val phonologicalRulesContainer = createDefaultRules(generator.phonemePool)
+    val ruleApplicator = PhonologicalRuleApplicator()
+    for (i in 0 until CHANGES_NUMBER)
+        language = ruleApplicator.applyRandomPhonologicalRule(language, phonologicalRulesContainer)
+    println(ruleApplicator.messages.joinToString("\n"))
 
     Visualizer(language).visualize()
 }

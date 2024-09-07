@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.phonology.matcher
 
+import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
 
 
@@ -8,5 +9,8 @@ object PassingPhonemeMatcher: PhonemeMatcher() {
         "*"
 
     override fun match(phoneme: Phoneme?) =
+        true
+
+    override fun match(changingPhoneme: ChangingPhoneme) =
         true
 }

@@ -24,7 +24,7 @@ import io.tashtabash.random.singleton.randomElement
 class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private val generationAttempts = 10
 
-    internal fun generateChanges(position: Position, restrictions: PhoneticRestrictions): TemplateSequenceChange {
+    internal fun generateChanges(position: Position, restrictions: PhoneticRestrictions): TemplateChange {
         val (hasInitial, hasFinal) = when (position) {
             Position.Beginning -> null to true
             Position.End -> true to null
@@ -45,14 +45,14 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                         hasInitial == true || it == PhonemeType.Vowel,
                         it == PhonemeType.Vowel && position == Position.End
                     )
-                    val substitutions = listOf(PassingPhonemeSubstitution())
+                    val substitutions = listOf(PassingPhonemeSubstitution)
 
                     TemplateSingleChange(position, listOf(TypePhonemeMatcher(it)), substitutions, affix)
                 }
                 randomCollisionElimination(templates, restrictions)
             }
         }
-        return TemplateSequenceChange(rawSubstitutions)
+        return createSimplifiedTemplateChange(rawSubstitutions)
     }
 
     private fun eliminateCollisionsByEpenthesis(
@@ -72,11 +72,11 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             listOf(
                 change.copy(
                     phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Consonant)),
-                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
+                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution),
                 ),
                 change.copy(
                     phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Vowel)),
-                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution()),
+                    matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution),
                     affix = vowelAdjacentAffix
                 ),
             )
@@ -120,10 +120,10 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 Position.End -> newChange[0]
             }.exactPhoneme
             if (!doPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
-                return TemplateSequenceChange(
+                return createSimplifiedTemplateChange(listOf(
                     makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme),
                     wordChange
-                )
+                ))
             }
         }
         return null
@@ -135,7 +135,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         neededPhoneme: Phoneme
     ): TemplateSingleChange {
         val singleMatcher = listOf(ExactPhonemeMatcher(neededPhoneme))
-        val singleSubstitution = listOf(PassingPhonemeSubstitution())
+        val singleSubstitution = listOf(PassingPhonemeSubstitution)
         var phonemeMatcher = oldChange.phonemeMatchers
         var matchedPhonemeSubstitution = oldChange.matchedPhonemesSubstitution
 
