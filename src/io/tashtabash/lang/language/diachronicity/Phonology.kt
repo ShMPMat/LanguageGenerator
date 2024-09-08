@@ -5,6 +5,7 @@ import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.realization.*
+import io.tashtabash.lang.language.derivation.Compound
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.lexis.Word
@@ -51,8 +52,10 @@ class PhonologicalRuleApplicator {
         val shiftedDerivations = language.derivationParadigm.derivations.map {
             applyPhonologicalRule(it, phonologicalRule)
         }
-
-        val shiftedDerivationParadigm = DerivationParadigm(shiftedDerivations, language.derivationParadigm.compounds)
+        val shiftedCompounds = language.derivationParadigm.compounds.map {
+            applyPhonologicalRule(it, phonologicalRule)
+        }
+        val shiftedDerivationParadigm = DerivationParadigm(shiftedDerivations, shiftedCompounds)
 
         val shiftedSpeechPartChangeParadigms =
             language.changeParadigm.wordChangeParadigm.speechPartChangeParadigms.mapValues {
@@ -82,9 +85,20 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(derivation: Derivation, phonologicalRule: PhonologicalRule): Derivation {
-        val affix = applyPhonologicalRule(derivation.affix, phonologicalRule)
+        val shiftedAffix = applyPhonologicalRule(derivation.affix, phonologicalRule)
 
-        return derivation.copy(affix = affix)
+        return derivation.copy(affix = shiftedAffix)
+    }
+
+    fun applyPhonologicalRule(compound: Compound, phonologicalRule: PhonologicalRule): Compound {
+        val changingPhonemes = getChangingPhonemes(
+            compound.infix.phonemes,
+            addStartBoundary = false,
+            addEndBoundary = false
+        )
+        val shiftedInfix = applyPhonologicalRule(changingPhonemes, phonologicalRule)
+
+        return compound.copy(infix = PhonemeSequence(clearChangingPhonemes(shiftedInfix)))
     }
 
     fun applyPhonologicalRule(affix: Affix, phonologicalRule: PhonologicalRule): Affix = when (affix) {
@@ -105,9 +119,11 @@ class PhonologicalRuleApplicator {
                     Position.Beginning -> {
                         val prefixPhonemes = templateChange.affix
                             .map { it.getSubstitutePhoneme() }
-                        var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(prefixPhonemes).apply {
-                            removeLast()
-                        }
+                        var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
+                            prefixPhonemes,
+                            addStartBoundary = true,
+                            addEndBoundary = false
+                        )
                         baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, phonologicalRule)
                         val newBaseAffix = clearChangingPhonemes(baseRawPhonemes)
                             .map { ExactPhonemeSubstitution(it) }
@@ -318,12 +334,20 @@ class PhonologicalRuleApplicator {
             .map { it.phoneme }
 
     private fun getChangingPhonemes(word: Word): MutableList<ChangingPhoneme> =
-        getChangingPhonemes(word.toPhonemes())
+        getChangingPhonemes(word.toPhonemes(), addStartBoundary = true, addEndBoundary = true)
 
-    private fun getChangingPhonemes(phonemes: List<Phoneme>): MutableList<ChangingPhoneme> {
-        val rawPhonemes = mutableListOf<ChangingPhoneme>(ChangingPhoneme.Boundary)
+    private fun getChangingPhonemes(
+        phonemes: List<Phoneme>,
+        addStartBoundary: Boolean,
+        addEndBoundary: Boolean
+    ): MutableList<ChangingPhoneme> {
+        val rawPhonemes = mutableListOf<ChangingPhoneme>()
+
+        if (addStartBoundary)
+            rawPhonemes += listOf(ChangingPhoneme.Boundary)
         rawPhonemes += phonemes.map { ChangingPhoneme.ExactPhoneme(it) }
-        rawPhonemes += listOf(ChangingPhoneme.Boundary)
+        if (addEndBoundary)
+            rawPhonemes += listOf(ChangingPhoneme.Boundary)
 
         return rawPhonemes
     }
