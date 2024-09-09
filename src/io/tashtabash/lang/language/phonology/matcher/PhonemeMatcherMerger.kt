@@ -33,6 +33,13 @@ fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): Phone
         return null
     }
 
+    if (phonemeMatchers.all { it is TypePhonemeMatcher }) {
+        return if (first == second)
+            first
+        else
+            null
+    }
+
     throw LanguageException("Cannot merge Phoneme matchers '$first' and '$second'")
 }
 
