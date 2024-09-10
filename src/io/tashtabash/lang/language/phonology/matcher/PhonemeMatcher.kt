@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.phonology.matcher
 
 import io.tashtabash.lang.containers.PhonemeContainer
+import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeType
@@ -39,5 +40,10 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
     "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
     "_" -> PassingPhonemeMatcher
     "$" -> BorderPhonemeMatcher
-    else -> ExactPhonemeMatcher(phonemeContainer.getPhoneme(matcher))
+    else -> {
+        val phoneme = phonemeContainer.getPhonemeOrNull(matcher)
+            ?: throw LanguageException("cannot create a matcher for symbol '$matcher'")
+
+        ExactPhonemeMatcher(phoneme)
+    }
 }
