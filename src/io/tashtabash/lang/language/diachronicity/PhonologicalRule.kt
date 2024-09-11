@@ -47,7 +47,8 @@ fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer) = P
         .dropLast(2)
         .replace(" ", "")
         .map { createPhonemeMatcher(it.toString(), phonemeContainer) },
-    rule.dropWhile { it != '_' }
+    rule.dropWhile { it != '/' }
+        .dropWhile { it != '_' }
         .drop(1)
         .replace(" ", "")
         .map { createPhonemeMatcher(it.toString(), phonemeContainer) },
