@@ -15,15 +15,16 @@ fun simplifyTemplateChange(templateChange: TemplateChange): TemplateChange = whe
     is TemplateSequenceChange -> {
         var resultChanges = templateChange.changes
 
-        resultChanges = simplifyTypePairsInTemplateChange(resultChanges)
+        resultChanges = simplifyTypePairsInRules(resultChanges)
         resultChanges = simplifyPassingRules(resultChanges)
+        resultChanges = simplifyEqualRules(resultChanges)
 
         unwrapSingletonSequence(resultChanges)
     }
     else -> throw LanguageException("Unknown template change '$templateChange'")
 }
 
-private fun simplifyTypePairsInTemplateChange(templateChanges: List<TemplateChange>): List<TemplateChange> {
+private fun simplifyTypePairsInRules(templateChanges: List<TemplateChange>): List<TemplateChange> {
     val windowSize = PhonemeType.values().size
     val resultTemplateChanges = templateChanges.toMutableList()
 
@@ -91,6 +92,20 @@ private fun simplifyPassingRules(templateChange: TemplateChange): TemplateChange
 
         resultTemplateChange
     }
+}
+
+private fun simplifyEqualRules(templateChanges: List<TemplateChange>): List<TemplateChange> {
+    val resultTemplateChanges = templateChanges.toMutableList()
+    var i = 0
+
+    while (i < resultTemplateChanges.size - 1) {
+        if (resultTemplateChanges[i] == resultTemplateChanges[i + 1])
+            resultTemplateChanges.removeAt(i)
+        else
+            i++
+    }
+
+    return resultTemplateChanges
 }
 
 private fun unwrapSingletonSequence(templateChanges: List<TemplateChange>): TemplateChange =
