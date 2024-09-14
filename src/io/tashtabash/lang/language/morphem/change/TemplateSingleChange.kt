@@ -48,7 +48,11 @@ data class TemplateSingleChange(
         Position.End -> matchedPhonemesSubstitution + affix
     }
 
-    override fun change(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Word {
+    override fun change(
+        word: Word,
+        categoryValues: SourcedCategoryValues,
+        derivationValues: List<DerivationClass>
+    ): Word {
         fun Word.takeProsody(i: Int) = this.syllables
             .getOrNull(i)
             ?.prosodicEnums
@@ -56,54 +60,52 @@ data class TemplateSingleChange(
             ?: listOf()
 
         val testResult = findGoodIndex(word)
-        if (testResult != null) {
-            val newMorpheme = MorphemeData(affix.size, categoryValues, false, derivationValues)
-            val (prosodicSyllables, morphemes) = when (position) {
-                Position.End -> {
-                    val change: List<Phoneme?> = getFullChange()
-                        .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                        PhonemeSequence(
-                            word.toPhonemes().subList(
-                                0,
-                                word.size - phonemeMatchers.size
-                            ) + change.filterNotNull()
-                        )
-                    ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val morphemes = word.morphemes + listOf(newMorpheme)
+            ?: return word.copy()
 
-                    noProsodyWord.mapIndexed { i, s ->
-                        s.copy(prosodicEnums = word.takeProsody(i))
-                    } to morphemes
-                }
-                Position.Beginning -> {
-                    val change: List<Phoneme?> = getFullChange()
-                        .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                        PhonemeSequence(
-                            change.filterNotNull() + word.toPhonemes().subList(
-                                phonemeMatchers.size,
-                                word.size
-                            )
-                        )
-                    ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
-                    val shift = noProsodyWord.size - word.syllables.size
-                    val morphemes = listOf(newMorpheme) + word.morphemes
+        val newMorpheme = MorphemeData(affix.size, categoryValues, false, derivationValues)
+        val (prosodicSyllables, morphemes) = when (position) {
+            Position.End -> {
+                val change: List<Phoneme?> = getFullChange()
+                    .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
+                    .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                val noProsodyWord = word.syllableTemplate.splitOnSyllables(
+                    PhonemeSequence(
+                        word.toPhonemes().subList(
+                            0,
+                            word.size - phonemeMatchers.size
+                        ) + change.filterNotNull()
+                    )
+                ) ?: throw LanguageException("Couldn't convert $word with change $this to word")
+                val morphemes = word.morphemes + listOf(newMorpheme)
 
-                    noProsodyWord.mapIndexed { i, s ->
-                        s.copy(prosodicEnums = word.takeProsody(i - shift))
-                    } to morphemes
-                }
+                noProsodyWord.mapIndexed { i, s ->
+                    s.copy(prosodicEnums = word.takeProsody(i))
+                } to morphemes
             }
-            val additionalCategoryValues = categoryValues subtract word.categoryValues
-            val newCategoryValues = word.categoryValues + additionalCategoryValues
+            Position.Beginning -> {
+                val change: List<Phoneme?> = getFullChange()
+                    .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
+                    .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                val noProsodyWord = word.syllableTemplate.splitOnSyllables(
+                    PhonemeSequence(
+                        change.filterNotNull() + word.toPhonemes().subList(
+                            phonemeMatchers.size,
+                            word.size
+                        )
+                    )
+                ) ?: throw LanguageException("Couldn't convert $word with change $this to a word")
+                val shift = noProsodyWord.size - word.syllables.size
+                val morphemes = listOf(newMorpheme) + word.morphemes
 
-            return word.copy(syllables = prosodicSyllables, morphemes = morphemes, categoryValues = newCategoryValues)
-        } else {
-            return word.copy()
+                noProsodyWord.mapIndexed { i, s ->
+                    s.copy(prosodicEnums = word.takeProsody(i - shift))
+                } to morphemes
+            }
         }
+        val additionalCategoryValues = categoryValues subtract word.categoryValues
+        val newCategoryValues = word.categoryValues + additionalCategoryValues
+
+        return word.copy(syllables = prosodicSyllables, morphemes = morphemes, categoryValues = newCategoryValues)
     }
 
     override fun mirror() = TemplateSingleChange(
