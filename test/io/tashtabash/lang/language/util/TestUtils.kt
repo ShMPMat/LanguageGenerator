@@ -25,7 +25,9 @@ fun getPhonySyllableTemplate(): SyllableTemplate =
         listOf(
             ValencyPlace(PhonemeType.Consonant, 0.5),
             ValencyPlace(PhonemeType.Consonant, 0.5),
+            ValencyPlace(PhonemeType.Consonant, 0.5),
             ValencyPlace(PhonemeType.Vowel, 1.0),
+            ValencyPlace(PhonemeType.Consonant, 0.5),
             ValencyPlace(PhonemeType.Consonant, 0.5)
         )
     )

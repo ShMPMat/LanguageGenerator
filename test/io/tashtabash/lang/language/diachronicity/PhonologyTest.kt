@@ -535,7 +535,7 @@ internal class PhonologyTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )
         assertEquals(
-            listOf("Can't split the word 'bab' on syllables after applying changes, reverting the word"),
+            listOf("Can't split the word 'bab' on syllables after applying the rule, reverting the word"),
             phonologicalRuleApplicator.messages
         )
     }

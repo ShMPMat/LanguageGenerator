@@ -72,6 +72,14 @@ class PhonologicalRuleApplicator {
         }
         val shiftedLexis = language.lexis.copy(words = shiftedWords)
 
+        val changeValidityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
+
+        if (!changeValidityReport.isValid) {
+            _messages += "Cannot apply rule $phonologicalRule: " +
+                    "the resulting language has incorrect forms: '${changeValidityReport.exception?.message}'"
+            return language
+        }
+
         val newPhonemes = analyzePhonemes(shiftedLexis, shiftedDerivationParadigm, shiftedChangeParadigm)
 
         return Language(
@@ -274,11 +282,11 @@ class PhonologicalRuleApplicator {
             .splitOnSyllables(PhonemeSequence(clearChangingPhonemes(rawPhonemes)))
             ?.mapIndexed { j, syllable -> syllable.copy(prosodicEnums = prosodies[j]) }
         if (syllables == null) {
-            _messages += "Can't split the word '$word' on syllables after applying changes, reverting the word"
+            _messages += "Can't split the word '$word' on syllables after applying the rule, reverting the word"
             return word
         }
         if (syllables.size != prosodies.size) {
-            _messages += "The word '$word' changed the number of syllables after applying changes, reverting the word"
+            _messages += "The word '$word' changed the number of syllables after applying the rule, reverting the word"
             return word
         }
 
