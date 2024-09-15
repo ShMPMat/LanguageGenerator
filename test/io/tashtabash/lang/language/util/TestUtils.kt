@@ -1,9 +1,7 @@
 package io.tashtabash.lang.language.util
 
-import io.tashtabash.lang.language.lexis.MeaningCluster
-import io.tashtabash.lang.language.lexis.SemanticsCore
-import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.*
 import org.opentest4j.TestAbortedException
 
@@ -16,6 +14,11 @@ fun createNoun(phonemes: List<Phoneme>) = getPhonySyllableTemplate().createWord(
     PhonemeSequence(phonemes.toList()),
     makeSemanticsCore()
 ) ?: throw TestAbortedException("Wrong word creation")
+
+fun Word.withMorphemes(rootIdx: Int, vararg lengths: Int) =
+    copy(
+        morphemes = lengths.mapIndexed { i, it -> MorphemeData(it, listOf(), i == rootIdx) }
+    )
 
 fun getPhonySyllableTemplate(): SyllableTemplate =
     SyllableValenceTemplate(

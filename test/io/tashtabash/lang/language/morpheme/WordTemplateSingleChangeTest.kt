@@ -1,173 +1,121 @@
 package io.tashtabash.lang.language.morpheme
 
 import io.tashtabash.lang.language.util.createNoun
-import io.tashtabash.lang.language.util.getPhonySyllableTemplate
-import io.tashtabash.lang.language.lexis.*
-import io.tashtabash.lang.language.util.makePhoneme
-import io.tashtabash.lang.language.util.makeSemanticsCore
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import io.tashtabash.lang.language.morphem.change.Position
-import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
-import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
-import io.tashtabash.lang.language.phonology.*
-import io.tashtabash.lang.language.phonology.matcher.ExactPhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.TypePhonemeMatcher
+import io.tashtabash.lang.language.util.createTemplateChange
+import io.tashtabash.lang.language.util.withMorphemes
 
 
 internal class WordTemplateSingleChangeTest {
     @Test
-    fun prefixIsolatingTest() {
-        val prefix = listOf(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val affix = prefix.map { ExactPhonemeSubstitution(it) }
-        val condition = listOf<PhonemeMatcher>()
-        val substitution = listOf<PhonemeSubstitution>()
-        val changeTemplate = TemplateSingleChange(
-            Position.Beginning,
-            condition,
-            substitution,
-            affix
-        )
-        val syllableTemplate = getPhonySyllableTemplate()
-        val firstWord = createNoun(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val secondWord = createNoun(
-            makePhoneme("c", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
+    fun `TemplateChange correctly agglutinates a prefix`() {
+        val changeTemplate = createTemplateChange("ba-")
+        val firstWord = createNoun("ba")
+        val secondWord = createNoun("ca")
 
-        checkForWord(
-            firstWord,
-            Word(
-                listOf(
-                    Syllable(prefix, 1)
-                ) + firstWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("baba").withMorphemes(1, 2, 2),
+            changeTemplate.change(firstWord, listOf(), listOf())
         )
-        checkForWord(
-            secondWord,
-            Word(
-                listOf(
-                    Syllable(prefix, 1)
-                ) + secondWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("baca").withMorphemes(1, 2, 2),
+            changeTemplate.change(secondWord, listOf(), listOf())
         )
     }
 
     @Test
-    fun prefixPhonemeTypeIsolatingTest() {
-        val prefix = listOf(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val affix = prefix.map { ExactPhonemeSubstitution(it) }
-        val substitution = listOf(PassingPhonemeSubstitution)
-        val condition = listOf(
-            TypePhonemeMatcher(PhonemeType.Consonant)
-        )
-        val changeTemplate = TemplateSingleChange(
-            Position.Beginning,
-            condition,
-            substitution,
-            affix
-        )
-        val syllableTemplate = getPhonySyllableTemplate()
-        val correctWord = createNoun(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val badWord = createNoun(
-            makePhoneme("a", PhonemeType.Vowel),
-            makePhoneme("c", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
+    fun `TemplateChange correctly adds a prefix on a phoneme type condition`() {
+        val changeTemplate = createTemplateChange("C- -> ba_")
+        val matchingWord = createNoun("ba")
+        val nonMatchingWord = createNoun("aca")
 
-        checkForWord(
-            correctWord,
-            Word(
-                listOf(
-                    Syllable(prefix, 1)
-                ) + correctWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("baba").withMorphemes(1, 2, 2),
+            changeTemplate.change(matchingWord, listOf(), listOf())
         )
-        checkForWord(
-            badWord,
-            Word(
-                badWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("aca"),
+            changeTemplate.change(nonMatchingWord, listOf(), listOf())
         )
     }
 
     @Test
-    fun prefixStaticPhonemeIsolatingTest() {
-        val prefix = listOf(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val affix = prefix.map { ExactPhonemeSubstitution(it) }
-        val substitution = listOf(PassingPhonemeSubstitution)
-        val condition = listOf(
-            ExactPhonemeMatcher(makePhoneme("b", PhonemeType.Consonant))
-        )
-        val changeTemplate = TemplateSingleChange(
-            Position.Beginning,
-            condition,
-            substitution,
-            affix
-        )
-        val syllableTemplate = getPhonySyllableTemplate()
-        val correctWord = createNoun(
-            makePhoneme("b", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
-        val badWord = createNoun(
-            makePhoneme("c", PhonemeType.Consonant),
-            makePhoneme("a", PhonemeType.Vowel)
-        )
+    fun `TemplateChange correctly adds a prefix on a phoneme condition`() {
+        val changeTemplate = createTemplateChange("b- -> ba_")
+        val matchingWord = createNoun("ba")
+        val nonMatchingWord = createNoun("ca")
 
-        checkForWord(
-            correctWord,
-            Word(
-                listOf(
-                    Syllable(prefix, 1)
-                ) + correctWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("baba").withMorphemes(1, 2, 2),
+            changeTemplate.change(matchingWord, listOf(), listOf())
         )
-        checkForWord(
-            badWord,
-            Word(
-                badWord.syllables,
-                syllableTemplate,
-                makeSemanticsCore()
-            ),
-            changeTemplate
+        assertEquals(
+            createNoun("ca"),
+            changeTemplate.change(nonMatchingWord, listOf(), listOf())
+        )
+    }
+    @Test
+    fun `TemplateChange correctly agglutinates a postfix`() {
+        val changeTemplate = createTemplateChange("-ba")
+        val firstWord = createNoun("ba")
+        val secondWord = createNoun("ca")
+
+        assertEquals(
+            createNoun("baba").withMorphemes(0, 2, 2),
+            changeTemplate.change(firstWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("caba").withMorphemes(0, 2, 2),
+            changeTemplate.change(secondWord, listOf(), listOf())
         )
     }
 
-    private fun checkForWord(word: Word, result: Word, change: TemplateSingleChange) {
-        assertEquals(result.toPhonemes(), change.change(word, listOf(), listOf()).toPhonemes())
+    @Test
+    fun `TemplateChange correctly adds a postfix on a phoneme type condition`() {
+        val changeTemplate = createTemplateChange("-C -> _ba")
+        val matchingWord = createNoun("bab")
+        val nonMatchingWord = createNoun("aca")
+
+        assertEquals(
+            createNoun("babba").withMorphemes(0, 3, 2),
+            changeTemplate.change(matchingWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("aca"),
+            changeTemplate.change(nonMatchingWord, listOf(), listOf())
+        )
+    }
+
+    @Test
+    fun `TemplateChange correctly adds a postfix on a phoneme condition`() {
+        val changeTemplate = createTemplateChange("-b -> _ba")
+        val matchingWord = createNoun("bab")
+        val nonMatchingWord = createNoun("cac")
+
+        assertEquals(
+            createNoun("babba").withMorphemes(0, 3, 2),
+            changeTemplate.change(matchingWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("cac"),
+            changeTemplate.change(nonMatchingWord, listOf(), listOf())
+        )
+    }
+
+    @Test
+    fun `TemplateChange correctly deletes a boundary phoneme`() {
+        val changeTemplate = createTemplateChange("_- -> ba-")
+        val firstWord = createNoun("ba")
+        val secondWord = createNoun("ca")
+
+        assertEquals(
+            createNoun("baa").withMorphemes(1, 2, 1),
+            changeTemplate.change(firstWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("baa").withMorphemes(1, 2, 1),
+            changeTemplate.change(secondWord, listOf(), listOf())
+        )
     }
 }
