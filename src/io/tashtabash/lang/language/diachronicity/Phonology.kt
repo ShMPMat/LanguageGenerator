@@ -1,5 +1,7 @@
 package io.tashtabash.lang.language.diachronicity
 
+import io.tashtabash.lang.containers.NoPhonemeException
+import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -27,7 +29,7 @@ import io.tashtabash.random.singleton.randomElementOrNull
 import kotlin.math.max
 
 
-class PhonologicalRuleApplicator {
+class PhonologicalRuleApplicator() {
     private val _messages = mutableListOf<String>()
     val messages: List<String>
         get() = _messages
@@ -99,14 +101,19 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(compound: Compound, phonologicalRule: PhonologicalRule): Compound {
-        val changingPhonemes = getChangingPhonemes(
-            compound.infix.phonemes,
-            addStartBoundary = false,
-            addEndBoundary = false
-        )
-        val shiftedInfix = applyPhonologicalRule(changingPhonemes, phonologicalRule)
+        return try {
+            val changingPhonemes = getChangingPhonemes(
+                compound.infix.phonemes,
+                addStartBoundary = false,
+                addEndBoundary = false
+            )
+            val shiftedInfix = applyPhonologicalRule(changingPhonemes, phonologicalRule)
 
-        return compound.copy(infix = PhonemeSequence(clearChangingPhonemes(shiftedInfix)))
+            compound.copy(infix = PhonemeSequence(clearChangingPhonemes(shiftedInfix)))
+        } catch (e: NoPhonemeException) {
+            _messages += "Can't apply the rule for the infix '${compound.infix.phonemes}': ${e.message}"
+            compound
+        }
     }
 
     fun applyPhonologicalRule(affix: Affix, phonologicalRule: PhonologicalRule): Affix = when (affix) {
@@ -125,83 +132,88 @@ class PhonologicalRuleApplicator {
                 templateChange.affix
                 when (templateChange.position) {
                     Position.Beginning -> {
-                        val prefixPhonemes = templateChange.affix
-                            .map { it.getSubstitutePhoneme() }
-                        var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
-                            prefixPhonemes,
-                            addStartBoundary = true,
-                            addEndBoundary = false
-                        )
-                        baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, phonologicalRule)
-                        val newBaseAffix = clearChangingPhonemes(baseRawPhonemes)
-                            .map { ExactPhonemeSubstitution(it) }
-
-                        val changes = mutableListOf(
-                            templateChange.copy(affix = newBaseAffix)
-                        )
-
-                        // Calculate new TemplateChanges for all applications of the rule across morpheme boundaries
-                        for (i in 1 until phonologicalRule.matchers.size) {
-                            val prefixMatchers = phonologicalRule.matchers.dropLast(i)
-                            val stemMatchers = phonologicalRule.matchers.takeLast(i)
-                            val phonemeWindow = baseRawPhonemes.takeLast(prefixMatchers.size)
-
-                            // Check if the morpheme matches the prefix of the phonologicalRule
-                            if (phonemeWindow.size != prefixMatchers.size)
-                                continue
-                            if (!prefixMatchers.match(phonemeWindow))
-                                continue
-
-                            val substitutionShift = baseRawPhonemes.size -
-                                    prefixMatchers.size +
-                                    phonologicalRule.precedingMatchers.size
-
-                            val rawPhonemes = baseRawPhonemes.toMutableList()
-                            substitutePhonemes(rawPhonemes, substitutionShift, phonologicalRule.resultingPhonemes)
-                            val newAffix = clearChangingPhonemes(rawPhonemes)
+                        try {
+                            val prefixPhonemes = templateChange.affix
+                                .map { it.getSubstitutePhoneme() }
+                            var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
+                                prefixPhonemes,
+                                addStartBoundary = true,
+                                addEndBoundary = false
+                            )
+                            baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, phonologicalRule)
+                            val newBaseAffix = clearChangingPhonemes(baseRawPhonemes)
                                 .map { ExactPhonemeSubstitution(it) }
 
-                            // Create new stem matchers accounting for the suffix of the phonologicalRule
-                            val newMatchersLength = max(stemMatchers.size, templateChange.phonemeMatchers.size)
-                            val newMatchers = (0 until newMatchersLength).map { j ->
-                                unitePhonemeMatchers(
-                                    stemMatchers.getOrNull(j),
-                                    templateChange.phonemeMatchers.getOrNull(j)
+                            val changes = mutableListOf(
+                                templateChange.copy(affix = newBaseAffix)
+                            )
+
+                            // Calculate new TemplateChanges for all applications of the rule across morpheme boundaries
+                            for (i in 1 until phonologicalRule.matchers.size) {
+                                val prefixMatchers = phonologicalRule.matchers.dropLast(i)
+                                val stemMatchers = phonologicalRule.matchers.takeLast(i)
+                                val phonemeWindow = baseRawPhonemes.takeLast(prefixMatchers.size)
+
+                                // Check if the morpheme matches the prefix of the phonologicalRule
+                                if (phonemeWindow.size != prefixMatchers.size)
+                                    continue
+                                if (!prefixMatchers.match(phonemeWindow))
+                                    continue
+
+                                val substitutionShift = baseRawPhonemes.size -
+                                        prefixMatchers.size +
+                                        phonologicalRule.precedingMatchers.size
+
+                                val rawPhonemes = baseRawPhonemes.toMutableList()
+                                substitutePhonemes(rawPhonemes, substitutionShift, phonologicalRule.resultingPhonemes)
+                                val newAffix = clearChangingPhonemes(rawPhonemes)
+                                    .map { ExactPhonemeSubstitution(it) }
+
+                                // Create new stem matchers accounting for the suffix of the phonologicalRule
+                                val newMatchersLength = max(stemMatchers.size, templateChange.phonemeMatchers.size)
+                                val newMatchers = (0 until newMatchersLength).map { j ->
+                                    unitePhonemeMatchers(
+                                        stemMatchers.getOrNull(j),
+                                        templateChange.phonemeMatchers.getOrNull(j)
+                                    )
+                                }
+                                if (newMatchers.any { it == null })
+                                    continue
+                                // The morpheme can't be attached to a word border
+                                if (newMatchers == listOf(BorderPhonemeMatcher))
+                                    continue
+
+                                // Create new substitutions accounting for the suffix of the phonologicalRule
+                                val stemSubstitutionsSize = max(
+                                    stemMatchers.size - phonologicalRule.followingMatchers.size,
+                                    0
+                                )
+                                val stemSubstitutions = phonologicalRule.resultingPhonemes
+                                    .takeLast(stemSubstitutionsSize)
+                                val stemSubstitutionsShift = max(
+                                    stemMatchers.size - phonologicalRule.followingMatchers.size - phonologicalRule.targetMatchers.size,
+                                    0
+                                )
+                                val newSubstitutions = unitePhonemeSubstitutions(
+                                    templateChange.matchedPhonemesSubstitution,
+                                    (1..stemSubstitutionsShift).map { null } + stemSubstitutions
+                                )
+                                val passingMatcherSuffix = (newSubstitutions.size until newMatchers.size)
+                                    .map { PassingPhonemeSubstitution }
+
+                                changes += TemplateSingleChange(
+                                    templateChange.position,
+                                    newMatchers.filterIsInstance<PhonemeMatcher>(),
+                                    newSubstitutions + passingMatcherSuffix,
+                                    newAffix
                                 )
                             }
-                            if (newMatchers.any { it == null })
-                                continue
-                            // The morpheme can't be attached to a word border
-                            if (newMatchers == listOf(BorderPhonemeMatcher))
-                                continue
 
-                            // Create new substitutions accounting for the suffix of the phonologicalRule
-                            val stemSubstitutionsSize = max(
-                                stemMatchers.size - phonologicalRule.followingMatchers.size,
-                                0
-                            )
-                            val stemSubstitutions = phonologicalRule.resultingPhonemes
-                                .takeLast(stemSubstitutionsSize)
-                            val stemSubstitutionsShift = max(
-                                stemMatchers.size - phonologicalRule.followingMatchers.size - phonologicalRule.targetMatchers.size,
-                                0
-                            )
-                            val newSubstitutions = unitePhonemeSubstitutions(
-                                templateChange.matchedPhonemesSubstitution,
-                                (1..stemSubstitutionsShift).map { null } + stemSubstitutions
-                            )
-                            val passingMatcherSuffix = (newSubstitutions.size until newMatchers.size)
-                                .map { PassingPhonemeSubstitution }
-
-                            changes += TemplateSingleChange(
-                                templateChange.position,
-                                newMatchers.filterIsInstance<PhonemeMatcher>(),
-                                newSubstitutions + passingMatcherSuffix,
-                                newAffix
-                            )
+                            return createSimplifiedTemplateChange(changes.reversed())
+                        } catch (e: NoPhonemeException) {
+                            _messages += "Can't apply the rule for the change '${templateChange}': ${e.message}"
+                            return templateChange
                         }
-
-                        return createSimplifiedTemplateChange(changes.reversed())
                     }
                     Position.End -> {
                         return applyPhonologicalRule(templateChange.mirror(), phonologicalRule.mirror())
@@ -275,22 +287,27 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(word: Word, phonologicalRule: PhonologicalRule): Word {
-        val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), phonologicalRule)
-        val prosodies = matchProsodies(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
-        val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
-        val syllables = word.syllableTemplate
-            .splitOnSyllables(PhonemeSequence(clearChangingPhonemes(rawPhonemes)))
-            ?.mapIndexed { j, syllable -> syllable.copy(prosodicEnums = prosodies[j]) }
-        if (syllables == null) {
-            _messages += "Can't split the word '$word' on syllables after applying the rule, reverting the word"
-            return word
-        }
-        if (syllables.size != prosodies.size) {
-            _messages += "The word '$word' changed the number of syllables after applying the rule, reverting the word"
-            return word
-        }
+        try {
+            val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), phonologicalRule)
+            val prosodies = matchProsodies(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
+            val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
+            val syllables = word.syllableTemplate
+                .splitOnSyllables(PhonemeSequence(clearChangingPhonemes(rawPhonemes)))
+                ?.mapIndexed { j, syllable -> syllable.copy(prosodicEnums = prosodies[j]) }
+            if (syllables == null) {
+                _messages += "Can't split the word '$word' on syllables after applying the rule, reverting the word"
+                return word
+            }
+            if (syllables.size != prosodies.size) {
+                _messages += "The word '$word' changed the number of syllables after applying the rule, reverting the word"
+                return word
+            }
 
-        return word.copy(syllables = syllables, morphemes = morphemes)
+            return word.copy(syllables = syllables, morphemes = morphemes)
+        } catch (e: NoPhonemeException) {
+            _messages += "Can't apply the rule for the word '${word}': ${e.message}"
+            return word
+        }
     }
 
     fun applyPhonologicalRule(

@@ -1,6 +1,6 @@
 package io.tashtabash.lang.language.morphem.change.substitution
 
-import kotlin.math.max
+import io.tashtabash.lang.language.LanguageException
 
 
 fun unitePhonemeSubstitutions(
@@ -23,18 +23,40 @@ fun unitePhonemeSubstitutions(
             if (newIdx < new.size)
                 newIdx++
             continue
-        } else if (curOld == null) {
+        }
+        if (curOld == null) {
             result += curNew!!
             newIdx++
             continue
-        } else if (curNew == null) {
+        }
+        if (curNew == null) {
             result += curOld
             oldIdx++
             continue
-        } else if (curOld is DeletingPhonemeSubstitution) {
+        }
+        if (curOld is DeletingPhonemeSubstitution) {
             result += DeletingPhonemeSubstitution
             oldIdx++
             continue
+        }
+        if (curNew is AddModifierPhonemeSubstitution) {
+            val phonemeContainer = curNew.phonemes
+
+            result += when (curOld) {
+                is PassingPhonemeSubstitution -> curNew
+                is AddModifierPhonemeSubstitution -> AddModifierPhonemeSubstitution(
+                    curOld.modifiers + curNew.modifiers,
+                    phonemeContainer
+                )
+                is ExactPhonemeSubstitution -> {
+                    val newPhoneme = phonemeContainer.getPhonemeWithAddedModifiers(curOld.exactPhoneme, curNew.modifiers)
+                    ExactPhonemeSubstitution(newPhoneme)
+                }
+                else -> throw LanguageException("Unknown PhonemeSubstitution type '${curOld.javaClass.name}'")
+            }
+
+            oldIdx++
+            newIdx++
         }
 
         result += curNew

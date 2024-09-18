@@ -3,9 +3,9 @@ package io.tashtabash.lang.language.diachronicity
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitutions
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatchers
 
 
 data class PhonologicalRule(
@@ -42,20 +42,20 @@ fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer) = P
         .dropLastWhile { it != '_' }
         .dropLast(1)
         .replace(" ", "")
-        .map { createPhonemeMatcher(it.toString(), phonemeContainer) },
+        .let { createPhonemeMatchers(it, phonemeContainer) },
     rule.dropLastWhile { it != '>' }
         .dropLast(2)
         .replace(" ", "")
-        .map { createPhonemeMatcher(it.toString(), phonemeContainer) },
+        .let { createPhonemeMatchers(it, phonemeContainer) },
     rule.dropWhile { it != '/' }
         .dropWhile { it != '_' }
         .drop(1)
         .replace(" ", "")
-        .map { createPhonemeMatcher(it.toString(), phonemeContainer) },
+        .let { createPhonemeMatchers(it, phonemeContainer) },
     rule.dropWhile { it != '>' }
         .drop(1)
         .dropLastWhile { it != '/' }
         .dropLast(1)
         .replace(" ", "")
-        .map { createPhonemeSubstitution(it.toString(), phonemeContainer) },
+        .let { createPhonemeSubstitutions(it, phonemeContainer) },
 )

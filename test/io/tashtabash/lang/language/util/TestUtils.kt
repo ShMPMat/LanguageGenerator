@@ -32,8 +32,5 @@ fun getPhonySyllableTemplate(): SyllableTemplate =
         )
     )
 
-fun makePhoneme(name: String, type: PhonemeType) =
-    Phoneme(name, type, ArticulationPlace.Bilabial, ArticulationManner.Close, setOf())
-
 fun makeSemanticsCore() =
     SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(SpeechPart.Noun), 1.0)

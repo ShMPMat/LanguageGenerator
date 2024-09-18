@@ -10,10 +10,7 @@ import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.morphem.change.TemplateChange
 import io.tashtabash.lang.language.morphem.change.TemplateSequenceChange
 import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
-import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 
@@ -57,7 +54,7 @@ private fun analyzePhonemes(templateChange: TemplateChange): List<Phoneme> = whe
 
 private fun analyzePhoneme(phonemeSubstitution: PhonemeSubstitution): Phoneme? = when (phonemeSubstitution) {
     is ExactPhonemeSubstitution -> phonemeSubstitution.exactPhoneme
-    is PassingPhonemeSubstitution, DeletingPhonemeSubstitution -> null
+    is AddModifierPhonemeSubstitution, PassingPhonemeSubstitution, DeletingPhonemeSubstitution -> null
     else -> throw LanguageException("Unknown phoneme substitution '$phonemeSubstitution'")
 }
 

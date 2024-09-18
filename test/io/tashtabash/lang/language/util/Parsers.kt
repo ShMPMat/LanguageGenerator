@@ -9,25 +9,22 @@ import io.tashtabash.lang.language.morphem.change.Position
 import io.tashtabash.lang.language.morphem.change.TemplateSequenceChange
 import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitution
-import io.tashtabash.lang.language.phonology.PhonemeType
-import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatcher
+import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitutions
+import io.tashtabash.lang.language.phonology.*
+import io.tashtabash.lang.language.phonology.ArticulationManner.*
+import io.tashtabash.lang.language.phonology.ArticulationPlace.*
+import io.tashtabash.lang.language.phonology.PhonemeModifier.*
+import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatchers
 
 
-fun createTestPhonologicalRule(rule: String) = createPhonologicalRule(
-    rule,
-    testPhonemeContainer
-)
+fun createTestPhonologicalRule(rule: String) =
+    createPhonologicalRule(rule, testPhonemeContainer)
 
-fun createTestPhonemeMatcher(matcher: Char) = createPhonemeMatcher(
-    matcher.toString(),
-    testPhonemeContainer
-)
+fun createTestPhonemeMatchers(matcher: String) =
+    createPhonemeMatchers(matcher, testPhonemeContainer)
 
-fun createTestPhonemeSubstitution(substitution: Char) = createPhonemeSubstitution(
-    substitution.toString(),
-    testPhonemeContainer
-)
+fun createTestPhonemeSubstitutions(substitutions: String) =
+    createPhonemeSubstitutions(substitutions, testPhonemeContainer)
 
 
 fun createAffix(vararg affixes: String): Affix {
@@ -59,22 +56,18 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
         if (matchers[0] == '-')
             TemplateSingleChange(
                 Position.End,
-                matchers.drop(1)
-                    .map { createTestPhonemeMatcher(it) },
-                substitutions.take(matchers.length - 1)
-                    .map { createTestPhonemeSubstitution(it) },
-                substitutions.drop(matchers.length - 1)
-                    .map { createTestPhonemeSubstitution(it) as ExactPhonemeSubstitution },
+                createTestPhonemeMatchers(matchers.drop(1)),
+                createTestPhonemeSubstitutions(substitutions.take(matchers.length - 1)),
+                createTestPhonemeSubstitutions(substitutions.drop(matchers.length - 1))
+                    .map { s -> s as ExactPhonemeSubstitution },
             )
         else
             TemplateSingleChange(
                 Position.Beginning,
-                matchers.dropLast(1)
-                    .map { createTestPhonemeMatcher(it) },
-                substitutions.takeLast(matchers.length - 1)
-                    .map { createTestPhonemeSubstitution(it) },
-                substitutions.dropLast(matchers.length - 1)
-                    .map { createTestPhonemeSubstitution(it) as ExactPhonemeSubstitution },
+                createTestPhonemeMatchers(matchers.dropLast(1)),
+                createTestPhonemeSubstitutions(substitutions.takeLast(matchers.length - 1)),
+                createTestPhonemeSubstitutions(substitutions.dropLast(matchers.length - 1))
+                    .map { s -> s as ExactPhonemeSubstitution },
             )
     }
     templateChange[0] == '-' -> {
@@ -82,7 +75,7 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
             Position.End,
             listOf(),
             listOf(),
-            templateChange.drop(1).map { ExactPhonemeSubstitution(makePhoneme(it)) }
+            templateChange.drop(1).map { ExactPhonemeSubstitution(testPhonemeContainer.getPhoneme(it.toString())) }
         )
     }
     templateChange.last() == '-' -> {
@@ -90,31 +83,26 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
             Position.Beginning,
             listOf(),
             listOf(),
-            templateChange.dropLast(1).map { ExactPhonemeSubstitution(makePhoneme(it)) }
+            templateChange.dropLast(1).map { ExactPhonemeSubstitution(testPhonemeContainer.getPhoneme(it.toString())) }
         )
     }
     else -> throw Exception("Incorrect test affix format: '$templateChange'")
 }
 
-fun createPhonemeContainer(phonemes: String) =
-    createPhonemes(phonemes)
-        .distinct()
-        .let {
-            ImmutablePhonemeContainer(it)
-        }
-
 fun createPhonemes(phonemes: String) =
-    phonemes.map {
-        makePhoneme(it)
-    }
-
-fun makePhoneme(symbol: Char) = makePhoneme(
-    symbol.toString(),
-    if (symbol in testVowelChars) PhonemeType.Vowel else PhonemeType.Consonant
-)
+    phonemes.map { testPhonemeContainer.getPhoneme(it.toString()) }
 
 fun createNoun(phonemes: String) =
     createNoun(createPhonemes(phonemes))
 
-val testVowelChars = listOf('a', 'e', 'i', 'o', 'u')
-val testPhonemeContainer = createPhonemeContainer("aoubcit")
+val testPhonemeContainer = ImmutablePhonemeContainer(listOf(
+    Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),
+    Phoneme("i", PhonemeType.Vowel, Front, Close, setOf(Voiced)),
+    Phoneme("o", PhonemeType.Vowel, Back, CloseMid, setOf(Labialized, Voiced)),
+    Phoneme("u", PhonemeType.Vowel, Back, Close, setOf(Labialized, Voiced)),
+    Phoneme("p", PhonemeType.Consonant, Bilabial, Stop, setOf()),
+    Phoneme("b", PhonemeType.Consonant, Bilabial, Stop, setOf(Voiced)),
+    Phoneme("t", PhonemeType.Consonant, Alveolar, Stop, setOf()),
+    Phoneme("d", PhonemeType.Consonant, Alveolar, Stop, setOf(Voiced)),
+    Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
+))

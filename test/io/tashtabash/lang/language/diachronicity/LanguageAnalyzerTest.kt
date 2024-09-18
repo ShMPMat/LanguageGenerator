@@ -44,6 +44,6 @@ internal class LanguageAnalyzerTest {
 
         val phonemeContainer = analyzePhonemes(language)
 
-        assertEquals(createPhonemeContainer("abouc").phonemes, phonemeContainer.phonemes)
+        assertEquals(createPhonemes("abouc"), phonemeContainer.phonemes)
     }
 }

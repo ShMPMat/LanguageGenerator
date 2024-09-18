@@ -65,39 +65,39 @@ Cʕ  Pharyngeal  NonSibilantFricative  Voiced
 Cħ  Pharyngeal  NonSibilantFricative
 
 
-Vi  Front       Close
-Vy  Front       Close      Labialized
-Vɨ  Central     Close
-Vʉ  Central     Close      Labialized
-Vɯ  Back        Close
-Vu  Back        Close      Labialized
+Vi  Front       Close                 Voiced
+Vy  Front       Close      Labialized Voiced
+Vɨ  Central     Close                 Voiced
+Vʉ  Central     Close      Labialized Voiced
+Vɯ  Back        Close                 Voiced
+Vu  Back        Close      Labialized Voiced
 
-Vɪ  Front       NearClose
-Vʏ  Front       NearClose  Labialized
-Vʊ  Back        NearClose  Labialized
+Vɪ  Front       NearClose             Voiced
+Vʏ  Front       NearClose  Labialized Voiced
+Vʊ  Back        NearClose  Labialized Voiced
 
-Ve  Front       CloseMid
-Vø  Front       CloseMid   Labialized
-Vɘ  Central     CloseMid
-Vɵ  Central     CloseMid   Labialized
-Vɤ  Back        CloseMid
-Vo  Back        CloseMid   Labialized
+Ve  Front       CloseMid              Voiced
+Vø  Front       CloseMid   Labialized Voiced
+Vɘ  Central     CloseMid              Voiced
+Vɵ  Central     CloseMid   Labialized Voiced
+Vɤ  Back        CloseMid              Voiced
+Vo  Back        CloseMid   Labialized Voiced
 
-Və  Central     Mid
+Və  Central     Mid                   Voiced
 
-Vɛ  Front       OpenMid
-Vœ  Front       OpenMid    Labialized
-Vɜ  Central     OpenMid
-Vɞ  Central     OpenMid    Labialized
-Vʌ  Back        OpenMid
-Vɔ  Back        OpenMid    Labialized
+Vɛ  Front       OpenMid               Voiced
+Vœ  Front       OpenMid    Labialized Voiced
+Vɜ  Central     OpenMid               Voiced
+Vɞ  Central     OpenMid    Labialized Voiced
+Vʌ  Back        OpenMid               Voiced
+Vɔ  Back        OpenMid    Labialized Voiced
 
 
-Væ  Front       NearOpen
-Vɐ  Central     NearOpen
+Væ  Front       NearOpen              Voiced
+Vɐ  Central     NearOpen              Voiced
 
-Va  Front       Open
-Vɶ  Front       Open       Labialized
-Vä  Central     Open
-Vɑ  Back        Open
-Vɒ  Back        Open       Labialized
+Va  Front       Open                  Voiced
+Vɶ  Front       Open       Labialized Voiced
+Vä  Central     Open                  Voiced
+Vɑ  Back        Open                  Voiced
+Vɒ  Back        Open       Labialized Voiced

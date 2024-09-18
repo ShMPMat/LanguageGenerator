@@ -16,6 +16,8 @@ data class PhonologicalRulesContainer(val phonologicalRules: List<PhonologicalRu
             language.phonemeContainer.getPhonemeOrNull(matcher.phoneme.symbol) != null
         is TypePhonemeMatcher ->
             language.phonemeContainer.getPhonemes(matcher.phonemeType).isNotEmpty()
+        is AbsentModifierPhonemeMatcher ->
+            language.phonemeContainer.getPhonemesNot(matcher.modifiers).isNotEmpty()
         is BorderPhonemeMatcher, PassingPhonemeMatcher ->
             true
         else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
@@ -24,13 +26,24 @@ data class PhonologicalRulesContainer(val phonologicalRules: List<PhonologicalRu
 
 fun createDefaultRules(phonemeContainer: PhonemeContainer) = PhonologicalRulesContainer(
     listOf(
+        // Vowel shifts
         "a -> o / _ ",
         "o -> a / _ ",
         "ə -> o / _ ",
         "ɨ -> o / _ ",
-
+        // Consonant shifts
         "d -> g / _ n",
+        "s -> h / _ ",
 
+        // Quality transfers
+        "[-Voiced] -> [+Voiced] / _ V",
+        "k -> [+Voiced] / _ V",
+        "p -> [+Voiced] / _ V",
+        "t -> [+Voiced] / _ V",
+
+        // Vowel deletion
+        "V -> - / \$C _ CV",
+        // Consonant deletion
         "C -> - / _ $",
     ).map { createPhonologicalRule(it, phonemeContainer) }
 )

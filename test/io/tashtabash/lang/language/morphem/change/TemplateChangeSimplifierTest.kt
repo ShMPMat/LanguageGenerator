@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 internal class TemplateChangeSimplifierTest {
     @Test
-    fun `createSimplifiedTemplateChange doesn't wrap a single change into TemplateSequenceChange`() {
+    fun `createSimplifiedTemplateChange doesn't warp a single change into TemplateSequenceChange`() {
         val templateSingleChange = createAffix("-t -> _b").templateChange
 
         val result = createSimplifiedTemplateChange(listOf(templateSingleChange))

@@ -4,6 +4,7 @@ import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
+import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 
 
@@ -30,16 +31,38 @@ abstract class PhonemeMatcher {
     }
 
     override fun toString() = name
-
-
 }
 
+fun createPhonemeMatchers(matchers: String, phonemeContainer: PhonemeContainer): List<PhonemeMatcher> {
+    var currentPostfix = matchers
+    val resultMatchers = mutableListOf<PhonemeMatcher>()
 
-fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = when (matcher) {
-    "C" -> TypePhonemeMatcher(PhonemeType.Consonant)
-    "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
-    "_" -> PassingPhonemeMatcher
-    "$" -> BorderPhonemeMatcher
+    while (currentPostfix.isNotEmpty()) {
+        val token = if (currentPostfix[0] == '[')
+            currentPostfix.takeWhile { it != ']' } + ']'
+        else
+            currentPostfix.take(1)
+
+        resultMatchers += createPhonemeMatcher(token, phonemeContainer)
+
+        currentPostfix = currentPostfix.drop(token.length)
+    }
+
+    return resultMatchers
+}
+
+fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = when {
+    matcher == "C" -> TypePhonemeMatcher(PhonemeType.Consonant)
+    matcher == "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
+    matcher == "_" -> PassingPhonemeMatcher
+    matcher == "$" -> BorderPhonemeMatcher
+    absentModifierRegex.matches(matcher) -> AbsentModifierPhonemeMatcher(
+        matcher.drop(2)
+            .dropLast(1)
+            .split(",")
+            .map { PhonemeModifier.valueOf(it) }
+            .toSet()
+    )
     else -> {
         val phoneme = phonemeContainer.getPhonemeOrNull(matcher)
             ?: throw LanguageException("cannot create a matcher for symbol '$matcher'")
@@ -47,3 +70,5 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
         ExactPhonemeMatcher(phoneme)
     }
 }
+
+private val absentModifierRegex = "\\[-.*]".toRegex()

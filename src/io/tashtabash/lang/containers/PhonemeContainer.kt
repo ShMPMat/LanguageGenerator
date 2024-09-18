@@ -29,7 +29,7 @@ interface PhonemeContainer {
 
         val newPhoneme = phoneme.copy(modifiers = phoneme.modifiers + modifiers)
         val correctNamePhoneme = getPhonemeByPropertiesOrNull(newPhoneme)
-            ?: throw LanguageException(
+            ?: throw NoPhonemeException(
                 "Phoneme with properties " +
                         "${newPhoneme.type}, " +
                         "${newPhoneme.articulationPlace}, " +
@@ -44,6 +44,12 @@ interface PhonemeContainer {
     fun getPhonemes(phonemeType: PhonemeType): List<Phoneme> =
         phonemes.filter { it.type == phonemeType }
 
+    fun getPhonemes(modifiers: Set<PhonemeModifier>): List<Phoneme> =
+        phonemes.filter { it.modifiers.containsAll(modifiers) }
+
     fun getPhonemesNot(phonemeType: PhonemeType): List<Phoneme> =
         phonemes.filter { it.type != phonemeType }
+
+    fun getPhonemesNot(modifiers: Set<PhonemeModifier>): List<Phoneme> =
+        phonemes.filter { modifiers.none { m -> m in it.modifiers } }
 }

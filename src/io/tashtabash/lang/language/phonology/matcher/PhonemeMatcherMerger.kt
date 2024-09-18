@@ -32,6 +32,17 @@ fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): Phone
 
         return null
     }
+    if (phonemeMatchers.any { it is ExactPhonemeMatcher } && phonemeMatchers.any { it is AbsentModifierPhonemeMatcher }) {
+        val exactPhonemeMatcher = phonemeMatchers.filterIsInstance<ExactPhonemeMatcher>()
+            .first()
+        val absentModifierPhonemeMatcher = phonemeMatchers.filterIsInstance<AbsentModifierPhonemeMatcher>()
+            .first()
+
+        if (absentModifierPhonemeMatcher.match(exactPhonemeMatcher.phoneme))
+            return exactPhonemeMatcher
+
+        return null
+    }
 
     if (phonemeMatchers.all { it is TypePhonemeMatcher }) {
         return if (first == second)
@@ -39,6 +50,12 @@ fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): Phone
         else
             null
     }
+
+    if (phonemeMatchers.all { it is AbsentModifierPhonemeMatcher })
+        AbsentModifierPhonemeMatcher(
+            (first as AbsentModifierPhonemeMatcher).modifiers
+                    + (second as AbsentModifierPhonemeMatcher).modifiers
+        )
 
     throw LanguageException("Cannot merge Phoneme matchers '$first' and '$second'")
 }

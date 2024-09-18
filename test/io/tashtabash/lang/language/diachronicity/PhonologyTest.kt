@@ -539,4 +539,74 @@ internal class PhonologyTest {
             phonologicalRuleApplicator.messages
         )
     }
+
+    @Test
+    fun `applyPhonologicalRule makes a consonant voiced`() {
+        val words = listOf(
+            createNoun("aba"),
+            createNoun("abo"),
+            createNoun("apa"),
+            createNoun("ata"),
+            createNoun("apo"),
+            createNoun("ub"),
+            createNoun("ut"),
+            createNoun("bob"),
+            createNoun("bac")
+        )
+        val derivations = listOf(
+            Derivation(createAffix("-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("ta-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("to-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("da-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("a-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("-od"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("t-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("[-Voiced] -> [+Voiced] / _ a")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("aba"),
+                createNoun("abo"),
+                createNoun("aba"),
+                createNoun("ada"),
+                createNoun("apo"),
+                createNoun("ub"),
+                createNoun("ut"),
+                createNoun("bob"),
+                createNoun("bac")
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-[-Voiced] -> [+Voiced]at", "-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("da-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("to-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("da-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("a-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("a- -> d_", "t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-od"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("a- -> d_", "t-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
 }

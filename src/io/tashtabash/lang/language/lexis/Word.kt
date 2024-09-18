@@ -54,6 +54,7 @@ data class Word(
 
         if (syllables != other.syllables) return false
         if (semanticsCore != other.semanticsCore) return false
+        if (morphemes != other.morphemes) return false
 
         return true
     }
