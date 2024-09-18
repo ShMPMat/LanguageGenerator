@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.containers.NoPhonemeException
-import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -29,7 +28,7 @@ import io.tashtabash.random.singleton.randomElementOrNull
 import kotlin.math.max
 
 
-class PhonologicalRuleApplicator() {
+class PhonologicalRuleApplicator {
     private val _messages = mutableListOf<String>()
     val messages: List<String>
         get() = _messages
@@ -352,29 +351,6 @@ class PhonologicalRuleApplicator() {
             phonemes[shift + j] =
                 newPhoneme?.let { ChangingPhoneme.ExactPhoneme(it) } ?: ChangingPhoneme.DeletedPhoneme
         }
-    }
-
-    private fun clearChangingPhonemes(phonemes: List<ChangingPhoneme>): List<Phoneme> =
-        phonemes.filterIsInstance<ChangingPhoneme.ExactPhoneme>()
-            .map { it.phoneme }
-
-    private fun getChangingPhonemes(word: Word): MutableList<ChangingPhoneme> =
-        getChangingPhonemes(word.toPhonemes(), addStartBoundary = true, addEndBoundary = true)
-
-    private fun getChangingPhonemes(
-        phonemes: List<Phoneme>,
-        addStartBoundary: Boolean,
-        addEndBoundary: Boolean
-    ): MutableList<ChangingPhoneme> {
-        val rawPhonemes = mutableListOf<ChangingPhoneme>()
-
-        if (addStartBoundary)
-            rawPhonemes += listOf(ChangingPhoneme.Boundary)
-        rawPhonemes += phonemes.map { ChangingPhoneme.ExactPhoneme(it) }
-        if (addEndBoundary)
-            rawPhonemes += listOf(ChangingPhoneme.Boundary)
-
-        return rawPhonemes
     }
 
     private fun matchProsodies(oldWord: Word, rawNewPhonemes: List<Phoneme?>): List<List<Prosody>> {
