@@ -101,14 +101,14 @@ class PhonologicalRuleApplicator {
 
     fun applyPhonologicalRule(compound: Compound, phonologicalRule: PhonologicalRule): Compound {
         return try {
-            val changingPhonemes = getChangingPhonemes(
+            val shiftedInfix = applyPhonologicalRule(
                 compound.infix.phonemes,
+                phonologicalRule,
                 addStartBoundary = false,
                 addEndBoundary = false
             )
-            val shiftedInfix = applyPhonologicalRule(changingPhonemes, phonologicalRule)
 
-            compound.copy(infix = PhonemeSequence(clearChangingPhonemes(shiftedInfix)))
+            compound.copy(infix = PhonemeSequence(shiftedInfix))
         } catch (e: NoPhonemeException) {
             _messages += "Can't apply the rule for the infix '${compound.infix.phonemes}': ${e.message}"
             compound
@@ -221,16 +221,8 @@ class PhonologicalRuleApplicator {
                 }
             }
             is TemplateSequenceChange -> {
-                val shiftedTemplateChanges = templateChange
-                    .changes
-                    .flatMap {
-                        val change = applyPhonologicalRule(it, phonologicalRule)
-
-                        if (change is TemplateSequenceChange)
-                            change.changes
-                        else
-                            listOf(change)
-                    }
+                val shiftedTemplateChanges = templateChange.changes
+                    .map { applyPhonologicalRule(it, phonologicalRule) }
 
                 return createSimplifiedTemplateChange(shiftedTemplateChanges)
             }
@@ -330,6 +322,17 @@ class PhonologicalRuleApplicator {
         }
 
         return result
+    }
+
+    fun applyPhonologicalRule(
+        phonemes: List<Phoneme>,
+        phonologicalRule: PhonologicalRule,
+        addStartBoundary: Boolean,
+        addEndBoundary: Boolean
+    ): List<Phoneme> {
+        val rawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(phonemes, addStartBoundary, addEndBoundary)
+        val changedPhonemes = applyPhonologicalRule(rawPhonemes, phonologicalRule)
+        return clearChangingPhonemes(changedPhonemes)
     }
 
     private fun List<PhonemeMatcher>.match(phonemeWindow: List<ChangingPhoneme>): Boolean =

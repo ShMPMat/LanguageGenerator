@@ -15,6 +15,7 @@ fun simplifyTemplateChange(templateChange: TemplateChange): TemplateChange = whe
     is TemplateSequenceChange -> {
         var resultChanges = templateChange.changes
 
+        resultChanges = flattenHierarchy(resultChanges)
         resultChanges = simplifyTypePairsInRules(resultChanges)
         resultChanges = simplifyPassingRules(resultChanges)
         resultChanges = simplifyEqualRules(resultChanges)
@@ -23,6 +24,14 @@ fun simplifyTemplateChange(templateChange: TemplateChange): TemplateChange = whe
     }
     else -> throw LanguageException("Unknown template change '$templateChange'")
 }
+
+private fun flattenHierarchy(templateChanges: List<TemplateChange>): List<TemplateChange> =
+    templateChanges.flatMap {
+        when (it) {
+            is TemplateSequenceChange -> it.changes
+            else -> listOf(it)
+        }
+    }
 
 private fun simplifyTypePairsInRules(templateChanges: List<TemplateChange>): List<TemplateChange> {
     val windowSize = PhonemeType.values().size
