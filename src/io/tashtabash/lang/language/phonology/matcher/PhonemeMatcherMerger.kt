@@ -1,7 +1,19 @@
 package io.tashtabash.lang.language.phonology.matcher
 
 import io.tashtabash.lang.language.LanguageException
+import kotlin.math.max
 
+
+fun unitePhonemeMatchers(first: List<PhonemeMatcher>, second: List<PhonemeMatcher>): List<PhonemeMatcher?> {
+    val newMatchersLength = max(first.size, second.size)
+
+    return (0 until newMatchersLength).map { j ->
+        unitePhonemeMatchers(
+            first.getOrNull(j),
+            second.getOrNull(j)
+        )
+    }
+}
 
 // Returns null if the resulting union matches no phonemes
 fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): PhonemeMatcher? {

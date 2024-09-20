@@ -169,13 +169,7 @@ class PhonologicalRuleApplicator {
                                     .map { ExactPhonemeSubstitution(it) }
 
                                 // Create new stem matchers accounting for the suffix of the phonologicalRule
-                                val newMatchersLength = max(stemMatchers.size, templateChange.phonemeMatchers.size)
-                                val newMatchers = (0 until newMatchersLength).map { j ->
-                                    unitePhonemeMatchers(
-                                        stemMatchers.getOrNull(j),
-                                        templateChange.phonemeMatchers.getOrNull(j)
-                                    )
-                                }
+                                val newMatchers = unitePhonemeMatchers(stemMatchers, templateChange.phonemeMatchers)
                                 if (newMatchers.any { it == null })
                                     continue
                                 // The morpheme can't be attached to a word border
