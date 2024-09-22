@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.derivation.Compound
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationParadigm
+import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.lang.language.morphem.MorphemeData
@@ -24,6 +25,7 @@ import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
 import io.tashtabash.lang.language.phonology.prosody.Prosody
+import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.random.singleton.randomElementOrNull
 import kotlin.math.max
 
@@ -33,11 +35,8 @@ class PhonologicalRuleApplicator {
     val messages: List<String>
         get() = _messages
 
-    fun applyRandomPhonologicalRule(
-        language: Language,
-        phonologicalRulesContainer: PhonologicalRulesContainer
-    ): Language {
-        val phonologicalRule = phonologicalRulesContainer
+    fun applyRandomPhonologicalRule(language: Language, rulesContainer: PhonologicalRulesContainer): Language {
+        val phonologicalRule = rulesContainer
             .getApplicableRules(language)
             .randomElementOrNull()
         if (phonologicalRule == null) {
@@ -49,35 +48,15 @@ class PhonologicalRuleApplicator {
         return applyPhonologicalRule(language, phonologicalRule)
     }
 
-    fun applyPhonologicalRule(language: Language, phonologicalRule: PhonologicalRule): Language {
-        val shiftedDerivations = language.derivationParadigm.derivations.map {
-            applyPhonologicalRule(it, phonologicalRule)
-        }
-        val shiftedCompounds = language.derivationParadigm.compounds.map {
-            applyPhonologicalRule(it, phonologicalRule)
-        }
-        val shiftedDerivationParadigm = DerivationParadigm(shiftedDerivations, shiftedCompounds)
-
-        val shiftedSpeechPartChangeParadigms =
-            language.changeParadigm.wordChangeParadigm.speechPartChangeParadigms.mapValues {
-                applyPhonologicalRule(it.value, phonologicalRule)
-            }
-        val shiftedWordChangeParadigm = WordChangeParadigm(
-            language.changeParadigm.wordChangeParadigm.categories,
-            shiftedSpeechPartChangeParadigms
-        )
-        val shiftedChangeParadigm = language.changeParadigm.copy(wordChangeParadigm = shiftedWordChangeParadigm)
-
-        val shiftedWords = language.lexis.words.map {
-            applyPhonologicalRule(it, phonologicalRule)
-        }
-        val shiftedLexis = language.lexis.copy(words = shiftedWords)
+    fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
+        val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
+        val shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
+        val shiftedLexis = applyPhonologicalRule(language.lexis, rule)
 
         val changeValidityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
-
-        if (!changeValidityReport.isValid) {
-            _messages += "Cannot apply rule $phonologicalRule: " +
-                    "the resulting language has incorrect forms: '${changeValidityReport.exception?.message}'"
+        if (changeValidityReport.isFailure) {
+            _messages += "Cannot apply rule $rule: " +
+                    "the resulting language has incorrect forms: '${changeValidityReport.exceptionOrNull()?.message}'"
             return language
         }
 
@@ -89,21 +68,31 @@ class PhonologicalRuleApplicator {
             language.stressType,
             language.restrictionsParadigm,
             shiftedDerivationParadigm,
-            shiftedChangeParadigm,
+            shiftedChangeParadigm
         )
     }
 
-    fun applyPhonologicalRule(derivation: Derivation, phonologicalRule: PhonologicalRule): Derivation {
-        val shiftedAffix = applyPhonologicalRule(derivation.affix, phonologicalRule)
+    fun applyPhonologicalRule(derivationParadigm: DerivationParadigm, rule: PhonologicalRule): DerivationParadigm {
+        val shiftedDerivations = derivationParadigm.derivations.map {
+            applyPhonologicalRule(it, rule)
+        }
+        val shiftedCompounds = derivationParadigm.compounds.map {
+            applyPhonologicalRule(it, rule)
+        }
+        return DerivationParadigm(shiftedDerivations, shiftedCompounds)
+    }
+
+    fun applyPhonologicalRule(derivation: Derivation, rule: PhonologicalRule): Derivation {
+        val shiftedAffix = applyPhonologicalRule(derivation.affix, rule)
 
         return derivation.copy(affix = shiftedAffix)
     }
 
-    fun applyPhonologicalRule(compound: Compound, phonologicalRule: PhonologicalRule): Compound {
+    fun applyPhonologicalRule(compound: Compound, rule: PhonologicalRule): Compound {
         return try {
             val shiftedInfix = applyPhonologicalRule(
                 compound.infix.phonemes,
-                phonologicalRule,
+                rule,
                 addStartBoundary = false,
                 addEndBoundary = false
             )
@@ -115,17 +104,17 @@ class PhonologicalRuleApplicator {
         }
     }
 
-    fun applyPhonologicalRule(affix: Affix, phonologicalRule: PhonologicalRule): Affix = when (affix) {
+    fun applyPhonologicalRule(affix: Affix, rule: PhonologicalRule): Affix = when (affix) {
         is Prefix -> {
-            Prefix(applyPhonologicalRule(affix.templateChange, phonologicalRule))
+            Prefix(applyPhonologicalRule(affix.templateChange, rule))
         }
         is Suffix -> {
-            Suffix(applyPhonologicalRule(affix.templateChange, phonologicalRule))
+            Suffix(applyPhonologicalRule(affix.templateChange, rule))
         }
         else -> throw LanguageException("Unknown affix '$affix'")
     }
 
-    fun applyPhonologicalRule(templateChange: TemplateChange, phonologicalRule: PhonologicalRule): TemplateChange {
+    fun applyPhonologicalRule(templateChange: TemplateChange, rule: PhonologicalRule): TemplateChange {
         when (templateChange) {
             is TemplateSingleChange -> {
                 templateChange.affix
@@ -139,7 +128,7 @@ class PhonologicalRuleApplicator {
                                 addStartBoundary = true,
                                 addEndBoundary = false
                             )
-                            baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, phonologicalRule)
+                            baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, rule)
                             val newBaseAffix = clearChangingPhonemes(baseRawPhonemes)
                                 .map { ExactPhonemeSubstitution(it) }
 
@@ -148,9 +137,9 @@ class PhonologicalRuleApplicator {
                             )
 
                             // Calculate new TemplateChanges for all applications of the rule across morpheme boundaries
-                            for (i in 1 until phonologicalRule.matchers.size) {
-                                val prefixMatchers = phonologicalRule.matchers.dropLast(i)
-                                val stemMatchers = phonologicalRule.matchers.takeLast(i)
+                            for (i in 1 until rule.matchers.size) {
+                                val prefixMatchers = rule.matchers.dropLast(i)
+                                val stemMatchers = rule.matchers.takeLast(i)
                                 val phonemeWindow = baseRawPhonemes.takeLast(prefixMatchers.size)
 
                                 // Check if the morpheme matches the prefix of the phonologicalRule
@@ -161,10 +150,10 @@ class PhonologicalRuleApplicator {
 
                                 val substitutionShift = baseRawPhonemes.size -
                                         prefixMatchers.size +
-                                        phonologicalRule.precedingMatchers.size
+                                        rule.precedingMatchers.size
 
                                 val rawPhonemes = baseRawPhonemes.toMutableList()
-                                substitutePhonemes(rawPhonemes, substitutionShift, phonologicalRule.resultingPhonemes)
+                                substitutePhonemes(rawPhonemes, substitutionShift, rule.resultingPhonemes)
                                 val newAffix = clearChangingPhonemes(rawPhonemes)
                                     .map { ExactPhonemeSubstitution(it) }
 
@@ -178,13 +167,13 @@ class PhonologicalRuleApplicator {
 
                                 // Create new substitutions accounting for the suffix of the phonologicalRule
                                 val stemSubstitutionsSize = max(
-                                    stemMatchers.size - phonologicalRule.followingMatchers.size,
+                                    stemMatchers.size - rule.followingMatchers.size,
                                     0
                                 )
-                                val stemSubstitutions = phonologicalRule.resultingPhonemes
+                                val stemSubstitutions = rule.resultingPhonemes
                                     .takeLast(stemSubstitutionsSize)
                                 val stemSubstitutionsShift = max(
-                                    stemMatchers.size - phonologicalRule.followingMatchers.size - phonologicalRule.targetMatchers.size,
+                                    stemMatchers.size - rule.followingMatchers.size - rule.targetMatchers.size,
                                     0
                                 )
                                 val newSubstitutions = unitePhonemeSubstitutions(
@@ -209,14 +198,14 @@ class PhonologicalRuleApplicator {
                         }
                     }
                     Position.End -> {
-                        return applyPhonologicalRule(templateChange.mirror(), phonologicalRule.mirror())
+                        return applyPhonologicalRule(templateChange.mirror(), rule.mirror())
                             .mirror()
                     }
                 }
             }
             is TemplateSequenceChange -> {
                 val shiftedTemplateChanges = templateChange.changes
-                    .map { applyPhonologicalRule(it, phonologicalRule) }
+                    .map { applyPhonologicalRule(it, rule) }
 
                 return createSimplifiedTemplateChange(shiftedTemplateChanges)
             }
@@ -224,56 +213,76 @@ class PhonologicalRuleApplicator {
         }
     }
 
+    fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm {
+        val shiftedSpeechPartChangeParadigms = changeParadigm.wordChangeParadigm
+            .speechPartChangeParadigms
+            .mapValues {
+                applyPhonologicalRule(it.value, rule)
+            }
+        val shiftedWordChangeParadigm = WordChangeParadigm(
+            changeParadigm.wordChangeParadigm.categories,
+            shiftedSpeechPartChangeParadigms
+        )
+
+        return changeParadigm.copy(wordChangeParadigm = shiftedWordChangeParadigm)
+    }
+
     fun applyPhonologicalRule(
         speechPartChangeParadigm: SpeechPartChangeParadigm,
-        phonologicalRule: PhonologicalRule
+        rule: PhonologicalRule
     ): SpeechPartChangeParadigm {
         val applicators = speechPartChangeParadigm.applicators
             .mapValues { (_, values) ->
                 values.mapValues { (_, applicator) ->
-                    applyPhonologicalRule(applicator, phonologicalRule)
+                    applyPhonologicalRule(applicator, rule)
                 }
             }
 
         return speechPartChangeParadigm.copy(applicators = applicators)
     }
 
-    fun applyPhonologicalRule(
-        categoryApplicator: CategoryApplicator,
-        phonologicalRule: PhonologicalRule
-    ): CategoryApplicator = when (categoryApplicator) {
-        is AffixCategoryApplicator -> AffixCategoryApplicator(
-            applyPhonologicalRule(categoryApplicator.affix, phonologicalRule),
-            categoryApplicator.type
-        )
-        is ConsecutiveApplicator -> ConsecutiveApplicator(
-            categoryApplicator.applicators.map { applyPhonologicalRule(it, phonologicalRule) }
-        )
-        is FilterApplicator -> FilterApplicator(
-            categoryApplicator.applicators.map { (applicator, words) ->
-                applyPhonologicalRule(applicator, phonologicalRule) to
-                        words.map { applyPhonologicalRule(it, phonologicalRule) }
-            }
-        )
-        is PassingCategoryApplicator -> PassingCategoryApplicator
-        is PrefixWordCategoryApplicator -> PrefixWordCategoryApplicator(
-            applyPhonologicalRule(categoryApplicator.word, phonologicalRule),
-            categoryApplicator.latch
-        )
-        is ReduplicationCategoryApplicator -> ReduplicationCategoryApplicator()
-        is SuffixWordCategoryApplicator -> SuffixWordCategoryApplicator(
-            applyPhonologicalRule(categoryApplicator.word, phonologicalRule),
-            categoryApplicator.latch
-        )
-        is SuppletionCategoryApplicator -> SuppletionCategoryApplicator(
-            applyPhonologicalRule(categoryApplicator.word, phonologicalRule)
-        )
-        else -> throw LanguageException("Unknown category applicator '$categoryApplicator'")
+    fun applyPhonologicalRule(categoryApplicator: CategoryApplicator, rule: PhonologicalRule): CategoryApplicator =
+        when (categoryApplicator) {
+            is AffixCategoryApplicator -> AffixCategoryApplicator(
+                applyPhonologicalRule(categoryApplicator.affix, rule),
+                categoryApplicator.type
+            )
+            is ConsecutiveApplicator -> ConsecutiveApplicator(
+                categoryApplicator.applicators.map { applyPhonologicalRule(it, rule) }
+            )
+            is FilterApplicator -> FilterApplicator(
+                categoryApplicator.applicators.map { (applicator, words) ->
+                    applyPhonologicalRule(applicator, rule) to
+                            words.map { applyPhonologicalRule(it, rule) }
+                }
+            )
+            is PassingCategoryApplicator -> PassingCategoryApplicator
+            is PrefixWordCategoryApplicator -> PrefixWordCategoryApplicator(
+                applyPhonologicalRule(categoryApplicator.word, rule),
+                categoryApplicator.latch
+            )
+            is ReduplicationCategoryApplicator -> ReduplicationCategoryApplicator()
+            is SuffixWordCategoryApplicator -> SuffixWordCategoryApplicator(
+                applyPhonologicalRule(categoryApplicator.word, rule),
+                categoryApplicator.latch
+            )
+            is SuppletionCategoryApplicator -> SuppletionCategoryApplicator(
+                applyPhonologicalRule(categoryApplicator.word, rule)
+            )
+            else -> throw LanguageException("Unknown category applicator '$categoryApplicator'")
+        }
+
+    fun applyPhonologicalRule(lexis: Lexis, rule: PhonologicalRule): Lexis {
+        val shiftedWords = lexis.words.map {
+            applyPhonologicalRule(it, rule)
+        }
+
+        return lexis.copy(words = shiftedWords)
     }
 
-    fun applyPhonologicalRule(word: Word, phonologicalRule: PhonologicalRule): Word {
+    fun applyPhonologicalRule(word: Word, rule: PhonologicalRule): Word {
         try {
-            val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), phonologicalRule)
+            val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
             val prosodies = matchProsodies(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
             val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
             val syllables = word.syllableTemplate
@@ -295,22 +304,19 @@ class PhonologicalRuleApplicator {
         }
     }
 
-    fun applyPhonologicalRule(
-        phonemes: List<ChangingPhoneme>,
-        phonologicalRule: PhonologicalRule
-    ): List<ChangingPhoneme> {
+    fun applyPhonologicalRule(phonemes: List<ChangingPhoneme>, rule: PhonologicalRule): List<ChangingPhoneme> {
         val result = phonemes.toMutableList()
         var i = 0
 
-        while (i + phonologicalRule.matchers.size <= phonemes.size) {
+        while (i + rule.matchers.size <= phonemes.size) {
             val phonemeWindow = phonemes.drop(i)
-            val isMatch = phonologicalRule.matchers
+            val isMatch = rule.matchers
                 .match(phonemeWindow)
             if (isMatch)
                 substitutePhonemes(
                     result,
-                    i + phonologicalRule.precedingMatchers.size,
-                    phonologicalRule.resultingPhonemes
+                    i + rule.precedingMatchers.size,
+                    rule.resultingPhonemes
                 )
             i++
         }
@@ -320,12 +326,12 @@ class PhonologicalRuleApplicator {
 
     fun applyPhonologicalRule(
         phonemes: List<Phoneme>,
-        phonologicalRule: PhonologicalRule,
+        rule: PhonologicalRule,
         addStartBoundary: Boolean,
         addEndBoundary: Boolean
     ): List<Phoneme> {
         val rawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(phonemes, addStartBoundary, addEndBoundary)
-        val changedPhonemes = applyPhonologicalRule(rawPhonemes, phonologicalRule)
+        val changedPhonemes = applyPhonologicalRule(rawPhonemes, rule)
         return clearChangingPhonemes(changedPhonemes)
     }
 

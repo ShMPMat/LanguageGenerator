@@ -5,15 +5,12 @@ import io.tashtabash.lang.language.morphem.change.ChangeException
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 
 
-fun areChangesValid(lexis: Lexis, changeParadigm: ChangeParadigm): ChangeValidityReport {
+fun areChangesValid(lexis: Lexis, changeParadigm: ChangeParadigm): Result<Unit> {
     try {
         for (word in lexis.words)
             changeParadigm.wordChangeParadigm.getAllWordForms(word, true)
     } catch (e: ChangeException) {
-        return ChangeValidityReport(false, e)
+        return Result.failure(e)
     }
-    return ChangeValidityReport(true)
+    return Result.success(Unit)
 }
-
-
-data class ChangeValidityReport(val isValid: Boolean, val exception: ChangeException? = null)
