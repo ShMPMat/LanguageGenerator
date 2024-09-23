@@ -1,12 +1,18 @@
 package io.tashtabash.lang.language.phonology
 
+import io.tashtabash.lang.language.LanguageException
+import kotlin.math.max
+import kotlin.math.min
 
-class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
+
+data class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTemplate {
+    constructor(vararg valencies: ValencyPlace) : this(valencies.toList())
+
     val nucleusIndex: Int
         get() = valencies.zip(valencies.indices)
             .lastOrNull { it.first.realizationProbability == 1.0 }
             ?.second
-            ?: throw ExceptionInInitializerError("No nucleus (first valency with 1 probability) found.")
+            ?: throw ExceptionInInitializerError("No nucleus (last valency with probability 1) found")
     override val nucleusPhonemeTypes: Set<PhonemeType> = setOf(valencies[nucleusIndex].phonemeType)
 
     override val initialPhonemeTypes: Set<PhonemeType> =
@@ -25,10 +31,7 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         .map { it.phonemeType }
         .toSet()
 
-    override fun test(phonemes: PhonemeSequence): Boolean {
-        val string = phonemes.getTypeRepresentation()
-        return getRegexp().containsMatchIn(string)
-    }
+    override val maxSize = valencies.size
 
     override fun splitOnSyllables(phonemes: PhonemeSequence): Syllables? {
         val syllables = mutableListOf<Syllable>()
@@ -47,6 +50,46 @@ class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : SyllableTempl
         }
 
         return syllables
+    }
+
+    override fun addInitial(initial: PhonemeType) = SyllableValenceTemplate(
+        listOf(ValencyPlace(initial, 0.5)) + valencies
+    )
+
+    override fun addFinal(initial: PhonemeType) = SyllableValenceTemplate(
+        valencies + listOf(ValencyPlace(initial, 0.5))
+    )
+
+    override fun merge(that: SyllableTemplate): SyllableTemplate {
+        if (that !is SyllableValenceTemplate)
+            throw LanguageException("Can't merge 'SyllableValenceTemplate' with '${that.javaClass.name}'")
+
+        val newValencies = mutableListOf<ValencyPlace>()
+        val shift = that.nucleusIndex - nucleusIndex
+        val startIndex = min(0, -shift)
+        val endIndex = max(maxSize, that.maxSize - shift)
+
+        for (i in startIndex until endIndex) {
+            val thisValency = valencies.getOrNull(i)
+            val thatValency = that.valencies.getOrNull(i + shift)
+
+            newValencies +=
+                if (thisValency == null)
+                    thatValency!!
+                else if (thatValency == null)
+                    thisValency
+                else {
+                    if (thisValency.phonemeType != thatValency.phonemeType)
+                        throw LanguageException("Can't unite SyllableValenceTemplates")
+
+                    ValencyPlace(
+                        thisValency.phonemeType,
+                        (thisValency.realizationProbability + thatValency.realizationProbability) / 2
+                    )
+                }
+        }
+
+        return SyllableValenceTemplate(newValencies)
     }
 
     private fun findNucleus(phonemes: List<Phoneme>): Int = phonemes

@@ -9,9 +9,15 @@ interface SyllableTemplate {
     val initialPhonemeTypes: Set<PhonemeType>
     val finalPhonemeTypes: Set<PhonemeType>
 
-    fun test(phonemes: PhonemeSequence): Boolean
+    val maxSize: Int
 
     fun splitOnSyllables(phonemes: PhonemeSequence): Syllables?
+    fun addInitial(initial: PhonemeType): SyllableTemplate
+    fun addFinal(initial: PhonemeType): SyllableTemplate
+    fun merge(that: SyllableTemplate): SyllableTemplate
+
+    fun splitOnSyllables(phonemes: List<Phoneme>) =
+        splitOnSyllables(PhonemeSequence(phonemes))
 
     fun createWord(phonemes: PhonemeSequence, semanticsCore: SemanticsCore): Word? =
         splitOnSyllables(phonemes)?.let { syllables ->
