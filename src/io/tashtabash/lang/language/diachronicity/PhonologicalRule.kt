@@ -13,6 +13,7 @@ data class PhonologicalRule(
     val targetMatchers: List<PhonemeMatcher>,
     val followingMatchers: List<PhonemeMatcher>,
     val resultingPhonemes: List<PhonemeSubstitution>,
+    val allowSyllableStructureChange: Boolean = false
 ) {
     init {
         if (targetMatchers.size != resultingPhonemes.size)
@@ -32,7 +33,8 @@ data class PhonologicalRule(
     override fun toString() = targetMatchers.joinToString("") +
             " -> ${resultingPhonemes.joinToString("")}" +
             " / ${precedingMatchers.joinToString("")}" +
-            " _ ${followingMatchers.joinToString("")}"
+            " _ ${followingMatchers.joinToString("")}" +
+            if (allowSyllableStructureChange) "!" else ""
 }
 
 

@@ -4,6 +4,9 @@ import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
+import io.tashtabash.lang.language.phonology.PhonemeType
+import io.tashtabash.lang.language.phonology.SyllableValenceTemplate
+import io.tashtabash.lang.language.phonology.ValencyPlace
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.util.*
 import org.junit.jupiter.api.Test
@@ -605,6 +608,78 @@ internal class PhonologyTest {
                 AffixCategoryApplicator(createAffix("a- -> d_", "t-"), CategoryRealization.Prefix),
                 AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
                 AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule makes a deletes a consonant changing the syllable structure`() {
+        val words = listOf(
+            createNoun("aba"),
+            createNoun("bapo"),
+            createNoun("bopo"),
+            createNoun("pa"),
+            createNoun("ata"),
+        )
+        val derivations = listOf(
+            Derivation(createAffix("-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("ta-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("to-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("da-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("a-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("-od"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("t-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> - / \$C _ CV")
+            .copy(allowSyllableStructureChange = true)
+
+        val phonologicalRuleApplicator = PhonologicalRuleApplicator()
+        val shiftedLanguage = phonologicalRuleApplicator.applyPhonologicalRule(language, phonologicalRule)
+
+        val expectedSyllableTemplate = SyllableValenceTemplate(
+            ValencyPlace(PhonemeType.Consonant, 0.5),
+            ValencyPlace(PhonemeType.Consonant, 0.5),
+            ValencyPlace(PhonemeType.Consonant, 0.5),
+            ValencyPlace(PhonemeType.Vowel, 1.0),
+            ValencyPlace(PhonemeType.Consonant, 0.5)
+        )
+        assertEquals(phonologicalRuleApplicator.messages, listOf())
+        assertEquals(
+            listOf(
+                createNoun("aba", expectedSyllableTemplate),
+                createNoun("bpo", expectedSyllableTemplate),
+                createNoun("bopo", expectedSyllableTemplate),
+                createNoun("pa", expectedSyllableTemplate),
+                createNoun("ata", expectedSyllableTemplate),
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-\$CaC -> __-_at", "-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("CV- -> t__", "ta-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("to-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("CV- -> d__", "da-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("a-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("aCV- -> t-__", "t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-\$CaC -> __-_od", "-od"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("aCV- -> t-__", "t-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("aCV- -> d-__", "d-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("-\$CaC -> __-_ob", "-ob"), CategoryRealization.Suffix)
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )

@@ -51,7 +51,18 @@ class PhonologicalRuleApplicator {
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         val shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
-        val shiftedLexis = applyPhonologicalRule(language.lexis, rule)
+        var shiftedLexis = applyPhonologicalRule(language.lexis, rule)
+
+        if (rule.allowSyllableStructureChange) {
+            val result = fixSyllableStructure(shiftedLexis, shiftedChangeParadigm)
+
+            result.exceptionOrNull()
+                ?.message
+                ?.let { _messages += it }
+
+            shiftedLexis = result.getOrNull()
+                ?: shiftedLexis
+        }
 
         val changeValidityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
         if (changeValidityReport.isFailure) {
@@ -285,19 +296,27 @@ class PhonologicalRuleApplicator {
             val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
             val prosodies = matchProsodies(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
             val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
-            val syllables = word.syllableTemplate
-                .splitOnSyllables(PhonemeSequence(clearChangingPhonemes(rawPhonemes)))
+            val resultPhonemes = clearChangingPhonemes(rawPhonemes)
+
+            val syllableTemplate =
+                if (rule.allowSyllableStructureChange)
+                    analyzeSyllableStructure(resultPhonemes).getOrNull()
+                else
+                    word.syllableTemplate
+            val syllables = syllableTemplate
+                ?.splitOnSyllables(PhonemeSequence(resultPhonemes))
                 ?.mapIndexed { j, syllable -> syllable.copy(prosodicEnums = prosodies[j]) }
             if (syllables == null) {
                 _messages += "Can't split the word '$word' on syllables after applying the rule, reverting the word"
                 return word
             }
             if (syllables.size != prosodies.size) {
-                _messages += "The word '$word' changed the number of syllables after applying the rule, reverting the word"
+                _messages += "The word '$word' unexpectedly changed the number of syllables after applying the rule, " +
+                        "reverting the word"
                 return word
             }
 
-            return word.copy(syllables = syllables, morphemes = morphemes)
+            return word.copy(syllables = syllables, syllableTemplate = syllableTemplate, morphemes = morphemes)
         } catch (e: NoPhonemeException) {
             _messages += "Can't apply the rule for the word '${word}': ${e.message}"
             return word

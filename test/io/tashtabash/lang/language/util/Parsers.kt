@@ -92,8 +92,8 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
 fun createPhonemes(phonemes: String) =
     phonemes.map { testPhonemeContainer.getPhoneme(it.toString()) }
 
-fun createNoun(phonemes: String) =
-    createNoun(createPhonemes(phonemes))
+fun createNoun(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
+    createNoun(createPhonemes(phonemes), syllableTemplate)
 
 val testPhonemeContainer = ImmutablePhonemeContainer(listOf(
     Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),

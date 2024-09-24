@@ -46,4 +46,5 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer) = PhonologicalRulesCo
         // Consonant deletion
         "C -> - / _ $",
     ).map { createPhonologicalRule(it, phonemeContainer) }
+        .flatMap { listOf(it, it.copy(allowSyllableStructureChange = true)) }
 )
