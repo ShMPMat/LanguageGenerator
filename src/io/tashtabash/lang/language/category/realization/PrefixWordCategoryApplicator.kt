@@ -13,6 +13,7 @@ class PrefixWordCategoryApplicator(word: Word, latch: LatchType) : WordCategoryA
         FoldedWordSequence(listOf(LatchedWord(word.copyWithValues(values), latch)) + words.words)
 
     override fun copy() = PrefixWordCategoryApplicator(word, latch)
+    override fun copy(word: Word) = PrefixWordCategoryApplicator(word, latch)
 
     override fun toString() = "$word, placed before the word $latch"
 }

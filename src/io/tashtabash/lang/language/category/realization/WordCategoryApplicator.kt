@@ -8,4 +8,6 @@ abstract class WordCategoryApplicator(
     val word: Word,
     val latch: LatchType,
     type: CategoryRealization
-) : AbstractCategoryApplicator(type)
+) : AbstractCategoryApplicator(type) {
+    abstract fun copy(word: Word): WordCategoryApplicator
+}

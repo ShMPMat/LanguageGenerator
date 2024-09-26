@@ -13,6 +13,7 @@ class SuffixWordCategoryApplicator(word: Word, latch: LatchType) : WordCategoryA
         FoldedWordSequence(words.words + LatchedWord(word.copyWithValues(values), latch))
 
     override fun copy() = SuffixWordCategoryApplicator(word, latch)
+    override fun copy(word: Word) = SuffixWordCategoryApplicator(word, latch)
 
     override fun toString() = "$word, placed after the word $latch"
 }

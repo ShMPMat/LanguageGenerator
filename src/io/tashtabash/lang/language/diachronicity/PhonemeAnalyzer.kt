@@ -65,9 +65,7 @@ fun analyzePhoneme(categoryApplicator: CategoryApplicator): List<Phoneme> = when
     is FilterApplicator -> categoryApplicator.applicators.flatMap { (applicator, words) ->
             analyzePhoneme(applicator) + words.flatMap { it.toPhonemes() }
         }
-    is PrefixWordCategoryApplicator -> categoryApplicator.word.toPhonemes()
-    is SuffixWordCategoryApplicator -> categoryApplicator.word.toPhonemes()
-    is SuppletionCategoryApplicator -> categoryApplicator.word.toPhonemes()
+    is WordCategoryApplicator -> categoryApplicator.word.toPhonemes()
     is ReduplicationCategoryApplicator, PassingCategoryApplicator -> listOf()
     else -> throw LanguageException("Unknown category applicator '$categoryApplicator'")
 }

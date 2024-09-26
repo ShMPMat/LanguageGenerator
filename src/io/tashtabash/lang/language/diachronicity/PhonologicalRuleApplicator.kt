@@ -267,18 +267,9 @@ class PhonologicalRuleApplicator {
                             words.map { applyPhonologicalRule(it, rule) }
                 }
             )
-            is PassingCategoryApplicator -> PassingCategoryApplicator
-            is PrefixWordCategoryApplicator -> PrefixWordCategoryApplicator(
+            is ReduplicationCategoryApplicator, PassingCategoryApplicator -> categoryApplicator.copy()
+            is WordCategoryApplicator -> categoryApplicator.copy(
                 applyPhonologicalRule(categoryApplicator.word, rule),
-                categoryApplicator.latch
-            )
-            is ReduplicationCategoryApplicator -> ReduplicationCategoryApplicator()
-            is SuffixWordCategoryApplicator -> SuffixWordCategoryApplicator(
-                applyPhonologicalRule(categoryApplicator.word, rule),
-                categoryApplicator.latch
-            )
-            is SuppletionCategoryApplicator -> SuppletionCategoryApplicator(
-                applyPhonologicalRule(categoryApplicator.word, rule)
             )
             else -> throw LanguageException("Unknown category applicator '$categoryApplicator'")
         }

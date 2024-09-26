@@ -12,6 +12,7 @@ class SuppletionCategoryApplicator(word: Word) : WordCategoryApplicator(word, La
         words.swapWord(wordPosition) { w -> word.copyAndAddValues(w.categoryValues + values) }
 
     override fun copy() = SuppletionCategoryApplicator(word)
+    override fun copy(word: Word) = SuppletionCategoryApplicator(word)
 
     override fun toString() = "Suppletion: $word"
 }
