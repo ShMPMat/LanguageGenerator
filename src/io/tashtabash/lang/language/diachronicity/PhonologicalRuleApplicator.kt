@@ -225,31 +225,10 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm {
-        val shiftedSpeechPartChangeParadigms = changeParadigm.wordChangeParadigm
-            .speechPartChangeParadigms
-            .mapValues {
-                applyPhonologicalRule(it.value, rule)
-            }
-        val shiftedWordChangeParadigm = WordChangeParadigm(
-            changeParadigm.wordChangeParadigm.categories,
-            shiftedSpeechPartChangeParadigms
-        )
+        val shiftedWordChangeParadigm = changeParadigm.wordChangeParadigm
+            .mapApplicators { applyPhonologicalRule(it, rule) }
 
         return changeParadigm.copy(wordChangeParadigm = shiftedWordChangeParadigm)
-    }
-
-    fun applyPhonologicalRule(
-        speechPartChangeParadigm: SpeechPartChangeParadigm,
-        rule: PhonologicalRule
-    ): SpeechPartChangeParadigm {
-        val applicators = speechPartChangeParadigm.applicators
-            .mapValues { (_, values) ->
-                values.mapValues { (_, applicator) ->
-                    applyPhonologicalRule(applicator, rule)
-                }
-            }
-
-        return speechPartChangeParadigm.copy(applicators = applicators)
     }
 
     fun applyPhonologicalRule(categoryApplicator: CategoryApplicator, rule: PhonologicalRule): CategoryApplicator =

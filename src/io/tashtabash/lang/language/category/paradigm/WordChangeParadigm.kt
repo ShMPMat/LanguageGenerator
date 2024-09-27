@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
+import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
@@ -111,6 +112,20 @@ data class WordChangeParadigm(
             .map { apply(word, categoryValues = it).unfold() to it }
 
     val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
+
+    fun mapApplicators(mapper: (CategoryApplicator) -> CategoryApplicator) = WordChangeParadigm(
+        categories,
+        speechPartChangeParadigms.mapValues {  (_, speechPartChangeParadigm) ->
+            val mappedApplicators = speechPartChangeParadigm.applicators
+                .mapValues { (_, exponenceToApplicator) ->
+                    exponenceToApplicator.mapValues { (_, applicator) ->
+                        mapper(applicator)
+                    }
+                }
+
+            speechPartChangeParadigm.copy(applicators = mappedApplicators)
+        }
+    )
 
     override fun toString() = categories.joinToString("\n") + "\n\n" +
             speechPartChangeParadigms

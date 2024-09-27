@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
+import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
 import io.tashtabash.lang.language.phonology.PhonemeType
@@ -33,7 +34,7 @@ internal class PhonologyTest {
         val nounChangeParadigm = makeDefNounChangeParadigm(
             AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
-            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            SuppletionCategoryApplicator(createNoun("baboboba")),
             AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
         )
         val language = makeDefLang(words, derivations, nounChangeParadigm)
@@ -64,7 +65,7 @@ internal class PhonologyTest {
             makeDefNounChangeParadigm(
                 AffixCategoryApplicator(createAffix("i-"), CategoryRealization.Prefix),
                 AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
-                AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+                SuppletionCategoryApplicator(createNoun("bibobobi")),
                 AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
