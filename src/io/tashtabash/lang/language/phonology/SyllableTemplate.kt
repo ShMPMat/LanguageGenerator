@@ -23,4 +23,11 @@ interface SyllableTemplate {
         splitOnSyllables(phonemes)?.let { syllables ->
             Word(syllables, this, semanticsCore)
         }
+
+    fun apply(word: Word): Word? {
+        val fixedSyllables = splitOnSyllables(word.toPhonemes())
+            ?: return null
+
+        return word.copy(syllables = fixedSyllables, syllableTemplate = this)
+    }
 }
