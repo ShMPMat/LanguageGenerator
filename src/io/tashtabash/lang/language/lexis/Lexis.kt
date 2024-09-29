@@ -28,6 +28,23 @@ data class Lexis(
     fun getWordOrNull(meaning: Meaning) = words
         .firstOrNull { it.semanticsCore.hasMeaning(meaning) }
 
+    // Assumes that the word order is the same
+    fun shift(newWords: List<Word>): Lexis {
+        if (newWords.size != words.size)
+            throw LanguageException("Can't shift words: the size has been changed: ${words.size} to ${newWords.size}")
+
+        val newCopulas = copula.mapValues { (_, word) ->
+            val i = words.indexOf(word)
+            newWords[i]
+        }
+        val newQuestionMarkers = questionMarker.mapValues { (_, word) ->
+            val i = words.indexOf(word)
+            newWords[i]
+        }
+
+        return Lexis(newWords, newCopulas, newQuestionMarkers)
+    }
+
     override fun toString() = """
         |copula: $copula
         |question marker: $questionMarker
