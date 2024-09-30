@@ -133,8 +133,6 @@ class LexisGenerator(
     private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
         val copula = mutableMapOf<CopulaType, Word>()
 
-        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-            copula[CopulaType.Verb] = words.first { it.semanticsCore.hasMeaning("be") }
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
             val particle = generateWord(
                 SemanticsCore("copula_particle", SpeechPart.Particle.toDefault())
@@ -157,6 +155,9 @@ class LexisGenerator(
         }
 
         injectTags()
+
+        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
+            copula[CopulaType.Verb] = words.first { it.semanticsCore.hasMeaning("be") }
 
         return Lexis(words, copula, questionMarker)
     }
