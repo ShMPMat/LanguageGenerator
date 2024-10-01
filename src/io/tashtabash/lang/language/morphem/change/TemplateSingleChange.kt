@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.morphem.change
 
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.derivation.DerivationClass
+import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
@@ -22,28 +23,34 @@ data class TemplateSingleChange(
     fun findGoodIndex(word: Word): Int? {
         return when (position) {
             Position.Beginning ->
-                if (testFromPosition(word))
+                if (testFromPosition(word.toPhonemes()))
                     phonemeMatchers.size
                 else null
             Position.End -> {
                 val sublistStart = word.size - phonemeMatchers.size
-                if (testFromPosition(word)) sublistStart else null
+                if (testFromPosition(word.toPhonemes())) sublistStart else null
             }
         }
     }
 
     override fun test(word: Word) = findGoodIndex(word) != null
 
-    private fun getTestedPhonemes(word: Word) = when (position) {
-        Position.Beginning -> word.toPhonemes().take(phonemeMatchers.size)
-        Position.End -> word.toPhonemes().takeLast(phonemeMatchers.size)
+    private fun getTestedPhonemes(phonemes: List<Phoneme>): List<ChangingPhoneme> = when (position) {
+        Position.End -> mirror().getTestedPhonemes(phonemes.reversed())
+        Position.Beginning -> {
+            val wordPhonemes = phonemes.take(phonemeMatchers.size)
+                .map { ChangingPhoneme.ExactPhoneme(it) }
+            val missingPhonemes = (phonemes.size..phonemeMatchers.size).map { ChangingPhoneme.Boundary }
+
+            missingPhonemes + wordPhonemes
+        }
     }
 
-    private fun testFromPosition(word: Word) = phonemeMatchers
-        .zip(getTestedPhonemes(word))
+    private fun testFromPosition(phonemes: List<Phoneme>) = phonemeMatchers
+        .zip(getTestedPhonemes(phonemes))
         .all { (matcher, phoneme) -> matcher.match(phoneme) }
 
-    fun getFullChange() = when (position) {
+    private fun getFullChange() = when (position) {
         Position.Beginning -> affix + matchedPhonemesSubstitution
         Position.End -> matchedPhonemesSubstitution + affix
     }
