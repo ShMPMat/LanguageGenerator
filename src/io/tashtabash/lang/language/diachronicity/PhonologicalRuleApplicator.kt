@@ -16,10 +16,7 @@ import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
 import io.tashtabash.lang.language.morphem.change.*
-import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.unitePhonemeSubstitutions
+import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
@@ -50,7 +47,7 @@ class PhonologicalRuleApplicator {
 
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
-        val shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
+        var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
         var shiftedLexis = applyPhonologicalRule(language.lexis, rule)
 
         if (rule.allowSyllableStructureChange) {
@@ -61,7 +58,11 @@ class PhonologicalRuleApplicator {
                 ?.let { _messages += it }
 
             shiftedLexis = result.getOrNull()
+                ?.first
                 ?: shiftedLexis
+            shiftedChangeParadigm = result.getOrNull()
+                ?.second
+                ?: shiftedChangeParadigm
         }
 
         val changeValidityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
@@ -258,7 +259,7 @@ class PhonologicalRuleApplicator {
             applyPhonologicalRule(it, rule)
         }
 
-        return lexis.copy(words = shiftedWords)
+        return lexis.shift(shiftedWords)
     }
 
     fun applyPhonologicalRule(word: Word, rule: PhonologicalRule): Word {

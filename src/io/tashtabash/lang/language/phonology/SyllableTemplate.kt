@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.phonology
 
+import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.lexis.SemanticsCore
 import io.tashtabash.lang.language.lexis.Word
 
@@ -24,10 +25,14 @@ interface SyllableTemplate {
             Word(syllables, this, semanticsCore)
         }
 
-    fun apply(word: Word): Word? {
+    fun applyOrNull(word: Word): Word? {
         val fixedSyllables = splitOnSyllables(word.toPhonemes())
             ?: return null
 
         return word.copy(syllables = fixedSyllables, syllableTemplate = this)
     }
+
+    fun apply(word: Word): Word =
+        applyOrNull(word)
+            ?: throw LanguageException("Cannot apply the syllableTemplate $this to the word '$word'")
 }

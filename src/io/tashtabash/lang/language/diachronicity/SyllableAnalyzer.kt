@@ -1,6 +1,8 @@
 package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.WordCategoryApplicator
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.change.ChangeException
@@ -8,43 +10,90 @@ import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 
 
-fun fixSyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm, maxLength: Int = 15): Result<Lexis> {
+fun fixSyllableStructure(
+    lexis: Lexis,
+    changeParadigm: ChangeParadigm,
+    maxLength: Int = 15
+): Result<Pair<Lexis, ChangeParadigm>> {
+    var fixedChangeParadigm = changeParadigm
     val fixedWords = lexis.words
         .map {
-            fixSyllableStructure(it, changeParadigm, maxLength)
+            val (word, newChangeParadigm) = fixSyllableStructure(it, fixedChangeParadigm, maxLength)
                 .getOrElse { e -> return Result.failure(e) }
+
+            fixedChangeParadigm = newChangeParadigm
+            word
         }
 
-    val fixedLexis = lexis.copy(words = fixedWords)
+    val fixedLexis = lexis.shift(fixedWords)
 
-    return Result.success(unifySyllableStructure(fixedLexis))
+    return Result.success(unifySyllableStructure(fixedLexis, fixedChangeParadigm))
 }
 
-fun unifySyllableStructure(lexis: Lexis): Lexis {
-    var resultTemplate = lexis.words[0].syllableTemplate
+fun unifySyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<Lexis, ChangeParadigm> {
+    val changeParadigmWords = changeParadigm.wordChangeParadigm
+        .speechPartChangeParadigms
+        .flatMap { (_, paradigm) -> paradigm.applicators.values }
+        .flatMap { it.values.filterIsInstance<WordCategoryApplicator>() }
+        .map { it.word }
 
-    for (word in lexis.words.drop(1))
+    var resultTemplate = lexis.words[0].syllableTemplate
+    for (word in lexis.words.drop(1) + changeParadigmWords)
         resultTemplate = resultTemplate.merge(word.syllableTemplate)
 
     val newWords = lexis.words
-        .map { it.copy(syllableTemplate = resultTemplate) }
+        .map { resultTemplate.apply(it) }
+    val newChangeParadigm = changeParadigm.wordChangeParadigm
+        .mapApplicators {
+            when (it) {
+                is WordCategoryApplicator -> it.copy(resultTemplate.apply(it.word))
+                else -> it
+            }
+        }
 
-    return lexis.copy(words = newWords)
+    return lexis.shift(newWords) to changeParadigm.copy(wordChangeParadigm = newChangeParadigm)
 }
 
-fun fixSyllableStructure(word: Word, changeParadigm: ChangeParadigm, maxLength: Int = 15): Result<Word> {
+fun fixSyllableStructure(
+    word: Word,
+    changeParadigm: ChangeParadigm,
+    maxLength: Int
+): Result<Pair<Word, ChangeParadigm>> {
+    var currentChangeParadigm = changeParadigm
+
     for (template in SyllableStructureIterator(word.syllableTemplate, maxLength))
         try {
-            val fixedSyllables = template.splitOnSyllables(word.toPhonemes())
+            val fixedWord = template.applyOrNull(word)
                 ?: continue
-            val fixedWord = word.copy(syllables = fixedSyllables, syllableTemplate = template)
-            changeParadigm.wordChangeParadigm.getAllWordForms(fixedWord, true)
+            currentChangeParadigm = mergeSyllableTemplate(changeParadigm, template)
+            currentChangeParadigm.wordChangeParadigm.getAllWordForms(fixedWord, true)
 
-            return Result.success(fixedWord)
+            return Result.success(fixedWord to currentChangeParadigm)
         } catch (e: ChangeException) {
         }
 
     return Result.failure(LanguageException("Can't create a syllable for all the changes of '$word'"))
+}
+
+// Changes syllable structure for words in case it became more complex
+private fun mergeSyllableTemplate(
+    changeParadigm: ChangeParadigm,
+    syllableTemplate: SyllableTemplate
+): ChangeParadigm {
+    val newWordChangeParadigm = changeParadigm.wordChangeParadigm
+        .mapApplicators { mergeSyllableTemplate(it, syllableTemplate) }
+
+    return changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
+}
+
+fun mergeSyllableTemplate(
+    applicator: CategoryApplicator,
+    syllableTemplate: SyllableTemplate
+): CategoryApplicator = when (applicator) {
+    is WordCategoryApplicator -> syllableTemplate.applyOrNull(applicator.word)
+        ?.let { applicator.copy(it) }
+        ?: applicator
+    else -> applicator
 }
 
 fun analyzeSyllableStructure(
