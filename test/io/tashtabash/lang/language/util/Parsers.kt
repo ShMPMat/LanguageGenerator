@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.util
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.language.diachronicity.createPhonologicalRule
+import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
@@ -93,7 +94,14 @@ fun createPhonemes(phonemes: String) =
     phonemes.map { testPhonemeContainer.getPhoneme(it.toString()) }
 
 fun createNoun(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
-    createNoun(createPhonemes(phonemes), syllableTemplate)
+    createWord(phonemes, SpeechPart.Noun, syllableTemplate)
+
+fun createWord(
+    phonemes: String,
+    speechPart: SpeechPart,
+    syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()
+) =
+    createWord(createPhonemes(phonemes), speechPart, syllableTemplate)
 
 val testPhonemeContainer = ImmutablePhonemeContainer(listOf(
     Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),

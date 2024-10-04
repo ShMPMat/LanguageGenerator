@@ -1,23 +1,30 @@
 package io.tashtabash.lang.language.util
 
+import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.*
 import org.opentest4j.TestAbortedException
 
 
-fun createNoun(vararg phonemes: Phoneme) =
-    createNoun(phonemes.toList())
-
-fun createNoun(phonemes: List<Phoneme>, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
+fun createWord(
+    phonemes: List<Phoneme>,
+    speechPart: SpeechPart,
+    syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()
+) =
     syllableTemplate.createWord(
         PhonemeSequence(phonemes.toList()),
-        makeSemanticsCore()
+        makeSemanticsCore(speechPart)
     ) ?: throw TestAbortedException("Wrong word creation")
 
 fun Word.withMorphemes(rootIdx: Int, vararg lengths: Int) =
     copy(
         morphemes = lengths.mapIndexed { i, it -> MorphemeData(it, listOf(), i == rootIdx) }
+    )
+
+fun Word.withStaticCategories(vararg staticCategories: CategoryValue) =
+    copy(
+        semanticsCore = semanticsCore.copy(staticCategories = staticCategories.toSet())
     )
 
 fun getPhonySyllableTemplate(): SyllableTemplate =
@@ -30,5 +37,5 @@ fun getPhonySyllableTemplate(): SyllableTemplate =
         ValencyPlace(PhonemeType.Consonant, 0.5)
     )
 
-fun makeSemanticsCore() =
-    SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(SpeechPart.Noun), 1.0)
+fun makeSemanticsCore(speechPart: SpeechPart = SpeechPart.Noun) =
+    SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(speechPart), 1.0)
