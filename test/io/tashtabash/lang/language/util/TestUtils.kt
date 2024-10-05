@@ -22,6 +22,9 @@ fun Word.withMorphemes(rootIdx: Int, vararg lengths: Int) =
         morphemes = lengths.mapIndexed { i, it -> MorphemeData(it, listOf(), i == rootIdx) }
     )
 
+fun Word.withMorphemes(vararg morphemes: MorphemeData) =
+    copy(morphemes = morphemes.toList())
+
 fun Word.withStaticCategories(vararg staticCategories: CategoryValue) =
     copy(
         semanticsCore = semanticsCore.copy(staticCategories = staticCategories.toSet())

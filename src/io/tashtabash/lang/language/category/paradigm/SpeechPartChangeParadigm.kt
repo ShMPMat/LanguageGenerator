@@ -23,13 +23,14 @@ data class SpeechPartChangeParadigm(
     val orderedApplicators = exponenceClusters
         .map { it to applicators.getValue(it) }
 
-    fun getCategory(name: String) = categories
-        .first { it.category.outType == name }
-
-    fun getCluster(cluster: ExponenceCluster) = exponenceClusters.firstOrNull { it == cluster }
+    fun getCluster(cluster: ExponenceCluster) = exponenceClusters
+        .firstOrNull { it == cluster }
 
     fun getCategoryOrNull(name: String) = categories
         .firstOrNull { it.category.outType == name }
+
+    fun getCategory(name: String) = categories
+        .first { it.category.outType == name }
 
     fun getCategoryValues(name: String) = getCategoryOrNull(name)
         ?.category
@@ -37,9 +38,8 @@ data class SpeechPartChangeParadigm(
         ?: emptyList()
 
     fun apply(word: Word, latchType: LatchType, categoryValues: Set<SourcedCategoryValue>): WordClauseResult {
-        if (word.semanticsCore.speechPart != speechPart) throw ChangeException(
-            "SpeechPartChangeParadigm for $speechPart has been given ${word.semanticsCore.speechPart}"
-        )
+        if (word.semanticsCore.speechPart != speechPart)
+            throw ChangeException("SpeechPartChangeParadigm for $speechPart received ${word.semanticsCore.speechPart}")
 
         var currentClause = FoldedWordSequence(LatchedWord(word, latchType))
         var currentWord = word

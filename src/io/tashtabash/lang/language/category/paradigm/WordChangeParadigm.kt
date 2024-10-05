@@ -27,7 +27,7 @@ data class WordChangeParadigm(
             speechPartChangeParadigms[word.semanticsCore.speechPart]
                 ?.apply(word, latchType, applicableValues)
                 ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}"),
-            applicableValues
+            applicableValues + getStaticCategoryValues(word)
         )
     }
 
@@ -54,11 +54,7 @@ data class WordChangeParadigm(
         val isArticle = word.semanticsCore.speechPart.type == SpeechPart.Article
         return if (isAdnominal || isArticle) {
             val newCv = values.map {
-                SourcedCategoryValue(
-                    it.categoryValue,
-                    Agreement(SyntaxRelation.Agent, nominals),
-                    it.parent
-                )
+                it.copy(source = Agreement(SyntaxRelation.Agent, nominals))
             }
             apply(word, latchType, newCv).words.words
         } else
@@ -79,13 +75,20 @@ data class WordChangeParadigm(
             .filter { v ->
                 word.semanticsCore.staticCategories.none { it.parentClassName == v.categoryValue.parentClassName }
             }
-            .union(word.semanticsCore.staticCategories.map { v ->
-                val value = paradigm.categories.first { it.category.outType == it.category.outType }
-
-                SourcedCategoryValue(v, Self, value)
-            })
+            .union(getStaticCategoryValues(word))
             .toList()
     }
+
+    private fun getStaticCategoryValues(word: Word): List<SourcedCategoryValue> =
+        word.semanticsCore
+            .staticCategories
+            .mapNotNull {
+                val parentCategory = speechPartChangeParadigms[word.semanticsCore.speechPart]
+                    ?.getCategoryOrNull(it.parentClassName)
+                    ?: return@mapNotNull null
+
+                SourcedCategoryValue(it, Self, parentCategory)
+            }
 
     fun getSpeechPartParadigm(speechPart: TypedSpeechPart) = speechPartChangeParadigms.getValue(speechPart)
     fun getSpeechPartParadigms(speechPart: SpeechPart) = speechPartChangeParadigms
@@ -107,7 +110,10 @@ data class WordChangeParadigm(
                 .map { it.actualSourcedValues }
         )
 
-    fun getAllWordForms(word: Word, includeOptionalCategories: Boolean): List<Pair<WordSequence, SourcedCategoryValues>> =
+    fun getAllWordForms(
+        word: Word,
+        includeOptionalCategories: Boolean
+    ): List<Pair<WordSequence, SourcedCategoryValues>> =
         getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
             .map { apply(word, categoryValues = it).unfold() to it }
 
@@ -115,7 +121,7 @@ data class WordChangeParadigm(
 
     fun mapApplicators(mapper: (CategoryApplicator) -> CategoryApplicator) = WordChangeParadigm(
         categories,
-        speechPartChangeParadigms.mapValues {  (_, speechPartChangeParadigm) ->
+        speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
                 .mapValues { (_, exponenceToApplicator) ->
                     exponenceToApplicator.mapValues { (_, applicator) ->
