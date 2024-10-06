@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.phonology.matcher
 
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import kotlin.math.max
 
 
@@ -31,8 +32,10 @@ fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): Phone
     if (phonemeMatchers.any { it is BorderPhonemeMatcher})
         return null
 
-    if (phonemeMatchers.all { it is ExactPhonemeMatcher} && first == second)
-        return first
+    if (phonemeMatchers.all { it is ExactPhonemeMatcher})
+        return if (first == second)
+            first
+        else null
     if (phonemeMatchers.any { it is ExactPhonemeMatcher } && phonemeMatchers.any { it is TypePhonemeMatcher }) {
         val exactPhonemeMatcher = phonemeMatchers.filterIsInstance<ExactPhonemeMatcher>()
             .first()
@@ -50,7 +53,7 @@ fun unitePhonemeMatchers(first: PhonemeMatcher?, second: PhonemeMatcher?): Phone
         val absentModifierPhonemeMatcher = phonemeMatchers.filterIsInstance<AbsentModifierPhonemeMatcher>()
             .first()
 
-        if (absentModifierPhonemeMatcher.match(exactPhonemeMatcher.phoneme))
+        if (absentModifierPhonemeMatcher.match(ChangingPhoneme.ExactPhoneme(exactPhonemeMatcher.phoneme)))
             return exactPhonemeMatcher
 
         return null
