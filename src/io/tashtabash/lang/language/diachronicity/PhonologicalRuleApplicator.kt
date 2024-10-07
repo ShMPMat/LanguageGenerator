@@ -103,7 +103,7 @@ class PhonologicalRuleApplicator {
     fun applyPhonologicalRule(compound: Compound, rule: PhonologicalRule): Compound {
         return try {
             val shiftedInfix = applyPhonologicalRule(
-                compound.infix.phonemes,
+                compound.infix.phonemes.map { it to listOf() },
                 rule,
                 addStartBoundary = false,
                 addEndBoundary = false
@@ -136,7 +136,7 @@ class PhonologicalRuleApplicator {
                             val prefixPhonemes = templateChange.affix
                                 .map { it.getSubstitutePhoneme() }
                             var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
-                                prefixPhonemes,
+                                prefixPhonemes.map { it to listOf() },
                                 addStartBoundary = true,
                                 addEndBoundary = false
                             )
@@ -265,7 +265,8 @@ class PhonologicalRuleApplicator {
     fun applyPhonologicalRule(word: Word, rule: PhonologicalRule): Word {
         try {
             val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
-            val prosodies = matchProsodies(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
+            val prosodies = rawPhonemes.filterIsInstance<ChangingPhoneme.ExactPhoneme>()
+                .mapNotNull { it.prosody }
             val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
             val resultPhonemes = clearChangingPhonemes(rawPhonemes)
 
@@ -315,7 +316,7 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(
-        phonemes: List<Phoneme>,
+        phonemes: List<Pair<Phoneme, List<Prosody>?>>,
         rule: PhonologicalRule,
         addStartBoundary: Boolean,
         addEndBoundary: Boolean
@@ -341,26 +342,14 @@ class PhonologicalRuleApplicator {
                 continue
 
             val newPhoneme = resultingPhonemes[j].substitute(phonemes[shift + j].phoneme)
-            phonemes[shift + j] =
-                newPhoneme?.let { ChangingPhoneme.ExactPhoneme(it) } ?: ChangingPhoneme.DeletedPhoneme
-        }
-    }
-
-    private fun matchProsodies(oldWord: Word, rawNewPhonemes: List<Phoneme?>): List<List<Prosody>> {
-        val prosodyContour = getProsodyContour(oldWord)
-        val newProsodies = mutableListOf<List<Prosody>>()
-        var oldSyllableIdx = 0
-
-        for ((phoneme, prosodies) in rawNewPhonemes.zip(prosodyContour)) {
-            if (prosodies != null) {
-                if (phoneme != null)
-                    newProsodies += oldWord.syllables[oldSyllableIdx].prosodicEnums
-
-                oldSyllableIdx++
+            val newProsody = phonemes[shift + j].let {
+                if (it is ChangingPhoneme.ExactPhoneme)
+                    it.prosody
+                else null
             }
+            phonemes[shift + j] =
+                newPhoneme?.let { ChangingPhoneme.ExactPhoneme(it, newProsody) } ?: ChangingPhoneme.DeletedPhoneme
         }
-
-        return newProsodies
     }
 
     private fun matchMorphemes(oldWord: Word, rawNewPhonemes: List<Phoneme?>): List<MorphemeData> =
@@ -393,15 +382,5 @@ class PhonologicalRuleApplicator {
         }
 
         return newMorphemes
-    }
-
-    // null - not a nucleus; empty list - nucleus w/o prosody
-    private fun getProsodyContour(word: Word): List<List<Prosody>?> {
-        return word.syllables.flatMap { syllable ->
-            val prefix = (0 until syllable.nucleusIdx).map<Int, List<Prosody>?> { null }
-            val postfix = (syllable.nucleusIdx + 1 until syllable.size).map<Int, List<Prosody>?> { null }
-
-            prefix + listOf(syllable.prosodicEnums) + postfix
-        }
     }
 }

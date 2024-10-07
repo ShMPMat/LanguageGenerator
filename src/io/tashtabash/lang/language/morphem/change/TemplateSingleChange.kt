@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.morphem.change
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
+import io.tashtabash.lang.language.diachronicity.getChangingPhonemes
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
@@ -20,9 +21,9 @@ data class TemplateSingleChange(
     val affix: List<ExactPhonemeSubstitution>
 ) : TemplateChange() {
     fun findGoodIndex(word: Word): Int? =
-        findGoodIndex(word.toPhonemes())
+        findGoodIndex(getChangingPhonemes(word, addStartBoundary = false, addEndBoundary = false))
 
-    fun findGoodIndex(phonemes: List<Phoneme>): Int? {
+    fun findGoodIndex(phonemes: List<ChangingPhoneme>): Int? {
         return when (position) {
             Position.End -> mirror().findGoodIndex(phonemes.reversed())
                 ?.let { phonemes.size - it }
@@ -38,9 +39,8 @@ data class TemplateSingleChange(
         }
     }
 
-    private fun getBeginningTestedPhonemes(phonemes: List<Phoneme>): List<ChangingPhoneme> {
+    private fun getBeginningTestedPhonemes(phonemes: List<ChangingPhoneme>): List<ChangingPhoneme> {
         val wordPhonemes = phonemes.take(phonemeMatchers.size)
-            .map { ChangingPhoneme.ExactPhoneme(it) }
         val missingPhonemes = (wordPhonemes.size until phonemeMatchers.size).map { ChangingPhoneme.Boundary }
 
         return missingPhonemes + wordPhonemes
