@@ -13,4 +13,9 @@ object PassingPhonemeMatcher: PhonemeMatcher() {
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         true
+
+    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+        BorderPhonemeMatcher -> null
+        else -> other ?: this
+    }
 }

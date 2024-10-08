@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.phonology.matcher
 
+import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeType
@@ -15,4 +16,20 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme is ChangingPhoneme.ExactPhoneme
                 && changingPhoneme.phoneme.type == phonemeType
+
+    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+        is AbsentModifierPhonemeMatcher ->
+            TODO("Use matcher sum")
+        is ExactPhonemeMatcher ->
+            if (other.phoneme.type == phonemeType)
+                other
+            else null
+        is TypePhonemeMatcher ->
+            if (this == other)
+                this
+            else null
+        PassingPhonemeMatcher, null -> this
+        BorderPhonemeMatcher -> null
+        else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")
+    }
 }

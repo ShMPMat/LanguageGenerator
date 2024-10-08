@@ -1,0 +1,42 @@
+package io.tashtabash.lang.language.phonology.matcher
+
+import io.tashtabash.lang.language.phonology.PhonemeType
+import io.tashtabash.lang.language.util.testPhonemeContainer
+import io.tashtabash.lang.utils.cartesianProduct
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
+
+
+internal class PhonemeMatcherTest {
+    @ParameterizedTest(name = "{0} combined with {1} = {1} combined with {0}")
+    @MethodSource("phonemeMatcherProvider")
+    fun `times method is commutative`(first: PhonemeMatcher?, second: PhonemeMatcher?) {
+        assertEquals(
+            first?.times(second),
+            second?.times(first)
+        )
+    }
+
+    companion object {
+        @JvmStatic
+        fun phonemeMatcherProvider(): Stream<Arguments> {
+            val matchers = listOf(
+                PassingPhonemeMatcher,
+                BorderPhonemeMatcher,
+                ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("a")),
+                ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("o")),
+                ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("b")),
+                ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t")),
+                TypePhonemeMatcher(PhonemeType.Vowel),
+                TypePhonemeMatcher(PhonemeType.Consonant)
+            )
+
+            return cartesianProduct(matchers, matchers)
+                .map { (f, s) -> Arguments.of(f, s) }
+                .stream()
+        }
+    }
+}

@@ -6,6 +6,7 @@ import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
+import kotlin.math.max
 
 
 abstract class PhonemeMatcher {
@@ -25,6 +26,8 @@ abstract class PhonemeMatcher {
 
         return true
     }
+
+    abstract operator fun times(other: PhonemeMatcher?): PhonemeMatcher?
 
     override fun hashCode(): Int {
         return name.hashCode()
@@ -72,3 +75,16 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
 }
 
 private val absentModifierRegex = "\\[-.*]".toRegex()
+
+
+fun unitePhonemeMatchers(first: List<PhonemeMatcher>, second: List<PhonemeMatcher>): List<PhonemeMatcher?> {
+    val newMatchersLength = max(first.size, second.size)
+
+    return (0 until newMatchersLength).map { j ->
+        val curFirst = first.getOrNull(j)
+        val curSecond = second.getOrNull(j)
+
+        curFirst?.times(curSecond)
+            ?: curSecond?.times(curFirst)
+    }
+}

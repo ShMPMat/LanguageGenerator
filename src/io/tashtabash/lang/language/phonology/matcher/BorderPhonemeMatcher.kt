@@ -13,4 +13,9 @@ object BorderPhonemeMatcher: PhonemeMatcher() {
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme == ChangingPhoneme.Boundary
+
+    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+        BorderPhonemeMatcher, null -> this
+        else -> null
+    }
 }
