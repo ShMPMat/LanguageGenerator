@@ -29,6 +29,8 @@ class ExactPhonemeMatcher(val phoneme: Phoneme): PhonemeMatcher() {
             if (phoneme.type == other.phonemeType)
                 this
             else null
+        is MulMatcher ->
+            other * this
         PassingPhonemeMatcher, null -> this
         BorderPhonemeMatcher -> null
         else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")

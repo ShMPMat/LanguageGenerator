@@ -19,7 +19,7 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
         is AbsentModifierPhonemeMatcher ->
-            TODO("Use matcher sum")
+            MulMatcher(this, other)
         is ExactPhonemeMatcher ->
             if (other.phoneme.type == phonemeType)
                 other
@@ -28,6 +28,8 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
             if (this == other)
                 this
             else null
+        is MulMatcher ->
+            other * this
         PassingPhonemeMatcher, null -> this
         BorderPhonemeMatcher -> null
         else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")

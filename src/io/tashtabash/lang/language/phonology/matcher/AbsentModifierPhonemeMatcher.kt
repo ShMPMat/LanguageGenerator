@@ -7,8 +7,10 @@ import io.tashtabash.lang.language.phonology.PhonemeModifier
 
 
 class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatcher() {
+    constructor(vararg modifiers: PhonemeModifier) : this(modifiers.toSet() )
+
     override val name =
-        "[-${modifiers.joinToString(",")}]"
+        "[-${modifiers.sorted().joinToString(",")}]"
 
     override fun match(phoneme: Phoneme?) =
         phoneme?.modifiers
@@ -24,10 +26,12 @@ class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): Phoneme
             AbsentModifierPhonemeMatcher(modifiers + other.modifiers)
         is ExactPhonemeMatcher ->
             if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
-                this
+                other
             else null
         is TypePhonemeMatcher ->
-            TODO("Use matcher sum")
+            MulMatcher(other, this)
+        is MulMatcher ->
+            other * this
         PassingPhonemeMatcher, null -> this
         BorderPhonemeMatcher -> null
         else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")
