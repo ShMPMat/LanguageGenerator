@@ -2,10 +2,9 @@ package io.tashtabash.lang.language.phonology.matcher
 
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeModifier.*
-import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.PhonemeType.*
 import io.tashtabash.lang.language.util.testPhonemeContainer
-import io.tashtabash.lang.utils.cartesianProduct
+import io.tashtabash.lang.utils.composeUniquePairs
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -51,7 +50,7 @@ internal class PhonemeMatcherTest {
                 MulMatcher(TypePhonemeMatcher(Vowel), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
             )
 
-            return cartesianProduct(matchers, matchers)
+            return composeUniquePairs(matchers, matchers)
                 .map { (f, s) -> Arguments.of(f, s) }
                 .stream()
         }
