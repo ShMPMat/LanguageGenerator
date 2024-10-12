@@ -38,26 +38,32 @@ data class PhonologicalRule(
 }
 
 
-fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer) = PhonologicalRule(
-    rule.dropWhile { it != '/' }
-        .drop(1)
-        .dropLastWhile { it != '_' }
-        .dropLast(1)
-        .replace(" ", "")
-        .let { createPhonemeMatchers(it, phonemeContainer) },
-    rule.dropLastWhile { it != '>' }
-        .dropLast(2)
-        .replace(" ", "")
-        .let { createPhonemeMatchers(it, phonemeContainer) },
-    rule.dropWhile { it != '/' }
-        .dropWhile { it != '_' }
-        .drop(1)
-        .replace(" ", "")
-        .let { createPhonemeMatchers(it, phonemeContainer) },
-    rule.dropWhile { it != '>' }
-        .drop(1)
-        .dropLastWhile { it != '/' }
-        .dropLast(1)
-        .replace(" ", "")
-        .let { createPhonemeSubstitutions(it, phonemeContainer) },
-)
+fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer): PhonologicalRule {
+    val allowSyllableStructureChange = rule.last() == '!'
+    val clearedRule = rule.dropLastWhile { it == '!' }
+
+    return PhonologicalRule(
+        clearedRule.dropWhile { it != '/' }
+            .drop(1)
+            .dropLastWhile { it != '_' }
+            .dropLast(1)
+            .replace(" ", "")
+            .let { createPhonemeMatchers(it, phonemeContainer) },
+        clearedRule.dropLastWhile { it != '>' }
+            .dropLast(2)
+            .replace(" ", "")
+            .let { createPhonemeMatchers(it, phonemeContainer) },
+        clearedRule.dropWhile { it != '/' }
+            .dropWhile { it != '_' }
+            .drop(1)
+            .replace(" ", "")
+            .let { createPhonemeMatchers(it, phonemeContainer) },
+        clearedRule.dropWhile { it != '>' }
+            .drop(1)
+            .dropLastWhile { it != '/' }
+            .dropLast(1)
+            .replace(" ", "")
+            .let { createPhonemeSubstitutions(it, phonemeContainer) },
+        allowSyllableStructureChange
+    )
+}
