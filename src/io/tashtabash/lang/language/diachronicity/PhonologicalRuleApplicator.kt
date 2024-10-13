@@ -3,8 +3,6 @@ package io.tashtabash.lang.language.diachronicity
 import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
-import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
-import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.derivation.Compound
 import io.tashtabash.lang.language.derivation.Derivation
@@ -23,7 +21,6 @@ import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.syntax.ChangeParadigm
-import io.tashtabash.random.singleton.randomElementOrNull
 import kotlin.math.max
 
 
@@ -31,19 +28,6 @@ class PhonologicalRuleApplicator {
     private val _messages = mutableListOf<String>()
     val messages: List<String>
         get() = _messages
-
-    fun applyRandomPhonologicalRule(language: Language, rulesContainer: PhonologicalRulesContainer): Language {
-        val phonologicalRule = rulesContainer
-            .getApplicableRules(language)
-            .randomElementOrNull()
-        if (phonologicalRule == null) {
-            _messages += "No changes available for the language"
-            return language
-        }
-        _messages += "Applying rule '$phonologicalRule'"
-
-        return applyPhonologicalRule(language, phonologicalRule)
-    }
 
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
@@ -347,8 +331,9 @@ class PhonologicalRuleApplicator {
                     it.prosody
                 else null
             }
-            phonemes[shift + j] =
-                newPhoneme?.let { ChangingPhoneme.ExactPhoneme(it, newProsody) } ?: ChangingPhoneme.DeletedPhoneme
+            phonemes[shift + j] = newPhoneme
+                ?.let { ChangingPhoneme.ExactPhoneme(it, newProsody) }
+                ?: ChangingPhoneme.DeletedPhoneme
         }
     }
 

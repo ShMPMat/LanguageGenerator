@@ -7,7 +7,7 @@ import io.tashtabash.lang.language.category.DeixisValue
 import io.tashtabash.lang.language.category.InclusivityValue
 import io.tashtabash.lang.language.category.NounClassValue.*
 import io.tashtabash.lang.language.category.PersonValue.*
-import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
+import io.tashtabash.lang.language.diachronicity.RandomPhonologicalRuleApplicator
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.lexis.Word
@@ -213,8 +213,7 @@ class Visualizer(val language: Language) {
         ?: "No derivations"
 }
 
-
-private const val DEFAULT_SEED = 216 + 53
+private const val DEFAULT_SEED = 216 + 48
 private fun extractSeed(args: Array<String>): Int =
     args.getOrNull(0)
         ?.toIntOrNull()
@@ -224,7 +223,7 @@ private fun extractSeed(args: Array<String>): Int =
             DEFAULT_SEED
         }
 
-val CHANGES_NUMBER = 4
+val CHANGES_NUMBER = 5
 
 /**
  * One parameter expected: a generator seed in the Int range
@@ -238,10 +237,11 @@ fun main(args: Array<String>) {
     var language = generator.generateLanguage(wordAmount)
 
     val phonologicalRulesContainer = createDefaultRules(generator.phonemePool)
-    val ruleApplicator = PhonologicalRuleApplicator()
-    for (i in 0 until CHANGES_NUMBER)
+    for (i in 0 until CHANGES_NUMBER) {
+        val ruleApplicator = RandomPhonologicalRuleApplicator()
         language = ruleApplicator.applyRandomPhonologicalRule(language, phonologicalRulesContainer)
-    println(ruleApplicator.messages.joinToString("\n"))
+        println(ruleApplicator.messages.joinToString("\n"))
+    }
 
     Visualizer(language).visualize()
 }
