@@ -48,9 +48,9 @@ fun getFixedStressPosition(stressType: StressType, word: Word): Int {
 fun putStressOn(word: Word, position: Int): Word {
     val newSyllables = word.syllables.mapIndexed { i, s ->
         if (i == position)
-            s.copy(prosodicEnums = s.prosodicEnums.union(setOf(Stress())).toList())
+            s.copy(prosodicEnums = (s.prosodicEnums union setOf(Stress)).toList())
         else
-            s.copy()
+            s
     }
     return word.copy(syllables = newSyllables)
 }

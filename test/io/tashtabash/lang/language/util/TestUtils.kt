@@ -4,6 +4,8 @@ import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.*
+import io.tashtabash.lang.language.phonology.prosody.Prosody
+import io.tashtabash.lang.language.phonology.prosody.Stress
 import org.opentest4j.TestAbortedException
 
 
@@ -24,6 +26,16 @@ fun Word.withMorphemes(rootIdx: Int, vararg lengths: Int) =
 
 fun Word.withMorphemes(vararg morphemes: MorphemeData) =
     copy(morphemes = morphemes.toList())
+
+fun Word.withProsodyOn(i: Int, vararg prosody: Prosody) =
+    copy(
+        syllables = syllables.mapIndexed { j, s ->
+            if (i == j)
+                s.copy(prosodicEnums = prosody.asList())
+            else
+                s
+        }
+    )
 
 fun Word.withStaticCategories(vararg staticCategories: CategoryValue) =
     copy(

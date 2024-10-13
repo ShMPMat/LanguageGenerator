@@ -5,6 +5,6 @@ interface Prosody{
     val mark: String
 }
 
-class Stress : Prosody {
+object Stress : Prosody {
     override val mark = "\u0301"
 }

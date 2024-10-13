@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNo
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.SyllableValenceTemplate
 import io.tashtabash.lang.language.phonology.ValencyPlace
+import io.tashtabash.lang.language.phonology.prosody.Stress
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.util.*
 import org.junit.jupiter.api.Test
@@ -681,6 +682,90 @@ internal class PhonologyTest {
                 AffixCategoryApplicator(createAffix("aCV- -> t-__", "t-"), CategoryRealization.Prefix),
                 AffixCategoryApplicator(createAffix("aCV- -> d-__", "d-"), CategoryRealization.Prefix),
                 AffixCategoryApplicator(createAffix("-\$CaC -> __-_ob", "-ob"), CategoryRealization.Suffix)
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule saves prosody`() {
+        val words = listOf(
+            createNoun("abab")
+                .withProsodyOn(0, Stress),
+        )
+        val derivations = listOf<Derivation>()
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("b -> - / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("aba")
+                    .withProsodyOn(0, Stress)
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule saves prosody when syllable recalculation is applied`() {
+        val words = listOf(
+            createNoun("abab")
+                .withProsodyOn(0, Stress),
+        )
+        val derivations = listOf<Derivation>()
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("b -> - / _ $!")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val expectedSyllableTemplate = SyllableValenceTemplate(
+            ValencyPlace(PhonemeType.Consonant, 0.5),
+            ValencyPlace(PhonemeType.Vowel, 1.0),
+        )
+
+        assertEquals(
+            listOf(
+                createNoun("aba", expectedSyllableTemplate)
+                    .withProsodyOn(0, Stress)
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )

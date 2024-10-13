@@ -1,6 +1,8 @@
 package io.tashtabash.lang.language.phonology
 
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
+import io.tashtabash.lang.language.diachronicity.getChangingPhonemes
 import io.tashtabash.lang.language.lexis.SemanticsCore
 import io.tashtabash.lang.language.lexis.Word
 
@@ -26,10 +28,20 @@ interface SyllableTemplate {
         }
 
     fun applyOrNull(word: Word): Word? {
-        val fixedSyllables = splitOnSyllables(word.toPhonemes())
+        val newSyllables = splitOnSyllables(word.toPhonemes())
             ?: return null
+        var exactPhonemes = getChangingPhonemes(word, false, false)
+            .map { it as ChangingPhoneme.ExactPhoneme }
+        val prosodySyllables = newSyllables.map { syllable ->
+            val prosody = exactPhonemes.take(syllable.size)
+                .mapNotNull { it.prosody }
+                .flatten()
+            exactPhonemes = exactPhonemes.drop(syllable.size)
 
-        return word.copy(syllables = fixedSyllables, syllableTemplate = this)
+            syllable.copy(prosodicEnums = prosody)
+        }
+
+        return word.copy(syllables = prosodySyllables, syllableTemplate = this)
     }
 
     fun apply(word: Word): Word =
