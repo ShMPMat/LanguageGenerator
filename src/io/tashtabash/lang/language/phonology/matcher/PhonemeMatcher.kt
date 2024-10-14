@@ -59,6 +59,13 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
     matcher == "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
     matcher == "_" -> PassingPhonemeMatcher
     matcher == "$" -> BorderPhonemeMatcher
+    modifierRegex.matches(matcher) -> ModifierPhonemeMatcher(
+        matcher.drop(2)
+            .dropLast(1)
+            .split(",")
+            .map { PhonemeModifier.valueOf(it) }
+            .toSet()
+    )
     absentModifierRegex.matches(matcher) -> AbsentModifierPhonemeMatcher(
         matcher.drop(2)
             .dropLast(1)
@@ -74,6 +81,7 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
     }
 }
 
+private val modifierRegex = "\\[\\+.*]".toRegex()
 private val absentModifierRegex = "\\[-.*]".toRegex()
 
 

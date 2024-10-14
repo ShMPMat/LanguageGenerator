@@ -6,26 +6,27 @@ import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 
 
-class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatcher() {
+class ModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatcher() {
     constructor(vararg modifiers: PhonemeModifier) : this(modifiers.toSet() )
 
     override val name =
-        "[-${modifiers.sorted().joinToString(",")}]"
+        "[+${modifiers.sorted().joinToString(",")}]"
 
     override fun match(phoneme: Phoneme?) =
-        phoneme?.modifiers
-            ?.none { it in modifiers }
-            ?: false
+        modifiers.all { it in (phoneme?.modifiers ?: listOf()) }
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme is ChangingPhoneme.ExactPhoneme
                 && match(changingPhoneme.phoneme)
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
-        is AbsentModifierPhonemeMatcher ->
-            AbsentModifierPhonemeMatcher(modifiers + other.modifiers)
         is ModifierPhonemeMatcher ->
-            other * this
+            ModifierPhonemeMatcher(modifiers + other.modifiers)
+        is AbsentModifierPhonemeMatcher ->
+            if (modifiers.any { it in other.modifiers })
+                null
+            else
+                MulMatcher(this, other)
         is ExactPhonemeMatcher ->
             if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
                 other

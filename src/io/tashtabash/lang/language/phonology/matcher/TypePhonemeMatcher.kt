@@ -18,6 +18,8 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
                 && changingPhoneme.phoneme.type == phonemeType
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+        is ModifierPhonemeMatcher ->
+            MulMatcher(this, other)
         is AbsentModifierPhonemeMatcher ->
             MulMatcher(this, other)
         is ExactPhonemeMatcher ->
