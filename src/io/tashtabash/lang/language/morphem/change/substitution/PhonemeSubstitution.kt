@@ -8,6 +8,10 @@ import io.tashtabash.lang.language.phonology.PhonemeModifier
 interface PhonemeSubstitution {
     fun substitute(phoneme: Phoneme?): Phoneme?
     fun getSubstitutePhoneme(): Phoneme?
+
+    // Create a new PhonemeSubstitution which is equal in effect to
+    // the sequential application of this instance after the other
+    operator fun times(other: PhonemeSubstitution): PhonemeSubstitution
 }
 
 
@@ -32,7 +36,17 @@ fun createPhonemeSubstitutions(substitutions: String, phonemeContainer: PhonemeC
 fun createPhonemeSubstitution(substitution: String, phonemeContainer: PhonemeContainer) = when {
     substitution == "-" -> DeletingPhonemeSubstitution
     substitution == "_" -> PassingPhonemeSubstitution
-    addModifierRegex.matches(substitution) -> AddModifierPhonemeSubstitution(
+    addModifierRegex.matches(substitution) -> ModifierPhonemeSubstitution(
+        substitution.drop(2)
+            .dropLast(1)
+            .split(",")
+            .map { PhonemeModifier.valueOf(it) }
+            .toSet(),
+        setOf(),
+        phonemeContainer
+    )
+    removeModifierRegex.matches(substitution) -> ModifierPhonemeSubstitution(
+        setOf(),
         substitution.drop(2)
             .dropLast(1)
             .split(",")
@@ -44,3 +58,4 @@ fun createPhonemeSubstitution(substitution: String, phonemeContainer: PhonemeCon
 }
 
 private val addModifierRegex = "\\[\\+.*]".toRegex()
+private val removeModifierRegex = "\\[-.*]".toRegex()

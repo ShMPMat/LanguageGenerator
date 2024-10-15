@@ -8,5 +8,8 @@ data class ExactPhonemeSubstitution(val exactPhoneme: Phoneme) : PhonemeSubstitu
 
     override fun getSubstitutePhoneme() = exactPhoneme
 
+    override fun times(other: PhonemeSubstitution): PhonemeSubstitution =
+        this
+
     override fun toString() = exactPhoneme.toString()
 }

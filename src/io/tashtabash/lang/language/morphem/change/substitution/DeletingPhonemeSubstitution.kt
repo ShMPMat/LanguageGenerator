@@ -8,5 +8,8 @@ object DeletingPhonemeSubstitution : PhonemeSubstitution {
 
     override fun getSubstitutePhoneme(): Phoneme? = null
 
+    override fun times(other: PhonemeSubstitution): PhonemeSubstitution =
+        this
+
     override fun toString() = "-"
 }

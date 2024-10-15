@@ -54,7 +54,7 @@ private fun analyzePhonemes(templateChange: TemplateChange): List<Phoneme> = whe
 
 private fun analyzePhoneme(phonemeSubstitution: PhonemeSubstitution): Phoneme? = when (phonemeSubstitution) {
     is ExactPhonemeSubstitution -> phonemeSubstitution.exactPhoneme
-    is AddModifierPhonemeSubstitution, PassingPhonemeSubstitution, DeletingPhonemeSubstitution -> null
+    is ModifierPhonemeSubstitution, PassingPhonemeSubstitution, DeletingPhonemeSubstitution -> null
     else -> throw LanguageException("Unknown phoneme substitution '$phonemeSubstitution'")
 }
 

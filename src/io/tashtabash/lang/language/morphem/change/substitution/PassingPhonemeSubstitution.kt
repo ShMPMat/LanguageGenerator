@@ -8,5 +8,8 @@ object PassingPhonemeSubstitution : PhonemeSubstitution {
 
     override fun getSubstitutePhoneme(): Phoneme? = null
 
+    override fun times(other: PhonemeSubstitution): PhonemeSubstitution =
+        other
+
     override fun toString() = "_"
 }

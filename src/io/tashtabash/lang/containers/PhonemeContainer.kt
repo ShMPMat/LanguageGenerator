@@ -32,6 +32,16 @@ interface PhonemeContainer {
     fun getPhonemeByPropertiesOrNull(phoneme: Phoneme): Phoneme? =
         phonemes.firstOrNull { it.isEqualByProperties(phoneme) }
 
+    fun getPhonemeWithShiftedModifiers(
+        phoneme: Phoneme,
+        addModifiers: Set<PhonemeModifier>,
+        removeModifiers: Set<PhonemeModifier>
+    ): Phoneme {
+        val shiftedPhoneme = getPhonemeWithRemovedModifiers(phoneme, removeModifiers)
+
+        return getPhonemeWithAddedModifiers(shiftedPhoneme, addModifiers)
+    }
+
     fun getPhonemeWithAddedModifiers(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme {
         modifiers.firstOrNull { it in phoneme.modifiers }
             ?.let {

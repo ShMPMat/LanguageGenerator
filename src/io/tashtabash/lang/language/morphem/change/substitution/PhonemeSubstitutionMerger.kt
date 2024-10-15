@@ -1,7 +1,5 @@
 package io.tashtabash.lang.language.morphem.change.substitution
 
-import io.tashtabash.lang.language.LanguageException
-
 
 fun unitePhonemeSubstitutions(
     old: List<PhonemeSubstitution?>,
@@ -39,27 +37,8 @@ fun unitePhonemeSubstitutions(
             oldIdx++
             continue
         }
-        if (curNew is AddModifierPhonemeSubstitution) {
-            val phonemeContainer = curNew.phonemes
 
-            result += when (curOld) {
-                is PassingPhonemeSubstitution -> curNew
-                is AddModifierPhonemeSubstitution -> AddModifierPhonemeSubstitution(
-                    curOld.modifiers + curNew.modifiers,
-                    phonemeContainer
-                )
-                is ExactPhonemeSubstitution -> {
-                    val newPhoneme = phonemeContainer.getPhonemeWithAddedModifiers(curOld.exactPhoneme, curNew.modifiers)
-                    ExactPhonemeSubstitution(newPhoneme)
-                }
-                else -> throw LanguageException("Unknown PhonemeSubstitution type '${curOld.javaClass.name}'")
-            }
-
-            oldIdx++
-            newIdx++
-        }
-
-        result += curNew
+        result += curNew * curOld
         oldIdx++
         newIdx++
     }
