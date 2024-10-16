@@ -18,14 +18,16 @@ data class PhonologicalRulesContainer(val phonologicalRules: List<PhonologicalRu
             language.phonemeContainer.getPhonemes(matcher.phonemeType).isNotEmpty()
         is AbsentModifierPhonemeMatcher ->
             language.phonemeContainer.getPhonemesNot(matcher.modifiers).isNotEmpty()
+        is ModifierPhonemeMatcher ->
+            language.phonemeContainer.getPhonemes(matcher.modifiers).isNotEmpty()
         is BorderPhonemeMatcher, PassingPhonemeMatcher ->
             true
         else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
     }
 }
 
-fun createDefaultRules(phonemeContainer: PhonemeContainer) = PhonologicalRulesContainer(
-    listOf(
+fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesContainer {
+    val noSyllableStructureChangeRules = listOf(
         // Vowel shifts
         "a -> o / _ ",
         "o -> a / _ ",
@@ -35,16 +37,27 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer) = PhonologicalRulesCo
         "d -> g / _ n",
         "s -> h / _ ",
 
-        // Quality transfers
+        // Vowel quality transfers
+        "Vh -> [+Long]- / _ ",
+        "Vx -> [+Long]- / _ ",
+        "Və -> [+Long]- / _ ",
+        // Consonant quality transfers
         "[-Voiced] -> [+Voiced] / _ V",
         "k -> [+Voiced] / _ V",
         "p -> [+Voiced] / _ V",
         "t -> [+Voiced] / _ V",
+    ).map { createPhonologicalRule(it, phonemeContainer) }
 
+    val possibleSyllableStructureChangeRules = listOf(
         // Vowel deletion
         "V -> - / \$C _ CV",
+        "V -> - / VC _ C\$",
         // Consonant deletion
-        "C -> - / _ $",
+        "C -> - / _ \$",
     ).map { createPhonologicalRule(it, phonemeContainer) }
         .flatMap { listOf(it, it.copy(allowSyllableStructureChange = true)) }
-)
+
+    return PhonologicalRulesContainer(
+        noSyllableStructureChangeRules + possibleSyllableStructureChangeRules
+    )
+}
