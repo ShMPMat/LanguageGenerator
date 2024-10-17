@@ -9,7 +9,7 @@ class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
     constructor(vararg matchers: PhonemeMatcher) : this(matchers.asList())
 
     override val name =
-        matchers.drop(1).joinToString("", "(", ")")
+        matchers.joinToString("", "(", ")")
 
     override fun match(phoneme: Phoneme?) =
         matchers.all { it.match(phoneme) }
