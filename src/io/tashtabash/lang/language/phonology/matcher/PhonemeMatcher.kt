@@ -43,6 +43,8 @@ fun createPhonemeMatchers(matchers: String, phonemeContainer: PhonemeContainer):
     while (currentPostfix.isNotEmpty()) {
         val token = if (currentPostfix[0] == '[')
             currentPostfix.takeWhile { it != ']' } + ']'
+        else if (currentPostfix[0] == '(')
+            currentPostfix.takeWhile { it != ')' } + ')'
         else
             currentPostfix.take(1)
 
@@ -54,7 +56,7 @@ fun createPhonemeMatchers(matchers: String, phonemeContainer: PhonemeContainer):
     return resultMatchers
 }
 
-fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = when {
+fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer): PhonemeMatcher = when {
     matcher == "C" -> TypePhonemeMatcher(PhonemeType.Consonant)
     matcher == "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
     matcher == "_" -> PassingPhonemeMatcher
@@ -73,6 +75,13 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
             .map { PhonemeModifier.valueOf(it) }
             .toSet()
     )
+    mulModifierRegex.matches(matcher) -> MulMatcher(
+        matcher.drop(1)
+            .dropLast(1)
+            .split("[")
+            .map { if (it.last() == ']' && it[0] != '[') "[$it" else it }
+            .map { createPhonemeMatcher(it, phonemeContainer) }
+    )
     else -> {
         val phoneme = phonemeContainer.getPhonemeOrNull(matcher)
             ?: throw LanguageException("cannot create a matcher for symbol '$matcher'")
@@ -83,6 +92,7 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer) = 
 
 private val modifierRegex = "\\[\\+.*]".toRegex()
 private val absentModifierRegex = "\\[-.*]".toRegex()
+private val mulModifierRegex = "\\(.*\\)".toRegex()
 
 
 fun unitePhonemeMatchers(first: List<PhonemeMatcher>, second: List<PhonemeMatcher>): List<PhonemeMatcher?> {
