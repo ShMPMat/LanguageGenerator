@@ -5,6 +5,7 @@ import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.language.VowelQualityAmount
 import io.tashtabash.lang.language.phonology.Phoneme
+import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.random.singleton.*
 import kotlin.math.log2
 import kotlin.math.pow
@@ -14,6 +15,25 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
     private val MAX_VOWEL_QUALITIES = 20
     private val MAX_VOWELS = MAX_VOWEL_QUALITIES * 6
     private val MAX_CONSONANTS = 120
+
+    private val vowelDiversityApplicators = listOf(
+        VowelLengthApplicator,
+        VowelNasalizationApplicator
+    )
+
+    val allPossiblePhonemes: PhonemeContainer by lazy {
+        val additionalVowels = phonemePool.getPhonemes(PhonemeType.Vowel)
+            .toMutableList()
+        for (applicator in vowelDiversityApplicators)
+            additionalVowels += additionalVowels.flatMap {
+                applicator.changeVowels(listOf(it))
+            }
+
+        val newPhonemes = (phonemePool.phonemes.toList() + additionalVowels.toList())
+            .distinct()
+
+        ImmutablePhonemeContainer(newPhonemes)
+    }
 
     private val vowelApplicators = listOf<PhonemeGenerationCondition>(
         AddRandomVowelApplicator(phonemePool)

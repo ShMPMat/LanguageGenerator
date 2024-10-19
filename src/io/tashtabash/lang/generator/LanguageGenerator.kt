@@ -21,7 +21,7 @@ import kotlin.collections.HashMap
 
 class LanguageGenerator(private val supplementPath: String) {
     val phonemePool = PhonemePool(supplementPath)
-    private val phonemeGenerator = PhonemeGenerator(phonemePool)
+    val phonemeGenerator = PhonemeGenerator(phonemePool)
     private val phonemeContainer = phonemeGenerator.generate()
 
     private val syllableGenerator = randomSyllableGenerator()
