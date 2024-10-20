@@ -41,9 +41,7 @@ data class SpeechPartChangeParadigm(
         if (word.semanticsCore.speechPart != speechPart)
             throw ChangeException("SpeechPartChangeParadigm for $speechPart received ${word.semanticsCore.speechPart}")
 
-        var currentClause = FoldedWordSequence(LatchedWord(word, latchType))
-        var currentWord = word
-        var wordPosition = 0
+        var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
         for (exponenceCluster in exponenceClusters) {
             if (word.categoryValues.map { it.parent }.containsAll(exponenceCluster.categories))
                 continue
@@ -62,25 +60,31 @@ data class SpeechPartChangeParadigm(
                 else continue
             val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
             val newClause = useCategoryApplicator(
-                currentClause,
-                wordPosition,
+                wordClauseResult.words,
+                wordClauseResult.mainWordIdx,
                 exponenceCluster,
                 exponenceUnion,
                 actualValues
             )
-            if (currentClause.size != newClause.size)
-                for (i in wordPosition until newClause.size)
-                    if (currentWord == newClause[i].word) {
-                        wordPosition = i
+
+            var newWordPosition = wordClauseResult.mainWordIdx
+            if (wordClauseResult.words.size != newClause.size)
+                for (i in wordClauseResult.mainWordIdx until newClause.size)
+                    if (wordClauseResult.mainWord == newClause[i].word) {
+                        newWordPosition = i
                         break
                     }
-            currentWord = newClause[wordPosition].word
-            currentClause = newClause
+
+            wordClauseResult = WordClauseResult(newClause, newWordPosition)
         }
 
-        currentClause = currentClause.swapWord(wordPosition) { it.copy(syntaxRole = word.syntaxRole) }
+        val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
+            it.copy(syntaxRole = word.syntaxRole)
+        }
 
-        return WordClauseResult(applyProsodyParadigm(currentClause, wordPosition, word), wordPosition)
+        return wordClauseResult.copy(
+            words = applyProsodyParadigm(currentClause, wordClauseResult.mainWordIdx, word)
+        )
     }
 
     private fun useCategoryApplicator(
