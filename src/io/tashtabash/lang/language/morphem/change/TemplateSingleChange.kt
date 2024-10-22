@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.morphem.change
 
+import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
@@ -67,48 +68,52 @@ data class TemplateSingleChange(
         val testResult = findGoodIndex(word)
             ?: return word.copy()
 
-        val prosodicSyllables = when (position) {
-            Position.End -> {
-                val change: List<Phoneme?> = getFullChange()
-                    .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                    .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                    PhonemeSequence(
-                        word.toPhonemes().subList(
-                            0,
-                            word.size - phonemeMatchers.size
-                        ) + change.filterNotNull()
-                    )
-                ) ?: throw ChangeException("Couldn't convert $word with change $this to word")
-
-                noProsodyWord.mapIndexed { i, s ->
-                    s.copy(prosodicEnums = word.takeProsody(i))
-                }
-            }
-            Position.Beginning -> {
-                val change: List<Phoneme?> = getFullChange()
-                    .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                    .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                    PhonemeSequence(
-                        change.filterNotNull() + word.toPhonemes().subList(
-                            phonemeMatchers.size,
-                            word.size
+        try {
+            val prosodicSyllables = when (position) {
+                Position.End -> {
+                    val change: List<Phoneme?> = getFullChange()
+                        .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
+                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
+                        PhonemeSequence(
+                            word.toPhonemes().subList(
+                                0,
+                                word.size - phonemeMatchers.size
+                            ) + change.filterNotNull()
                         )
-                    )
-                ) ?: throw ChangeException("Couldn't convert $word with change $this to a word")
-                val shift = noProsodyWord.size - word.syllables.size
+                    ) ?: throw ChangeException("Couldn't convert $word with change $this to word")
 
-                noProsodyWord.mapIndexed { i, s ->
-                    s.copy(prosodicEnums = word.takeProsody(i - shift))
+                    noProsodyWord.mapIndexed { i, s ->
+                        s.copy(prosodicEnums = word.takeProsody(i))
+                    }
+                }
+                Position.Beginning -> {
+                    val change: List<Phoneme?> = getFullChange()
+                        .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
+                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
+                        PhonemeSequence(
+                            change.filterNotNull() + word.toPhonemes().subList(
+                                phonemeMatchers.size,
+                                word.size
+                            )
+                        )
+                    ) ?: throw ChangeException("Couldn't convert $word with change $this to a word")
+                    val shift = noProsodyWord.size - word.syllables.size
+
+                    noProsodyWord.mapIndexed { i, s ->
+                        s.copy(prosodicEnums = word.takeProsody(i - shift))
+                    }
                 }
             }
-        }
-        val morphemes = constructMorphemes(word.morphemes, categoryValues, derivationValues)
-        val additionalCategoryValues = categoryValues subtract word.categoryValues
-        val newCategoryValues = word.categoryValues + additionalCategoryValues
+            val morphemes = constructMorphemes(word.morphemes, categoryValues, derivationValues)
+            val additionalCategoryValues = categoryValues subtract word.categoryValues
+            val newCategoryValues = word.categoryValues + additionalCategoryValues
 
-        return word.copy(syllables = prosodicSyllables, morphemes = morphemes, categoryValues = newCategoryValues)
+            return word.copy(syllables = prosodicSyllables, morphemes = morphemes, categoryValues = newCategoryValues)
+        } catch (e: NoPhonemeException) {
+            throw ChangeException("Can't apply $this to $word: $e")
+        }
     }
 
     private fun constructMorphemes(
