@@ -43,39 +43,11 @@ data class SpeechPartChangeParadigm(
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
         for (exponenceCluster in exponenceClusters) {
+            //TODO why do we need this if? Find out and delete
             if (word.categoryValues.map { it.parent }.containsAll(exponenceCluster.categories))
                 continue
 
-            val staticCategoryValues = word.semanticsCore.staticCategories.mapNotNull { v ->
-                val parent = exponenceCluster.categories
-                    .firstOrNull { it.category.outType == v.parentClassName }
-                    ?: return@mapNotNull null
-
-                SourcedCategoryValue(v, CategorySource.Self, parent)
-            }
-            val allCategoryValues = categoryValues + staticCategoryValues
-            val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
-                ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
-                    throw SyntaxException("No value for compulsory cluster $exponenceCluster")
-                else continue
-            val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
-            val newClause = useCategoryApplicator(
-                wordClauseResult.words,
-                wordClauseResult.mainWordIdx,
-                exponenceCluster,
-                exponenceUnion,
-                actualValues
-            )
-
-            var newWordPosition = wordClauseResult.mainWordIdx
-            if (wordClauseResult.words.size != newClause.size)
-                for (i in wordClauseResult.mainWordIdx until newClause.size)
-                    if (wordClauseResult.mainWord == newClause[i].word) {
-                        newWordPosition = i
-                        break
-                    }
-
-            wordClauseResult = WordClauseResult(newClause, newWordPosition)
+            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster)
         }
 
         val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
@@ -85,6 +57,44 @@ data class SpeechPartChangeParadigm(
         return wordClauseResult.copy(
             words = applyProsodyParadigm(currentClause, wordClauseResult.mainWordIdx, word)
         )
+    }
+
+    private fun useExponenceCluster(
+        wordClauseResult: WordClauseResult,
+        categoryValues: Set<SourcedCategoryValue>,
+        exponenceCluster: ExponenceCluster
+    ): WordClauseResult {
+        val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { v ->
+            val parent = exponenceCluster.categories
+                .firstOrNull { it.category.outType == v.parentClassName }
+                ?: return@mapNotNull null
+
+            SourcedCategoryValue(v, CategorySource.Self, parent)
+        }
+        val allCategoryValues = categoryValues + staticCategoryValues
+        val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
+            ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
+                throw SyntaxException("No value for compulsory cluster $exponenceCluster")
+            else
+                return wordClauseResult
+        val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
+        val newClause = useCategoryApplicator(
+            wordClauseResult.words,
+            wordClauseResult.mainWordIdx,
+            exponenceCluster,
+            exponenceUnion,
+            actualValues
+        )
+
+        var newWordPosition = wordClauseResult.mainWordIdx
+        if (wordClauseResult.words.size != newClause.size)
+            for (i in wordClauseResult.mainWordIdx until newClause.size)
+                if (wordClauseResult.mainWord == newClause[i].word) {
+                    newWordPosition = i
+                    break
+                }
+
+        return WordClauseResult(newClause, newWordPosition)
     }
 
     private fun useCategoryApplicator(
