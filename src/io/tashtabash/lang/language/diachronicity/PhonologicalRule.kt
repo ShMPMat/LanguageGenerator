@@ -20,6 +20,20 @@ data class PhonologicalRule(
             throw LanguageException("The number of targetMatchers and resultingPhonemes must be the same")
     }
 
+    constructor(
+        matchers: List<PhonemeMatcher>,
+        precedingLength: Int,
+        followingLength: Int,
+        resultingPhonemes: List<PhonemeSubstitution>,
+        allowSyllableStructureChange: Boolean
+    ) : this(
+        matchers.take(precedingLength),
+        matchers.drop(precedingLength).dropLast(followingLength),
+        matchers.takeLast(followingLength),
+        resultingPhonemes,
+        allowSyllableStructureChange
+    )
+
     val matchers: List<PhonemeMatcher>
         get() = precedingMatchers + targetMatchers + followingMatchers
 
