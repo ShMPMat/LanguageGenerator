@@ -30,6 +30,15 @@ internal class PhonemeMatcherTest {
         assertEquals(matcher * matcher, matcher)
     }
 
+    @Test
+    fun `MulMatcher times MulMatcher merges ModifierPhonemeMatcher if possible`() {
+        assertEquals(
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long))
+                    * AbsentModifierPhonemeMatcher(Voiced),
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long, Voiced))
+        )
+    }
+
     companion object {
         @JvmStatic
         fun phonemeMatcherProvider(): Stream<Arguments> {
