@@ -75,12 +75,22 @@ enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int) {
 }
 
 enum class PhonemeModifier {
+    // Vowel
     Nasalized,
 
+    // Vowel, Consonant
     Long,
     Voiced,
-
-    Palatilized,
     Labialized,
-    Velarized
+
+    // Consonant
+    Palatilized,
+    Velarized;
+
+    companion object {
+        fun values(type: PhonemeType) = when (type) {
+            PhonemeType.Consonant -> listOf(Nasalized, Long, Voiced, Labialized)
+            PhonemeType.Vowel -> listOf(Long, Voiced, Labialized, Palatilized, Velarized)
+        }
+    }
 }
