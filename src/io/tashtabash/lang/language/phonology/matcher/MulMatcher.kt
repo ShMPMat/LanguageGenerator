@@ -3,7 +3,6 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.lang.utils.cartesianProduct
 
 
 class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
@@ -19,13 +18,16 @@ class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
         matchers.all { it.match(changingPhoneme) }
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
-        is MulMatcher -> {
-            var newMatcher: MulMatcher? = this
-            for (otherMatcher in other.matchers)
-                newMatcher = newMatcher?.mergeNonMulMatcher(otherMatcher)
+        is MulMatcher ->
+            if (matchers[0] !is TypePhonemeMatcher && other.matchers[0] is TypePhonemeMatcher)
+                other * this // Preserves the invariant "a type matcher should be the first matcher"
+            else {
+                var newMatcher: MulMatcher? = this
+                for (otherMatcher in other.matchers)
+                    newMatcher = newMatcher?.mergeNonMulMatcher(otherMatcher)
 
-            newMatcher
-        }
+                newMatcher
+            }
         PassingPhonemeMatcher, null -> this
         BorderPhonemeMatcher -> null
         else -> this * MulMatcher(other)

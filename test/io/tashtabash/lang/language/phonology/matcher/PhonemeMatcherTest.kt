@@ -61,6 +61,7 @@ internal class PhonemeMatcherTest {
                 AbsentModifierPhonemeMatcher(Palatilized),
                 MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long)),
                 MulMatcher(TypePhonemeMatcher(Vowel), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
+                MulMatcher(AbsentModifierPhonemeMatcher(PhonemeModifier.Long), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
             )
 
             return composeUniquePairs(matchers, matchers)
