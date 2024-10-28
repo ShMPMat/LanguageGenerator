@@ -23,10 +23,9 @@ class ModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatche
         is ModifierPhonemeMatcher ->
             ModifierPhonemeMatcher(modifiers + other.modifiers)
         is AbsentModifierPhonemeMatcher ->
-            if (modifiers.any { it in other.modifiers })
-                null
-            else
+            if (modifiers.none { it in other.modifiers })
                 MulMatcher(this, other)
+            else null
         is ExactPhonemeMatcher ->
             if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
                 other
