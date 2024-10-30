@@ -26,7 +26,14 @@ class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
                 for (otherMatcher in other.matchers)
                     newMatcher = newMatcher?.mergeNonMulMatcher(otherMatcher)
 
-                newMatcher
+                newMatcher?.matchers
+                    ?.distinct()
+                    ?.let {
+                        if (it.size == 1)
+                            it[0]
+                        else
+                            MulMatcher(it)
+                    }
             }
         PassingPhonemeMatcher, null -> this
         BorderPhonemeMatcher -> null

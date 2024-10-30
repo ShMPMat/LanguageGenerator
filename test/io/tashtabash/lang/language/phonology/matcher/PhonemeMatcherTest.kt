@@ -39,6 +39,15 @@ internal class PhonemeMatcherTest {
         )
     }
 
+    @Test
+    fun `MulMatcher times ExactPhonemeMatcher results in ExactPhonemeMatcher if the merge is possible`() {
+        assertEquals(
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(Voiced))
+                    * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t")),
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t"))
+        )
+    }
+
     companion object {
         @JvmStatic
         fun phonemeMatcherProvider(): Stream<Arguments> {
