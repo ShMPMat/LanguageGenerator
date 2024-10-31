@@ -213,7 +213,7 @@ class Visualizer(val language: Language) {
         ?: "No derivations"
 }
 
-private const val DEFAULT_SEED = 216 + 48
+private const val DEFAULT_SEED = 216
 private fun extractSeed(args: Array<String>): Int =
     args.getOrNull(0)
         ?.toIntOrNull()
@@ -236,7 +236,7 @@ fun main(args: Array<String>) {
     val wordAmount = WordBase("SupplementFiles").baseWords.size
     var language = generator.generateLanguage(wordAmount)
 
-    val phonologicalRulesContainer = createDefaultRules(generator.phonemePool)
+    val phonologicalRulesContainer = createDefaultRules(generator.phonemeGenerator.allPossiblePhonemes)
     for (i in 0 until CHANGES_NUMBER) {
         val ruleApplicator = RandomPhonologicalRuleApplicator()
         language = ruleApplicator.applyRandomPhonologicalRule(language, phonologicalRulesContainer)

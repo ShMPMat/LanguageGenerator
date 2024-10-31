@@ -10,22 +10,22 @@ data class PhonologicalRulesContainer(val phonologicalRules: List<PhonologicalRu
     fun getApplicableRules(language: Language) = phonologicalRules.filter { rule ->
         rule.matchers.all { isMatcherApplicable(it, language) }
     }
+}
 
-    private fun isMatcherApplicable(matcher: PhonemeMatcher, language: Language): Boolean = when (matcher) {
-        is ExactPhonemeMatcher ->
-            language.phonemeContainer.getPhonemeOrNull(matcher.phoneme.symbol) != null
-        is TypePhonemeMatcher ->
-            language.phonemeContainer.getPhonemes(matcher.phonemeType).isNotEmpty()
-        is AbsentModifierPhonemeMatcher ->
-            language.phonemeContainer.getPhonemesNot(matcher.modifiers).isNotEmpty()
-        is ModifierPhonemeMatcher ->
-            language.phonemeContainer.getPhonemes(matcher.modifiers).isNotEmpty()
-        is MulMatcher ->
-            matcher.matchers.all { isMatcherApplicable(it, language) }
-        is BorderPhonemeMatcher, PassingPhonemeMatcher ->
-            true
-        else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
-    }
+fun isMatcherApplicable(matcher: PhonemeMatcher, language: Language): Boolean = when (matcher) {
+    is ExactPhonemeMatcher ->
+        language.phonemeContainer.getPhonemeOrNull(matcher.phoneme.symbol) != null
+    is TypePhonemeMatcher ->
+        language.phonemeContainer.getPhonemes(matcher.phonemeType).isNotEmpty()
+    is AbsentModifierPhonemeMatcher ->
+        language.phonemeContainer.getPhonemesNot(matcher.modifiers).isNotEmpty()
+    is ModifierPhonemeMatcher ->
+        language.phonemeContainer.getPhonemes(matcher.modifiers).isNotEmpty()
+    is MulMatcher ->
+        matcher.matchers.all { isMatcherApplicable(it, language) }
+    is BorderPhonemeMatcher, PassingPhonemeMatcher ->
+        true
+    else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
 }
 
 fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesContainer {
@@ -49,9 +49,6 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "[-Voiced] -> [+Voiced] / V _ V",
         "[-Voiced] -> [+Voiced] / V _ $",
         "[-Voiced] -> [+Voiced] / V _ ",
-        "k -> [+Voiced] / _ V",
-        "p -> [+Voiced] / _ V",
-        "t -> [+Voiced] / _ V",
         "[+Voiced] -> [-Voiced] / _ $",
     ).map { createPhonologicalRule(it, phonemeContainer) }
 
