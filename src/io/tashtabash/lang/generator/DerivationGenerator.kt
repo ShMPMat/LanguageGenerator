@@ -59,87 +59,106 @@ class DerivationGenerator(
 
     private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
         val bannedTypes = setOf(Big, Old, Smallness, Young)
-        for (derivation in DerivationType.values().filter { it !in bannedTypes }) {
-            for (from in words.filter { it.speechPart == derivation.fromSpeechPart })
-                for (to in words.filter { it.speechPart == derivation.toSpeechPart }) {
-                    if (from == to)
-                        continue
+        for (derivationType in DerivationType.values().filter { it !in bannedTypes })
+            for (from in words.filter { it.speechPart == derivationType.fromSpeechPart })
+                for (to in words.filter { it.speechPart == derivationType.toSpeechPart }) {
+                    val derivationLink = createDerivationByConnotation(derivationType, from, to)
+                        ?: continue
 
-                    val fromDerivationConnotationStrength = calculateConnotationsStrength(
-                        derivation.connotations.values,
-                        from.connotations.values
-                    )
-
-                    val toDerivationConnotationsStrength = calculateConnotationsStrength(
-                        derivation.connotations.values,
-                        to.connotations.values
-                    )
-
-                    val wordConnotationsStrength = calculateConnotationsStrength(
-                        to.connotations.values,
-                        from.connotations.values.filter { !it.isGlobal }
-                    )
-
-                    val probability = (toDerivationConnotationsStrength * wordConnotationsStrength *
-                            max(0.0, 1 - fromDerivationConnotationStrength)).pow(0.5)
-
-                    if (probability > 0) {
-                        val present = from.derivationClusterTemplate.typeToCore[derivation]
-                            ?.firstOrNull { it.template == to.word }
-
-                        if (present != null) {
-                            println("ALREADY PRESENT ${derivation.name}  ${from.word} -> ${to.word} $probability")
-                            continue
-                        }
-
-//                        println("${derivation.name}  ${from.word} -> ${to.word} $probability")
-                        from.derivationClusterTemplate.typeToCore[derivation]
-                            ?.add(DerivationLink(to.word, probability))
-                            ?: from.derivationClusterTemplate.typeToCore.put(
-                                derivation,
-                                mutableListOf(DerivationLink(to.word, probability))
-                            )
-                    }
+                    from.derivationClusterTemplate
+                        .typeToCore
+                        .getOrPut(derivationType) { mutableListOf() }
+                        .add(derivationLink)
                 }
-        }
 
         injectCompounds(words)
+    }
+
+    private fun createDerivationByConnotation(
+        derivationType: DerivationType,
+        from: SemanticsCoreTemplate,
+        to: SemanticsCoreTemplate
+    ): DerivationLink? {
+        if (from == to)
+            return null
+
+        val fromDerivationConnotationStrength = calculateConnotationsStrength(
+            derivationType.connotations.values,
+            from.connotations.values
+        )
+
+        val toDerivationConnotationsStrength = calculateConnotationsStrength(
+            derivationType.connotations.values,
+            to.connotations.values
+        )
+
+        val wordConnotationsStrength = calculateConnotationsStrength(
+            to.connotations.values,
+            from.connotations.values.filter { !it.isGlobal }
+        )
+
+        val probability = (toDerivationConnotationsStrength * wordConnotationsStrength *
+                max(0.0, 1 - fromDerivationConnotationStrength)).pow(0.5)
+
+        if (probability == 0.0)
+            return null
+
+        val present = from.derivationClusterTemplate.typeToCore[derivationType]
+            ?.firstOrNull { it.template == to.word }
+
+        if (present != null) {
+            println("ALREADY PRESENT ${derivationType.name}  ${from.word} -> ${to.word} $probability")
+            return null
+        }
+//        println("${derivation.name}  ${from.word} -> ${to.word} $probability")
+        return DerivationLink(to.word, probability)
     }
 
     private fun injectCompounds(words: List<SemanticsCoreTemplate>) {
         for (target in words)
             for ((index, left) in words.withIndex())
                 for (right in words.drop(index)) {
-                    if (left == right || left == target || right == target)
-                        continue
+                    val compoundLink = createCompound(target, left, right)
+                        ?: continue
 
-                    val connotationsSum = left.connotations + right.connotations
-                    val distance = target.connotations distance connotationsSum
-                    val leftDistance = target.connotations localDistance left.connotations
-                    val rightDistance = target.connotations localDistance right.connotations
-                    val clearDistance = target.connotations.values.toList() distance
-                            connotationsSum.values.filter { !it.isGlobal }
-
-                    if (clearDistance > 0 && leftDistance > 0 && rightDistance > 0) {
-                        val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
-                            it.templates == listOf(left.word, right.word) || it.templates == listOf(
-                                right.word,
-                                left.word
-                            )
-                        }
-
-                        if (present != null) {
-                            println("ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
-                            continue
-                        }
-//                        println("${left.word} + ${right.word} = ${target.word} $distance")
-                        target.derivationClusterTemplate.possibleCompounds += CompoundLink(
-                            listOf(left.word, right.word),
-                            distance
-                        )
-                    }
+                    target.derivationClusterTemplate.possibleCompounds += compoundLink
                 }
+    }
 
+    private fun createCompound(
+        target: SemanticsCoreTemplate,
+        left: SemanticsCoreTemplate,
+        right: SemanticsCoreTemplate
+    ): CompoundLink? {
+        if (left == target || right == target)
+            return null
+
+        val connotationsSum = left.connotations + right.connotations
+        val distance = target.connotations distance connotationsSum
+        val leftDistance = target.connotations localDistance left.connotations
+        val rightDistance = target.connotations localDistance right.connotations
+        val clearDistance = target.connotations.values.toList() distance
+                connotationsSum.values.filter { !it.isGlobal }
+
+        if (clearDistance == 0.0 || leftDistance == 0.0 || rightDistance == 0.0)
+            return null
+
+        val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
+            it.templates == listOf(left.word, right.word) || it.templates == listOf(
+                right.word,
+                left.word
+            )
+        }
+
+        if (present != null) {
+            println("COMPOUND ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
+            return null
+        }
+//        println("${left.word} + ${right.word} = ${target.word} $distance")
+        return CompoundLink(
+            listOf(left.word, right.word),
+            distance
+        )
     }
 
     private fun calculateConnotationsStrength(from: Collection<Connotation>, to: Collection<Connotation>): Double {
@@ -150,7 +169,10 @@ class DerivationGenerator(
             otherStrength * connotation.strength
         }
 
-        return hits.reduceOrNull(Double::plus)?.div(hits.size)?.pow(1.0 / hits.size.toDouble().pow(2.0)) ?: 0.0
+        return hits.reduceOrNull(Double::plus)
+            ?.div(hits.size)
+            ?.pow(1.0 / hits.size.toDouble().pow(2.0))
+            ?: 0.0
     }
 
     internal fun generateDerivationParadigm(
