@@ -5,7 +5,6 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.prosody.Prosody
-import io.tashtabash.lang.language.phonology.prosody.Stress
 import org.opentest4j.TestAbortedException
 
 
@@ -31,7 +30,7 @@ fun Word.withProsodyOn(i: Int, vararg prosody: Prosody) =
     copy(
         syllables = syllables.mapIndexed { j, s ->
             if (i == j)
-                s.copy(prosodicEnums = prosody.asList())
+                s.copy(prosody = prosody.asList())
             else
                 s
         }

@@ -52,6 +52,6 @@ private fun getProsodyContour(word: Word): List<List<Prosody>?> {
         val prefix = (0 until syllable.nucleusIdx).map<Int, List<Prosody>?> { null }
         val postfix = (syllable.nucleusIdx + 1 until syllable.size).map<Int, List<Prosody>?> { null }
 
-        prefix + listOf(syllable.prosodicEnums) + postfix
+        prefix + listOf(syllable.prosody) + postfix
     }
 }

@@ -3,7 +3,7 @@ package io.tashtabash.lang.language.phonology
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 
 
-data class Syllable(val phonemes: PhonemeSequence, val prosodicEnums: List<Prosody>, val nucleusIdx: Int) {
+data class Syllable(val phonemes: PhonemeSequence, val prosody: List<Prosody>, val nucleusIdx: Int) {
     constructor(phonemes: List<Phoneme>, nucleusIdx: Int) : this(PhonemeSequence(phonemes), listOf(), nucleusIdx)
     constructor(nucleusIdx: Int, vararg phonemes: Phoneme) : this(phonemes.toList(), nucleusIdx)
 
@@ -15,7 +15,7 @@ data class Syllable(val phonemes: PhonemeSequence, val prosodicEnums: List<Proso
 
     override fun toString() =
         phonemes.phonemes.take(nucleusIdx + 1).joinToString("") +
-                prosodicEnums.joinToString("") { it.mark } +
+                prosody.joinToString("") { it.mark } +
                 phonemes.phonemes.drop(nucleusIdx + 1).joinToString("")
 
 }

@@ -61,7 +61,7 @@ data class TemplateSingleChange(
     ): Word {
         fun Word.takeProsody(i: Int) = this.syllables
             .getOrNull(i)
-            ?.prosodicEnums
+            ?.prosody
             ?.toList()
             ?: listOf()
 
@@ -84,7 +84,7 @@ data class TemplateSingleChange(
                     ) ?: throw ChangeException("Couldn't convert $word with change $this to word")
 
                     noProsodyWord.mapIndexed { i, s ->
-                        s.copy(prosodicEnums = word.takeProsody(i))
+                        s.copy(prosody = word.takeProsody(i))
                     }
                 }
                 Position.Beginning -> {
@@ -102,7 +102,7 @@ data class TemplateSingleChange(
                     val shift = noProsodyWord.size - word.syllables.size
 
                     noProsodyWord.mapIndexed { i, s ->
-                        s.copy(prosodicEnums = word.takeProsody(i - shift))
+                        s.copy(prosody = word.takeProsody(i - shift))
                     }
                 }
             }

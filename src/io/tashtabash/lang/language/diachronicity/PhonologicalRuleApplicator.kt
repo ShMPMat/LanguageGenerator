@@ -261,7 +261,7 @@ class PhonologicalRuleApplicator {
                     word.syllableTemplate
             val syllables = syllableTemplate
                 ?.splitOnSyllables(PhonemeSequence(resultPhonemes))
-                ?.mapIndexed { j, syllable -> syllable.copy(prosodicEnums = prosodies[j]) }
+                ?.mapIndexed { j, syllable -> syllable.copy(prosody = prosodies[j]) }
             if (syllables == null) {
                 _messages += "Can't split the word '$word' on syllables after applying the rule, reverting the word"
                 return word

@@ -94,7 +94,7 @@ data class Compound(
         for ((wordInd, word) in sourceWords.withIndex()) {
             for (syllable in word.syllables) {
                 prosodySyllables += syllables[syllableInd].copy(
-                    prosodicEnums = prosodyRule.changeProsody(wordInd, syllable.prosodicEnums)
+                    prosody = prosodyRule.changeProsody(wordInd, syllable.prosody)
                 )
 
                 syllableInd++

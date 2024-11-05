@@ -38,7 +38,7 @@ interface SyllableTemplate {
                 .flatten()
             exactPhonemes = exactPhonemes.drop(syllable.size)
 
-            syllable.copy(prosodicEnums = prosody)
+            syllable.copy(prosody = prosody)
         }
 
         return word.copy(syllables = prosodySyllables, syllableTemplate = this)
