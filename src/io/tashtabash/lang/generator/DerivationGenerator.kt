@@ -116,8 +116,8 @@ class DerivationGenerator(
 
     private fun injectCompounds(words: List<SemanticsCoreTemplate>) {
         for (target in words)
-            for ((index, left) in words.withIndex())
-                for (right in words.drop(index)) {
+            for ((i, left) in words.withIndex())
+                for (right in words.drop(i)) {
                     val compoundLink = createCompound(target, left, right)
                         ?: continue
 
@@ -134,13 +134,13 @@ class DerivationGenerator(
             return null
 
         val connotationsSum = left.connotations + right.connotations
-        val distance = target.connotations distance connotationsSum
-        val leftDistance = target.connotations localDistance left.connotations
-        val rightDistance = target.connotations localDistance right.connotations
-        val clearDistance = target.connotations.values.toList() distance
+        val closeness = target.connotations closeness  connotationsSum
+        val leftCloseness = target.connotations localCloseness left.connotations
+        val rightCloseness = target.connotations localCloseness right.connotations
+        val clearCloseness = target.connotations.values.toList() closeness
                 connotationsSum.values.filter { !it.isGlobal }
 
-        if (clearDistance == 0.0 || leftDistance == 0.0 || rightDistance == 0.0)
+        if (clearCloseness == 0.0 || leftCloseness == 0.0 || rightCloseness == 0.0)
             return null
 
         val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
@@ -151,13 +151,13 @@ class DerivationGenerator(
         }
 
         if (present != null) {
-            println("COMPOUND ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $distance")
+            println("COMPOUND ALREADY PRESENT ${left.word} + ${right.word} = ${target.word} $closeness")
             return null
         }
-//        println("${left.word} + ${right.word} = ${target.word} $distance")
+//        println("${left.word} + ${right.word} = ${target.word} $closeness")
         return CompoundLink(
             listOf(left.word, right.word),
-            distance
+            closeness
         )
     }
 

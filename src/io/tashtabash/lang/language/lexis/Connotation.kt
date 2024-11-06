@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.lexis
 
 import io.tashtabash.lang.language.LanguageException
+import kotlin.math.abs
 
 
 data class Connotation(var name: String, val strength: Double, var isGlobal: Boolean = false) {
@@ -66,6 +67,9 @@ class Connotations internal constructor(val _values: LinkedHashMap<Connotation, 
     }
 
     infix fun distance(that: Connotations): Double {
+        if (_values.isEmpty() || that._values.isEmpty())
+            return 1.0
+
         val mutualConnotations = values.mapNotNull { c ->
             val other = that._values[c]
                 ?: return@mapNotNull null
@@ -74,15 +78,15 @@ class Connotations internal constructor(val _values: LinkedHashMap<Connotation, 
         }
         val nonMutualElementsNumber = _values.size + that._values.size - 2 * mutualConnotations.size
 
-        if (_values.isEmpty() || that._values.isEmpty())
-            return 0.0
-
         return mutualConnotations
-            .map { (c1, c2) -> c1.strength * c2.strength }
+            .map { (c1, c2) -> abs(c1.strength - c2.strength) }
             .toMutableList()
-            .apply { addAll(List(nonMutualElementsNumber) { 0.0 }) }
+            .apply { addAll(List(nonMutualElementsNumber) { 1.0 }) }
             .average()
     }
+
+    infix fun closeness(that: Connotations): Double =
+        1.0 - distance(that)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -108,6 +112,9 @@ class Connotations internal constructor(val _values: LinkedHashMap<Connotation, 
 infix fun List<Connotation>.distance(that: List<Connotation>) =
     Connotations(this) distance Connotations(that)
 
+infix fun List<Connotation>.closeness(that: List<Connotation>) =
+    1.0 - distance(that)
+
 infix fun Connotations.localDistance(that: Connotations): Double {
     val globalConnotations = values
         .filter { it.isGlobal && that._values[it]?.isGlobal ?: true } +
@@ -116,6 +123,9 @@ infix fun Connotations.localDistance(that: Connotations): Double {
     return values
         .filter { it !in globalConnotations } distance that.values.filter { it !in globalConnotations }
 }
+
+infix fun Connotations.localCloseness(that: Connotations): Double =
+    1.0 - localDistance(that)
 
 
 val connotationsCompatibility = mapOf<String, Map<String, Double>>(
