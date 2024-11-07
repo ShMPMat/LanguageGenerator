@@ -18,56 +18,74 @@ class WordBase(private val supplementPath: String) {
         val lines = readLines()
 
         lines.forEach { line ->
-            val tokens = line.split(" +".toRegex())
+            val unparsedLinksTemplate = parseLine(line)
+            if (wordsAndDataMap[unparsedLinksTemplate.template.word] != null)
+                throw GeneratorException("Word ${unparsedLinksTemplate.template.word} already exists")
 
-            val word = tokens[0]
-            val speechPart = SpeechPart.valueOf(tokens[1])
-            val realizationProbability = tokens[2].toDouble()
-
-            val connotations = tokens.filter { it.contains("*") }
-            val tags = tokens.filter { it.contains("|") }
-            val derivations = tokens.filter { it.contains("@") }
-            val compounds = tokens.filter { it.contains("&") }
-
-            val core = SemanticsCoreTemplate(
-                word,
-                speechPart,
-                parseConnotations(connotations),
-                tags.map {
-                    val (name, semanticTags) = it.split("|")
-
-                    SemanticsTagCluster(
-                        parseSemanticsTagTemplates(semanticTags),
-                        getType(name),
-                        getInstantiationType(name)
-                    )
-                }.toSet(),
-                DerivationClusterTemplate(),
-                realizationProbability
-            )
-
-            if (wordsAndDataMap[core.word] != null)
-                throw GeneratorException("Word ${core.word} already exists")
-
-            wordsAndDataMap[core.word] = UnparsedLinksTemplate(core, derivations, compounds)
+            wordsAndDataMap[unparsedLinksTemplate.template.word] = unparsedLinksTemplate
         }
 
-        for (data in wordsAndDataMap.values)
-            for (derivation in data.derivations) {
-                val (name, tags) = derivation.split("@")
-                data.template.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
-                    parseDerivationTemplates(tags).toMutableList()
-            }
+        for (unparsedLinksTemplate in wordsAndDataMap.values)
+            parseDerivations(unparsedLinksTemplate)
 
-        for (data in wordsAndDataMap.values)
-            for (compound in data.compounds)
-                data.template.derivationClusterTemplate.possibleCompounds += parseCompoundTemplate(
-                    compound,
-                    wordsAndDataMap
-                )
+        for (unparsedLinksTemplate in wordsAndDataMap.values)
+            parseCompounds(unparsedLinksTemplate, wordsAndDataMap)
 
-        baseWords += wordsAndDataMap.values.map { it.template }.sortedBy { it.word }
+        baseWords += wordsAndDataMap.values
+            .map { it.template }
+            .sortedBy { it.word }
         allWords += baseWords
+    }
+
+    private fun parseLine(line: String): UnparsedLinksTemplate {
+        val tokens = line.split(" +".toRegex())
+
+        val word = tokens[0]
+        val speechPart = SpeechPart.valueOf(tokens[1])
+        val realizationProbability = tokens[2].toDouble()
+
+        val connotations = tokens.filter { it.contains("*") }
+        val tags = tokens.filter { it.contains("|") }
+        val derivations = tokens.filter { it.contains("@") }
+        val compounds = tokens.filter { it.contains("&") }
+
+        val core = SemanticsCoreTemplate(
+            word,
+            speechPart,
+            parseConnotations(connotations),
+            tags.map {
+                val (name, semanticTags) = it.split("|")
+
+                SemanticsTagCluster(
+                    parseSemanticsTagTemplates(semanticTags),
+                    getType(name),
+                    getInstantiationType(name)
+                )
+            }.toSet(),
+            DerivationClusterTemplate(),
+            realizationProbability
+        )
+
+        return UnparsedLinksTemplate(core, derivations, compounds)
+    }
+
+    private fun parseDerivations(unparsedLinksTemplate: UnparsedLinksTemplate) {
+        for (derivation in unparsedLinksTemplate.derivations) {
+            val (name, tags) = derivation.split("@")
+            unparsedLinksTemplate.template.derivationClusterTemplate.typeToCore[DerivationType.valueOf(name)] =
+                parseDerivationTemplates(tags).toMutableList()
+        }
+    }
+
+    private fun parseCompounds(
+        unparsedLinksTemplate: UnparsedLinksTemplate,
+        wordsAndDataMap: MutableMap<String, UnparsedLinksTemplate>
+    ) {
+        for (compound in unparsedLinksTemplate.compounds)
+            unparsedLinksTemplate.template.derivationClusterTemplate.possibleCompounds += parseCompoundTemplate(
+                compound,
+                wordsAndDataMap
+            )
     }
 
     fun addWords(words: List<SemanticsCoreTemplate>) {
