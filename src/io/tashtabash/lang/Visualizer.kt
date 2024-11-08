@@ -195,7 +195,7 @@ class Visualizer(val language: Language) {
                 language.lexis.words
                     .filter { it.semanticsCore.changeHistory != null }
                     .sortedBy { it.semanticsCore.changeDepth }
-                    .joinToString("\n\n") { printDerivationStory(it) }
+                    .joinToString("\n\n") { language.lexis.computeHistory(it) }
             }
         |
         |Collapsed meanings:
@@ -208,9 +208,6 @@ class Visualizer(val language: Language) {
     """.trimMargin()
         )
     }
-
-    private fun printDerivationStory(word: Word) = word.semanticsCore.changeHistory?.printHistory(word)
-        ?: "No derivations"
 }
 
 private const val DEFAULT_SEED = 216

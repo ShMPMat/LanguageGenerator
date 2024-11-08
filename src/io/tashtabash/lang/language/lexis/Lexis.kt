@@ -45,6 +45,11 @@ data class Lexis(
         return Lexis(newWords, newCopulas, newQuestionMarkers)
     }
 
+    fun computeHistory(word: Word): String {
+        return word.semanticsCore.changeHistory?.printHistory(word)
+            ?: "No derivations"
+    }
+
     override fun toString() = """
         |copula: $copula
         |question marker: $questionMarker
