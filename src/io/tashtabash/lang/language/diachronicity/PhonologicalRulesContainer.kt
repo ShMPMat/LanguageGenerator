@@ -56,8 +56,11 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         // Vowel deletion
         "V -> - / \$C _ CV",
         "V -> - / VC _ C\$",
+        "V -> - / C _ \$",
         // Consonant deletion
         "C -> - / _ \$",
+        "C -> - / C _ \$",
+        "C -> - / V _ \$",
     ).map { createPhonologicalRule(it, phonemeContainer) }
         .flatMap { listOf(it, it.copy(allowSyllableStructureChange = true)) }
 
