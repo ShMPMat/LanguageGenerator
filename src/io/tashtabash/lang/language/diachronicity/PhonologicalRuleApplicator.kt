@@ -231,7 +231,7 @@ class PhonologicalRuleApplicator {
                             words.map { applyPhonologicalRule(it, rule) }
                 }
             )
-            is ReduplicationCategoryApplicator, PassingCategoryApplicator -> categoryApplicator.copy()
+            is WordReduplicationCategoryApplicator, PassingCategoryApplicator -> categoryApplicator.copy()
             is WordCategoryApplicator -> categoryApplicator.copy(
                 applyPhonologicalRule(categoryApplicator.word, rule),
             )

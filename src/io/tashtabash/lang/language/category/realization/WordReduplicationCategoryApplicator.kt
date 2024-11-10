@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
 import io.tashtabash.lang.language.syntax.sequence.LatchedWord
 
 
-class ReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryRealization.Reduplication) {
+class WordReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryRealization.Reduplication) {
     override fun apply(
         words: FoldedWordSequence,
         wordPosition: Int,
@@ -22,7 +22,7 @@ class ReduplicationCategoryApplicator : AbstractCategoryApplicator(CategoryReali
         )
     }
 
-    override fun copy() = ReduplicationCategoryApplicator()
+    override fun copy() = WordReduplicationCategoryApplicator()
 
     override fun toString() = "Reduplication"
 }

@@ -112,7 +112,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
                 Suffix
             ) to null
         }
-        Reduplication -> ReduplicationCategoryApplicator() to null
+        Reduplication -> WordReduplicationCategoryApplicator() to null
         Passing -> PassingCategoryApplicator to null
         Suppletion -> {
             val word = lexisGenerator.generateWord(semanticsCore)
