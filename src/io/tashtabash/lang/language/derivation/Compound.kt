@@ -22,18 +22,18 @@ data class Compound(
     private val categoriesChanger: CategoryChanger,
     private val prosodyRule: CompoundProsodyRule
 ) {
-    fun compose(words: List<Word>, resultCore: SemanticsCoreTemplate, random: Random): Word? {
+    fun compose(lexis: Lexis, resultCore: SemanticsCoreTemplate, random: Random): Word? {
         if (resultCore.speechPart != speechPart.type)
             return null
 
-        val existingDoubles = words
+        val existingDoubles = lexis.words
             .map { getMeaningDistance(it.semanticsCore.meaningCluster, resultCore.word) }
             .foldRight(0.0, Double::plus)
         (1.0 / (existingDoubles + 1)).chanceOfNot {
             return null
         }
 
-        val options = chooseOptions(words, resultCore.derivationClusterTemplate.possibleCompounds)
+        val options = chooseOptions(lexis, resultCore.derivationClusterTemplate.possibleCompounds)
 
         val chosenCompound = options.randomElementOrNull()?.options
             ?: return null
@@ -64,23 +64,23 @@ data class Compound(
             ),
             syllableTemplate,
             core.toSemanticsCore(newCategories)
-                .copy(changeHistory = CompoundHistory(this, words)),
+                .copy(changeHistory = CompoundHistory(this, words.map { SimpleWordPointer(it) })),
             listOf(),
             morphemes
         )
     }
 
-    private fun chooseOptions(words: List<Word>, templates: List<CompoundLink>): List<CompoundOptions> =
-        templates.mapNotNull { pickOptionWords(words, it) } +
+    private fun chooseOptions(lexis: Lexis, templates: List<CompoundLink>): List<CompoundOptions> =
+        templates.mapNotNull { pickOptionWords(lexis, it) } +
                 CompoundOptions(null, noCompoundLink.probability)
 
     private fun pickOptionWords(
-        words: List<Word>,
+        lexis: Lexis,
         template: CompoundLink
     ): CompoundOptions? = template.templates
         ?.map { t ->
-            words.filter {//TODO generate probability test
-                (1 / (it.semanticsCore.changeDepth + 1.0)).testProbability()
+            lexis.words.filter {//TODO generate probability test
+                (1 / (it.semanticsCore.computeChangeDepth(lexis) + 1.0)).testProbability()
                         && it.semanticsCore.meaningCluster.contains(t)
             }
         }

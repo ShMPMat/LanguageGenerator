@@ -5,11 +5,10 @@ import io.tashtabash.lang.generator.util.DataConsistencyException
 import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
 import io.tashtabash.lang.generator.util.readWordClusters
-import io.tashtabash.lang.language.category.value.CategoryValue
-import io.tashtabash.lang.language.phonology.PhonemeType
-import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.category.CategoryPool
+import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.Syllable
 import io.tashtabash.lang.language.phonology.Syllables
@@ -18,10 +17,11 @@ import io.tashtabash.lang.language.phonology.prosody.generateStress
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
-import io.tashtabash.random.*
+import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import io.tashtabash.random.singleton.testProbability
+import io.tashtabash.random.toSampleSpaceObject
 import java.io.File
 import kotlin.math.abs
 import kotlin.math.pow
@@ -44,8 +44,12 @@ class LexisGenerator(
         val allConnotations = File("$supplementPath/Connotations")
             .readLines()
             .filter { it.isNotBlank() }
-            .map { if (it[0] == '-') it.drop(1) to true else it to false }
-            .toMap()
+            .associate {
+                if (it[0] == '-')
+                    it.drop(1) to true
+                else
+                    it to false
+            }
 
         for (template in wordBase.allWords) {
             template.connotations.values
@@ -93,7 +97,7 @@ class LexisGenerator(
             throw DataConsistencyException("Unknown meaning in derivation - $unknownDerivationMeaning")
     }
 
-    private val words = mutableListOf<Word>()
+    private val words = GenerationWordContainer()
 
     private val syllableTests = 10
 
@@ -119,10 +123,9 @@ class LexisGenerator(
             val staticCategories = makeStaticCategories(core, categoryPool)
             val mainCore = core.toSemanticsCore(staticCategories)
             val extendedCore = extendCore(mainCore)
-            val newWords = mutableListOf(generateWord(extendedCore))
+            words += generateWord(extendedCore)
 
-            derivationGenerator.makeDerivations(newWords, wordBase)
-            words += newWords
+            derivationGenerator.makeDerivations(words.all.last(), words, wordBase)
         }
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
@@ -154,32 +157,12 @@ class LexisGenerator(
             questionMarker[QuestionMarker] = particle
         }
 
-        injectTags()
-
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-            copula[CopulaType.Verb] = words.first { it.semanticsCore.hasMeaning("be") }
+            copula[CopulaType.Verb] = words.all
+                .first { it.semanticsCore.hasMeaning("be") }
 
-        return Lexis(words, copula, questionMarker)
-    }
-
-    private fun injectTags() {
-        injectVerbObjectTags()
-    }
-
-    private fun injectVerbObjectTags() {
-        val verbs = words.mapIndexedNotNull { i, w ->
-            (w to i).takeIf { w.semanticsCore.speechPart.type == SpeechPart.Verb }
-        }
-
-        for ((verb, i) in verbs) {
-            val newVerb = verb.copy(
-                semanticsCore = verb.semanticsCore.copy(
-                    tags = verb.semanticsCore.tags + SemanticsTag("location")
-                )
-            )
-
-            words[i] = newVerb
-        }
+        return Lexis(words.all, copula, questionMarker)
+            .reifyPointers()
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {
@@ -199,7 +182,7 @@ class LexisGenerator(
     }
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
-        val doubles = words
+        val doubles = words.all
             .map { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
             .foldRight(0.0, Double::plus)
         val successProbability = core.probability * wordDoubleProbability.pow(doubles)

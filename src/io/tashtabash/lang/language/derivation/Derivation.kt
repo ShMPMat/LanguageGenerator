@@ -1,11 +1,9 @@
 package io.tashtabash.lang.language.derivation
 
+import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.containers.WordBase
 import io.tashtabash.lang.containers.toSemanticsCore
-import io.tashtabash.lang.language.lexis.SemanticsTag
-import io.tashtabash.lang.language.lexis.TypedSpeechPart
-import io.tashtabash.lang.language.lexis.Word
-import io.tashtabash.lang.language.lexis.noDerivationLink
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.random.randomUnwrappedElement
 import kotlin.random.Random
@@ -18,7 +16,7 @@ data class Derivation(
     val strength: Double,
     private val categoriesChanger: CategoryChanger
 ) {
-    fun derive(word: Word, allWords: WordBase, random: Random): Word? {
+    fun deriveRandom(word: Word, allWords: WordBase, random: Random): Word? {
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 
@@ -32,21 +30,25 @@ data class Derivation(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
         ) ?: return null
+        val core = allWords.allWords.first { it.word == chosenMeaning }
 
-        val derivedWord = affix.change(word, listOf(), listOf(derivationClass))
-        val newDerivations = word.semanticsCore.appliedDerivations + this
+        return derive(word, core)
+    }
+
+    private fun derive(originalWord: Word, derivedCore: SemanticsCoreTemplate,): Word? {
+        val derivedWord = affix.change(originalWord, listOf(), listOf(derivationClass))
+        val newDerivations = originalWord.semanticsCore.appliedDerivations + this
         val newStaticCategories = categoriesChanger.makeStaticCategories(
-            listOf(word.semanticsCore),
+            listOf(originalWord.semanticsCore),
             resultSpeechPart
         ) ?: return null
-        val newCore = allWords.allWords.first { it.word == chosenMeaning }
-            .toSemanticsCore(newStaticCategories).let {
-                it.copy(
-                    tags = it.tags + SemanticsTag(derivationClass.name),
-                    appliedDerivations = newDerivations,
-                    changeHistory = DerivationHistory(this, word)
-                )
-            }
+        val newCore = derivedCore.toSemanticsCore(newStaticCategories).let {
+            it.copy(
+                tags = it.tags + SemanticsTag(derivationClass.name),
+                appliedDerivations = newDerivations,
+                changeHistory = DerivationHistory(this, SimpleWordPointer(originalWord))
+            )
+        }
 
         return derivedWord.copy(semanticsCore = newCore)
     }

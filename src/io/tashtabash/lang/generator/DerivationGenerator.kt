@@ -19,6 +19,7 @@ import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.testProbability
+import java.util.*
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.random.Random
@@ -288,23 +289,26 @@ class DerivationGenerator(
         return randomElement(possibleCategoryMakers, random)
     }
 
-    internal fun makeDerivations(words: MutableList<Word>, wordBase: WordBase) {
-        var i = 0
-        while (i < words.size) {
-            val word = words[i]
+    internal fun makeDerivations(word: Word, words: GenerationWordContainer, wordBase: WordBase) {
+        val queue = ArrayDeque(listOf(word))
+
+        while (queue.isNotEmpty()) {
+            val curWord = queue.poll()
             for (derivation in derivationParadigm.derivations) {
-                val derivedWord = derivation.derive(word, wordBase, random)
+                val derivedWord = derivation.deriveRandom(curWord, wordBase, random)
                     ?: continue
+
                 words += derivedWord
+                queue += words.all.last()
             }
-            i++
         }
     }
 
-    internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: MutableList<Word>) {
+    internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: GenerationWordContainer) {
         for (template in templates.shuffled(RandomSingleton.random))
             for (compound in derivationParadigm.compounds.shuffled(RandomSingleton.random)) {
-                val derivedWord = compound.compose(availableWords, template, random)
+                val incompleteLexis = Lexis(availableWords.all, mapOf(), mapOf())
+                val derivedWord = compound.compose(incompleteLexis, template, random)
                     ?: continue
 
                 availableWords += derivedWord

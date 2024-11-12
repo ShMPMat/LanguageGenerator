@@ -10,7 +10,6 @@ import io.tashtabash.lang.language.category.PersonValue.*
 import io.tashtabash.lang.language.diachronicity.RandomPhonologicalRuleApplicator
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
-import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.clause.description.*
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
@@ -194,7 +193,7 @@ class Visualizer(val language: Language) {
         |${
                 language.lexis.words
                     .filter { it.semanticsCore.changeHistory != null }
-                    .sortedBy { it.semanticsCore.changeDepth }
+                    .sortedBy { it.semanticsCore.computeChangeDepth(language.lexis) }
                     .joinToString("\n\n") { language.lexis.computeHistory(it) }
             }
         |
@@ -220,7 +219,7 @@ private fun extractSeed(args: Array<String>): Int =
             DEFAULT_SEED
         }
 
-val CHANGES_NUMBER = 5
+val CHANGES_NUMBER = 7
 
 /**
  * One parameter expected: a generator seed in the Int range

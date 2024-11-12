@@ -1,42 +1,60 @@
 package io.tashtabash.lang.language.derivation
 
 import io.tashtabash.lang.generator.util.GeneratorException
+import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.Word
+import io.tashtabash.lang.language.lexis.WordPointer
 import io.tashtabash.lang.language.lineUp
 
 
 interface ChangeHistory {
-    fun printHistory(parent: Word): String
+    fun printHistory(parent: Word, lexis: Lexis): String
 
-    val changeDepth: Int
+    fun computeChangeDepth(lexis: Lexis): Int
 }
 
 
-data class DerivationHistory(val derivation: Derivation, val previous: Word) : ChangeHistory {
-    override fun printHistory(parent: Word) =
-        constructChangeTree(listOf(previous), parent, derivation.derivationClass.toString())
+data class DerivationHistory(val derivation: Derivation, val previous: WordPointer) : ChangeHistory {
+    override fun printHistory(parent: Word, lexis: Lexis): String =
+        constructChangeTree(listOf(previous.resolve(lexis)), parent, lexis, derivation.derivationClass.toString())
 
-    override val changeDepth: Int
-        get() = 1 + (previous.semanticsCore.changeHistory?.changeDepth ?: 0)
+    override fun computeChangeDepth(lexis: Lexis): Int {
+        val previousDepth = previous.resolve(lexis)
+            .semanticsCore
+            .changeHistory
+            ?.computeChangeDepth(lexis)
+            ?: 0
+
+        return 1 + previousDepth
+    }
 }
 
 
-data class CompoundHistory(val compound: Compound, val previous: List<Word>) : ChangeHistory {
-    override fun printHistory(parent: Word) =
-        constructChangeTree(previous, parent, compound.infix.toString())
+data class CompoundHistory(val compound: Compound, val previous: List<WordPointer>) : ChangeHistory {
+    override fun printHistory(parent: Word, lexis: Lexis): String =
+        constructChangeTree(previous.map { it.resolve(lexis) }, parent, lexis, compound.infix.toString())
 
-    override val changeDepth: Int
-        get() = 1 + (previous.map { it.semanticsCore.changeHistory?.changeDepth ?: 0 }.maxOrNull() ?: 0)
+    override fun computeChangeDepth(lexis: Lexis): Int {
+        val previousDepth = previous.mapNotNull {
+            it.resolve(lexis)
+                .semanticsCore
+                .changeHistory
+                ?.computeChangeDepth(lexis)
+        }.maxOrNull()
+            ?: 0
+
+        return 1 + previousDepth
+    }
 }
 
 
-private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, arrowLabel: String): String {
-    val (maxDepthString, maxDepth) = previousWords.maxByOrNull { it.semanticsCore.changeDepth }
-        ?.let { it.printChange() to it.semanticsCore.changeDepth }
+private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, lexis: Lexis, arrowLabel: String): String {
+    val (maxDepthString, maxDepth) = previousWords.maxByOrNull { it.semanticsCore.computeChangeDepth(lexis) }
+        ?.let { it.printChange(lexis) to it.semanticsCore.computeChangeDepth(lexis) }
         ?: throw GeneratorException("Empty word list has been given")
     val indexes = getIndexes(maxDepthString)
     val prefix = previousWords
-        .map { it.semanticsCore.changeDepth to it.printChange() }
+        .map { it.semanticsCore.computeChangeDepth(lexis) to it.printChange(lexis) }
         .joinToString("\n") { (d, s) ->
             s.lines().joinToString("\n") {
                 " ".repeat(indexes.elementAtOrNull(maxDepth - d) ?: indexes.last()) + it
@@ -73,5 +91,5 @@ private fun getIndexes(maxDepthString: String): List<Int> {
     return indexes
 }
 
-private fun Word.printChange() = semanticsCore.changeHistory?.printHistory(this)
+private fun Word.printChange(lexis: Lexis) = semanticsCore.changeHistory?.printHistory(this, lexis)
     ?: lineUp(toString(), semanticsCore.toString()).let { (f, s) -> "$f\n$s" }

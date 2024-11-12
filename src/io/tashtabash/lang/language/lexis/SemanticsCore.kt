@@ -32,7 +32,9 @@ data class SemanticsCore(
             }
     }
 
-    val changeDepth = changeHistory?.changeDepth ?: 0
+    fun computeChangeDepth(lexis: Lexis): Int =
+        changeHistory?.computeChangeDepth(lexis)
+            ?: 0
 
     fun hasMeaning(meaning: String) = meaning in meaningCluster.meanings
 
