@@ -257,12 +257,16 @@ class DerivationGenerator(
             }
 
             0.5.chanceOf {
-                val changer = PassingCategoryChanger(random.nextInt(2))
-                val prosodyRule = generateCompoundProsodyRule()
-                compounds += Compound(speechPart, PhonemeSequence(), changer, prosodyRule)
+                compounds += constructPassingCompound(speechPart)
             }
         }
         return compounds
+    }
+
+    private fun constructPassingCompound(speechPart: TypedSpeechPart): Compound {
+        val changer = PassingCategoryChanger(random.nextInt(2))
+        val prosodyRule = generateCompoundProsodyRule()
+        return Compound(speechPart, PhonemeSequence(), changer, prosodyRule)
     }
 
     private fun generateCompoundProsodyRule() =
@@ -295,7 +299,9 @@ class DerivationGenerator(
         while (queue.isNotEmpty()) {
             val curWord = queue.poll()
             for (derivation in derivationParadigm.derivations) {
-                val derivedWord = derivation.deriveRandom(curWord, wordBase, random)
+                val derivedWord = derivation.deriveRandom(curWord, random) { m ->
+                    wordBase.allWords.first { it.word == m }
+                }
                     ?: continue
 
                 words += derivedWord

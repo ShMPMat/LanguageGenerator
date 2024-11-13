@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.derivation
 
 import io.tashtabash.lang.containers.SemanticsCoreTemplate
-import io.tashtabash.lang.containers.WordBase
 import io.tashtabash.lang.containers.toSemanticsCore
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.Affix
@@ -16,7 +15,7 @@ data class Derivation(
     val strength: Double,
     private val categoriesChanger: CategoryChanger
 ) {
-    fun deriveRandom(word: Word, allWords: WordBase, random: Random): Word? {
+    fun deriveRandom(word: Word, random: Random, resolver: (Meaning) -> SemanticsCoreTemplate): Word? {
         if (word.semanticsCore.appliedDerivations.contains(this))
             return null
 
@@ -30,7 +29,7 @@ data class Derivation(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + noDerivationLink,
             random
         ) ?: return null
-        val core = allWords.allWords.first { it.word == chosenMeaning }
+        val core = resolver(chosenMeaning)
 
         return derive(word, core)
     }
