@@ -52,7 +52,7 @@ fun makeDefLang(
     derivations: List<Derivation>,
     nounChangeParadigm: SpeechPartChangeParadigm
 ) = Language(
-    Lexis(words, mapOf(), mapOf()),
+    Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
     StressType.Initial,
     RestrictionsParadigm(mutableMapOf()),

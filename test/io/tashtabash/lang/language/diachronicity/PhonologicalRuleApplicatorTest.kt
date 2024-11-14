@@ -1,10 +1,15 @@
 package io.tashtabash.lang.language.diachronicity
 
+import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
+import io.tashtabash.lang.language.derivation.DerivationType
+import io.tashtabash.lang.language.lexis.DerivationCluster
+import io.tashtabash.lang.language.lexis.DerivationLink
+import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.SyllableValenceTemplate
 import io.tashtabash.lang.language.phonology.ValencyPlace
@@ -13,10 +18,11 @@ import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.random.Random
 import kotlin.test.assertEquals
 
 
-internal class PhonologyTest {
+internal class PhonologicalRuleApplicatorTest {
     @Test
     fun `applyPhonologicalRule changes a single vowel`() {
         val words = listOf(
@@ -768,6 +774,49 @@ internal class PhonologyTest {
                 AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+
+
+    @Test
+    fun `applyPhonologicalRule doesn't break the ChangeHistory output`() {
+        val derivation = Derivation(createAffix("ba-"), AbstractNounFromNoun, defSpeechPart, 100.0, defCategoryChanger)
+        val stemWord = createNoun("babo").let {
+            it.copy(
+                semanticsCore = it.semanticsCore.copy(
+                    derivationCluster = DerivationCluster(
+                        mapOf(DerivationType.NNAbstract to listOf(DerivationLink("phony derived", 100.0)))
+                    )
+                )
+            )
+        }
+        val derivedWord = derivation
+            .deriveRandom(stemWord, Random(0)) { SemanticsCoreTemplate(it, SpeechPart.Noun) }!!
+        val words = listOf(stemWord, derivedWord)
+        val derivations = listOf(derivation)
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> o / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createPhonemes("bobo"),
+                createPhonemes("bobobo"),
+            ),
+            shiftedLanguage.lexis.words.map { it.toPhonemes() }
+        )
+        assertEquals(
+            "bobo  ->AbstractNounFromNoun-> bobobo       \n" +
+                    "phony ->AbstractNounFromNoun-> phony derived",
+            shiftedLanguage.lexis.computeHistory(shiftedLanguage.lexis.words[1])
         )
     }
 }
