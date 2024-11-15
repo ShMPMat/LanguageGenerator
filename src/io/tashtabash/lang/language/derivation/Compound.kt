@@ -22,7 +22,7 @@ data class Compound(
     private val categoriesChanger: CategoryChanger,
     private val prosodyRule: CompoundProsodyRule
 ) {
-    fun compose(lexis: Lexis, resultCore: SemanticsCoreTemplate, random: Random): Word? {
+    fun compose(lexis: AbstractLexis, resultCore: SemanticsCoreTemplate, random: Random): Word? {
         if (resultCore.speechPart != speechPart.type)
             return null
 
@@ -70,12 +70,12 @@ data class Compound(
         )
     }
 
-    private fun chooseOptions(lexis: Lexis, templates: List<CompoundLink>): List<CompoundOptions> =
+    private fun chooseOptions(lexis: AbstractLexis, templates: List<CompoundLink>): List<CompoundOptions> =
         templates.mapNotNull { pickOptionWords(lexis, it) } +
                 CompoundOptions(null, noCompoundLink.probability)
 
     private fun pickOptionWords(
-        lexis: Lexis,
+        lexis: AbstractLexis,
         template: CompoundLink
     ): CompoundOptions? = template.templates
         ?.map { t ->

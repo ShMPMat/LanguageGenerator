@@ -293,7 +293,7 @@ class DerivationGenerator(
         return randomElement(possibleCategoryMakers, random)
     }
 
-    internal fun makeDerivations(word: Word, words: GenerationWordContainer, wordBase: WordBase) {
+    internal fun makeDerivations(word: Word, words: SimpleMutableLexis, wordBase: WordBase) {
         val queue = ArrayDeque(listOf(word))
 
         while (queue.isNotEmpty()) {
@@ -305,15 +305,15 @@ class DerivationGenerator(
                     ?: continue
 
                 words += derivedWord
-                queue += words.all.last()
+                queue += words.words.last()
             }
         }
     }
 
-    internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: GenerationWordContainer) {
+    internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: SimpleMutableLexis) {
         for (template in templates.shuffled(RandomSingleton.random))
             for (compound in derivationParadigm.compounds.shuffled(RandomSingleton.random)) {
-                val incompleteLexis = Lexis(availableWords.all, mapOf(), mapOf())
+                val incompleteLexis = Lexis(availableWords.words, mapOf(), mapOf())
                 val derivedWord = compound.compose(incompleteLexis, template, random)
                     ?: continue
 

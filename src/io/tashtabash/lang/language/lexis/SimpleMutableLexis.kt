@@ -1,14 +1,10 @@
-package io.tashtabash.lang.generator
-
-import io.tashtabash.lang.language.lexis.SemanticsTag
-import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.Word
+package io.tashtabash.lang.language.lexis
 
 
-class GenerationWordContainer {
+open class SimpleMutableLexis: AbstractLexis() {
     private val _words = mutableListOf<Word>()
 
-    val all: List<Word> = _words
+    override val words: List<Word> = _words
 
     operator fun plusAssign(word: Word) {
         _words += injectTags(word)

@@ -8,10 +8,10 @@ import io.tashtabash.lang.language.syntax.features.QuestionMarker
 
 
 data class Lexis(
-    val words: List<Word>,
+    override val words: List<Word>,
     private val copula: WordMap<CopulaType>,
     val questionMarker: WordMap<QuestionMarker>
-) {
+): AbstractLexis() {
     val size: Int
         get() = words.size
 

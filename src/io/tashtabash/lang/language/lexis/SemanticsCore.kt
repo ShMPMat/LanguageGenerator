@@ -32,7 +32,7 @@ data class SemanticsCore(
             }
     }
 
-    fun computeChangeDepth(lexis: Lexis): Int =
+    fun computeChangeDepth(lexis: AbstractLexis): Int =
         changeHistory?.computeChangeDepth(lexis)
             ?: 0
 

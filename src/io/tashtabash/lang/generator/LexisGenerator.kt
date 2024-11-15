@@ -97,7 +97,7 @@ class LexisGenerator(
             throw DataConsistencyException("Unknown meaning in derivation - $unknownDerivationMeaning")
     }
 
-    private val words = GenerationWordContainer()
+    private val words = SimpleMutableLexis()
 
     private val syllableTests = 10
 
@@ -125,7 +125,7 @@ class LexisGenerator(
             val extendedCore = extendCore(mainCore)
             words += generateWord(extendedCore)
 
-            derivationGenerator.makeDerivations(words.all.last(), words, wordBase)
+            derivationGenerator.makeDerivations(words.words.last(), words, wordBase)
         }
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
@@ -158,10 +158,10 @@ class LexisGenerator(
         }
 
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-            copula[CopulaType.Verb] = words.all
+            copula[CopulaType.Verb] = words.words
                 .first { it.semanticsCore.hasMeaning("be") }
 
-        return Lexis(words.all, copula, questionMarker)
+        return Lexis(words.words, copula, questionMarker)
             .reifyPointers()
     }
 
@@ -182,7 +182,7 @@ class LexisGenerator(
     }
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
-        val doubles = words.all
+        val doubles = words.words
             .map { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
             .foldRight(0.0, Double::plus)
         val successProbability = core.probability * wordDoubleProbability.pow(doubles)
