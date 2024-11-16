@@ -134,7 +134,7 @@ class LexisGenerator(
     }
 
     private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula = mutableMapOf<CopulaType, Word>()
+        val copula = mutableMapOf<CopulaType, WordPointer>()
 
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
             val particle = generateWord(
@@ -143,10 +143,10 @@ class LexisGenerator(
 
             words += particle
 
-            copula[CopulaType.Particle] = particle
+            copula[CopulaType.Particle] = SimpleWordPointer(particle)
         }
 
-        val questionMarker = mutableMapOf<QuestionMarker, Word>()
+        val questionMarker = mutableMapOf<QuestionMarker, WordPointer>()
         if (syntaxParadigm.questionMarkerPresence.questionMarker != null) {
             val particle = generateWord(
                 SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
@@ -154,12 +154,13 @@ class LexisGenerator(
 
             words += particle
 
-            questionMarker[QuestionMarker] = particle
+            questionMarker[QuestionMarker] = SimpleWordPointer(particle)
         }
 
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-            copula[CopulaType.Verb] = words.words
-                .first { it.semanticsCore.hasMeaning("be") }
+            copula[CopulaType.Verb] = SimpleWordPointer(
+                words.getWord("be")
+            )
 
         return Lexis(words.words, copula, questionMarker)
             .reifyPointers()

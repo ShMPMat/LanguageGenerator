@@ -10,7 +10,7 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.sequence.unfold
 
 
-class Language(
+data class Language(
     val lexis: Lexis,
     val phonemeContainer: PhonemeContainer,
     val stressType: StressType,

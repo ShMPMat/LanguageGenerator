@@ -1,20 +1,29 @@
 package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.containers.SemanticsCoreTemplate
+import io.tashtabash.lang.language.Language
+import io.tashtabash.lang.language.NumeralSystemBase
+import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
+import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
+import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.derivation.DerivationType
-import io.tashtabash.lang.language.lexis.DerivationCluster
-import io.tashtabash.lang.language.lexis.DerivationLink
-import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.phonology.PhonemeType
+import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.SyllableValenceTemplate
 import io.tashtabash.lang.language.phonology.ValencyPlace
+import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.Stress
+import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
+import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.features.*
+import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -777,8 +786,6 @@ internal class PhonologicalRuleApplicatorTest {
         )
     }
 
-
-
     @Test
     fun `applyPhonologicalRule doesn't break the ChangeHistory output`() {
         val derivation = Derivation(createAffix("ba-"), AbstractNounFromNoun, defSpeechPart, 100.0, defCategoryChanger)
@@ -817,6 +824,63 @@ internal class PhonologicalRuleApplicatorTest {
             "bobo  ->AbstractNounFromNoun-> bobobo       \n" +
                     "phony ->AbstractNounFromNoun-> phony derived",
             shiftedLanguage.lexis.computeHistory(shiftedLanguage.lexis.words[1])
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule doesn't break the copula and question marker pointers`() {
+        val copulaWord = createWord("ba", SpeechPart.Particle)
+        val questionMarkerWord = createWord("pa", SpeechPart.Particle)
+        val words = listOf(copulaWord, questionMarkerWord)
+        val nounChangeParadigm = SpeechPartChangeParadigm(
+            defSpeechPart,
+            listOf(),
+            mapOf(),
+            ProsodyChangeParadigm(StressType.Initial)
+        )
+        val particleChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Particle.toDefault(),
+            listOf(),
+            mapOf(),
+            ProsodyChangeParadigm(StressType.Initial)
+        )
+        val lexis = Lexis(
+            words,
+            mapOf(CopulaType.Particle to SimpleWordPointer(copulaWord)),
+            mapOf(QuestionMarker to SimpleWordPointer(questionMarkerWord))
+        ).reifyPointers()
+        val language = Language(
+            lexis,
+            testPhonemeContainer,
+            StressType.Initial,
+            RestrictionsParadigm(mutableMapOf()),
+            DerivationParadigm(listOf(), listOf()),
+            ChangeParadigm(
+                WordOrder(mapOf(), mapOf(), NominalGroupOrder.DNP),
+                WordChangeParadigm(
+                    listOf(),
+                    mapOf(defSpeechPart to nounChangeParadigm, SpeechPart.Particle.toDefault() to particleChangeParadigm)
+                ),
+                SyntaxParadigm(
+                    CopulaPresence(listOf(CopulaType.None.toSso(1.0))),
+                    QuestionMarkerPresence(null),
+                    PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
+                ),
+                NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
+                SyntaxLogic(mapOf(), mapOf(), mapOf(), mapOf(), null, mapOf(), mapOf(), listOf(), null)
+            )
+        )
+        val phonologicalRule = createTestPhonologicalRule("a -> o / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            createWord("bo", SpeechPart.Particle),
+            shiftedLanguage.lexis.copula[CopulaType.Particle]?.resolve(shiftedLanguage.lexis)
+        )
+        assertEquals(
+            createWord("po", SpeechPart.Particle),
+            shiftedLanguage.lexis.questionMarker[QuestionMarker]?.resolve(shiftedLanguage.lexis)
         )
     }
 }
