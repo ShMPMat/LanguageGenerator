@@ -10,6 +10,7 @@ import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
+import io.tashtabash.lang.language.derivation.DerivationHistory
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.derivation.DerivationType
 import io.tashtabash.lang.language.lexis.*
@@ -824,6 +825,10 @@ internal class PhonologicalRuleApplicatorTest {
             "bobo  ->AbstractNounFromNoun-> bobobo       \n" +
                     "phony ->AbstractNounFromNoun-> phony derived",
             shiftedLanguage.lexis.computeHistory(shiftedLanguage.lexis.words[1])
+        )
+        assertEquals(
+            Derivation(createAffix("bo-"), AbstractNounFromNoun, defSpeechPart, 100.0, defCategoryChanger),
+            (shiftedLanguage.lexis.words[1].semanticsCore.changeHistory as DerivationHistory).derivation
         )
     }
 

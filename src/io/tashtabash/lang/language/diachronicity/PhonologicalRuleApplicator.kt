@@ -4,9 +4,7 @@ import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.realization.*
-import io.tashtabash.lang.language.derivation.Compound
-import io.tashtabash.lang.language.derivation.Derivation
-import io.tashtabash.lang.language.derivation.DerivationParadigm
+import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.Affix
@@ -25,11 +23,15 @@ import kotlin.math.max
 
 
 class PhonologicalRuleApplicator {
+    private val derivationCache = mutableMapOf<Derivation, Derivation>()
+
     private val _messages = mutableListOf<String>()
     val messages: List<String>
         get() = _messages
 
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
+        derivationCache.clear()
+
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
         var shiftedLexis = applyPhonologicalRule(language.lexis, rule)
@@ -79,9 +81,16 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(derivation: Derivation, rule: PhonologicalRule): Derivation {
-        val shiftedAffix = applyPhonologicalRule(derivation.affix, rule)
+        derivationCache[derivation]?.let {
+            return it
+        }
 
-        return derivation.copy(affix = shiftedAffix)
+        val shiftedAffix = applyPhonologicalRule(derivation.affix, rule)
+        val shiftedDerivation = derivation.copy(affix = shiftedAffix)
+
+        derivationCache[derivation] = shiftedDerivation
+
+        return shiftedDerivation
     }
 
     fun applyPhonologicalRule(compound: Compound, rule: PhonologicalRule): Compound {
@@ -272,12 +281,27 @@ class PhonologicalRuleApplicator {
                 return word
             }
 
-            return word.copy(syllables = syllables, syllableTemplate = syllableTemplate, morphemes = morphemes)
+            val changeHistory = word.semanticsCore.changeHistory?.let { applyPhonologicalRule(it, rule) }
+
+            return word.copy(
+                syllables = syllables,
+                syllableTemplate = syllableTemplate,
+                morphemes = morphemes,
+                semanticsCore = word.semanticsCore.copy(changeHistory = changeHistory)
+            )
         } catch (e: NoPhonemeException) {
             _messages += "Can't apply the rule for the word '${word}': ${e.message}"
             return word
         }
     }
+
+    fun applyPhonologicalRule(changeHistory: ChangeHistory, rule: PhonologicalRule): ChangeHistory =
+        when (changeHistory) {
+            is DerivationHistory ->
+                changeHistory.copy(derivation = applyPhonologicalRule(changeHistory.derivation, rule))
+            is CompoundHistory -> changeHistory //TODO!
+            else -> throw LanguageException("Unknown ChangeHistory $changeHistory")
+        }
 
     fun applyPhonologicalRule(phonemes: List<ChangingPhoneme>, rule: PhonologicalRule): List<ChangingPhoneme> {
         val result = phonemes.toMutableList()
