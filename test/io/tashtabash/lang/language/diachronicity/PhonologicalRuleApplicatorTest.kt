@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.diachronicity
 
+import io.tashtabash.lang.containers.DerivationClusterTemplate
 import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.NumeralSystemBase
@@ -8,16 +9,10 @@ import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
-import io.tashtabash.lang.language.derivation.Derivation
+import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
-import io.tashtabash.lang.language.derivation.DerivationHistory
-import io.tashtabash.lang.language.derivation.DerivationParadigm
-import io.tashtabash.lang.language.derivation.DerivationType
 import io.tashtabash.lang.language.lexis.*
-import io.tashtabash.lang.language.phonology.PhonemeType
-import io.tashtabash.lang.language.phonology.RestrictionsParadigm
-import io.tashtabash.lang.language.phonology.SyllableValenceTemplate
-import io.tashtabash.lang.language.phonology.ValencyPlace
+import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.Stress
 import io.tashtabash.lang.language.phonology.prosody.StressType
@@ -26,6 +21,7 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
+import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.random.Random
@@ -788,7 +784,7 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
-    fun `applyPhonologicalRule doesn't break the ChangeHistory output`() {
+    fun `applyPhonologicalRule doesn't break the DerivationHistory output`() {
         val derivation = Derivation(createAffix("ba-"), AbstractNounFromNoun, defSpeechPart, 100.0, defCategoryChanger)
         val stemWord = createNoun("babo").let {
             it.copy(
@@ -829,6 +825,73 @@ internal class PhonologicalRuleApplicatorTest {
         assertEquals(
             Derivation(createAffix("bo-"), AbstractNounFromNoun, defSpeechPart, 100.0, defCategoryChanger),
             (shiftedLanguage.lexis.words[1].semanticsCore.changeHistory as DerivationHistory).derivation
+        )
+    }
+
+
+    @Test
+    fun `applyPhonologicalRule doesn't break the CompoundHistory output`() {
+        RandomSingleton.safeRandom = Random(1)
+        val lexis = Lexis(
+            listOf(
+                createNoun("babo").let {
+                    it.copy(
+                        semanticsCore = it.semanticsCore.copy(
+                            meaningCluster = MeaningCluster("left")
+                        )
+                    )
+                },
+                createNoun("papo").let {
+                    it.copy(
+                        semanticsCore = it.semanticsCore.copy(
+                            meaningCluster = MeaningCluster("right")
+                        )
+                    )
+                }
+            ),
+            mapOf(),
+            mapOf()
+        )
+        val compound = Compound(
+            SpeechPart.Noun.toDefault(),
+            PhonemeSequence(createPhonemes("ta")),
+            ConstantCategoryChanger(setOf(), SpeechPart.Noun.toDefault()),
+            PassingProsodyRule
+        )
+        val semanticsCoreTemplate = SemanticsCoreTemplate(
+            "Compound",
+            SpeechPart.Noun,
+            derivationClusterTemplate = DerivationClusterTemplate(
+                possibleCompounds = mutableListOf(CompoundLink(listOf("left", "right"), 100.0))
+            )
+        )
+        val compoundWord = compound.compose(lexis, semanticsCoreTemplate, Random(1))!!
+        val words = lexis.words + compoundWord
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> o / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createPhonemes("bobo"),
+                createPhonemes("popo"),
+                createPhonemes("bobotopopo"),
+            ),
+            shiftedLanguage.lexis.words.map { it.toPhonemes() }
+        )
+        assertEquals(
+            "bobo  ->to-> \n" +
+                    "left  ->to-> \n" +
+                    "popo  ->to-> bobotopopo\n" +
+                    "right ->to-> Compound  ",
+            shiftedLanguage.lexis.computeHistory(shiftedLanguage.lexis.words[2])
         )
     }
 

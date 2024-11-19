@@ -24,6 +24,7 @@ import kotlin.math.max
 
 class PhonologicalRuleApplicator {
     private val derivationCache = mutableMapOf<Derivation, Derivation>()
+    private val compoundCache = mutableMapOf<Compound, Compound>()
 
     private val _messages = mutableListOf<String>()
     val messages: List<String>
@@ -31,6 +32,7 @@ class PhonologicalRuleApplicator {
 
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         derivationCache.clear()
+        compoundCache.clear()
 
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
@@ -94,6 +96,10 @@ class PhonologicalRuleApplicator {
     }
 
     fun applyPhonologicalRule(compound: Compound, rule: PhonologicalRule): Compound {
+        compoundCache[compound]?.let {
+            return it
+        }
+
         return try {
             val shiftedInfix = applyPhonologicalRule(
                 compound.infix.phonemes.map { it to listOf() },
@@ -101,8 +107,11 @@ class PhonologicalRuleApplicator {
                 addStartBoundary = false,
                 addEndBoundary = false
             )
+            val shiftedCompound = compound.copy(infix = PhonemeSequence(shiftedInfix))
 
-            compound.copy(infix = PhonemeSequence(shiftedInfix))
+            compoundCache[compound] = shiftedCompound
+
+            shiftedCompound
         } catch (e: NoPhonemeException) {
             _messages += "Can't apply the rule for the infix '${compound.infix.phonemes}': ${e.message}"
             compound
@@ -299,8 +308,10 @@ class PhonologicalRuleApplicator {
         when (changeHistory) {
             is DerivationHistory ->
                 changeHistory.copy(derivation = applyPhonologicalRule(changeHistory.derivation, rule))
-            is CompoundHistory -> changeHistory //TODO!
-            else -> throw LanguageException("Unknown ChangeHistory $changeHistory")
+            is CompoundHistory ->
+                changeHistory.copy(compound = applyPhonologicalRule(changeHistory.compound, rule))
+            else ->
+                throw LanguageException("Unknown ChangeHistory $changeHistory")
         }
 
     fun applyPhonologicalRule(phonemes: List<ChangingPhoneme>, rule: PhonologicalRule): List<ChangingPhoneme> {
