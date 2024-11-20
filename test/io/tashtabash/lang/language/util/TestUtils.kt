@@ -41,6 +41,11 @@ fun Word.withStaticCategories(vararg staticCategories: CategoryValue) =
         semanticsCore = semanticsCore.copy(staticCategories = staticCategories.toSet())
     )
 
+fun Word.withMeaning(meaning: Meaning) =
+    copy(
+        semanticsCore = semanticsCore.copy(meaningCluster = MeaningCluster(meaning))
+    )
+
 fun getPhonySyllableTemplate(): SyllableTemplate =
     SyllableValenceTemplate(
         ValencyPlace(PhonemeType.Consonant, 0.5),

@@ -834,20 +834,8 @@ internal class PhonologicalRuleApplicatorTest {
         RandomSingleton.safeRandom = Random(1)
         val lexis = Lexis(
             listOf(
-                createNoun("babo").let {
-                    it.copy(
-                        semanticsCore = it.semanticsCore.copy(
-                            meaningCluster = MeaningCluster("left")
-                        )
-                    )
-                },
-                createNoun("papo").let {
-                    it.copy(
-                        semanticsCore = it.semanticsCore.copy(
-                            meaningCluster = MeaningCluster("right")
-                        )
-                    )
-                }
+                createNoun("babo").withMeaning("left"),
+                createNoun("papo").withMeaning("right"),
             ),
             mapOf(),
             mapOf()
