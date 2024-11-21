@@ -25,18 +25,29 @@ import kotlin.math.max
 class PhonologicalRuleApplicator {
     private val derivationCache = mutableMapOf<Derivation, Derivation>()
     private val compoundCache = mutableMapOf<Compound, Compound>()
+    private var isChangeApplied = false
 
     private val _messages = mutableListOf<String>()
     val messages: List<String>
         get() = _messages
 
-    fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
+    private fun cleanState() {
         derivationCache.clear()
         compoundCache.clear()
+        isChangeApplied = false
+    }
+
+    fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
+        cleanState()
 
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
         var shiftedLexis = applyPhonologicalRule(language.lexis, rule)
+
+        if (!isChangeApplied) {
+            _messages += "Rule $rule didn't have any effect on the language"
+            return language
+        }
 
         if (rule.allowSyllableStructureChange) {
             val result = fixSyllableStructure(shiftedLexis, shiftedChangeParadigm)
@@ -53,10 +64,10 @@ class PhonologicalRuleApplicator {
                 ?: shiftedChangeParadigm
         }
 
-        val changeValidityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
-        if (changeValidityReport.isFailure) {
-            _messages += "Cannot apply rule $rule: " +
-                    "the resulting language has incorrect forms: '${changeValidityReport.exceptionOrNull()?.message}'"
+        val validityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
+        if (validityReport.isFailure) {
+            _messages += "Can't apply rule $rule: " +
+                    "the resulting language has incorrect forms: '${validityReport.exceptionOrNull()?.message}'"
             return language
         }
 
@@ -205,7 +216,11 @@ class PhonologicalRuleApplicator {
                                 )
                             }
 
-                            return createSimplifiedTemplateChange(changes.reversed())
+                            val resultChange = createSimplifiedTemplateChange(changes.reversed())
+                            if (resultChange != templateChange)
+                                isChangeApplied = true
+
+                            return resultChange
                         } catch (e: NoPhonemeException) {
                             _messages += "Can't apply the rule for the change '${templateChange}': ${e.message}"
                             return templateChange
@@ -322,12 +337,14 @@ class PhonologicalRuleApplicator {
             val phonemeWindow = phonemes.drop(i)
             val isMatch = rule.matchers
                 .match(phonemeWindow)
-            if (isMatch)
+            if (isMatch) {
                 substitutePhonemes(
                     result,
                     i + rule.precedingMatchers.size,
                     rule.resultingPhonemes
                 )
+                isChangeApplied = true
+            }
             i++
         }
 

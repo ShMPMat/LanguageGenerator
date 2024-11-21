@@ -25,6 +25,7 @@ import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.random.Random
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 
@@ -938,5 +939,36 @@ internal class PhonologicalRuleApplicatorTest {
             createWord("po", SpeechPart.Particle),
             shiftedLanguage.lexis.questionMarker[QuestionMarker]?.resolve(shiftedLanguage.lexis)
         )
+    }
+
+    @Test
+    fun `applyPhonologicalRule doesn't change a language if a rule isn't applicable`() {
+        val words = listOf(
+            createNoun("aba"),
+            createNoun("abo"),
+            createNoun("ubo"),
+            createNoun("bacab"),
+            createNoun("bob"),
+            createNoun("bac")
+        )
+        val derivations = listOf(
+            Derivation(createAffix("-ab"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("-ob"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("t -> b / _ ")
+
+        val phonologicalRuleApplicator = PhonologicalRuleApplicator()
+        val shiftedLanguage = phonologicalRuleApplicator.applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(language, shiftedLanguage)
+        assertContains(phonologicalRuleApplicator.messages, "Rule t -> b /  _  didn't have any effect on the language")
     }
 }
