@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.nominals
 import io.tashtabash.lang.language.morphem.MorphemeData
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.SyntaxRelation
@@ -20,7 +21,7 @@ import kotlin.test.assertEquals
 
 internal class WordChangeParadigmTest {
     @Test
-    fun `articles can decline by noun class`() {
+    fun `Articles can decline by noun class`() {
         // Set up words
         val article = createWord("a", SpeechPart.Article)
         val noun = createNoun("daba")
@@ -116,6 +117,60 @@ internal class WordChangeParadigmTest {
                     MorphemeData(1, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Agreement(SyntaxRelation.Agent, nominals), articleNounClassSourcedCategory)), false),
                     MorphemeData(1, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), true)
                 )
+            ),
+            result.unfold().words
+        )
+    }
+
+    @Test
+    fun `Ultimate stress is moved when a suffix is applied`() {
+        // Set up words
+        val noun = createNoun("daba")
+            .withProsodyOn(1, Prosody.Stress)
+        // Set up definiteness
+        val definitenessCategory = Definiteness(
+            listOf(DefinitenessValue.Definite),
+            setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
+            setOf()
+        )
+        val definitenessSourcedCategory = SourcedCategory(
+            definitenessCategory,
+            CategorySource.Self,
+            CompulsoryData(false)
+        )
+        val definitenessExponenceCluster = ExponenceCluster(
+            listOf(definitenessSourcedCategory),
+            definitenessSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
+        )
+        // Set up WordChangeParadigm
+        val nounDefinitenessApplicators = listOf(AffixCategoryApplicator(createAffix("-dac"), CategoryRealization.Suffix))
+        val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            TypedSpeechPart(SpeechPart.Noun),
+            listOf(definitenessExponenceCluster),
+            mapOf(
+                definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
+            ),
+            ProsodyChangeParadigm(StressType.Ultimate)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(definitenessCategory),
+            mapOf(TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm)
+        )
+
+        val result = wordChangeParadigm.apply(
+            noun,
+            LatchType.Center,
+            listOf(definitenessSourcedCategory.actualSourcedValues[0])
+        )
+
+        assertEquals(
+            listOf(
+                createNoun("dabadac")
+                    .withProsodyOn(2, Prosody.Stress)
+                    .withMorphemes(
+                        MorphemeData(4, listOf(), true),
+                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), false)
+                    )
             ),
             result.unfold().words
         )

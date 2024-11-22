@@ -13,8 +13,8 @@ import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.phonology.*
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
-import io.tashtabash.lang.language.phonology.prosody.Stress
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.syntax.*
@@ -704,7 +704,7 @@ internal class PhonologicalRuleApplicatorTest {
     fun `applyPhonologicalRule saves prosody`() {
         val words = listOf(
             createNoun("abab")
-                .withProsodyOn(0, Stress),
+                .withProsodyOn(0, Prosody.Stress),
         )
         val derivations = listOf<Derivation>()
         val nounChangeParadigm = makeDefNounChangeParadigm(
@@ -721,7 +721,7 @@ internal class PhonologicalRuleApplicatorTest {
         assertEquals(
             listOf(
                 createNoun("aba")
-                    .withProsodyOn(0, Stress)
+                    .withProsodyOn(0, Prosody.Stress)
             ),
             shiftedLanguage.lexis.words
         )
@@ -744,7 +744,7 @@ internal class PhonologicalRuleApplicatorTest {
     fun `applyPhonologicalRule saves prosody when syllable recalculation is applied`() {
         val words = listOf(
             createNoun("abab")
-                .withProsodyOn(0, Stress),
+                .withProsodyOn(0, Prosody.Stress),
         )
         val derivations = listOf<Derivation>()
         val nounChangeParadigm = makeDefNounChangeParadigm(
@@ -765,7 +765,7 @@ internal class PhonologicalRuleApplicatorTest {
         assertEquals(
             listOf(
                 createNoun("aba", expectedSyllableTemplate)
-                    .withProsodyOn(0, Stress)
+                    .withProsodyOn(0, Prosody.Stress)
             ),
             shiftedLanguage.lexis.words
         )

@@ -10,7 +10,7 @@ data class ProsodyChangeParadigm(val stress: StressType) {
             StressType.NotFixed -> newWord
             else -> {
                 val newSyllables = newWord.syllables.map { s ->
-                    s.copy(prosody = s.prosody.filter { it !is Stress })
+                    s.copy(prosody = s.prosody.filter { it != Prosody.Stress })
                 }
                 val cleanWord = newWord.copy(syllables = newSyllables)
 

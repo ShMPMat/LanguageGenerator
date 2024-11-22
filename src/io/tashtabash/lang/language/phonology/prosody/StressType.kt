@@ -21,7 +21,7 @@ enum class StressType(override val probability: Double) : SampleSpaceObject {
 
 
 fun generateStress(stressType: StressType, word: Word, random: Random): Word {
-    if (word.syllables.any { s -> s.prosody.any { it is Stress } })
+    if (word.syllables.any { s -> s.prosody.any { it == Prosody.Stress } })
         throw GeneratorException("Word $word already has stress")
 
     val position = when (stressType) {
@@ -48,7 +48,7 @@ fun getFixedStressPosition(stressType: StressType, word: Word): Int {
 fun putStressOn(word: Word, position: Int): Word {
     val newSyllables = word.syllables.mapIndexed { i, s ->
         if (i == position)
-            s.copy(prosody = (s.prosody union setOf(Stress)).toList())
+            s.copy(prosody = (s.prosody union setOf(Prosody.Stress)).toList())
         else
             s
     }
