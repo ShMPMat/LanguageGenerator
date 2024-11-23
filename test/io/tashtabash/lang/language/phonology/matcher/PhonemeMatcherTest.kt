@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeModifier.*
 import io.tashtabash.lang.language.phonology.PhonemeType.*
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.util.testPhonemeContainer
 import io.tashtabash.lang.utils.composeUniquePairs
 import org.junit.jupiter.api.Assertions.*
@@ -68,6 +69,7 @@ internal class PhonemeMatcherTest {
                 AbsentModifierPhonemeMatcher(Nasalized, PhonemeModifier.Long),
                 AbsentModifierPhonemeMatcher(Nasalized),
                 AbsentModifierPhonemeMatcher(Palatilized),
+                ProsodyMatcher(Prosody.Stress),
                 MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long)),
                 MulMatcher(TypePhonemeMatcher(Vowel), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
                 MulMatcher(AbsentModifierPhonemeMatcher(PhonemeModifier.Long), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),

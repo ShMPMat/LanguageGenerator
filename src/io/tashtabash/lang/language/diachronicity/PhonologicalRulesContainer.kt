@@ -4,6 +4,8 @@ import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.phonology.matcher.*
+import io.tashtabash.lang.language.phonology.prosody.Prosody
+import io.tashtabash.lang.language.phonology.prosody.StressType
 
 
 data class PhonologicalRulesContainer(val phonologicalRules: List<PhonologicalRule>) {
@@ -25,6 +27,9 @@ fun isMatcherApplicable(matcher: PhonemeMatcher, language: Language): Boolean = 
         matcher.matchers.all { isMatcherApplicable(it, language) }
     is BorderPhonemeMatcher, PassingPhonemeMatcher ->
         true
+    is ProsodyMatcher -> matcher.prosody.all {
+        it == Prosody.Stress && language.stressType != StressType.None
+    }
     else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
 }
 

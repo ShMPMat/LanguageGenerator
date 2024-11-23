@@ -55,6 +55,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
         is ModifierPhonemeMatcher -> false
         is AbsentModifierPhonemeMatcher -> false
         is MulMatcher -> false
+        is ProsodyMatcher -> false
         else -> true
     }
 

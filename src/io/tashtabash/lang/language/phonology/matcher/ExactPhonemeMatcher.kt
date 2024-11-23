@@ -33,6 +33,8 @@ class ExactPhonemeMatcher(val phoneme: Phoneme): PhonemeMatcher() {
             if (phoneme.type == other.phonemeType)
                 this
             else null
+        is ProsodyMatcher ->
+            MulMatcher(this, other)
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this

@@ -629,6 +629,56 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
+    fun `applyPhonologicalRule matches prosody`() {
+        val words = listOf(
+            createNoun("aba").withProsodyOn(0, Prosody.Stress),
+            createNoun("oba").withProsodyOn(1, Prosody.Stress),
+            createNoun("apapapa").withProsodyOn(0, Prosody.Stress)
+                .withProsodyOn(3, Prosody.Stress),
+        )
+        val derivations = listOf(
+            Derivation(createAffix("-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("ta-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("t-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("(a{+Stress}) -> o / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("oba").withProsodyOn(0, Prosody.Stress),
+                createNoun("obo").withProsodyOn(1, Prosody.Stress),
+                createNoun("opapapo").withProsodyOn(0, Prosody.Stress)
+                    .withProsodyOn(3, Prosody.Stress),
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-at"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("ta-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                AffixCategoryApplicator(createAffix("a-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("t-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("d-"), CategoryRealization.Prefix),
+                AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix)
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
     fun `applyPhonologicalRule makes a deletes a consonant changing the syllable structure`() {
         val words = listOf(
             createNoun("aba"),

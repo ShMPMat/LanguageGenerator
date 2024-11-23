@@ -6,6 +6,7 @@ import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 import kotlin.math.max
 
 
@@ -75,11 +76,18 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer): P
             .map { PhonemeModifier.valueOf(it) }
             .toSet()
     )
+    prosodyRegex.matches(matcher) -> ProsodyMatcher(
+        matcher.drop(2)
+            .dropLast(1)
+            .split(",")
+            .map { Prosody.valueOf(it) }
+            .toSet()
+    )
     mulModifierRegex.matches(matcher) -> MulMatcher(
         matcher.drop(1)
             .dropLast(1)
-            .split("[")
-            .map { if (it.last() == ']' && it[0] != '[') "[$it" else it }
+            .split("[\\[{]".toRegex())
+            .map { restoreInitialBracket(it) }
             .map { createPhonemeMatcher(it, phonemeContainer) }
     )
     else -> {
@@ -90,7 +98,15 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer): P
     }
 }
 
+private fun restoreInitialBracket(token: String) = when (token.last()) {
+    ']' -> "[$token"
+    '}' -> "{$token"
+    else -> token
+}
+
+
 private val modifierRegex = "\\[\\+.*]".toRegex()
+private val prosodyRegex = "\\{\\+.*}".toRegex()
 private val absentModifierRegex = "\\[-.*]".toRegex()
 private val mulModifierRegex = "\\(.*\\)".toRegex()
 

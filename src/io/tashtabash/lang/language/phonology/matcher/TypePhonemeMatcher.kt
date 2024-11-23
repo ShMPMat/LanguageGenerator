@@ -30,6 +30,8 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
             if (this == other)
                 this
             else null
+        is ProsodyMatcher ->
+            MulMatcher(this, other)
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this

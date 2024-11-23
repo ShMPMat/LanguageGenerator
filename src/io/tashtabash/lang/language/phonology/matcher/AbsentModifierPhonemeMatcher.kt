@@ -32,6 +32,8 @@ class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): Phoneme
             else null
         is TypePhonemeMatcher ->
             MulMatcher(other, this)
+        is ProsodyMatcher ->
+            MulMatcher(other, this)
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this

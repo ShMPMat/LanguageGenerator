@@ -3,37 +3,34 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.lang.language.phonology.PhonemeModifier
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 
 
-class ModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatcher() {
-    constructor(vararg modifiers: PhonemeModifier) : this(modifiers.toSet() )
+class ProsodyMatcher(val prosody: Set<Prosody>): PhonemeMatcher() {
+    constructor(vararg modifiers: Prosody) : this(modifiers.toSet() )
 
     override val name =
-        "[+${modifiers.sorted().joinToString(",")}]"
+        "{+${prosody.sorted().joinToString(",")}}"
 
     override fun match(phoneme: Phoneme?) =
-        modifiers.all { it in (phoneme?.modifiers ?: listOf()) }
+        false
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme is ChangingPhoneme.ExactPhoneme
-                && match(changingPhoneme.phoneme)
+                && changingPhoneme.prosody != null
+                && prosody.all { it in changingPhoneme.prosody }
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
         is ModifierPhonemeMatcher ->
-            ModifierPhonemeMatcher(modifiers + other.modifiers)
+            MulMatcher(this, other)
         is AbsentModifierPhonemeMatcher ->
-            if (modifiers.none { it in other.modifiers })
-                MulMatcher(this, other)
-            else null
+            MulMatcher(this, other)
         is ExactPhonemeMatcher ->
-            if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
-                other
-            else null
+            MulMatcher(other, this)
         is TypePhonemeMatcher ->
             MulMatcher(other, this)
         is ProsodyMatcher ->
-            MulMatcher(other, this)
+            ProsodyMatcher(prosody + other.prosody)
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this
