@@ -121,6 +121,61 @@ internal class WordChangeParadigmTest {
             result.unfold().words
         )
     }
+    @Test
+    fun `Adjectives can conjugate by compulsory tense`() {
+        // Set up words
+        val adjective = createWord("a", SpeechPart.Adjective)
+        // Set up tense
+        val tenseCategory = Tense(
+            listOf(TenseValue.Present, TenseValue.Past),
+            setOf(
+                PSpeechPart(SpeechPart.Adjective, CategorySource.Self)
+            ),
+            setOf(SpeechPart.Adjective)
+        )
+        val tenseSourcedCategory = SourcedCategory(
+            tenseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val tenseExponenceCluster = ExponenceCluster(
+            listOf(tenseSourcedCategory),
+            tenseSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
+        )
+        // Set up WordChangeParadigm
+        val tenseApplicators = listOf(
+            AffixCategoryApplicator(createAffix("-da"), CategoryRealization.Suffix),
+            AffixCategoryApplicator(createAffix("-to"), CategoryRealization.Suffix)
+        )
+        val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            TypedSpeechPart(SpeechPart.Adjective),
+            listOf(tenseExponenceCluster),
+            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap()),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(tenseCategory),
+            mapOf(
+                TypedSpeechPart(SpeechPart.Adjective) to adjectiveSpeechPartChangeParadigm,
+            )
+        )
+
+        val result = wordChangeParadigm.apply(
+            adjective,
+            LatchType.Center,
+            listOf(tenseSourcedCategory.actualSourcedValues[0])
+        )
+
+        assertEquals(
+            listOf(
+                createWord("ada", SpeechPart.Adjective).withMorphemes(
+                    MorphemeData(1, listOf(), true),
+                    MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Present, CategorySource.Self, tenseSourcedCategory)), false)
+                )
+            ),
+            result.unfold().words
+        )
+    }
 
     @Test
     fun `Ultimate stress is moved when a suffix is applied`() {
