@@ -1,6 +1,8 @@
 package io.tashtabash.lang.language.util
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
+import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
+import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.diachronicity.createPhonologicalRule
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.morphem.Affix
@@ -46,6 +48,15 @@ fun createAffix(affix: String): Affix {
         Prefix(templateChange)
     else
         Suffix(templateChange)
+}
+
+fun createAffixCategoryApplicator(affix: String): AffixCategoryApplicator {
+    val parsedAffix = createAffix(affix)
+
+    return if (parsedAffix.templateChange.position == Position.Beginning)
+        AffixCategoryApplicator(parsedAffix, CategoryRealization.Prefix)
+    else
+        AffixCategoryApplicator(parsedAffix, CategoryRealization.Suffix)
 }
 
 // Two different cases: with changing the stem and not changing the stem
