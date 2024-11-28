@@ -7,11 +7,15 @@ import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.lexis.SemanticsCore
 import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.utils.cartesianProduct
 import io.tashtabash.lang.utils.notEqualsByElement
 
 
-class ExponenceCluster(val categories: List<SourcedCategory>, possibleValuesSets: Set<List<SourcedCategoryValue>>) {
-    val possibleValues: List<ExponenceValue> = possibleValuesSets
+class ExponenceCluster(
+    val categories: List<SourcedCategory>,
+    possibleValues: Set<SourcedCategoryValues> = categories.map { it.actualSourcedValues }.cartesianProduct().toSet()
+) {
+    val possibleValues: List<ExponenceValue> = possibleValues
         .map { ExponenceValue(it, this) }
 
     val isCompulsory = categories.all { it.compulsoryData.isCompulsory }
