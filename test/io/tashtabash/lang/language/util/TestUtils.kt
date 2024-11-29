@@ -11,11 +11,12 @@ import org.opentest4j.TestAbortedException
 fun createWord(
     phonemes: List<Phoneme>,
     speechPart: SpeechPart,
-    syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()
+    syllableTemplate: SyllableTemplate = getPhonySyllableTemplate(),
+    tags: Set<SemanticsTag> = setOf()
 ) =
     syllableTemplate.createWord(
         PhonemeSequence(phonemes.toList()),
-        makeSemanticsCore(speechPart)
+        makeSemanticsCore(speechPart, tags)
     ) ?: throw TestAbortedException("Wrong word creation")
 
 fun Word.withMorphemes(rootIdx: Int, vararg lengths: Int) =
@@ -46,6 +47,11 @@ fun Word.withMeaning(meaning: Meaning) =
         semanticsCore = semanticsCore.copy(meaningCluster = MeaningCluster(meaning))
     )
 
+fun Word.withTags(vararg tags: SemanticsTag) =
+    copy(
+        semanticsCore = semanticsCore.copy(tags = tags.toSet())
+    )
+
 fun getPhonySyllableTemplate(): SyllableTemplate =
     SyllableValenceTemplate(
         ValencyPlace(PhonemeType.Consonant, 0.5),
@@ -56,5 +62,5 @@ fun getPhonySyllableTemplate(): SyllableTemplate =
         ValencyPlace(PhonemeType.Consonant, 0.5)
     )
 
-fun makeSemanticsCore(speechPart: SpeechPart = SpeechPart.Noun) =
-    SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(speechPart), 1.0)
+fun makeSemanticsCore(speechPart: SpeechPart = SpeechPart.Noun, tags: Set<SemanticsTag> = setOf()) =
+    SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(speechPart), 1.0, tags = tags)
