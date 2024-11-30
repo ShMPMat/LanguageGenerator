@@ -1,8 +1,6 @@
 package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.language.category.*
-import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
-import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.SuffixWordCategoryApplicator
 import io.tashtabash.lang.language.lexis.SpeechPart
@@ -40,10 +38,7 @@ internal class WordChangeParadigmTest {
             CategorySource.Self,
             CompulsoryData(false)
         )
-        val definitenessExponenceCluster = ExponenceCluster(
-            listOf(definitenessSourcedCategory),
-            definitenessSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
-        )
+        val definitenessExponenceCluster = ExponenceCluster(listOf(definitenessSourcedCategory))
         // Set up noun class
         val nounClassCategory = NounClass(
             listOf(NounClassValue.LongObject, NounClassValue.Fruit),
@@ -58,26 +53,17 @@ internal class WordChangeParadigmTest {
             CategorySource.Agreement(SyntaxRelation.Agent, nominals),
             CompulsoryData(true)
         )
-        val articleNounClassExponenceCluster = ExponenceCluster(
-            listOf(articleNounClassSourcedCategory),
-            articleNounClassSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
-        )
+        val articleNounClassExponenceCluster = ExponenceCluster(listOf(articleNounClassSourcedCategory))
         val nounNounClassSourcedCategory = SourcedCategory(
             nounClassCategory,
             CategorySource.Self,
             CompulsoryData(true)
         )
-        val nounNounClassExponenceCluster = ExponenceCluster(
-            listOf(nounNounClassSourcedCategory),
-            nounNounClassSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
-        )
+        val nounNounClassExponenceCluster = ExponenceCluster(listOf(nounNounClassSourcedCategory))
         // Set up WordChangeParadigm
         val nounDefinitenessApplicators = listOf(SuffixWordCategoryApplicator(article, LatchType.ClauseLatch))
         val nounClassApplicatiors = listOf(PassingCategoryApplicator, PassingCategoryApplicator)
-        val articleApplicators = listOf(
-            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
-            AffixCategoryApplicator(createAffix("p-"), CategoryRealization.Prefix)
-        )
+        val articleApplicators = listOf(createAffixCategoryApplicator("b-"), createAffixCategoryApplicator("p-"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             TypedSpeechPart(SpeechPart.Noun),
             listOf(definitenessExponenceCluster, nounNounClassExponenceCluster),
@@ -121,10 +107,9 @@ internal class WordChangeParadigmTest {
             result.unfold().words
         )
     }
+
     @Test
     fun `Adjectives can conjugate by compulsory tense`() {
-        // Set up words
-        val adjective = createWord("a", SpeechPart.Adjective)
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
@@ -138,15 +123,9 @@ internal class WordChangeParadigmTest {
             CategorySource.Self,
             CompulsoryData(true)
         )
-        val tenseExponenceCluster = ExponenceCluster(
-            listOf(tenseSourcedCategory),
-            tenseSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
-        )
+        val tenseExponenceCluster = ExponenceCluster(listOf(tenseSourcedCategory))
         // Set up WordChangeParadigm
-        val tenseApplicators = listOf(
-            AffixCategoryApplicator(createAffix("-da"), CategoryRealization.Suffix),
-            AffixCategoryApplicator(createAffix("-to"), CategoryRealization.Suffix)
-        )
+        val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             TypedSpeechPart(SpeechPart.Adjective),
             listOf(tenseExponenceCluster),
@@ -161,7 +140,7 @@ internal class WordChangeParadigmTest {
         )
 
         val result = wordChangeParadigm.apply(
-            adjective,
+            createWord("a", SpeechPart.Adjective),
             LatchType.Center,
             listOf(tenseSourcedCategory.actualSourcedValues[0])
         )
@@ -179,9 +158,6 @@ internal class WordChangeParadigmTest {
 
     @Test
     fun `Ultimate stress is moved when a suffix is applied`() {
-        // Set up words
-        val noun = createNoun("daba")
-            .withProsodyOn(1, Prosody.Stress)
         // Set up definiteness
         val definitenessCategory = Definiteness(
             listOf(DefinitenessValue.Definite),
@@ -193,12 +169,9 @@ internal class WordChangeParadigmTest {
             CategorySource.Self,
             CompulsoryData(false)
         )
-        val definitenessExponenceCluster = ExponenceCluster(
-            listOf(definitenessSourcedCategory),
-            definitenessSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
-        )
+        val definitenessExponenceCluster = ExponenceCluster(listOf(definitenessSourcedCategory))
         // Set up WordChangeParadigm
-        val nounDefinitenessApplicators = listOf(AffixCategoryApplicator(createAffix("-dac"), CategoryRealization.Suffix))
+        val nounDefinitenessApplicators = listOf(createAffixCategoryApplicator("-dac"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             TypedSpeechPart(SpeechPart.Noun),
             listOf(definitenessExponenceCluster),
@@ -213,7 +186,7 @@ internal class WordChangeParadigmTest {
         )
 
         val result = wordChangeParadigm.apply(
-            noun,
+            createNoun("daba").withProsodyOn(1, Prosody.Stress),
             LatchType.Center,
             listOf(definitenessSourcedCategory.actualSourcedValues[0])
         )
