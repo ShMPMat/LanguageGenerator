@@ -10,7 +10,7 @@ import org.opentest4j.TestAbortedException
 
 fun createWord(
     phonemes: List<Phoneme>,
-    speechPart: SpeechPart,
+    speechPart: TypedSpeechPart,
     syllableTemplate: SyllableTemplate = getPhonySyllableTemplate(),
     tags: Set<SemanticsTag> = setOf()
 ) =
@@ -62,5 +62,5 @@ fun getPhonySyllableTemplate(): SyllableTemplate =
         ValencyPlace(PhonemeType.Consonant, 0.5)
     )
 
-fun makeSemanticsCore(speechPart: SpeechPart = SpeechPart.Noun, tags: Set<SemanticsTag> = setOf()) =
-    SemanticsCore(MeaningCluster("phony"), TypedSpeechPart(speechPart), 1.0, tags = tags)
+fun makeSemanticsCore(speechPart: TypedSpeechPart, tags: Set<SemanticsTag> = setOf()) =
+    SemanticsCore(MeaningCluster("phony"), speechPart, 1.0, tags = tags)

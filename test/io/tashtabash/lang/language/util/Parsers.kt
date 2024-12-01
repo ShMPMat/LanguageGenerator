@@ -4,8 +4,7 @@ import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.diachronicity.createPhonologicalRule
-import io.tashtabash.lang.language.lexis.SemanticsTag
-import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
@@ -108,12 +107,20 @@ fun createPhonemes(phonemes: String) =
 fun createNoun(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
     createWord(phonemes, SpeechPart.Noun, syllableTemplate)
 
-fun createVerb(phonemes: String, vararg tags: SemanticsTag, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
-    createWord(phonemes, SpeechPart.Verb, syllableTemplate, tags.toSet())
+fun createIntransVerb(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
+    createWord(phonemes, SpeechPart.Verb.toIntransitive(), syllableTemplate, setOf(SemanticsTag("intrans")))
 
 fun createWord(
     phonemes: String,
     speechPart: SpeechPart,
+    syllableTemplate: SyllableTemplate = getPhonySyllableTemplate(),
+    tags: Set<SemanticsTag> = setOf()
+) =
+    createWord(createPhonemes(phonemes), speechPart.toDefault(), syllableTemplate, tags)
+
+fun createWord(
+    phonemes: String,
+    speechPart: TypedSpeechPart,
     syllableTemplate: SyllableTemplate = getPhonySyllableTemplate(),
     tags: Set<SemanticsTag> = setOf()
 ) =
