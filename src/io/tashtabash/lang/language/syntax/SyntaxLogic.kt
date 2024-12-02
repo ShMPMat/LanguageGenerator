@@ -16,7 +16,7 @@ import kotlin.math.abs
 
 
 class SyntaxLogic(
-    private val verbFormSolver: Map<VerbContextInfo, SourcedCategoryValues>,
+    private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues>,
     private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
     private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
@@ -107,19 +107,22 @@ class SyntaxLogic(
     }
 
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
-        resolveVerbTime(language, verbType, context)
+        resolveTime(language, verbType, context)
 
-    private fun resolveVerbTime(language: Language, verbType: TypedSpeechPart, context: Context): SourcedCategoryValues {
+    fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
+        resolveTime(language, adjectiveType, context)
+
+    private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: Context): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
-        verbFormSolver[verbType to timeValue]?.let { categories ->
+        timeFormSolver[speechPart to timeValue]?.let { categories ->
             return categories.map { it }
         }
 
         if (priority == Priority.Explicit) {
             TODO()
         } else
-            return chooseClosestTense(language, verbType, timeValue)
+            return chooseClosestTense(language, speechPart, timeValue)
     }
 
     private fun chooseClosestTense(
@@ -148,7 +151,7 @@ class SyntaxLogic(
         |Syntax:
         |
         |${
-        verbFormSolver.entries.map { (context, categories) ->
+        timeFormSolver.entries.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
