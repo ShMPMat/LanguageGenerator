@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.matcher.*
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.StressType
-import io.tashtabash.random.randomElement
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomElementOrNull
 import io.tashtabash.random.singleton.testProbability
@@ -82,37 +81,9 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
     }
 
     private fun narrowMatcher(matcher: PhonemeMatcher, language: Language): PhonemeMatcher = when (matcher) {
-        is TypePhonemeMatcher -> // Choose one of possible modifications
-            listOfNotNull(
-                {
-                    val randomModifier = PhonemeModifier.values(matcher.phonemeType)
-                        .randomElement()
-
-                    language.phonemeContainer
-                        .getPhonemes(setOf(randomModifier))
-                        .filter { it.type == matcher.phonemeType }
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { MulMatcher(matcher, ModifierPhonemeMatcher(randomModifier)) }
-                        ?: matcher
-                },
-                {
-                    val randomModifier = PhonemeModifier.values(matcher.phonemeType)
-                        .randomElement()
-
-                    language.phonemeContainer
-                        .getPhonemesNot(setOf(randomModifier))
-                        .filter { it.type == matcher.phonemeType }
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { MulMatcher(matcher, AbsentModifierPhonemeMatcher(randomModifier)) }
-                        ?: matcher
-                },
-                {
-                    if (matcher.phonemeType == PhonemeType.Vowel)
-                        MulMatcher(matcher, ProsodyMatcher(Prosody.Stress))
-                    else
-                        matcher
-                }.takeIf { language.stressType != StressType.None }
-            ).randomElement()()
+        is TypePhonemeMatcher ->
+            getApplicableTypeChanges(matcher, language)
+                .randomElement()()
         is ExactPhonemeMatcher ->
             if (language.stressType != StressType.None && matcher.phoneme.type == PhonemeType.Vowel)
                 MulMatcher(matcher, ProsodyMatcher(Prosody.Stress))
@@ -147,4 +118,45 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
     }
         .takeIf { isMatcherApplicable(it, language) }
         ?: matcher
+
+    // Choose possible TypePhonemeMatcher modifications
+    private fun getApplicableTypeChanges(
+        typePhonemeMatcher: TypePhonemeMatcher,
+        language: Language
+    ): List<() -> PhonemeMatcher> = listOfNotNull(
+        {
+            val randomModifier = PhonemeModifier.values(typePhonemeMatcher.phonemeType)
+                .randomElement()
+
+            language.phonemeContainer
+                .getPhonemes(setOf(randomModifier))
+                .filter { it.type == typePhonemeMatcher.phonemeType }
+                .takeIf { it.isNotEmpty() }
+                ?.let { MulMatcher(typePhonemeMatcher, ModifierPhonemeMatcher(randomModifier)) }
+                ?: typePhonemeMatcher
+        },
+        {
+            val randomModifier = PhonemeModifier.values(typePhonemeMatcher.phonemeType)
+                .randomElement()
+
+            language.phonemeContainer
+                .getPhonemesNot(setOf(randomModifier))
+                .filter { it.type == typePhonemeMatcher.phonemeType }
+                .takeIf { it.isNotEmpty() }
+                ?.let { MulMatcher(typePhonemeMatcher, AbsentModifierPhonemeMatcher(randomModifier)) }
+                ?: typePhonemeMatcher
+        },
+        {
+            if (typePhonemeMatcher.phonemeType == PhonemeType.Vowel)
+                MulMatcher(typePhonemeMatcher, ProsodyMatcher(Prosody.Stress))
+            else
+                typePhonemeMatcher
+        }.takeIf { language.stressType != StressType.None },
+        {
+            if (typePhonemeMatcher.phonemeType == PhonemeType.Vowel)
+                MulMatcher(typePhonemeMatcher, AbsentProsodyMatcher(Prosody.Stress))
+            else
+                typePhonemeMatcher
+        }.takeIf { language.stressType != StressType.None }
+    )
 }

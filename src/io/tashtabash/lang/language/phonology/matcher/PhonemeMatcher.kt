@@ -83,6 +83,13 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer): P
             .map { Prosody.valueOf(it) }
             .toSet()
     )
+    absentProsodyRegex.matches(matcher) -> AbsentProsodyMatcher(
+        matcher.drop(2)
+            .dropLast(1)
+            .split(",")
+            .map { Prosody.valueOf(it) }
+            .toSet()
+    )
     mulModifierRegex.matches(matcher) -> MulMatcher(
         matcher.drop(1)
             .dropLast(1)
@@ -107,6 +114,7 @@ private fun restoreInitialBracket(token: String) = when (token.last()) {
 
 private val modifierRegex = "\\[\\+.*]".toRegex()
 private val prosodyRegex = "\\{\\+.*}".toRegex()
+private val absentProsodyRegex = "\\{-.*}".toRegex()
 private val absentModifierRegex = "\\[-.*]".toRegex()
 private val mulModifierRegex = "\\(.*\\)".toRegex()
 

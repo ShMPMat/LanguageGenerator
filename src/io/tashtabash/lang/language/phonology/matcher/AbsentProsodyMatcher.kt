@@ -3,40 +3,35 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 
 
-class ExactPhonemeMatcher(val phoneme: Phoneme): PhonemeMatcher() {
+class AbsentProsodyMatcher(val prosody: Set<Prosody>): PhonemeMatcher() {
+    constructor(vararg modifiers: Prosody) : this(modifiers.toSet() )
+
     override val name =
-        phoneme.symbol
+        "{-${prosody.sorted().joinToString(",")}}"
 
     override fun match(phoneme: Phoneme?) =
-        phoneme == this.phoneme
+        false
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme is ChangingPhoneme.ExactPhoneme
-                && changingPhoneme.phoneme == phoneme
+                && (changingPhoneme.prosody == null || prosody.none { it in changingPhoneme.prosody })
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
         is ModifierPhonemeMatcher ->
-            if (other.match(ChangingPhoneme.ExactPhoneme(phoneme)))
-                this
-            else null
+            MulMatcher(this, other)
         is AbsentModifierPhonemeMatcher ->
-            if (other.match(ChangingPhoneme.ExactPhoneme(phoneme)))
-                this
-            else null
+            MulMatcher(this, other)
         is ExactPhonemeMatcher ->
-            if (this == other)
-                this
-            else null
+            MulMatcher(other, this)
         is TypePhonemeMatcher ->
-            if (phoneme.type == other.phonemeType)
-                this
-            else null
-        is ProsodyMatcher ->
-            MulMatcher(this, other)
+            MulMatcher(other, this)
         is AbsentProsodyMatcher ->
-            MulMatcher(this, other)
+            AbsentProsodyMatcher(prosody + other.prosody)
+        is ProsodyMatcher ->
+            other * this
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this

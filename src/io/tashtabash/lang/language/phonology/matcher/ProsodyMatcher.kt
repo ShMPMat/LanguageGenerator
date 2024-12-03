@@ -31,6 +31,10 @@ class ProsodyMatcher(val prosody: Set<Prosody>): PhonemeMatcher() {
             MulMatcher(other, this)
         is ProsodyMatcher ->
             ProsodyMatcher(prosody + other.prosody)
+        is AbsentProsodyMatcher ->
+            if (prosody.none { it in other.prosody })
+                MulMatcher(this, other)
+            else null
         is MulMatcher ->
             other * this
         PassingPhonemeMatcher, null -> this

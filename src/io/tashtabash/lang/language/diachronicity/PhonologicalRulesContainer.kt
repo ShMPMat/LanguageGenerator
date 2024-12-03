@@ -30,6 +30,9 @@ fun isMatcherApplicable(matcher: PhonemeMatcher, language: Language): Boolean = 
     is ProsodyMatcher -> matcher.prosody.all {
         it == Prosody.Stress && language.stressType != StressType.None
     }
+    is AbsentProsodyMatcher -> matcher.prosody.all {
+        it == Prosody.Stress && language.stressType != StressType.None
+    }
     else -> throw LanguageException("Unknown PhonemeMatcher '$matcher'")
 }
 

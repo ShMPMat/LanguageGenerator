@@ -70,6 +70,7 @@ internal class PhonemeMatcherTest {
                 AbsentModifierPhonemeMatcher(Nasalized),
                 AbsentModifierPhonemeMatcher(Palatilized),
                 ProsodyMatcher(Prosody.Stress),
+                AbsentProsodyMatcher(Prosody.Stress),
                 MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long)),
                 MulMatcher(TypePhonemeMatcher(Vowel), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
                 MulMatcher(AbsentModifierPhonemeMatcher(PhonemeModifier.Long), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
