@@ -59,6 +59,15 @@ fun createAffixCategoryApplicator(affix: String): AffixCategoryApplicator {
         AffixCategoryApplicator(parsedAffix, CategoryRealization.Suffix)
 }
 
+fun createAffixCategoryApplicator(vararg affixes: String): AffixCategoryApplicator {
+    val parsedAffix = createAffix(*affixes)
+
+    return if (parsedAffix.templateChange.position == Position.Beginning)
+        AffixCategoryApplicator(parsedAffix, CategoryRealization.Prefix)
+    else
+        AffixCategoryApplicator(parsedAffix, CategoryRealization.Suffix)
+}
+
 // Two different cases: with changing the stem and not changing the stem
 fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
     templateChange.contains("->") -> {
