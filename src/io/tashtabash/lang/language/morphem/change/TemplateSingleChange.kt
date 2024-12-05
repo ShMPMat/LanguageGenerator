@@ -112,7 +112,7 @@ data class TemplateSingleChange(
 
             return word.copy(syllables = prosodicSyllables, morphemes = morphemes, categoryValues = newCategoryValues)
         } catch (e: NoPhonemeException) {
-            throw ChangeException("Can't apply $this to $word: $e")
+            throw ChangeException("Can't apply $this to $word: ${e.message}")
         }
     }
 
