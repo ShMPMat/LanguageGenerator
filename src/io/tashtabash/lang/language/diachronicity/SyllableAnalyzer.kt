@@ -43,15 +43,14 @@ fun unifySyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<L
 
     val newWords = lexis.words
         .map { resultTemplate.apply(it) }
-    val newChangeParadigm = changeParadigm.wordChangeParadigm
-        .mapApplicators {
+    val newChangeParadigm = changeParadigm.mapApplicators {
             when (it) {
                 is WordCategoryApplicator -> it.copy(resultTemplate.apply(it.word))
                 else -> it
             }
         }
 
-    return lexis.shift(newWords) to changeParadigm.copy(wordChangeParadigm = newChangeParadigm)
+    return lexis.shift(newWords) to newChangeParadigm
 }
 
 fun fixSyllableStructure(
@@ -76,15 +75,8 @@ fun fixSyllableStructure(
 }
 
 // Changes syllable structure for words in case it became more complex
-private fun mergeSyllableTemplate(
-    changeParadigm: ChangeParadigm,
-    syllableTemplate: SyllableTemplate
-): ChangeParadigm {
-    val newWordChangeParadigm = changeParadigm.wordChangeParadigm
-        .mapApplicators { mergeSyllableTemplate(it, syllableTemplate) }
-
-    return changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
-}
+private fun mergeSyllableTemplate(changeParadigm: ChangeParadigm, syllableTemplate: SyllableTemplate): ChangeParadigm =
+    changeParadigm.mapApplicators { mergeSyllableTemplate(it, syllableTemplate) }
 
 fun mergeSyllableTemplate(
     applicator: CategoryApplicator,
