@@ -24,19 +24,17 @@ data class TemplateSingleChange(
     fun findGoodIndex(word: Word): Int? =
         findGoodIndex(getChangingPhonemes(word, addStartBoundary = false, addEndBoundary = false))
 
-    fun findGoodIndex(phonemes: List<ChangingPhoneme>): Int? {
-        return when (position) {
-            Position.End -> mirror().findGoodIndex(phonemes.reversed())
-                ?.let { phonemes.size - it }
-            Position.Beginning -> {
-                val isMatching = phonemeMatchers
-                    .zip(getBeginningTestedPhonemes(phonemes))
-                    .all { (matcher, phoneme) -> matcher.match(phoneme) }
+    fun findGoodIndex(phonemes: List<ChangingPhoneme>): Int? = when (position) {
+        Position.End -> mirror().findGoodIndex(phonemes.reversed())
+            ?.let { phonemes.size - it }
+        Position.Beginning -> {
+            val isMatching = phonemeMatchers
+                .zip(getBeginningTestedPhonemes(phonemes))
+                .all { (matcher, phoneme) -> matcher.match(phoneme) }
 
-                if (isMatching)
-                    phonemeMatchers.size
-                else null
-            }
+            if (isMatching)
+                phonemeMatchers.size
+            else null
         }
     }
 
