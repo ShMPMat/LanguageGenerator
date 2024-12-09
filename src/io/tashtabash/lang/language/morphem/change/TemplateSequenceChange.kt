@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.lexis.Word
 
 
-data class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateChange() {
+open class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateChange() {
     constructor(vararg changes: TemplateChange) : this(changes.toList())
 
     override val position: Position?
@@ -29,9 +29,32 @@ data class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateC
         return word.copy()
     }
 
+    fun findAppliedChangeIndex(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Int? {
+        for ((i, changeTemplate) in changes.withIndex()) {
+            val changedWord = changeTemplate.change(word, categoryValues, derivationValues)
+            if (changedWord.toString() != word.toString())
+                return i
+        }
+        return null
+    }
+
     override fun mirror() = TemplateSequenceChange(
         changes.map { it.mirror() }
     )
 
-    override fun toString() = changes.joinToString()
+    override fun toString() =
+        changes.joinToString()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as TemplateSequenceChange
+
+        return changes == other.changes
+    }
+
+    override fun hashCode(): Int {
+        return changes.hashCode()
+    }
 }
