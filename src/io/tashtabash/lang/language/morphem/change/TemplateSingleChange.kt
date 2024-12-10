@@ -42,7 +42,7 @@ data class TemplateSingleChange(
         val wordPhonemes = phonemes.take(phonemeMatchers.size)
         val missingPhonemes = (wordPhonemes.size until phonemeMatchers.size).map { ChangingPhoneme.Boundary }
 
-        return missingPhonemes + wordPhonemes
+        return wordPhonemes + missingPhonemes
     }
 
     override fun test(word: Word) = findGoodIndex(word) != null
@@ -69,15 +69,12 @@ data class TemplateSingleChange(
         try {
             val prosodicSyllables = when (position) {
                 Position.End -> {
-                    val change: List<Phoneme?> = getFullChange()
+                    val change: List<Phoneme> = getFullChange()
                         .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                        .mapNotNull { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
                     val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
-                            word.toPhonemes().subList(
-                                0,
-                                word.size - phonemeMatchers.size
-                            ) + change.filterNotNull()
+                            word.toPhonemes().dropLast(phonemeMatchers.size) + change
                         )
                     ) ?: throw ChangeException("Couldn't convert $word with change $this to word")
 
@@ -86,15 +83,12 @@ data class TemplateSingleChange(
                     }
                 }
                 Position.Beginning -> {
-                    val change: List<Phoneme?> = getFullChange()
+                    val change: List<Phoneme> = getFullChange()
                         .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                        .map { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
+                        .mapNotNull { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
                     val noProsodyWord = word.syllableTemplate.splitOnSyllables(
                         PhonemeSequence(
-                            change.filterNotNull() + word.toPhonemes().subList(
-                                phonemeMatchers.size,
-                                word.size
-                            )
+                            change + word.toPhonemes().drop(phonemeMatchers.size)
                         )
                     ) ?: throw ChangeException("Couldn't convert $word with change $this to a word")
                     val shift = noProsodyWord.size - word.syllables.size

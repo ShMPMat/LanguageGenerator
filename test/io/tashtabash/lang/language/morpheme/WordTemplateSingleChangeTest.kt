@@ -118,4 +118,36 @@ internal class WordTemplateSingleChangeTest {
             changeTemplate.change(secondWord, listOf(), listOf())
         )
     }
+
+    @Test
+    fun `TemplateChange suffix matches an opposite border`() {
+        val changeTemplate = createTemplateChange("-\$CaC -> __-_ob")
+        val firstWord = createNoun("cab")
+        val secondWord = createNoun("ca")
+
+        assertEquals(
+            createNoun("cbob").withMorphemes(0, 2, 2),
+            changeTemplate.change(firstWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("ca"),
+            changeTemplate.change(secondWord, listOf(), listOf())
+        )
+    }
+
+    @Test
+    fun `TemplateChange prefix matches an opposite border`() {
+        val changeTemplate = createTemplateChange("CaC\$- -> bo_-__")
+        val firstWord = createNoun("cab")
+        val secondWord = createNoun("ca")
+
+        assertEquals(
+            createNoun("bocb").withMorphemes(1, 2, 2),
+            changeTemplate.change(firstWord, listOf(), listOf())
+        )
+        assertEquals(
+            createNoun("ca"),
+            changeTemplate.change(secondWord, listOf(), listOf())
+        )
+    }
 }
