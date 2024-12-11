@@ -13,6 +13,7 @@ import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstituti
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
+import io.tashtabash.lang.language.phonology.prosody.Prosody
 
 
 data class TemplateSingleChange(
@@ -57,43 +58,28 @@ data class TemplateSingleChange(
         categoryValues: SourcedCategoryValues,
         derivationValues: List<DerivationClass>
     ): Word {
-        fun Word.takeProsody(i: Int) = this.syllables
+        fun Word.takeProsody(i: Int): List<Prosody> = this.syllables
             .getOrNull(i)
             ?.prosody
             ?.toList()
             ?: listOf()
 
-        val testResult = findGoodIndex(word)
-            ?: return word.copy()
-
         try {
+            val changingPhonemes = getChangingPhonemes(word, addStartBoundary = false, addEndBoundary = false)
+            val changedPhonemes = changePhonemes(changingPhonemes)
+                ?: return word.copy()
+            val noProsodySyllables = word.syllableTemplate.splitOnSyllables(changedPhonemes)
+                ?: throw ChangeException("Couldn't convert $word with change $this to a word")
+
             val prosodicSyllables = when (position) {
                 Position.End -> {
-                    val change: List<Phoneme> = getFullChange()
-                        .zip(testResult until testResult + matchedPhonemesSubstitution.size + affix.size)
-                        .mapNotNull { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                        PhonemeSequence(
-                            word.toPhonemes().dropLast(phonemeMatchers.size) + change
-                        )
-                    ) ?: throw ChangeException("Couldn't convert $word with change $this to word")
-
-                    noProsodyWord.mapIndexed { i, s ->
+                    noProsodySyllables.mapIndexed { i, s ->
                         s.copy(prosody = word.takeProsody(i))
                     }
                 }
                 Position.Beginning -> {
-                    val change: List<Phoneme> = getFullChange()
-                        .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-                        .mapNotNull { (substitution, i) -> substitution.substitute(word.getOrNull(i)) }
-                    val noProsodyWord = word.syllableTemplate.splitOnSyllables(
-                        PhonemeSequence(
-                            change + word.toPhonemes().drop(phonemeMatchers.size)
-                        )
-                    ) ?: throw ChangeException("Couldn't convert $word with change $this to a word")
-                    val shift = noProsodyWord.size - word.syllables.size
-
-                    noProsodyWord.mapIndexed { i, s ->
+                    val shift = noProsodySyllables.size - word.syllables.size
+                    noProsodySyllables.mapIndexed { i, s ->
                         s.copy(prosody = word.takeProsody(i - shift))
                     }
                 }
@@ -106,6 +92,23 @@ data class TemplateSingleChange(
         } catch (e: NoPhonemeException) {
             throw ChangeException("Can't apply $this to $word: ${e.message}")
         }
+    }
+
+    private fun changePhonemes(phonemes: List<ChangingPhoneme>): PhonemeSequence? {
+        if (position == Position.End)
+            return mirror()
+                .changePhonemes(phonemes.reversed())
+                ?.reversed()
+
+        val testResult = findGoodIndex(phonemes)
+            ?: return null
+
+        val change: List<Phoneme> = getFullChange()
+            .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
+            .mapNotNull { (substitution, i) -> substitution.substitute(phonemes.getOrNull(i)?.phoneme) }
+        return PhonemeSequence(
+            change + phonemes.drop(phonemeMatchers.size).mapNotNull { it.phoneme }
+        )
     }
 
     private fun constructMorphemes(
