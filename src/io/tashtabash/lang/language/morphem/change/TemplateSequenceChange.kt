@@ -18,8 +18,6 @@ open class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateC
             else null
         }
 
-    override fun test(word: Word) = changes.any { it.test(word) }
-
     override fun change(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Word {
         for (changeTemplate in changes) {
             val changedWord = changeTemplate.change(word, categoryValues, derivationValues)

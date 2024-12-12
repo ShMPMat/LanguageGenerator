@@ -10,8 +10,6 @@ import io.tashtabash.lang.language.morphem.change.WordChange
 interface Affix : WordChange {
     val templateChange: TemplateChange
 
-    override fun test(word: Word): Boolean = templateChange.test(word)
-
     override fun change(
         word: Word,
         categoryValues: SourcedCategoryValues,
