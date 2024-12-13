@@ -80,7 +80,7 @@ class PhonologicalRuleApplicator {
             language.restrictionsParadigm,
             shiftedDerivationParadigm,
             shiftedChangeParadigm
-        )
+        ).removeUnusedRules()
     }
 
     fun applyPhonologicalRule(derivationParadigm: DerivationParadigm, rule: PhonologicalRule): DerivationParadigm {
@@ -242,12 +242,8 @@ class PhonologicalRuleApplicator {
         }
     }
 
-    fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm {
-        val shiftedWordChangeParadigm = changeParadigm.wordChangeParadigm
-            .mapApplicators { applyPhonologicalRule(it, rule) }
-
-        return changeParadigm.copy(wordChangeParadigm = shiftedWordChangeParadigm)
-    }
+    fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm =
+        changeParadigm.mapApplicators { applyPhonologicalRule(it, rule) }
 
     fun applyPhonologicalRule(categoryApplicator: CategoryApplicator, rule: PhonologicalRule): CategoryApplicator =
         when (categoryApplicator) {
