@@ -6,6 +6,7 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.NumeralSystemBase
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
+import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.SuppletionCategoryApplicator
 import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.derivation.DerivationClass.AbstractNounFromNoun
@@ -1058,6 +1059,82 @@ internal class PhonologicalRuleApplicatorTest {
                 createAffixCategoryApplicator("u-"),
                 SuppletionCategoryApplicator(createNoun("ad")),
                 createAffixCategoryApplicator("-t")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule swaps Suffix for PassingCategoryApplicator if it is empty after applying a rule`() {
+        val words = listOf(createNoun("atab"))
+        val derivations = listOf(
+            Derivation(createAffix("-ta"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            SuppletionCategoryApplicator(createNoun("at")),
+            createAffixCategoryApplicator("-V -> _", "-t")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("t -> - / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("atab")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-ta"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a-"),
+                createAffixCategoryApplicator("u-"),
+                SuppletionCategoryApplicator(createNoun("a")),
+                PassingCategoryApplicator
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule swaps Prefix for PassingCategoryApplicator if it is empty after applying a rule`() {
+        val words = listOf(createNoun("atab"))
+        val derivations = listOf(
+            Derivation(createAffix("t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("-a"),
+            createAffixCategoryApplicator("-a"),
+            SuppletionCategoryApplicator(createNoun("at")),
+            createAffixCategoryApplicator("C- -> _", "a-")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> - / $ _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("tab")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("t-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("-a"),
+                createAffixCategoryApplicator("-a"),
+                SuppletionCategoryApplicator(createNoun("at")),
+                PassingCategoryApplicator
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )

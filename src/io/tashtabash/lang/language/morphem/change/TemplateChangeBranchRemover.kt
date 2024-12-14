@@ -4,6 +4,7 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
@@ -54,22 +55,25 @@ fun removeUnusedChanges(language: Language): Language =
 
 fun removeUnusedChanges(categoryApplicator: CategoryApplicator): CategoryApplicator =
     when (categoryApplicator) {
-        is AffixCategoryApplicator -> AffixCategoryApplicator(
-            removeUnusedChanges(categoryApplicator.affix),
-            categoryApplicator.type
-        )
+        is AffixCategoryApplicator -> {
+            val clearedChange = removeUnusedChanges(categoryApplicator.affix.templateChange)
+
+            if (clearedChange is TemplateSequenceChange && clearedChange.changes.isEmpty())
+                PassingCategoryApplicator
+            else {
+                val changedAffix = when (categoryApplicator.affix) {
+                    is Prefix -> Prefix(clearedChange)
+                    is Suffix -> Suffix(clearedChange)
+                    else -> throw LanguageException("Unknown affix '${categoryApplicator.affix}'")
+                }
+                AffixCategoryApplicator(
+                    changedAffix,
+                    categoryApplicator.type
+                )
+            }
+        }
         else -> categoryApplicator
     }
-
-fun removeUnusedChanges(affix: Affix): Affix = when (affix) {
-    is Prefix -> {
-        Prefix(removeUnusedChanges(affix.templateChange))
-    }
-    is Suffix -> {
-        Suffix(removeUnusedChanges(affix.templateChange))
-    }
-    else -> throw LanguageException("Unknown affix '$affix'")
-}
 
 fun removeUnusedChanges(templateChange: TemplateChange): TemplateChange =
     when (templateChange) {
