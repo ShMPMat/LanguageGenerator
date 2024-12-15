@@ -35,7 +35,7 @@ fun createAffix(vararg affixes: String): Affix {
         affixes.map { createAffix(it).templateChange }
     )
 
-    return if (change.changes[0].position == Position.End)
+    return if (change.position == Position.End)
         Suffix(change)
     else
         Prefix(change)
@@ -50,17 +50,12 @@ fun createAffix(affix: String): Affix {
         Suffix(templateChange)
 }
 
-fun createAffixCategoryApplicator(affix: String): AffixCategoryApplicator {
-    val parsedAffix = createAffix(affix)
-
-    return if (parsedAffix.templateChange.position == Position.Beginning)
-        AffixCategoryApplicator(parsedAffix, CategoryRealization.Prefix)
-    else
-        AffixCategoryApplicator(parsedAffix, CategoryRealization.Suffix)
-}
-
 fun createAffixCategoryApplicator(vararg affixes: String): AffixCategoryApplicator {
-    val parsedAffix = createAffix(*affixes)
+    val parsedAffix =
+        if (affixes.size == 1)
+            createAffix(affixes[0])
+        else
+            createAffix(*affixes)
 
     return if (parsedAffix.templateChange.position == Position.Beginning)
         AffixCategoryApplicator(parsedAffix, CategoryRealization.Prefix)
