@@ -8,16 +8,21 @@ data class FoldedWordSequence(val words: List<LatchedWord> = listOf()) {
 
     val size = words.size
 
-    operator fun get(position: Int) = words[position]
+    operator fun get(position: Int) =
+        words[position]
 
-    operator fun plus(that: FoldedWordSequence) = FoldedWordSequence(this.words + that.words)
+    operator fun plus(that: FoldedWordSequence) =
+        FoldedWordSequence(this.words + that.words)
 
-    fun mapIndexed(transform: (Int, Word) -> Word) = words
-        .mapIndexed { i, (w, l) -> LatchedWord(transform(i, w), l) }
-        .toFoldedWordSequence()
+    fun map(mapper: (Word) -> Word): FoldedWordSequence =
+        FoldedWordSequence(words.map { it.map(mapper) })
 
-    fun swapWord(i: Int, transform: (Word) -> Word) = mapIndexed { j, w ->
-        if (i == j) transform(w)
+    fun mapIndexed(transform: (Int, Word) -> Word): FoldedWordSequence =
+        words.mapIndexed { i, (w, l) -> LatchedWord(transform(i, w), l) }
+            .toFoldedWordSequence()
+
+    fun swapWord(i: Int, mapper: (Word) -> Word) = mapIndexed { j, w ->
+        if (i == j) mapper(w)
         else w
     }
 }
