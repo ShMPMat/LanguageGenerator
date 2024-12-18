@@ -61,4 +61,7 @@ class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
             newMatchers + if (isOtherMerged) listOf() else listOf(other)
         )
     }
+
+    override fun any(predicate: (PhonemeMatcher) -> Boolean): Boolean =
+        super.any(predicate) || matchers.any { it.any(predicate) }
 }

@@ -17,6 +17,11 @@ abstract class PhonemeMatcher {
 
     abstract fun match(changingPhoneme: ChangingPhoneme): Boolean
 
+    abstract operator fun times(other: PhonemeMatcher?): PhonemeMatcher?
+
+    open fun any(predicate: (PhonemeMatcher) -> Boolean) =
+        predicate(this)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -27,8 +32,6 @@ abstract class PhonemeMatcher {
 
         return true
     }
-
-    abstract operator fun times(other: PhonemeMatcher?): PhonemeMatcher?
 
     override fun hashCode(): Int {
         return name.hashCode()
