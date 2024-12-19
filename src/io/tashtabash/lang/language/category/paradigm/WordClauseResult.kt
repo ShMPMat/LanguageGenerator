@@ -11,4 +11,7 @@ data class WordClauseResult(val words: FoldedWordSequence, val mainWordIdx: Int)
 
     fun unfold(): WordSequence =
         words.unfold()
+
+    fun map(mapper: (Word) -> Word): WordClauseResult =
+        copy(words = words.map(mapper))
 }
