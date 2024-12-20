@@ -2,6 +2,9 @@ package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.generator.ApplicatorMap
 import io.tashtabash.lang.language.category.CategorySource
+import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
+import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
@@ -36,6 +39,17 @@ data class SpeechPartChangeParadigm(
         ?.category
         ?.actualValues
         ?: emptyList()
+
+    fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
+        applicators.values
+            .flatMap { it.values }
+            .any(predicate)
+
+    fun hasPrefixes(): Boolean =
+        anyApplicator { it is AffixCategoryApplicator && it.type == CategoryRealization.Prefix }
+
+    fun hasSuffixes(): Boolean =
+        anyApplicator { it is AffixCategoryApplicator && it.type == CategoryRealization.Suffix }
 
     fun apply(word: Word, latchType: LatchType, categoryValues: Set<SourcedCategoryValue>): WordClauseResult {
         if (word.semanticsCore.speechPart != speechPart)
