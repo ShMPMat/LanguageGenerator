@@ -22,7 +22,7 @@ import io.tashtabash.lang.language.syntax.ChangeParadigm
 import kotlin.math.max
 
 
-class PhonologicalRuleApplicator {
+class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false) {
     private val derivationCache = mutableMapOf<Derivation, Derivation>()
     private val compoundCache = mutableMapOf<Compound, Compound>()
     private var isChangeApplied = false
@@ -39,6 +39,16 @@ class PhonologicalRuleApplicator {
 
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         cleanState()
+
+        if (RuleApplicabilityAnalyser(language).isSandhi(rule) && !forcedApplication) {
+            val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
+                sandhiRules = language.changeParadigm.wordChangeParadigm.sandhiRules + rule
+            )
+
+            return language.copy(
+                changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
+            )
+        }
 
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)

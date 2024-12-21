@@ -54,7 +54,7 @@ fun makeDefLang(
 ) = Language(
     Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
-    StressType.Initial,
+    StressType.NotFixed,
     RestrictionsParadigm(mutableMapOf()),
     DerivationParadigm(derivations, listOf()),
     ChangeParadigm(

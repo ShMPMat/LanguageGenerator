@@ -33,13 +33,14 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
     }
 
     fun chooseRule(language: Language, rulesContainer: PhonologicalRulesContainer): PhonologicalRule? {
-        var rule = rulesContainer
-            .getApplicableRules(language)
+        val ruleApplicabilityAnalyser = RuleApplicabilityAnalyser(language)
+        var rule = ruleApplicabilityAnalyser.getApplicableRules(rulesContainer)
             .randomElementOrNull()
             ?: return null
 
         while (!isRuleExact(rule) && narrowingProbability.testProbability())
             rule = narrowRule(rule, language)
+                ?.takeIf(ruleApplicabilityAnalyser::isRuleApplicable)
                 ?: break
 
         return rule
@@ -116,7 +117,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
         }
         else -> throw LanguageException("Can't narrow down $matcher")
     }
-        .takeIf { isMatcherApplicable(it, language) }
+        .takeIf { RuleApplicabilityAnalyser(language).isMatcherApplicable(it) }
         ?: matcher
 
     // Choose possible TypePhonemeMatcher modifications

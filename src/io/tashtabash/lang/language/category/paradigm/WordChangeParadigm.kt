@@ -3,6 +3,8 @@ package io.tashtabash.lang.language.category.paradigm
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.diachronicity.PhonologicalRule
+import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
@@ -11,8 +13,17 @@ import io.tashtabash.lang.utils.listCartesianProduct
 
 data class WordChangeParadigm(
     val categories: List<Category>,
-    val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>
+    val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>,
+    val sandhiRules: List<PhonologicalRule> = listOf()
 ) {
+    fun hasPrefixes(): Boolean =
+        speechPartChangeParadigms.values
+            .any { it.hasPrefixes() }
+
+    fun hasSuffixes(): Boolean =
+        speechPartChangeParadigms.values
+            .any { it.hasSuffixes() }
+
     fun apply(
         word: Word,
         latchType: LatchType = LatchType.Center,
@@ -23,12 +34,14 @@ data class WordChangeParadigm(
             .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
             .toSet()
 
-        return applyToNewWords(
+        val resultingClause = applyToNewWords(
             speechPartChangeParadigms[word.semanticsCore.speechPart]
                 ?.apply(word, latchType, applicableValues)
                 ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}"),
             applicableValues + getStaticCategoryValues(word)
         )
+
+        return resultingClause.map { applySandhiRules(it) }
     }
 
     private fun applyToNewWords(
@@ -130,10 +143,20 @@ data class WordChangeParadigm(
                 }
 
             speechPartChangeParadigm.copy(applicators = mappedApplicators)
-        }
+        },
+        sandhiRules
     )
 
+    private fun applySandhiRules(word: Word): Word {
+        val phonologicalRuleApplicator = PhonologicalRuleApplicator()
+
+        return sandhiRules.fold(word) { curWord, rule ->
+            phonologicalRuleApplicator.applyPhonologicalRule(curWord, rule)
+        }
+    }
+
     override fun toString() = categories.joinToString("\n") + "\n\n" +
+            sandhiRules.joinToString("\n", "Sandhi rules:\n") + "\n\n" +
             speechPartChangeParadigms
                 .map { it.value }
                 .filter { it.hasChanges() }

@@ -165,7 +165,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("a -> i / $ _ ")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(
@@ -221,7 +221,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("b -> t / _ $")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(
@@ -279,7 +279,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("a -> - / _ $")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(
@@ -346,7 +346,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("C -> - / _ $")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(
@@ -477,7 +477,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("V -> - / \$C _ CV")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(
@@ -708,7 +708,7 @@ internal class PhonologicalRuleApplicatorTest {
         val phonologicalRule = createTestPhonologicalRule("a -> - / \$C _ CV")
             .copy(allowSyllableStructureChange = true)
 
-        val phonologicalRuleApplicator = PhonologicalRuleApplicator()
+        val phonologicalRuleApplicator = PhonologicalRuleApplicator(true)
         val shiftedLanguage = phonologicalRuleApplicator.applyPhonologicalRule(language, phonologicalRule)
 
         val expectedSyllableTemplate = SyllableValenceTemplate(
@@ -1079,7 +1079,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("t -> - / _ $")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(createNoun("atab")),
@@ -1117,7 +1117,7 @@ internal class PhonologicalRuleApplicatorTest {
         val language = makeDefLang(words, derivations, nounChangeParadigm)
         val phonologicalRule = createTestPhonologicalRule("a -> - / $ _ ")
 
-        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
         assertEquals(
             listOf(createNoun("tab")),
@@ -1137,6 +1137,90 @@ internal class PhonologicalRuleApplicatorTest {
                 PassingCategoryApplicator
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule is added to sandhi if it matches the word start and the lang has prefixes`() {
+        val words = listOf(createNoun("aca"))
+        val derivations = listOf(
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> i / $ _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("aca")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a-"),
+                createAffixCategoryApplicator("u-"),
+                createAffixCategoryApplicator("b-"),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+        assertEquals(
+            listOf(phonologicalRule),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule is added to sandhi if it matches the word end and the lang has suffixes`() {
+        val words = listOf(createNoun("aca"))
+        val derivations = listOf(
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> i / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("aca")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a-"),
+                createAffixCategoryApplicator("u-"),
+                createAffixCategoryApplicator("b-"),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+        assertEquals(
+            listOf(phonologicalRule),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
         )
     }
 }
