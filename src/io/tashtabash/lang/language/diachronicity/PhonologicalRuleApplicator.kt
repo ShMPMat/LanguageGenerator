@@ -41,6 +41,8 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         cleanState()
 
         if (RuleApplicabilityAnalyser(language).isSandhi(rule) && !forcedApplication) {
+            _messages += "Rule $rule is added to sandhi rules"
+
             val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
                 sandhiRules = language.changeParadigm.wordChangeParadigm.sandhiRules + rule
             )
@@ -157,7 +159,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
                     Position.Beginning -> {
                         try {
                             val prefixPhonemes = templateChange.affix
-                                .map { it.getSubstitutePhoneme() }
+                                .map { it.exactPhoneme }
                             var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
                                 prefixPhonemes.map { it to listOf() },
                                 addStartBoundary = true,

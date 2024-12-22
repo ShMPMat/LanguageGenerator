@@ -65,9 +65,9 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
             val isBeginning = change.position == Position.Beginning
             val vowelAdjacentAffix = if (isBeginning)
-                change.affix.dropLastWhile { it.getSubstitutePhoneme().type == PhonemeType.Vowel }
+                change.affix.dropLastWhile { it.exactPhoneme.type == PhonemeType.Vowel }
             else
-                change.affix.dropWhile { it.getSubstitutePhoneme().type == PhonemeType.Vowel }
+                change.affix.dropWhile { it.exactPhoneme.type == PhonemeType.Vowel }
 
             listOf(
                 change.copy(
@@ -154,7 +154,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     private fun getBorderPhoneme(singleChange: TemplateSingleChange) = when (singleChange.position) {
         Position.Beginning -> singleChange.affix.last()
         Position.End -> singleChange.affix.first()
-    }.getSubstitutePhoneme()
+    }.exactPhoneme
 
     private fun generateSyllableAffix(
         phoneticRestrictions: PhoneticRestrictions,

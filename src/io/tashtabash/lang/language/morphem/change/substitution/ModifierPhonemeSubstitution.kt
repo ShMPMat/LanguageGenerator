@@ -18,8 +18,6 @@ data class ModifierPhonemeSubstitution(
         return phonemes.getPhonemeWithShiftedModifiers(phoneme, addModifiers, removeModifiers)
     }
 
-    override fun getSubstitutePhoneme(): Phoneme? = null
-
     override fun times(other: PhonemeSubstitution): PhonemeSubstitution = when (other) {
         is PassingPhonemeSubstitution -> this
         is ModifierPhonemeSubstitution -> {

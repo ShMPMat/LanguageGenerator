@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.phonology.PhonemeModifier
 
 interface PhonemeSubstitution {
     fun substitute(phoneme: Phoneme?): Phoneme?
-    fun getSubstitutePhoneme(): Phoneme?
 
     // Create a new PhonemeSubstitution which is equal in effect to
     // the sequential application of this instance after the other
