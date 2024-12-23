@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.phonology.Phoneme
 
 
 object DeletingPhonemeSubstitution : PhonemeSubstitution {
-    override fun substitute(phoneme: Phoneme?): Phoneme? = null
+    override fun substitute(phoneme: Phoneme?): List<Phoneme> = listOf()
 
     override fun times(other: PhonemeSubstitution): PhonemeSubstitution =
         this

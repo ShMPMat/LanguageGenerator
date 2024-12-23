@@ -91,7 +91,7 @@ data class TemplateSingleChange(
 
         val change: List<Phoneme> = getFullChange()
             .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-            .mapNotNull { (substitution, i) -> substitution.substitute(phonemes.getOrNull(i)?.phoneme) }
+            .flatMap { (substitution, i) -> substitution.substitute(phonemes.getOrNull(i)?.phoneme) }
         return PhonemeSequence(
             change + phonemes.drop(phonemeMatchers.size).mapNotNull { it.phoneme }
         )

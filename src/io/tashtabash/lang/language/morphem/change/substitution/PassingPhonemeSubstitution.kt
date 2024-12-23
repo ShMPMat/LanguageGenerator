@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.phonology.Phoneme
 
 
 object PassingPhonemeSubstitution : PhonemeSubstitution {
-    override fun substitute(phoneme: Phoneme?): Phoneme? = phoneme
+    override fun substitute(phoneme: Phoneme?): List<Phoneme> = listOfNotNull(phoneme)
 
     override fun times(other: PhonemeSubstitution): PhonemeSubstitution =
         other

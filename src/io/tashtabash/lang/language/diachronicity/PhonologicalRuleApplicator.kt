@@ -377,24 +377,43 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     private fun substitutePhonemes(
         phonemes: MutableList<ChangingPhoneme>,
         shift: Int,
-        resultingPhonemes: List<PhonemeSubstitution>
+        substitutions: List<PhonemeSubstitution>
     ) {
-        for (j in resultingPhonemes.indices) {
-            if (shift + j >= phonemes.size)
+        var curShift = shift
+        for (substitution in substitutions) {
+            if (curShift >= phonemes.size)
                 break
-            if (shift + j < 0)
+            if (curShift < 0) {
+                curShift++
                 continue
-
-            val newPhoneme = resultingPhonemes[j].substitute(phonemes[shift + j].phoneme)
-            val newProsody = phonemes[shift + j].let {
-                if (it is ChangingPhoneme.ExactPhoneme)
-                    it.prosody
-                else null
             }
-            phonemes[shift + j] = newPhoneme
-                ?.let { ChangingPhoneme.ExactPhoneme(it, newProsody) }
-                ?: ChangingPhoneme.DeletedPhoneme
+
+            val newPhonemes = substitution.substitute(phonemes[curShift].phoneme)
+            if (newPhonemes.isEmpty())
+                phonemes[curShift] = ChangingPhoneme.DeletedPhoneme
+            else {
+                val newExactPhonemes = transferOldProsody(phonemes[curShift], newPhonemes)
+                phonemes.removeAt(curShift)
+                phonemes.addAll(curShift, newExactPhonemes)
+                curShift += newExactPhonemes.size
+            }
         }
+    }
+
+    private fun transferOldProsody(oldPhoneme: ChangingPhoneme, newPhonemes: List<Phoneme>): List<ChangingPhoneme> {
+        val newProsody = oldPhoneme.prosody
+
+        if (newPhonemes.size == 1)
+            return listOf(ChangingPhoneme.ExactPhoneme(newPhonemes[0], newProsody))
+
+        // If there are multiple new phonemes,
+        //  assume that the old phoneme is present in the new list
+        val newExactPhonemes = newPhonemes.map { p ->
+            ChangingPhoneme.ExactPhoneme(p, newProsody.takeIf { p == oldPhoneme.phoneme })
+        }
+        if (newExactPhonemes.none { it.prosody == newProsody })
+            _messages += "Prosody $newProsody lost: can't distribute across multiple phonemes: $newProsody"
+        return newExactPhonemes
     }
 
     private fun matchMorphemes(oldWord: Word, rawNewPhonemes: List<Phoneme?>): List<MorphemeData> =

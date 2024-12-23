@@ -11,11 +11,10 @@ data class ModifierPhonemeSubstitution(
     val removeModifiers: Set<PhonemeModifier>,
     val phonemes: PhonemeContainer
 ) : PhonemeSubstitution {
-    override fun substitute(phoneme: Phoneme?): Phoneme? {
-        phoneme
-            ?: return null
+    override fun substitute(phoneme: Phoneme?): List<Phoneme> {
+        val newPhoneme = phoneme?.let { phonemes.getPhonemeWithShiftedModifiers(it, addModifiers, removeModifiers) }
 
-        return phonemes.getPhonemeWithShiftedModifiers(phoneme, addModifiers, removeModifiers)
+        return listOfNotNull(newPhoneme)
     }
 
     override fun times(other: PhonemeSubstitution): PhonemeSubstitution = when (other) {

@@ -17,7 +17,7 @@ class AbsentProsodyMatcher(val prosody: Set<Prosody>): PhonemeMatcher() {
 
     override fun match(changingPhoneme: ChangingPhoneme) =
         changingPhoneme is ChangingPhoneme.ExactPhoneme
-                && (changingPhoneme.prosody == null || prosody.none { it in changingPhoneme.prosody })
+                && (changingPhoneme.prosody.let { it == null || prosody.none { p -> p in it  } })
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
         is ModifierPhonemeMatcher ->
