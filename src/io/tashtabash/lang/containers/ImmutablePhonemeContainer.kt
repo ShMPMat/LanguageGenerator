@@ -12,7 +12,8 @@ data class ImmutablePhonemeContainer(override val phonemes: List<Phoneme>) : Pho
         .joinToString { (type, phonemes) ->
             val sortedPhonemes = phonemes
                 .sortedWith(Comparator.comparing<Phoneme?, ArticulationPlace?> { it.articulationPlace }
-                .then(Comparator.comparing { it.articulationManner }))
+                .then(Comparator.comparing { it.articulationManner })
+                .then(Comparator.comparing { it.modifiers.size }))
 
             "$type: $sortedPhonemes"
         }
