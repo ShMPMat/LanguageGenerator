@@ -1223,4 +1223,45 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
         )
     }
+
+    @Test
+    fun `applyPhonologicalRule doesn't loose an empty morpheme at the beginning, middle, and end`() {
+        val words = listOf(
+            createNoun("aca").withMorphemes(1, 0, 3),
+            createNoun("aba").withMorphemes(0, 3, 0),
+            createNoun("apa").withMorphemes(1, 1, 0, 2),
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> i / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("ici").withMorphemes(1, 0, 3),
+                createNoun("ibi").withMorphemes(0, 3, 0),
+                createNoun("ipi").withMorphemes(1, 1, 0, 2),
+            ).map { it.morphemes },
+            shiftedLanguage.lexis.words.map { it.morphemes }
+        )
+        assertEquals(
+            listOf(),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("i-"),
+                createAffixCategoryApplicator("u-"),
+                createAffixCategoryApplicator("b-"),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
 }
