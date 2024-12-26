@@ -6,23 +6,17 @@ import io.tashtabash.lang.language.phonology.prosody.Prosody
 
 
 sealed class ChangingPhoneme {
-    abstract val phoneme: Phoneme?
-    abstract val prosody: List<Prosody>?
+    open val phoneme: Phoneme? = null
+    open val prosody: List<Prosody>? = null
 
     data class ExactPhoneme(
         override val phoneme: Phoneme,
-        override val prosody: List<Prosody>? = null
+        override val prosody: List<Prosody>? = null,
     ): ChangingPhoneme()
 
-    object DeletedPhoneme: ChangingPhoneme() {
-        override val phoneme: Phoneme? = null
-        override val prosody: List<Prosody>? = null
-    }
+    object DeletedPhoneme: ChangingPhoneme()
 
-    object Boundary: ChangingPhoneme() {
-        override val phoneme: Phoneme? = null
-        override val prosody: List<Prosody>? = null
-    }
+    object Boundary: ChangingPhoneme()
 }
 
 
