@@ -8,10 +8,12 @@ import io.tashtabash.lang.language.phonology.prosody.Prosody
 sealed class ChangingPhoneme {
     open val phoneme: Phoneme? = null
     open val prosody: List<Prosody>? = null
+    open val isEpenthesis: Boolean = false
 
     data class ExactPhoneme(
         override val phoneme: Phoneme,
         override val prosody: List<Prosody>? = null,
+        override val isEpenthesis: Boolean = false
     ): ChangingPhoneme()
 
     object DeletedPhoneme: ChangingPhoneme()
