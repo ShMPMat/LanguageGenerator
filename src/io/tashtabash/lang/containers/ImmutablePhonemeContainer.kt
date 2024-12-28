@@ -2,7 +2,6 @@ package io.tashtabash.lang.containers
 
 import io.tashtabash.lang.language.phonology.ArticulationPlace
 import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.lang.language.phonology.PhonemeType
 import java.util.Comparator
 
 
