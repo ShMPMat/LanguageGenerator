@@ -106,7 +106,7 @@ class WordBase(private val supplementPath: String) {
     private fun readLines(): List<String> {
         val semiLines = File("$supplementPath/Words")
             .readLines()
-            .filter { !it.isBlank() && it[0] != '/' }
+            .filter { it.isNotBlank() && it[0] != '/' }
 
         val lines = mutableListOf<String>()
 
