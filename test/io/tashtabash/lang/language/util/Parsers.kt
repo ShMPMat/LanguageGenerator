@@ -130,6 +130,9 @@ fun createWord(
 ) =
     createWord(createPhonemes(phonemes), speechPart, syllableTemplate, tags)
 
+fun getTestPhoneme(symbol: String): Phoneme =
+    testPhonemeContainer.getPhoneme(symbol)
+
 val testPhonemeContainer = ImmutablePhonemeContainer(listOf(
     Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),
     Phoneme("i", PhonemeType.Vowel, Front, Close, setOf(Voiced)),
