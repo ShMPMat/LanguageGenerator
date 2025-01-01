@@ -37,6 +37,11 @@ fun unitePhonemeSubstitutions(
             oldIdx++
             continue
         }
+        if (curNew is EpenthesisSubstitution) {
+            result += curNew
+            newIdx++
+            continue
+        }
 
         result += curNew * curOld
         oldIdx++

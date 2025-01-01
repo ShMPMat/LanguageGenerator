@@ -292,7 +292,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
             val prosodies = rawPhonemes.filterIsInstance<ChangingPhoneme.ExactPhoneme>()
                 .mapNotNull { it.prosody }
-            val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1).map { it.phoneme })
+            val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1))
             val resultPhonemes = clearChangingPhonemes(rawPhonemes)
 
             val syllableTemplate =
@@ -341,16 +341,12 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         val result = phonemes.toMutableList()
         var i = 0
 
-        while (i + rule.matchers.size <= phonemes.size) {
-            val phonemeWindow = phonemes.drop(i)
+        while (i + rule.matchers.size <= result.size) {
+            val phonemeWindow = result.drop(i)
             val isMatch = rule.matchers
                 .match(phonemeWindow)
             if (isMatch) {
-                substitutePhonemes(
-                    result,
-                    i + rule.precedingMatchers.size,
-                    rule.resultingPhonemes
-                )
+                substitutePhonemes(result, i + rule.precedingMatchers.size, rule.resultingPhonemes)
                 isChangeApplied = true
             }
             i++
@@ -381,21 +377,39 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     ) {
         var curShift = shift
         for (substitution in substitutions) {
-            if (curShift >= phonemes.size)
+            //Allow adding to the end only if a substitution is an epenthesis
+            if (curShift >= phonemes.size && substitution !is EpenthesisSubstitution)
                 break
             if (curShift < 0) {
                 curShift++
                 continue
             }
 
-            val newPhonemes = substitution.substitute(phonemes[curShift].phoneme)
+            val oldPhoneme = phonemes.getOrNull(curShift)
+            val newPhonemes = substitution.substitute(oldPhoneme?.phoneme)
             if (newPhonemes.isEmpty())
                 phonemes[curShift] = ChangingPhoneme.DeletedPhoneme
             else {
-                val newExactPhonemes = transferOldProsody(phonemes[curShift], newPhonemes)
-                phonemes.removeAt(curShift)
-                phonemes.addAll(curShift, newExactPhonemes)
+                val newExactPhonemes =
+                    if (substitution.isOriginalPhonemeChanged)
+                        transferOldProsody(oldPhoneme!!, newPhonemes)
+                    else
+                        newPhonemes.map {
+                            // Assume that only vowels are syllabic
+                            val defaultProsody = if (it.type == PhonemeType.Vowel) listOf<Prosody>() else null
+                            ChangingPhoneme.ExactPhoneme(it, defaultProsody, true)
+                        }
+
+                if (curShift != phonemes.size) {
+                    phonemes.removeAt(curShift)
+                    phonemes.addAll(curShift, newExactPhonemes)
+                } else
+                    phonemes.addAll(newExactPhonemes)
                 curShift += newExactPhonemes.size
+
+                if (!substitution.isOriginalPhonemeChanged && oldPhoneme != null) {
+                    phonemes.add(curShift, oldPhoneme)
+                }
             }
         }
     }
@@ -406,8 +420,6 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         if (newPhonemes.size == 1)
             return listOf(ChangingPhoneme.ExactPhoneme(newPhonemes[0], newProsody))
 
-        // If there are multiple new phonemes,
-        //  assume that the old phoneme is present in the new list
         val newExactPhonemes = newPhonemes.map { p ->
             ChangingPhoneme.ExactPhoneme(p, newProsody.takeIf { p == oldPhoneme.phoneme })
         }
@@ -416,10 +428,10 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         return newExactPhonemes
     }
 
-    private fun matchMorphemes(oldWord: Word, rawNewPhonemes: List<Phoneme?>): List<MorphemeData> =
+    private fun matchMorphemes(oldWord: Word, rawNewPhonemes: List<ChangingPhoneme>): List<MorphemeData> =
         matchMorphemes(oldWord.morphemes, rawNewPhonemes)
 
-    private fun matchMorphemes(oldMorphemes: List<MorphemeData>, rawNewPhonemes: List<Phoneme?>): List<MorphemeData> {
+    private fun matchMorphemes(oldMorphemes: List<MorphemeData>, rawNewPhonemes: List<ChangingPhoneme>): List<MorphemeData> {
         val newMorphemes = mutableListOf<MorphemeData>()
         var oldMorphemeIdx = 0
         var oldMorphemePhonemeIdx = 0
@@ -434,16 +446,20 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             }
         }
 
-        for (phoneme in rawNewPhonemes) {
-            addMorphemeIfReady()
+        for (changingPhoneme in rawNewPhonemes) {
+            // Add zero morphemes immediately and don't start the next morpheme if
+            //  an epenthesis is encountered (add epenthesis to the current non-zero morpheme)
+            if (newMorphemeSize == 0 || !changingPhoneme.isEpenthesis)
+                addMorphemeIfReady()
 
-            if (phoneme != null)
+            if (changingPhoneme.phoneme != null)
                 newMorphemeSize++
 
-            oldMorphemePhonemeIdx++
-
-            addMorphemeIfReady()
+            if (!changingPhoneme.isEpenthesis)
+                oldMorphemePhonemeIdx++
         }
+
+        addMorphemeIfReady()
 
         return newMorphemes
     }

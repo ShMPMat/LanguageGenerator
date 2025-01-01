@@ -8,6 +8,9 @@ import io.tashtabash.lang.language.phonology.PhonemeModifier
 interface PhonemeSubstitution {
     fun substitute(phoneme: Phoneme?): List<Phoneme>
 
+    val isOriginalPhonemeChanged: Boolean
+        get() = true
+
     // Create a new PhonemeSubstitution which is equal in effect to
     // the sequential application of this instance after the other
     operator fun times(other: PhonemeSubstitution): PhonemeSubstitution
@@ -21,6 +24,8 @@ fun createPhonemeSubstitutions(substitutions: String, phonemeContainer: PhonemeC
     while (currentPostfix.isNotEmpty()) {
         val token = if (currentPostfix[0] == '[')
             currentPostfix.takeWhile { it != ']' } + ']'
+        else if (currentPostfix[0] == '(')
+            currentPostfix.takeWhile { it != ')' } + ')'
         else
             currentPostfix.take(1)
 
@@ -53,8 +58,12 @@ fun createPhonemeSubstitution(substitution: String, phonemeContainer: PhonemeCon
             .toSet(),
         phonemeContainer
     )
+    epenthesisRegex.matches(substitution) -> EpenthesisSubstitution(
+        phonemeContainer.getPhoneme(substitution.removePrefix("(").removeSuffix(")"))
+    )
     else -> ExactPhonemeSubstitution(phonemeContainer.getPhoneme(substitution))
 }
 
 private val addModifierRegex = "\\[\\+.*]".toRegex()
 private val removeModifierRegex = "\\[-.*]".toRegex()
+private val epenthesisRegex = "\\(.\\)".toRegex()

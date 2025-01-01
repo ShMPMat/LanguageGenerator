@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitutions
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
@@ -16,8 +17,8 @@ data class PhonologicalRule(
     val allowSyllableStructureChange: Boolean = false
 ) {
     init {
-        if (targetMatchers.size != resultingPhonemes.size)
-            throw LanguageException("The number of targetMatchers and resultingPhonemes must be the same")
+        if (targetMatchers.size != resultingPhonemes.count { it !is EpenthesisSubstitution })
+            throw LanguageException("The number of targetMatchers and non-epenthesis resultingPhonemes must be equal")
     }
 
     constructor(

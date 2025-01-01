@@ -35,6 +35,10 @@ data class ModifierPhonemeSubstitution(
             val newPhoneme = phonemes.getPhonemeWithShiftedModifiers(other.exactPhoneme, addModifiers, removeModifiers)
             ExactPhonemeSubstitution(newPhoneme)
         }
+        is EpenthesisSubstitution -> {
+            val newPhoneme = phonemes.getPhonemeWithShiftedModifiers(other.epenthesisPhoneme, addModifiers, removeModifiers)
+            EpenthesisSubstitution(newPhoneme)
+        }
         else -> throw LanguageException("Unknown PhonemeSubstitution type '${other.javaClass.name}'")
     }
 
