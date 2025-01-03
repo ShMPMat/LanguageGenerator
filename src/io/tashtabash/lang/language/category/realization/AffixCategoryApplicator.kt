@@ -10,7 +10,8 @@ class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization?) : Ab
     override fun apply(words: FoldedWordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
         words.swapWord(wordPosition) { affix.change(it, values.toList(), listOf()) }
 
-    override fun copy() = AffixCategoryApplicator(affix, type)
+    override fun copy() =
+        AffixCategoryApplicator(affix, type)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -18,14 +19,12 @@ class AffixCategoryApplicator(val affix: Affix, type: CategoryRealization?) : Ab
 
         other as AffixCategoryApplicator
 
-        if (affix != other.affix) return false
-
-        return true
+        return affix == other.affix
     }
 
-    override fun hashCode(): Int {
-        return affix.hashCode()
-    }
+    override fun hashCode(): Int =
+        affix.hashCode()
 
-    override fun toString() = affix.toString()
+    override fun toString() =
+        affix.toString()
 }
