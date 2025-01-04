@@ -46,6 +46,14 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "C -> - / _ \$",
         "C -> - / C _ \$",
         "C -> - / V _ \$",
+        // Vowel epenthesis
+        "C -> _(ə) / _ C ",
+        "C -> _(a) / _ C ",
+        "C -> _(i) / _ C ",
+        // Consonant epenthesis
+        "V -> _(ʔ) / _ V ",
+        "V -> _(ɦ) / _ V ",
+        "V -> _(h) / _ V ",
     ).map { createPhonologicalRule(it, phonemeContainer) }
         .flatMap { listOf(it, it.copy(allowSyllableStructureChange = true)) }
 
