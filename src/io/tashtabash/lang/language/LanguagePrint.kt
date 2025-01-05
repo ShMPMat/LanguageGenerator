@@ -63,7 +63,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
 fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = true): String {
     val allWordForms = changeParadigm.wordChangeParadigm.getAllWordForms(word, printOptionalCategories)
 
-    return "Base - $word\n" +
+    return "Base - $word (${word.semanticsCore.meaningCluster})\n" +
             allWordForms
                 .map { (ws, vs) ->
                     val categoryValues = vs.map { it.categoryValue }
