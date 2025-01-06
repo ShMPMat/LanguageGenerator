@@ -68,23 +68,29 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
     templateChange.contains("->") -> {
         val (matchers, substitutions) = templateChange.split("->")
             .map { it.trim() }
+        val parsedSubstitutions = createTestPhonemeSubstitutions(substitutions)
 
-        if (matchers[0] == '-')
+        if (matchers[0] == '-') {
+            val parsedMatchers = createTestPhonemeMatchers(matchers.drop(1))
+
             TemplateSingleChange(
                 Position.End,
-                createTestPhonemeMatchers(matchers.drop(1)),
-                createTestPhonemeSubstitutions(substitutions.take(matchers.length - 1)),
-                createTestPhonemeSubstitutions(substitutions.drop(matchers.length - 1))
+                parsedMatchers,
+                parsedSubstitutions.take(parsedMatchers.size),
+                parsedSubstitutions.drop(parsedMatchers.size)
                     .map { s -> s as ExactPhonemeSubstitution },
             )
-        else
+        } else {
+            val parsedMatchers = createTestPhonemeMatchers(matchers.dropLast(1))
+
             TemplateSingleChange(
                 Position.Beginning,
-                createTestPhonemeMatchers(matchers.dropLast(1)),
-                createTestPhonemeSubstitutions(substitutions.takeLast(matchers.length - 1)),
-                createTestPhonemeSubstitutions(substitutions.dropLast(matchers.length - 1))
+                parsedMatchers,
+                parsedSubstitutions.takeLast(parsedMatchers.size),
+                parsedSubstitutions.dropLast(parsedMatchers.size)
                     .map { s -> s as ExactPhonemeSubstitution },
             )
+        }
     }
     templateChange[0] == '-' -> {
         TemplateSingleChange(
