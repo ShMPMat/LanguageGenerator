@@ -16,7 +16,7 @@ import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
+import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchersAfterSubstitution
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import kotlin.math.max
@@ -230,7 +230,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             .map { ExactPhonemeSubstitution(it) }
 
         // Create new stem matchers accounting for the suffix of the phonologicalRule
-        val newMatchers = unitePhonemeMatchers(stemMatchers, templateChange.phonemeMatchers)
+        val newMatchers = unitePhonemeMatchersAfterSubstitution(
+            templateChange.phonemeMatchers,
+            templateChange.matchedPhonemesSubstitution,
+            stemMatchers
+        )
         if (newMatchers.any { it == null })
             return null
         // The morpheme can't be attached to a word border

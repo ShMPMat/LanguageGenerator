@@ -3,11 +3,12 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
+import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.prosody.Prosody
-import kotlin.math.max
 
 
 abstract class PhonemeMatcher {
@@ -28,9 +29,7 @@ abstract class PhonemeMatcher {
 
         other as PhonemeMatcher
 
-        if (name != other.name) return false
-
-        return true
+        return name == other.name
     }
 
     override fun hashCode(): Int {
@@ -121,15 +120,43 @@ private val absentProsodyRegex = "\\{-.*}".toRegex()
 private val absentModifierRegex = "\\[-.*]".toRegex()
 private val mulModifierRegex = "\\(.*\\)".toRegex()
 
+fun unitePhonemeMatchersAfterSubstitution(
+    first: List<PhonemeMatcher>,
+    // Substitutions applied after the first matchers, used to correctly determine shifts
+    firstSubstitutions: List<PhonemeSubstitution>,
+    second: List<PhonemeMatcher>,
+): List<PhonemeMatcher?> {
+    val shifts = firstSubstitutions.map { it is DeletingPhonemeSubstitution }
 
-fun unitePhonemeMatchers(first: List<PhonemeMatcher>, second: List<PhonemeMatcher>): List<PhonemeMatcher?> {
-    val newMatchersLength = max(first.size, second.size)
+    return unitePhonemeMatchers(first, second, shifts)
+}
 
-    return (0 until newMatchersLength).map { j ->
-        val curFirst = first.getOrNull(j)
-        val curSecond = second.getOrNull(j)
+fun unitePhonemeMatchers(
+    first: List<PhonemeMatcher>,
+    second: List<PhonemeMatcher>,
+    // If true, the corresponding position in first will be skipped.
+    //  Useful for merging Matchers, in-between which a substitution is applied.
+    shifts: List<Boolean> = listOf()
+): List<PhonemeMatcher?> {
+    var firstIdx = 0
+    var secondIdx = 0
+    val result = mutableListOf<PhonemeMatcher?>()
 
-        curFirst?.times(curSecond)
+    while (firstIdx < second.size || secondIdx < first.size) {
+        val curFirst = first.getOrNull(firstIdx)
+        val curSecond = second.getOrNull(secondIdx)
+        if (shifts.getOrNull(firstIdx) == true) {
+            result += curFirst
+            firstIdx++
+            continue
+        }
+
+        result += curFirst?.times(curSecond)
             ?: curSecond?.times(curFirst)
+
+        firstIdx++
+        secondIdx++
     }
+
+    return result
 }

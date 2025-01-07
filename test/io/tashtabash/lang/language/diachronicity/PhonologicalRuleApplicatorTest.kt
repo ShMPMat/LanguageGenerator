@@ -1712,4 +1712,37 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )
     }
+
+    @Test
+    fun `applyPhonologicalRule doesn't change an affix if it matches a deleted sound`() {
+        val words = listOf(createNoun("apa"))
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("VC- -> u-_"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("(V[-Labialized]) -> - / V _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("apa")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("VC- -> u-_"),
+                createAffixCategoryApplicator("(V[-Labialized])- -> u-"),
+                createAffixCategoryApplicator("b-"),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
 }
