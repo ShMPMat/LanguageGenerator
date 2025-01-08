@@ -154,7 +154,6 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     fun applyPhonologicalRule(templateChange: TemplateChange, rule: PhonologicalRule): TemplateChange {
         when (templateChange) {
             is TemplateSingleChange -> {
-                templateChange.affix
                 when (templateChange.position) {
                     Position.Beginning -> {
                         try {
