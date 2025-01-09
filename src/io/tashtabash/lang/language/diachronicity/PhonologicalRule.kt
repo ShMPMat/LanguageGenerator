@@ -13,25 +13,25 @@ data class PhonologicalRule(
     val precedingMatchers: List<PhonemeMatcher>,
     val targetMatchers: List<PhonemeMatcher>,
     val followingMatchers: List<PhonemeMatcher>,
-    val resultingPhonemes: List<PhonemeSubstitution>,
+    val substitutions: List<PhonemeSubstitution>,
     val allowSyllableStructureChange: Boolean = false
 ) {
     init {
-        if (targetMatchers.size != resultingPhonemes.count { it !is EpenthesisSubstitution })
-            throw LanguageException("The number of targetMatchers and non-epenthesis resultingPhonemes must be equal")
+        if (targetMatchers.size != substitutions.count { it !is EpenthesisSubstitution })
+            throw LanguageException("The number of targetMatchers and non-epenthesis substitutions must be equal")
     }
 
     constructor(
         matchers: List<PhonemeMatcher>,
         precedingLength: Int,
         followingLength: Int,
-        resultingPhonemes: List<PhonemeSubstitution>,
+        substitutions: List<PhonemeSubstitution>,
         allowSyllableStructureChange: Boolean
     ) : this(
         matchers.take(precedingLength),
         matchers.drop(precedingLength).dropLast(followingLength),
         matchers.takeLast(followingLength),
-        resultingPhonemes,
+        substitutions,
         allowSyllableStructureChange
     )
 
@@ -42,11 +42,11 @@ data class PhonologicalRule(
         followingMatchers.reversed(),
         targetMatchers.reversed(),
         precedingMatchers.reversed(),
-        resultingPhonemes.reversed()
+        substitutions.reversed()
     )
 
     override fun toString() = targetMatchers.joinToString("") +
-            " -> ${resultingPhonemes.joinToString("")}" +
+            " -> ${substitutions.joinToString("")}" +
             " / ${precedingMatchers.joinToString("")}" +
             " _ ${followingMatchers.joinToString("")}" +
             if (allowSyllableStructureChange) "!" else ""

@@ -224,7 +224,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
                 rule.precedingMatchers.size
 
         val rawPhonemes = baseRawPhonemes.toMutableList()
-        substitutePhonemes(rawPhonemes, substitutionShift, rule.resultingPhonemes)
+        substitutePhonemes(rawPhonemes, substitutionShift, rule.substitutions)
         val newAffix = clearChangingPhonemes(rawPhonemes)
             .map { ExactPhonemeSubstitution(it) }
 
@@ -242,7 +242,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
 
         // Create new substitutions accounting for the suffix of the phonologicalRule
         val stemSubstitutionsSize = max(0, stemMatchers.size - rule.followingMatchers.size)
-        val stemSubstitutions = rule.resultingPhonemes
+        val stemSubstitutions = rule.substitutions
             .takeLast(stemSubstitutionsSize)
         val stemSubstitutionsShift = max(
             0,
@@ -355,7 +355,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             val isMatch = rule.matchers
                 .match(phonemeWindow)
             if (isMatch) {
-                substitutePhonemes(result, i + rule.precedingMatchers.size, rule.resultingPhonemes)
+                substitutePhonemes(result, i + rule.precedingMatchers.size, rule.substitutions)
                 isChangeApplied = true
             }
             i++

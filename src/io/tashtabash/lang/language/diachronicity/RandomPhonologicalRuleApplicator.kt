@@ -76,7 +76,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
             newMatchers,
             rule.precedingMatchers.size,
             rule.followingMatchers.size,
-            rule.resultingPhonemes,
+            rule.substitutions,
             rule.allowSyllableStructureChange
         )
     }
