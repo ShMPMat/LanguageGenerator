@@ -1,4 +1,4 @@
-package io.tashtabash.lang.language.diachronicity
+package io.tashtabash.lang.language.analyzer
 
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 
-internal class LanguageAnalyzerTest {
+internal class PhonemeAnalyzerTest {
     @Test
     fun `analyzePhonemes returns phonemes present in a language`() {
         val words = listOf(

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.diachronicity
 import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.analyzer.analyzePhonemes
 import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.lexis.Lexis

@@ -1,4 +1,4 @@
-package io.tashtabash.lang.language.diachronicity
+package io.tashtabash.lang.language.analyzer
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemeContainer
