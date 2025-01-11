@@ -3,7 +3,7 @@ package io.tashtabash.lang.utils
 
 fun <T> listCartesianProduct(l: List<Collection<T>>): List<List<T>> {
     if (l.isEmpty())
-        return emptyList()
+        return listOf(emptyList())
 
     var result = l[0].map { listOf(it) }
 
