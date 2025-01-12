@@ -3,6 +3,7 @@ package io.tashtabash.lang
 import io.tashtabash.lang.containers.WordBase
 import io.tashtabash.lang.generator.LanguageGenerator
 import io.tashtabash.lang.language.Language
+import io.tashtabash.lang.language.analyzer.getIdenticalWordForms
 import io.tashtabash.lang.language.category.DeixisValue
 import io.tashtabash.lang.language.category.InclusivityValue
 import io.tashtabash.lang.language.category.NounClassValue.*
@@ -19,6 +20,7 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
+import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.random.singleton.RandomSingleton
 import kotlin.random.Random
 
@@ -204,6 +206,16 @@ class Visualizer(val language: Language) {
                     .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
         |
+        |Same forms for different words:
+        |${
+                getIdenticalWordForms(language)
+                    .sortedBy { -it.size }
+                    .joinToString("\n\n") { words ->
+                        val joinedWords = words.map { it.first }
+                            .reduce(WordSequence::plus)
+                        getClauseAndInfoStr(joinedWords)
+                    }
+            }
     """.trimMargin()
         )
     }

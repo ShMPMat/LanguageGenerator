@@ -30,22 +30,31 @@ val defNumberCategory = Number(
     setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
     setOf()
 )
-val defNumberSourcedCategory = SourcedCategory(
+
+fun getDefNumberSourcedCategory(isCompulsory: Boolean) = SourcedCategory(
     defNumberCategory,
     CategorySource.Self,
-    CompulsoryData(false)
-)
-val defExponenceCluster = ExponenceCluster(
-    listOf(defNumberSourcedCategory),
-    defNumberSourcedCategory.actualSourcedValues.map { listOf(it) }.toSet()
+    CompulsoryData(isCompulsory)
 )
 
-fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator) = SpeechPartChangeParadigm(
-    defSpeechPart,
-    listOf(defExponenceCluster),
-    mapOf(defExponenceCluster to defExponenceCluster.possibleValues.zip(applicators).toMap()),
-    ProsodyChangeParadigm(StressType.Initial)
+fun makeDefExponenceCluster(isCompulsory: Boolean) = ExponenceCluster(
+    listOf(getDefNumberSourcedCategory(isCompulsory)),
+    getDefNumberSourcedCategory(isCompulsory)
+        .actualSourcedValues
+        .map { listOf(it) }
+        .toSet()
 )
+
+fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulsory: Boolean = false) =
+    SpeechPartChangeParadigm(
+        defSpeechPart,
+        listOf(makeDefExponenceCluster(isCompulsory)),
+        mapOf(makeDefExponenceCluster(isCompulsory) to makeDefExponenceCluster(isCompulsory)
+            .possibleValues
+            .zip(applicators)
+            .toMap()),
+        ProsodyChangeParadigm(StressType.Initial)
+    )
 
 fun makeDefLang(
     words: List<Word>,
