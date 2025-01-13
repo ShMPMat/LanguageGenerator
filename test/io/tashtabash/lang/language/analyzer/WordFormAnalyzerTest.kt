@@ -88,4 +88,25 @@ internal class WordFormAnalyzerTest {
             wordForms
         )
     }
+
+    @Test
+    fun `getIdenticalWordFormFraction outputs the correct fraction`() {
+        val words = listOf(
+            createNoun("aba").withMeaning("crow"),
+            createNoun("uba").withMeaning("dove"),
+            createNoun("ubo"),
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            AffixCategoryApplicator(createAffix("_- -> o-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix),
+            isCompulsory = true
+        ).copy(prosodyChangeParadigm = ProsodyChangeParadigm(StressType.None))
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+
+        val wordFormFraction = getIdenticalWordFormFraction(language)
+
+        assertEquals(2.0 / 12, wordFormFraction)
+    }
 }
