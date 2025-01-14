@@ -41,17 +41,8 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     fun applyPhonologicalRule(language: Language, rule: PhonologicalRule): Language {
         cleanState()
 
-        if (RuleApplicabilityAnalyser(language).isSandhi(rule) && !forcedApplication) {
-            _messages += "Rule $rule is added to sandhi rules"
-
-            val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
-                sandhiRules = language.changeParadigm.wordChangeParadigm.sandhiRules + rule
-            )
-
-            return language.copy(
-                changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
-            )
-        }
+        if (RuleApplicabilityAnalyser(language).isSandhi(rule) && !forcedApplication)
+            return addSandhiRule(language, rule)
 
         val shiftedDerivationParadigm = applyPhonologicalRule(language.derivationParadigm, rule)
         var shiftedChangeParadigm = applyPhonologicalRule(language.changeParadigm, rule)
@@ -63,18 +54,9 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         }
 
         if (rule.allowSyllableStructureChange) {
-            val result = fixSyllableStructure(shiftedLexis, shiftedChangeParadigm)
-
-            result.exceptionOrNull()
-                ?.message
-                ?.let { _messages += it }
-
-            shiftedLexis = result.getOrNull()
-                ?.first
-                ?: shiftedLexis
-            shiftedChangeParadigm = result.getOrNull()
-                ?.second
-                ?: shiftedChangeParadigm
+            val result = changeSyllableStructure(shiftedLexis, shiftedChangeParadigm)
+            shiftedLexis = result.first
+            shiftedChangeParadigm = result.second
         }
 
         val validityReport = areChangesValid(shiftedLexis, shiftedChangeParadigm)
@@ -94,6 +76,29 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             shiftedDerivationParadigm,
             shiftedChangeParadigm
         ).removeUnusedRules()
+    }
+
+    private fun addSandhiRule(language: Language, rule: PhonologicalRule): Language {
+        _messages += "Rule $rule is added to sandhi rules"
+
+        val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
+            sandhiRules = language.changeParadigm.wordChangeParadigm.sandhiRules + rule
+        )
+
+        return language.copy(
+            changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
+        )
+    }
+
+    private fun changeSyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<Lexis, ChangeParadigm> {
+        val result = fixSyllableStructure(lexis, changeParadigm)
+
+        result.exceptionOrNull()
+            ?.message
+            ?.let { _messages += it }
+
+        return (result.getOrNull()?.first ?: lexis) to
+                (result.getOrNull()?.second ?: changeParadigm)
     }
 
     fun applyPhonologicalRule(derivationParadigm: DerivationParadigm, rule: PhonologicalRule): DerivationParadigm {
