@@ -4,6 +4,7 @@ import io.tashtabash.lang.language.util.createAffix
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
+
 internal class TemplateChangeSimplifierTest {
     @Test
     fun `createSimplifiedTemplateChange doesn't warp a single change into TemplateSequenceChange`() {
