@@ -2,14 +2,18 @@ package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.analyzer.getIdenticalWordFormFraction
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 import io.tashtabash.lang.language.phonology.matcher.*
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.StressType
+import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomElementOrNull
 import io.tashtabash.random.singleton.testProbability
+import kotlin.math.max
+import kotlin.math.pow
 
 
 class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double = 0.8) {
@@ -28,6 +32,15 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
         val ruleApplicator = PhonologicalRuleApplicator()
         val shiftedLanguage = ruleApplicator.applyPhonologicalRule(language, phonologicalRule)
         _messages += ruleApplicator.messages
+
+        val oldLangHomophoneFraction = getIdenticalWordFormFraction(language)
+        val shiftedLangHomophoneFraction = getIdenticalWordFormFraction(shiftedLanguage)
+        val homophoneFractionIncrease = max(0.0, shiftedLangHomophoneFraction - oldLangHomophoneFraction)
+        (1 - (1 - homophoneFractionIncrease).pow(10)).chanceOf {
+            _messages += "Can't apply rule $phonologicalRule: " +
+                    "the homophone fraction is too high: $oldLangHomophoneFraction -> $shiftedLangHomophoneFraction"
+            return language
+        }
 
         return shiftedLanguage
     }

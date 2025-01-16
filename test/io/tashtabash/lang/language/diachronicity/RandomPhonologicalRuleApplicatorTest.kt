@@ -124,4 +124,48 @@ internal class RandomPhonologicalRuleApplicatorTest {
             rules.contains(createPhonologicalRule("(o{+Stress}) -> a / _", testPhonemeContainer))
         }
     }
+
+    @Test
+    @Execution(ExecutionMode.SAME_THREAD)
+    fun `chooseRule() doesn't apply a rule if it results in too many homophones`() {
+        val ruleNotApplied = (1..100).map {
+            RandomSingleton.safeRandom = Random(Random.nextInt())
+            val language = makeDefLang(
+                listOf(
+                    createNoun("aba").withMeaning("crow"),
+                    createNoun("uba").withMeaning("dove"),
+                    createNoun("ubo"),
+                    createNoun("ibo"),
+                    createNoun("ubi"),
+                    createNoun("ibi"),
+                    createNoun("uto"),
+                    createNoun("ito"),
+                    createNoun("uti"),
+                    createNoun("iti"),
+                ),
+                listOf(),
+                makeDefNounChangeParadigm(
+                    PassingCategoryApplicator,
+                    PassingCategoryApplicator,
+                    PassingCategoryApplicator,
+                    PassingCategoryApplicator
+                )
+            ).copy(stressType = StressType.None)
+            val phonologicalRulesContainer = PhonologicalRulesContainer(
+                listOf(
+                    createPhonologicalRule("u -> a / _", testPhonemeContainer)
+                )
+            )
+            val randomPhonologicalRuleApplicator = RandomPhonologicalRuleApplicator(0.5)
+
+            randomPhonologicalRuleApplicator.applyRandomPhonologicalRule(language, phonologicalRulesContainer)
+
+            randomPhonologicalRuleApplicator.messages.any { it.contains("the homophone fraction is too high") }
+        }
+
+        println(ruleNotApplied.count { it } / 100.0)
+        assertTrue {
+            ruleNotApplied.count { it } / 100.0 > 0.8
+        }
+    }
 }
