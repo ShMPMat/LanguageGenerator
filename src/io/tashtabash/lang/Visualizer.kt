@@ -3,6 +3,7 @@ package io.tashtabash.lang
 import io.tashtabash.lang.containers.WordBase
 import io.tashtabash.lang.generator.LanguageGenerator
 import io.tashtabash.lang.language.Language
+import io.tashtabash.lang.language.analyzer.getIdenticalWordFormFraction
 import io.tashtabash.lang.language.analyzer.getIdenticalWordForms
 import io.tashtabash.lang.language.category.DeixisValue
 import io.tashtabash.lang.language.category.InclusivityValue
@@ -206,7 +207,7 @@ class Visualizer(val language: Language) {
                     .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
         |
-        |Same forms for different words:
+        |Identical forms for different words (%.2f):
         |${
                 getIdenticalWordForms(language)
                     .sortedBy { -it.size }
@@ -216,7 +217,7 @@ class Visualizer(val language: Language) {
                         getClauseAndInfoStr(joinedWords)
                     }
             }
-    """.trimMargin()
+    """.trimMargin().format(getIdenticalWordFormFraction(language))
         )
     }
 }
@@ -231,7 +232,7 @@ private fun extractSeed(args: Array<String>): Int =
             DEFAULT_SEED
         }
 
-val CHANGES_NUMBER = 7
+val CHANGES_NUMBER = 10
 
 /**
  * One parameter expected: a generator seed in the Int range
