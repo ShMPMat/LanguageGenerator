@@ -94,8 +94,7 @@ fun getClauseAndInfoStr(wordSequence: WordSequence, printDerivation: Boolean = t
 }
 
 fun List<String>.lineUp(): List<String> {
-    val max = map { getStrWidth(it) }
-        .maxOrNull()
+    val max = maxOfOrNull { getStrWidth(it) }
         ?: throw GeneratorException("String list is empty")
 
     return map { it + " ".repeat(max - getStrWidth(it)) }
