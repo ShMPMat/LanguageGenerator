@@ -62,6 +62,9 @@ data class SentenceNode(
             }
     }
 
+    /**
+     * Extract CategoryValues using syntax relations (Agreement etc.)
+     */
     fun extractValues(references: List<SourcedCategory>): List<SourcedCategoryValue> =
         references.mapNotNull { sourcedCategory ->
             val (category, source, compulsoryData) = sourcedCategory
