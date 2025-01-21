@@ -75,7 +75,7 @@ internal class WordFormAnalyzerTest {
             .let { listOf(it!!) }
         val homophoneBase = createNoun("oba")
             .withMorphemes(
-                MorphemeData(1, sgCategoryValue, false),
+                MorphemeData(1, sgCategoryValue),
                 MorphemeData(2, listOf(), true)
             )
         assertEquals(
