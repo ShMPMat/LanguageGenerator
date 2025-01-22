@@ -97,10 +97,10 @@ internal class WordChangeParadigmTest {
             listOf(
                 noun.withMorphemes(
                     MorphemeData(4, listOf(), true),
-                    MorphemeData(0, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Self, nounNounClassSourcedCategory)), false)
+                    MorphemeData(0, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Self, nounNounClassSourcedCategory)))
                 ),
                 createWord("pa", SpeechPart.Article).withMorphemes(
-                    MorphemeData(1, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Agreement(SyntaxRelation.Agent, nominals), articleNounClassSourcedCategory)), false),
+                    MorphemeData(1, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Agreement(SyntaxRelation.Agent, nominals), articleNounClassSourcedCategory))),
                     MorphemeData(1, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), true)
                 )
             ),
@@ -149,7 +149,7 @@ internal class WordChangeParadigmTest {
             listOf(
                 createWord("ada", SpeechPart.Adjective).withMorphemes(
                     MorphemeData(1, listOf(), true),
-                    MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Present, CategorySource.Self, tenseSourcedCategory)), false)
+                    MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Present, CategorySource.Self, tenseSourcedCategory)))
                 )
             ),
             result.unfold().words
@@ -197,7 +197,7 @@ internal class WordChangeParadigmTest {
                     .withProsodyOn(2, Prosody.Stress)
                     .withMorphemes(
                         MorphemeData(4, listOf(), true),
-                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), false)
+                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
                     )
             ),
             result.unfold().words
@@ -271,7 +271,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabcat")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), false)
+                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
                     )
             ),
             result.unfold().words
@@ -319,7 +319,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabca")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), false)
+                        MorphemeData(2, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
                     )
             ),
             result.unfold().words
