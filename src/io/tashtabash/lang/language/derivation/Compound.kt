@@ -53,7 +53,7 @@ data class Compound(
 
         val syllables = syllableTemplate.splitOnSyllables(PhonemeSequence(newPhonemeList))
             ?: return null
-        val morphemes = words.flatMap { it.morphemes + MorphemeData(infix.size, listOf(), false) }
+        val morphemes = words.flatMap { it.morphemes + MorphemeData(infix.size, listOf()) }
             .dropLast(1)
 
         return Word(
