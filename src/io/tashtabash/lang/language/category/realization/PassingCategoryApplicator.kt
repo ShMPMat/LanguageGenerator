@@ -9,7 +9,7 @@ object PassingCategoryApplicator : AbstractCategoryApplicator(CategoryRealizatio
     override fun apply(words: FoldedWordSequence, wordPosition: Int, values: Collection<SourcedCategoryValue>) =
         words.swapWord(wordPosition) {
             val newCategoryValues = it.categoryValues + values
-            val newMorphemes = it.morphemes + MorphemeData(0, values.toList(), false)
+            val newMorphemes = it.morphemes + MorphemeData(0, values.toList())
 
             it.copy(categoryValues = newCategoryValues, morphemes = newMorphemes)
         }
