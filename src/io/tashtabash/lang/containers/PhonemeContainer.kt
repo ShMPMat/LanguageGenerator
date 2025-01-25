@@ -23,8 +23,7 @@ interface PhonemeContainer {
             ?: throw NoPhonemeException(
                 "Phoneme with properties " +
                         "${phoneme.type}, " +
-                        "${phoneme.articulationPlace}, " +
-                        "${phoneme.articulationManner}, " +
+                        "${phoneme.articulationPlace}, ${phoneme.articulationManner}, " +
                         "${phoneme.modifiers}, " +
                         "doesn't exist"
             )
@@ -37,31 +36,40 @@ interface PhonemeContainer {
         addModifiers: Set<PhonemeModifier>,
         removeModifiers: Set<PhonemeModifier>
     ): Phoneme {
-        val shiftedPhoneme = getPhonemeWithRemovedModifiers(phoneme, removeModifiers)
+        val shiftedPhoneme = getPhonemeWithRemovedModifiersOrNull(phoneme, removeModifiers)
+            ?: throw LanguageException("Can't remove modifiers '$removeModifiers' from phoneme '$phoneme' w/o them")
 
-        return getPhonemeWithAddedModifiers(shiftedPhoneme, addModifiers)
+        return getPhonemeWithAddedModifiersOrNull(shiftedPhoneme, addModifiers)
+            ?: throw LanguageException("Can't add modifiers '$addModifiers' to phoneme '$phoneme' already w/ them")
     }
 
-    fun getPhonemeWithAddedModifiers(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme {
+    fun getPhonemeWithShiftedModifiersOrNull(
+        phoneme: Phoneme,
+        addModifiers: Set<PhonemeModifier>,
+        removeModifiers: Set<PhonemeModifier>
+    ): Phoneme? {
+        val shiftedPhoneme = getPhonemeWithRemovedModifiersOrNull(phoneme, removeModifiers)
+            ?: return null
+
+        return getPhonemeWithAddedModifiersOrNull(shiftedPhoneme, addModifiers)
+    }
+
+    fun getPhonemeWithAddedModifiersOrNull(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme? {
         modifiers.firstOrNull { it in phoneme.modifiers }
-            ?.let {
-                throw LanguageException("Can't add modifier '$it' to phoneme '$phoneme' already containing it")
-            }
+            ?.let { return null }
 
         val newPhoneme = phoneme.copy(modifiers = phoneme.modifiers + modifiers)
 
         return getPhonemeByProperties(newPhoneme)
     }
 
-    fun getPhonemeWithRemovedModifiers(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme {
+    fun getPhonemeWithRemovedModifiersOrNull(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme? {
         modifiers.firstOrNull { it !in phoneme.modifiers }
-            ?.let {
-                throw LanguageException("Can't remove modifiers '$modifiers' from phoneme '$phoneme' without them")
-            }
+            ?.let { return null }
 
         val newPhoneme = phoneme.copy(modifiers = phoneme.modifiers - modifiers)
 
-        return getPhonemeByProperties(newPhoneme)
+        return getPhonemeByPropertiesOrNull(newPhoneme)
     }
 
     fun getPhonemes(phonemeType: PhonemeType): List<Phoneme> =
