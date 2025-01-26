@@ -181,7 +181,12 @@ internal class PhonemeSubstitutionTest {
             Arguments.of(
                 listOf(EpenthesisSubstitution(getTestPhoneme("t"))),
                 listOf(ExactPhonemeSubstitution(getTestPhoneme("t"))),
-                listOf(ExactPhonemeSubstitution(getTestPhoneme("t")))
+                listOf(EpenthesisSubstitution(getTestPhoneme("t")))
+            ),
+            Arguments.of(
+                listOf(EpenthesisSubstitution(getTestPhoneme("t"))),
+                listOf(ExactPhonemeSubstitution(getTestPhoneme("d"))),
+                listOf(EpenthesisSubstitution(getTestPhoneme("d")))
             ),
             Arguments.of(
                 listOf(ExactPhonemeSubstitution(getTestPhoneme("t"))),
