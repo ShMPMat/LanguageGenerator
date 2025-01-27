@@ -25,10 +25,12 @@ fun unitePhonemeSubstitutions(
         if (curOld == null) {
             result += curNew!!
             newIdx++
+            oldIdx++
             continue
         }
         if (curNew == null) {
             result += curOld
+            newIdx++
             oldIdx++
             continue
         }
