@@ -26,6 +26,9 @@ fun createPhonemeSubstitutions(substitutions: String, phonemeContainer: PhonemeC
             currentPostfix.takeWhile { it != ']' } + ']'
         else if (currentPostfix[0] == '(')
             currentPostfix.takeWhile { it != ')' } + ')'
+        else if (currentPostfix[0] == '|')
+             // Take a multi-char
+            '|' + currentPostfix.drop(1).takeWhile { it != '|' } + '|'
         else
             currentPostfix.take(1)
 
@@ -40,30 +43,26 @@ fun createPhonemeSubstitutions(substitutions: String, phonemeContainer: PhonemeC
 fun createPhonemeSubstitution(substitution: String, phonemeContainer: PhonemeContainer) = when {
     substitution == "-" -> DeletingPhonemeSubstitution
     substitution == "_" -> PassingPhonemeSubstitution
-    addModifierRegex.matches(substitution) -> ModifierPhonemeSubstitution(
-        substitution.drop(2)
+    modifierRegex.matches(substitution) -> {
+        val modifierTokens = substitution.drop(1)
             .dropLast(1)
             .split(",")
-            .map { PhonemeModifier.valueOf(it) }
-            .toSet(),
-        setOf(),
-        phonemeContainer
-    )
-    removeModifierRegex.matches(substitution) -> ModifierPhonemeSubstitution(
-        setOf(),
-        substitution.drop(2)
-            .dropLast(1)
-            .split(",")
-            .map { PhonemeModifier.valueOf(it) }
-            .toSet(),
-        phonemeContainer
-    )
+
+        ModifierPhonemeSubstitution(
+            modifierTokens.filter { it[0] == '+' }
+                .map { PhonemeModifier.valueOf(it.drop(1)) }
+                .toSet(),
+            modifierTokens.filter { it[0] == '-' }
+                .map { PhonemeModifier.valueOf(it.drop(1)) }
+                .toSet(),
+            phonemeContainer
+        )
+    }
     epenthesisRegex.matches(substitution) -> EpenthesisSubstitution(
         phonemeContainer.getPhoneme(substitution.removePrefix("(").removeSuffix(")"))
     )
-    else -> ExactPhonemeSubstitution(phonemeContainer.getPhoneme(substitution))
+    else -> ExactPhonemeSubstitution(phonemeContainer.getPhoneme(substitution.trim('|')))
 }
 
-private val addModifierRegex = "\\[\\+.*]".toRegex()
-private val removeModifierRegex = "\\[-.*]".toRegex()
+private val modifierRegex = "\\[.*]".toRegex()
 private val epenthesisRegex = "\\(.\\)".toRegex()
