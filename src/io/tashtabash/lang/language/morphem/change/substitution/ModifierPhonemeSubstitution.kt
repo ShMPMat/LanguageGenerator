@@ -17,6 +17,9 @@ data class ModifierPhonemeSubstitution(
         return listOfNotNull(newPhoneme)
     }
 
+    fun substituteOrNull(phoneme: Phoneme?): Phoneme? =
+        phoneme?.let { phonemes.getPhonemeWithShiftedModifiersOrNull(it, addModifiers, removeModifiers) }
+
     override fun times(other: PhonemeSubstitution): PhonemeSubstitution = when (other) {
         is PassingPhonemeSubstitution -> this
         is ModifierPhonemeSubstitution -> {
