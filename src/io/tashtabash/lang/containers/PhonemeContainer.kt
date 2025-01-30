@@ -13,7 +13,8 @@ interface PhonemeContainer {
         get() = phonemes.size
 
     fun getPhoneme(symbol: String): Phoneme =
-        phonemes.first { it.symbol == symbol }
+        phonemes.firstOrNull { it.symbol == symbol }
+            ?: throw NoPhonemeException("No phoneme with a symbol '$symbol' exist")
 
     fun getPhonemeOrNull(symbol: String): Phoneme? =
         phonemes.firstOrNull { it.symbol == symbol }
