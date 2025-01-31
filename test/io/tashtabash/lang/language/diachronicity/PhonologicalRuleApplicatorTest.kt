@@ -1673,6 +1673,35 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
+    fun `applyPhonologicalRule doesn't complicate an affix if a PhonologicalRule is always applicable (cross-boundary case)`() {
+        val words = listOf(createNoun("aba"))
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a- -> bo"),
+            createAffixCategoryApplicator("u-"),
+            SuppletionCategoryApplicator(createNoun("baboboba")),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("o -> i / b _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(createNoun("aba"),),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a- -> bi"), // Shouldn't be "a- -> bi", "a- -> bo"
+                createAffixCategoryApplicator("u-"),
+                SuppletionCategoryApplicator(createNoun("babibiba")),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
     fun `applyPhonologicalRule doesn't loose an empty morpheme at the beginning, middle, and end`() {
         val words = listOf(
             createNoun("aca").withMorphemes(1, 0, 3),
