@@ -130,7 +130,7 @@ internal class SentenceDescriptionTest {
                 createIntransVerb("oto").withMeaning("sleep")
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)), false)
+                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
                     )
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
@@ -237,7 +237,7 @@ internal class SentenceDescriptionTest {
                 createWord("ato", SpeechPart.Adjective)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)), false)
+                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
                     )
                     .withMeaning("new"),
                 createNoun("i").withMeaning("dog"),
