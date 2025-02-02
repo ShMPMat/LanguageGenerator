@@ -139,14 +139,18 @@ fun createWord(
 fun getTestPhoneme(symbol: String): Phoneme =
     testPhonemeContainer.getPhoneme(symbol)
 
-val testPhonemeContainer = ImmutablePhonemeContainer(listOf(
-    Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),
-    Phoneme("i", PhonemeType.Vowel, Front, Close, setOf(Voiced)),
-    Phoneme("o", PhonemeType.Vowel, Back, CloseMid, setOf(Labialized, Voiced)),
-    Phoneme("u", PhonemeType.Vowel, Back, Close, setOf(Labialized, Voiced)),
-    Phoneme("p", PhonemeType.Consonant, Bilabial, Stop, setOf()),
-    Phoneme("b", PhonemeType.Consonant, Bilabial, Stop, setOf(Voiced)),
-    Phoneme("t", PhonemeType.Consonant, Alveolar, Stop, setOf()),
-    Phoneme("d", PhonemeType.Consonant, Alveolar, Stop, setOf(Voiced)),
-    Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
-))
+val testPhonemeContainer = ImmutablePhonemeContainer(
+    listOf(
+        Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),
+        Phoneme("i", PhonemeType.Vowel, Front, Close, setOf(Voiced)),
+        Phoneme("o", PhonemeType.Vowel, Back, CloseMid, setOf(Labialized, Voiced)),
+        Phoneme("ɤ", PhonemeType.Vowel, Back, CloseMid, setOf(Voiced)),
+        Phoneme("u", PhonemeType.Vowel, Back, Close, setOf(Labialized, Voiced)),
+        Phoneme("ɯ", PhonemeType.Vowel, Back, Close, setOf(Voiced)),
+        Phoneme("p", PhonemeType.Consonant, Bilabial, Stop, setOf()),
+        Phoneme("b", PhonemeType.Consonant, Bilabial, Stop, setOf(Voiced)),
+        Phoneme("t", PhonemeType.Consonant, Alveolar, Stop, setOf()),
+        Phoneme("d", PhonemeType.Consonant, Alveolar, Stop, setOf(Voiced)),
+        Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
+    ).flatMap { listOf(it, it.copy(it.symbol + it.symbol, modifiers = it.modifiers + PhonemeModifier.Long)) }
+)
