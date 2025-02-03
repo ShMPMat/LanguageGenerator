@@ -17,7 +17,7 @@ import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchersAfterSubstitution
+import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import kotlin.math.max
@@ -235,13 +235,12 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             .map { ExactPhonemeSubstitution(it) }
 
         // Create new stem matchers accounting for the suffix of the phonologicalRule
-        val newMatchers = unitePhonemeMatchersAfterSubstitution(
+        val newMatchers = unitePhonemeMatchers(
             templateChange.phonemeMatchers,
             templateChange.matchedPhonemesSubstitution,
             stemMatchers
-        )
-        if (newMatchers.any { it == null })
-            return null
+        ).phonemeMatchers
+            ?: return null
         // The morpheme can't be attached to a word border
         if (newMatchers == listOf(BorderPhonemeMatcher))
             return null
@@ -271,6 +270,12 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
 
     fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm =
         changeParadigm.mapApplicators { applyPhonologicalRule(it, rule) }
+            .let {
+                val shiftedSandhiRules = it.wordChangeParadigm.sandhiRules
+                    .flatMap { s -> s * rule }
+                    .distinct()
+                it.copy(wordChangeParadigm = it.wordChangeParadigm.copy(sandhiRules = shiftedSandhiRules))
+            }
 
     fun applyPhonologicalRule(categoryApplicator: CategoryApplicator, rule: PhonologicalRule): CategoryApplicator =
         when (categoryApplicator) {

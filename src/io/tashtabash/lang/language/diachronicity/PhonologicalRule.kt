@@ -5,8 +5,12 @@ import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitutions
+import io.tashtabash.lang.language.morphem.change.substitution.unitePhonemeSubstitutions
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatchers
+import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
+import kotlin.math.max
+import kotlin.math.min
 
 
 data class PhonologicalRule(
@@ -44,6 +48,74 @@ data class PhonologicalRule(
         precedingMatchers.reversed(),
         substitutions.reversed()
     )
+
+    /**
+     * @return the shortest possible list of PhonologicalRules, which, applied
+     *  consecutively, will have the same result as the consecutive application
+     *  of this and other.
+     */
+    operator fun times(other: PhonologicalRule): List<PhonologicalRule> {
+        val resultBase = applyInside(other)
+            .takeIf { it.size == 1 }
+            ?.get(0)
+            ?: return listOf(this, other)
+
+        for (shift in -other.matchers.size + 1 until matchers.size)
+            if (shift !in computeInternalShifts(other) && resultBase.applyWithShift(other, shift) != null)
+                return listOf(this, other)
+
+        return listOf(resultBase)
+    }
+
+    private fun computeInternalShifts(other: PhonologicalRule): IntRange =
+        0..matchers.size - other.matchers.size
+
+    /**
+     * @return a PhonologicalRule which is identical to consecutive application
+     *  of this and other, if the application of other is restricted to the area
+     *  matched by this.
+     */
+    private fun applyInside(other: PhonologicalRule): List<PhonologicalRule> =
+        computeInternalShifts(other).fold(listOf(this)) { prev, shift ->
+            prev.flatMap { it.applyWithShift(other, shift) ?: prev }
+        }
+
+    /**
+     * @return a PhonologicalRule which is identical to application of this and
+     *  then application of other, applied at the point shifted by shift.
+     *  If other can't be possibly applied with such shift, return null.
+     */
+    private fun applyWithShift(other: PhonologicalRule, shift: Int): List<PhonologicalRule>? {
+        // Preceding matchers + the matchers of other applied before the matchers of this start
+        val thisSubstitutionsShift = precedingMatchers.size + max(0, -shift)
+        val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
+        val thisShiftedSubstitutions = createNullPadding(thisSubstitutionsShift) + substitutions
+
+        val (newMatchers, isNarrowed) = unitePhonemeMatchers(matchers, thisShiftedSubstitutions, other.matchers, shift)
+        newMatchers ?:
+            return null
+
+        val newSubstitutions = unitePhonemeSubstitutions(
+            createNullPadding(thisSubstitutionsShift - otherSubstitutionsShift) + substitutions,
+            createNullPadding(otherSubstitutionsShift - thisSubstitutionsShift) + other.substitutions
+        )
+        val newSubstitutionsShift = min(thisSubstitutionsShift, otherSubstitutionsShift)
+        val directSubstitutionsCount = newSubstitutions.count { it !is EpenthesisSubstitution }
+
+        return listOfNotNull(
+            PhonologicalRule(
+                newMatchers,
+                newSubstitutionsShift,
+                newMatchers.size - newSubstitutionsShift - directSubstitutionsCount,
+                newSubstitutions,
+                allowSyllableStructureChange || other.allowSyllableStructureChange
+            ),
+            this.takeIf { isNarrowed }
+        )
+    }
+
+    private fun createNullPadding(size: Int): List<Nothing?> = (1..size)
+        .map { null }
 
     override fun toString() = targetMatchers.joinToString("") +
             " -> ${substitutions.joinToString("")}" +
