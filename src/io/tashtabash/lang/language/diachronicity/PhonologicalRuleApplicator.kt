@@ -262,7 +262,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
 
         return TemplateSingleChange(
             templateChange.position,
-            newMatchers.filterIsInstance<PhonemeMatcher>(),
+            newMatchers,
             newSubstitutions + passingMatcherSuffix,
             newAffix
         )
