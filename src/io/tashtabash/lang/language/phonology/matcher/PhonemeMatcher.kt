@@ -135,6 +135,7 @@ fun unitePhonemeMatchers(
     var secondIdx = min(-shift, 0)
     val result = mutableListOf<PhonemeMatcher?>()
     var isNarrowed = false
+    var isChanged = false
 
     while (firstIdx < first.size || secondIdx < second.size) {
         val curFirst = first.getOrNull(firstIdx)
@@ -154,6 +155,7 @@ fun unitePhonemeMatchers(
                         result += null
                     substitutionShift++
                     secondIdx++
+                    isChanged = true
                     continue
                 }
                 is ExactPhonemeSubstitution -> {
@@ -164,9 +166,10 @@ fun unitePhonemeMatchers(
                         else null
                     firstIdx++
                     secondIdx++
+                    isChanged = true
                     continue
                 }
-                is ModifierPhonemeSubstitution -> {//TODO we need possible phoneme context
+                is ModifierPhonemeSubstitution -> { //TODO we need possible phoneme context
                     val possibleSubstitutionResults = curFirstSubstitution.phonemes
                         .phonemes
                         .filter { curFirst?.match(it) == true }
@@ -186,6 +189,7 @@ fun unitePhonemeMatchers(
                         isNarrowed = true
                     firstIdx++
                     secondIdx++
+                    isChanged = true
                     continue
                 }
                 is PassingPhonemeSubstitution -> {
@@ -203,17 +207,25 @@ fun unitePhonemeMatchers(
         if (curFirst == null)
             isNarrowed = true
 
+        if (curFirst != null && curSecond != null)
+            isChanged = true
+
         firstIdx++
         secondIdx++
     }
 
-    return UnitePhonemeMatchersResult(isNarrowed, result)
+    return UnitePhonemeMatchersResult(isNarrowed, isChanged, result)
 }
 
-data class UnitePhonemeMatchersResult(val phonemeMatchers: List<PhonemeMatcher>?, val isNarrowed: Boolean) {
-    constructor(isNarrowed: Boolean, phonemeMatchers: List<PhonemeMatcher?>): this(
+data class UnitePhonemeMatchersResult(
+    val phonemeMatchers: List<PhonemeMatcher>?,
+    val isNarrowed: Boolean,
+    val isChanged: Boolean
+) {
+    constructor(isNarrowed: Boolean, isChanged: Boolean, phonemeMatchers: List<PhonemeMatcher?>): this(
         phonemeMatchers.takeIf { it.none { m -> m == null } }
             ?.filterNotNull(),
-        isNarrowed
+        isNarrowed,
+        isChanged
     )
 }

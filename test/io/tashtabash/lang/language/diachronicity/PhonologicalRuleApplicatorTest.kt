@@ -1768,6 +1768,51 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
+    fun `applyPhonologicalRule shouldn't add a rule to Sandhi if it's not applicable to any sandhi rules`() {
+        val words = listOf(createNoun("aca"), createNoun("oci"))
+        val derivations = listOf(
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val nonEligibleSandhiPhonologicalRule = createTestPhonologicalRule("t -> - / $ _ ")
+        val phonologicalRule = createTestPhonologicalRule("i -> u / _ ")
+
+        var shiftedLanguage = language
+        for (rule in listOf(nonEligibleSandhiPhonologicalRule, phonologicalRule))
+            shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(shiftedLanguage, rule)
+
+        assertEquals(
+            listOf(createNoun("aca"), createNoun("ocu")),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a-"),
+                createAffixCategoryApplicator("u-"),
+                createAffixCategoryApplicator("b-"),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+        assertEquals(
+            listOf(createTestPhonologicalRule("t -> - / $ _ ")),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
+        )
+    }
+
+    @Test
     fun `applyPhonologicalRule doesn't complicate an affix if a PhonologicalRule is always applicable (cross-boundary case)`() {
         val words = listOf(createNoun("aba"))
         val nounChangeParadigm = makeDefNounChangeParadigm(

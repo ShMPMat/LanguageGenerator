@@ -60,7 +60,7 @@ data class PhonologicalRule(
             ?.get(0)
             ?: return listOf(this, other)
 
-        for (shift in -other.matchers.size + 1 until matchers.size)
+        for (shift in -other.matchers.size + 1 until resultBase.matchers.size)
             if (shift !in computeInternalShifts(other) && resultBase.applyWithShift(other, shift) != null)
                 return listOf(this, other)
 
@@ -91,8 +91,15 @@ data class PhonologicalRule(
         val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
         val thisShiftedSubstitutions = createNullPadding(thisSubstitutionsShift) + substitutions
 
-        val (newMatchers, isNarrowed) = unitePhonemeMatchers(matchers, thisShiftedSubstitutions, other.matchers, shift)
+        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchers(
+            matchers,
+            thisShiftedSubstitutions,
+            other.matchers,
+            shift
+        )
         newMatchers ?:
+            return null
+        if (!isChanged)
             return null
 
         val newSubstitutions = unitePhonemeSubstitutions(
