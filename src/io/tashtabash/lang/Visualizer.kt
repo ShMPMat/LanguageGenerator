@@ -251,6 +251,7 @@ fun main(args: Array<String>) {
         language = ruleApplicator.applyRandomPhonologicalRule(language, phonologicalRulesContainer)
         println(ruleApplicator.messages.joinToString("\n"))
     }
+    print("\n\n")
 
     Visualizer(language).visualize()
 }
