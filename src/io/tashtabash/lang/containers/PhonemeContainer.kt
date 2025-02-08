@@ -1,6 +1,5 @@
 package io.tashtabash.lang.containers
 
-import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
@@ -38,10 +37,10 @@ interface PhonemeContainer {
         removeModifiers: Set<PhonemeModifier>
     ): Phoneme {
         val shiftedPhoneme = getPhonemeWithRemovedModifiersOrNull(phoneme, removeModifiers)
-            ?: throw LanguageException("Can't remove modifiers '$removeModifiers' from phoneme '$phoneme' w/o them")
+            ?: throw NoPhonemeException("Can't remove modifiers '$removeModifiers' from phoneme '$phoneme' w/o them")
 
         return getPhonemeWithAddedModifiersOrNull(shiftedPhoneme, addModifiers)
-            ?: throw LanguageException("Can't add modifiers '$addModifiers' to phoneme '$phoneme' already w/ them")
+            ?: throw NoPhonemeException("Can't add modifiers '$addModifiers' to phoneme '$phoneme' already w/ them")
     }
 
     fun getPhonemeWithShiftedModifiersOrNull(
@@ -61,7 +60,7 @@ interface PhonemeContainer {
 
         val newPhoneme = phoneme.copy(modifiers = phoneme.modifiers + modifiers)
 
-        return getPhonemeByProperties(newPhoneme)
+        return getPhonemeByPropertiesOrNull(newPhoneme)
     }
 
     fun getPhonemeWithRemovedModifiersOrNull(phoneme: Phoneme, modifiers: Set<PhonemeModifier>): Phoneme? {
