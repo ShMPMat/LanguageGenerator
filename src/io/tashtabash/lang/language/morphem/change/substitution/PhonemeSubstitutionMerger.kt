@@ -10,9 +10,11 @@ fun unitePhonemeSubstitutions(
     val sizeSum = old.size + new.size
     val result = mutableListOf<PhonemeSubstitution>()
 
-    while (oldIdx + newIdx < sizeSum) {
+    while (true) {
         val curOld = old.getOrNull(oldIdx)
         val curNew = new.getOrNull(newIdx)
+        if (oldIdx + newIdx >= sizeSum && curOld == null && curNew == null)
+            break
 
         if (curOld == null && curNew == null) {
             result += PassingPhonemeSubstitution
