@@ -50,6 +50,39 @@ data class PhonologicalRule(
     )
 
     /**
+     * @return such a list of PhonologicalRules that the first matched member will
+     *  have the same result as the consecutive application of this and other.
+     *  This works for any given sequence of phonemes assuming that this matches
+     *  it in the first place.
+     */
+    operator fun plus(other: PhonologicalRule): List<PhonologicalRule> {
+        val bases = applyInside(other).toMutableList()
+
+        val modifications =  bases.toList().flatMap { base ->
+            val leftBorderShifts = -other.matchers.size until 0
+
+            val leftBorderApplications = leftBorderShifts
+                .mapNotNull { shift -> base.applyWithShift(other, shift)?.first }
+                .distinct()
+
+            (bases + leftBorderApplications).flatMap { leftBorderBase ->
+                val rightBorderShifts = leftBorderBase.matchers.size - other.matchers.size until leftBorderBase.matchers.size
+
+                rightBorderShifts.mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift) }
+                    .map { (rule, isNarrowed) ->
+                        if (isNarrowed)
+                            // Add the rule from before the narrowing
+                            bases += leftBorderBase
+                        rule
+                    }
+                    .distinct()
+            }
+        }
+
+        return (modifications.reversed() + bases.reversed()).distinct()
+    }
+
+    /**
      * @return the shortest possible list of PhonologicalRules, which, applied
      *  consecutively, will have the same result as the consecutive application
      *  of this and other.
@@ -77,19 +110,24 @@ data class PhonologicalRule(
      */
     private fun applyInside(other: PhonologicalRule): List<PhonologicalRule> =
         computeInternalShifts(other).fold(listOf(this)) { prev, shift ->
-            prev.flatMap { it.applyWithShift(other, shift) ?: prev }
+            prev.flatMap { curRule ->
+                curRule.applyWithShift(other, shift)
+                    ?.let { (rule, isNarrowed) ->
+                        listOfNotNull(curRule.takeIf { isNarrowed }, rule)
+                    } ?: prev
+            }
         }
 
     /**
      * @return a PhonologicalRule which is identical to application of this and
      *  then application of other, applied at the point shifted by shift.
      *  If other can't be possibly applied with such shift, return null.
-     */
-    private fun applyWithShift(other: PhonologicalRule, shift: Int): List<PhonologicalRule>? {
+     *///TODO return pair of Rule x isNarrowed?
+    private fun applyWithShift(other: PhonologicalRule, shift: Int): Pair<PhonologicalRule, Boolean>? {
         // Preceding matchers + the matchers of other applied before the matchers of this start
         val thisSubstitutionsShift = precedingMatchers.size + max(0, -shift)
         val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
-        val thisShiftedSubstitutions = createNullPadding(thisSubstitutionsShift) + substitutions
+        val thisShiftedSubstitutions = createNullPadding(precedingMatchers.size) + substitutions
 
         val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchers(
             matchers,
@@ -109,16 +147,13 @@ data class PhonologicalRule(
         val newSubstitutionsShift = min(thisSubstitutionsShift, otherSubstitutionsShift)
         val directSubstitutionsCount = newSubstitutions.count { it !is EpenthesisSubstitution }
 
-        return listOfNotNull(
-            PhonologicalRule(
-                newMatchers,
-                newSubstitutionsShift,
-                newMatchers.size - newSubstitutionsShift - directSubstitutionsCount,
-                newSubstitutions,
-                allowSyllableStructureChange || other.allowSyllableStructureChange
-            ),
-            this.takeIf { isNarrowed }
-        )
+        return PhonologicalRule(
+            newMatchers,
+            newSubstitutionsShift,
+            newMatchers.size - newSubstitutionsShift - directSubstitutionsCount,
+            newSubstitutions,
+            allowSyllableStructureChange || other.allowSyllableStructureChange
+        ) to isNarrowed
     }
 
     private fun createNullPadding(size: Int): List<Nothing?> = (1..size)
