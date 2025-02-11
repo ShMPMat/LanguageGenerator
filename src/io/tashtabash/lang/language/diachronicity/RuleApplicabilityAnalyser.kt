@@ -21,10 +21,10 @@ class RuleApplicabilityAnalyser(val language: Language) {
             language.phonemeContainer.getPhonemeOrNull(matcher.phoneme.symbol) != null
         is TypePhonemeMatcher ->
             language.phonemeContainer.getPhonemes(matcher.phonemeType).isNotEmpty()
-        is AbsentModifierPhonemeMatcher ->
-            language.phonemeContainer.getPhonemesNot(matcher.modifiers).isNotEmpty()
-        is ModifierPhonemeMatcher ->
-            language.phonemeContainer.getPhonemes(matcher.modifiers).isNotEmpty()
+        is AbsentCharacteristicPhonemeMatcher ->
+            language.phonemeContainer.getPhonemesNot(matcher.characteristics).isNotEmpty()
+        is CharacteristicPhonemeMatcher ->
+            language.phonemeContainer.getPhonemes(matcher.characteristics).isNotEmpty()
         is MulMatcher ->
             matcher.matchers.all { isMatcherApplicable(it) }
         is BorderPhonemeMatcher, PassingPhonemeMatcher ->

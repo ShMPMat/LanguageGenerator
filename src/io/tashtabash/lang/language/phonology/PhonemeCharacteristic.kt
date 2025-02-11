@@ -1,7 +1,17 @@
 package io.tashtabash.lang.language.phonology
 
+import io.tashtabash.lang.language.LanguageException
 
-enum class ArticulationPlace(val positionIndex: Int) {
+
+interface PhonemeCharacteristic
+
+fun parseCharacteristic(name: String): PhonemeCharacteristic =
+    PhonemeModifier.values().firstOrNull { it.name == name }
+        ?: ArticulationManner.values().firstOrNull { it.name == name }
+        ?: ArticulationPlace.values().firstOrNull { it.name == name }
+        ?: throw LanguageException("Cannot parse phoneme characteristic ${name}")
+
+enum class ArticulationPlace(val positionIndex: Int): PhonemeCharacteristic {
     Bilabial(0),
     LabioDental(1),
     Linguolabial(2),
@@ -26,7 +36,7 @@ val consonantArticulationPlaces = ArticulationPlace.values()
     .filter { it !in vowelArticulationPlaces }
 
 //TODO positions for consonants aren't final
-enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int) {
+enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int): PhonemeCharacteristic {
     Nasal(2, 0),
     Stop(5, 0),
     SibilantAffricate(4, 0),
@@ -50,7 +60,7 @@ enum class ArticulationManner(val sonorityLevel: Int, val positionIndex: Int) {
     Open(0, 6)
 }
 
-enum class PhonemeModifier {
+enum class PhonemeModifier: PhonemeCharacteristic {
     // Vowel
     Nasalized,
 

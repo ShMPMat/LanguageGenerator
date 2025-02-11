@@ -1,5 +1,7 @@
 package io.tashtabash.lang.language.phonology.matcher
 
+import io.tashtabash.lang.language.phonology.ArticulationManner
+import io.tashtabash.lang.language.phonology.ArticulationPlace
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeModifier.*
 import io.tashtabash.lang.language.phonology.PhonemeType.*
@@ -26,7 +28,7 @@ internal class PhonemeMatcherTest {
 
     @Test
     fun `MulMatcher times MulMatcher filters out duplicate matchers`() {
-        val matcher = MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long))
+        val matcher = MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long))
 
         assertEquals(matcher * matcher, matcher)
     }
@@ -34,18 +36,38 @@ internal class PhonemeMatcherTest {
     @Test
     fun `MulMatcher times MulMatcher merges ModifierPhonemeMatcher if possible`() {
         assertEquals(
-            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long))
-                    * AbsentModifierPhonemeMatcher(Voiced),
-            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long, Voiced))
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long))
+                    * AbsentCharacteristicPhonemeMatcher(Voiced),
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long, Voiced))
         )
     }
 
     @Test
     fun `MulMatcher times ExactPhonemeMatcher results in ExactPhonemeMatcher if the merge is possible`() {
         assertEquals(
-            MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(Voiced))
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(Voiced))
                     * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t")),
             ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t"))
+        )
+    }
+
+    @Test
+    fun `ModifierPhonemeMatcher filters by multiple PhonemeCharacteristics`() {
+        val matcher = CharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, ArticulationManner.Stop)
+
+        assertEquals(
+            listOf("t", "tt", "d", "dd").map { testPhonemeContainer.getPhoneme(it) },
+            testPhonemeContainer.phonemes.filter { matcher.match(it) }
+        )
+    }
+
+    @Test
+    fun `AbsentModifierPhonemeMatcher filters by multiple PhonemeCharacteristics`() {
+        val matcher = AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, Voiced)
+
+        assertEquals(
+            listOf("p", "pp", "c", "cc").map { testPhonemeContainer.getPhoneme(it) },
+            testPhonemeContainer.phonemes.filter { matcher.match(it) }
         )
     }
 
@@ -61,19 +83,27 @@ internal class PhonemeMatcherTest {
                 ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t")),
                 TypePhonemeMatcher(Vowel),
                 TypePhonemeMatcher(Consonant),
-                ModifierPhonemeMatcher(Labialized),
-                ModifierPhonemeMatcher(Nasalized, PhonemeModifier.Long),
-                ModifierPhonemeMatcher(Nasalized),
-                ModifierPhonemeMatcher(Palatilized),
-                AbsentModifierPhonemeMatcher(Labialized),
-                AbsentModifierPhonemeMatcher(Nasalized, PhonemeModifier.Long),
-                AbsentModifierPhonemeMatcher(Nasalized),
-                AbsentModifierPhonemeMatcher(Palatilized),
+                CharacteristicPhonemeMatcher(Labialized),
+                CharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long),
+                CharacteristicPhonemeMatcher(Nasalized),
+                CharacteristicPhonemeMatcher(Palatilized),
+                CharacteristicPhonemeMatcher(ArticulationManner.Stop),
+                CharacteristicPhonemeMatcher(ArticulationPlace.Alveolar),
+                CharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, ArticulationManner.Stop),
+                CharacteristicPhonemeMatcher(ArticulationManner.Stop, PhonemeModifier.Long),
+                AbsentCharacteristicPhonemeMatcher(Labialized),
+                AbsentCharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long),
+                AbsentCharacteristicPhonemeMatcher(Nasalized),
+                AbsentCharacteristicPhonemeMatcher(Palatilized),
+                AbsentCharacteristicPhonemeMatcher(ArticulationManner.Stop),
+                AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar),
+                AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, ArticulationManner.Stop),
+                AbsentCharacteristicPhonemeMatcher(ArticulationManner.Stop, PhonemeModifier.Long),
                 ProsodyMatcher(Prosody.Stress),
                 AbsentProsodyMatcher(Prosody.Stress),
-                MulMatcher(TypePhonemeMatcher(Consonant), AbsentModifierPhonemeMatcher(PhonemeModifier.Long)),
-                MulMatcher(TypePhonemeMatcher(Vowel), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
-                MulMatcher(AbsentModifierPhonemeMatcher(PhonemeModifier.Long), AbsentModifierPhonemeMatcher(Nasalized, Labialized)),
+                MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long)),
+                MulMatcher(TypePhonemeMatcher(Vowel), AbsentCharacteristicPhonemeMatcher(Nasalized, Labialized)),
+                MulMatcher(AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long), AbsentCharacteristicPhonemeMatcher(Nasalized, Labialized)),
             )
 
             return composeUniquePairs(matchers, matchers)

@@ -17,11 +17,11 @@ class ExactPhonemeMatcher(val phoneme: Phoneme): PhonemeMatcher() {
                 && changingPhoneme.phoneme == phoneme
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
-        is ModifierPhonemeMatcher ->
+        is CharacteristicPhonemeMatcher ->
             if (other.match(ChangingPhoneme.ExactPhoneme(phoneme)))
                 this
             else null
-        is AbsentModifierPhonemeMatcher ->
+        is AbsentCharacteristicPhonemeMatcher ->
             if (other.match(ChangingPhoneme.ExactPhoneme(phoneme)))
                 this
             else null

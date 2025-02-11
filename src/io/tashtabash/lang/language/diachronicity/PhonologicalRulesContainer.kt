@@ -28,6 +28,12 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "(V[-Long])h -> [+Long]- / _ ",
         "(V[-Long])x -> [+Long]- / _ ",
         "(V[-Long])ə -> [+Long]- / _ ",
+        "(V[-Nasalized])(C[+Nasal]) -> [+Nasalized]- / _ ",
+        "(V[-Nasalized])(C[+Nasal]) -> [+Nasalized]- / _ $",
+        "(V[-Nasalized])(C[+Nasal]) -> [+Nasalized]- / $ _ ",
+        "(C[+Nasal])(V[-Nasalized]) -> -[+Nasalized] / _ ",
+        "(C[+Nasal])(V[-Nasalized]) -> -[+Nasalized] / _ $",
+        "(C[+Nasal])(V[-Nasalized]) -> -[+Nasalized] / $ _ ",
         // Consonant quality transfers
         "[-Voiced] -> [+Voiced] / _ V",
         "[-Voiced] -> [+Voiced] / $ _ V",
@@ -35,6 +41,7 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "[-Voiced] -> [+Voiced] / V _ $",
         "[-Voiced] -> [+Voiced] / V _ ",
         "[+Voiced] -> [-Voiced] / _ $",
+        "[+Voiced] -> [-Voiced] / $ _ ",
     ).map { createPhonologicalRule(it, phonemeContainer) }
 
     val possibleSyllableStructureChangeRules = listOf(

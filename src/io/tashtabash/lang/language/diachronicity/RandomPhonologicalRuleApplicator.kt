@@ -68,8 +68,8 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
     // Returns true is there exists no different matcher which is a narrower case of this matcher
     private fun isMatcherExact(matcher: PhonemeMatcher): Boolean = when (matcher) {
         is TypePhonemeMatcher, PassingPhonemeMatcher -> false
-        is ModifierPhonemeMatcher -> false
-        is AbsentModifierPhonemeMatcher -> false
+        is CharacteristicPhonemeMatcher -> false
+        is AbsentCharacteristicPhonemeMatcher -> false
         is MulMatcher -> false
         is ExactPhonemeMatcher -> matcher.phoneme.type != PhonemeType.Vowel
         else -> true
@@ -107,13 +107,13 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
             .asList()
             .randomElement()
             .let { TypePhonemeMatcher(it) }
-        is ModifierPhonemeMatcher -> language.phonemeContainer
-            .getPhonemes(matcher.modifiers)
+        is CharacteristicPhonemeMatcher -> language.phonemeContainer
+            .getPhonemes(matcher.characteristics)
             .randomElementOrNull()
             ?.let { ExactPhonemeMatcher(it) }
             ?: matcher
-        is AbsentModifierPhonemeMatcher -> language.phonemeContainer
-            .getPhonemesNot(matcher.modifiers)
+        is AbsentCharacteristicPhonemeMatcher -> language.phonemeContainer
+            .getPhonemesNot(matcher.characteristics)
             .randomElementOrNull()
             ?.let { ExactPhonemeMatcher(it) }
             ?: matcher
@@ -146,7 +146,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
                 .getPhonemes(setOf(randomModifier))
                 .filter { it.type == typePhonemeMatcher.phonemeType }
                 .takeIf { it.isNotEmpty() }
-                ?.let { MulMatcher(typePhonemeMatcher, ModifierPhonemeMatcher(randomModifier)) }
+                ?.let { MulMatcher(typePhonemeMatcher, CharacteristicPhonemeMatcher(randomModifier)) }
                 ?: typePhonemeMatcher
         },
         {
@@ -157,7 +157,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
                 .getPhonemesNot(setOf(randomModifier))
                 .filter { it.type == typePhonemeMatcher.phonemeType }
                 .takeIf { it.isNotEmpty() }
-                ?.let { MulMatcher(typePhonemeMatcher, AbsentModifierPhonemeMatcher(randomModifier)) }
+                ?.let { MulMatcher(typePhonemeMatcher, AbsentCharacteristicPhonemeMatcher(randomModifier)) }
                 ?: typePhonemeMatcher
         },
         {

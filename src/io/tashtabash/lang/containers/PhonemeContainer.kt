@@ -1,6 +1,7 @@
 package io.tashtabash.lang.containers
 
 import io.tashtabash.lang.language.phonology.Phoneme
+import io.tashtabash.lang.language.phonology.PhonemeCharacteristic
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 import io.tashtabash.lang.language.phonology.PhonemeType
 
@@ -75,12 +76,12 @@ interface PhonemeContainer {
     fun getPhonemes(phonemeType: PhonemeType): List<Phoneme> =
         phonemes.filter { it.type == phonemeType }
 
-    fun getPhonemes(modifiers: Set<PhonemeModifier>): List<Phoneme> =
-        phonemes.filter { it.modifiers.containsAll(modifiers) }
+    fun getPhonemes(characteristics: Set<PhonemeCharacteristic>): List<Phoneme> =
+        phonemes.filter { it.characteristics.containsAll(characteristics) }
 
     fun getPhonemesNot(phonemeType: PhonemeType): List<Phoneme> =
         phonemes.filter { it.type != phonemeType }
 
-    fun getPhonemesNot(modifiers: Set<PhonemeModifier>): List<Phoneme> =
-        phonemes.filter { modifiers.none { m -> m in it.modifiers } }
+    fun getPhonemesNot(characteristics: Set<PhonemeCharacteristic>): List<Phoneme> =
+        phonemes.filter { characteristics.none { m -> m in it.modifiers } }
 }

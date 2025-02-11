@@ -20,9 +20,9 @@ class ProsodyMatcher(val prosody: Set<Prosody>): PhonemeMatcher() {
                 && changingPhoneme.prosody.let { it != null && prosody.all { p -> p in it } }
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
-        is ModifierPhonemeMatcher ->
+        is CharacteristicPhonemeMatcher ->
             MulMatcher(this, other)
-        is AbsentModifierPhonemeMatcher ->
+        is AbsentCharacteristicPhonemeMatcher ->
             MulMatcher(this, other)
         is ExactPhonemeMatcher ->
             MulMatcher(other, this)

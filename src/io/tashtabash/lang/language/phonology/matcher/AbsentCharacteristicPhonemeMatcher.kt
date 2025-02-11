@@ -3,18 +3,18 @@ package io.tashtabash.lang.language.phonology.matcher
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
 import io.tashtabash.lang.language.phonology.Phoneme
-import io.tashtabash.lang.language.phonology.PhonemeModifier
+import io.tashtabash.lang.language.phonology.PhonemeCharacteristic
 
 
-class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): PhonemeMatcher() {
-    constructor(vararg modifiers: PhonemeModifier) : this(modifiers.toSet() )
+class AbsentCharacteristicPhonemeMatcher(val characteristics: Set<PhonemeCharacteristic>): PhonemeMatcher() {
+    constructor(vararg modifiers: PhonemeCharacteristic) : this(modifiers.toSet() )
 
     override val name =
-        "[-${modifiers.sorted().joinToString(",")}]"
+        "[-${characteristics.map { it.toString() }.sorted().joinToString(",")}]"
 
     override fun match(phoneme: Phoneme?) =
-        phoneme?.modifiers
-            ?.none { it in modifiers }
+        phoneme?.characteristics
+            ?.none { it in characteristics }
             ?: false
 
     override fun match(changingPhoneme: ChangingPhoneme) =
@@ -22,9 +22,9 @@ class AbsentModifierPhonemeMatcher(val modifiers: Set<PhonemeModifier>): Phoneme
                 && match(changingPhoneme.phoneme)
 
     override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
-        is AbsentModifierPhonemeMatcher ->
-            AbsentModifierPhonemeMatcher(modifiers + other.modifiers)
-        is ModifierPhonemeMatcher ->
+        is AbsentCharacteristicPhonemeMatcher ->
+            AbsentCharacteristicPhonemeMatcher(characteristics + other.characteristics)
+        is CharacteristicPhonemeMatcher ->
             other * this
         is ExactPhonemeMatcher ->
             if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
