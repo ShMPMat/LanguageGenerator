@@ -64,8 +64,10 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "V -> - / C _ \$",
         // Consonant deletion
         "C -> - / _ \$",
-        "C -> - / C _ \$",
-        "C -> - / V _ \$",
+        "CC -> _- / _ \$",
+        "VC -> _- / _ \$",
+        "CC -> -_ / \$ _ ",
+        "CV -> -_ / \$ _ ",
         // Vowel epenthesis
         "C -> _(ə) / _ C ",
         "C -> _(a) / _ C ",
