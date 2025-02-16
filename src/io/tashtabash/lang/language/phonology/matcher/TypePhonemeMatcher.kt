@@ -17,26 +17,26 @@ class TypePhonemeMatcher(val phonemeType: PhonemeType): PhonemeMatcher() {
         changingPhoneme is ChangingPhoneme.ExactPhoneme
                 && changingPhoneme.phoneme.type == phonemeType
 
-    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+    override fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>? = when (other) {
         is CharacteristicPhonemeMatcher ->
-            MulMatcher(this, other)
+            MulMatcher(this, other) to true
         is AbsentCharacteristicPhonemeMatcher ->
-            MulMatcher(this, other)
+            MulMatcher(this, other) to true
         is ExactPhonemeMatcher ->
             if (other.phoneme.type == phonemeType)
-                other
+                other to true
             else null
         is TypePhonemeMatcher ->
             if (this == other)
-                this
+                this to false
             else null
         is ProsodyMatcher ->
-            MulMatcher(this, other)
+            MulMatcher(this, other) to true
         is AbsentProsodyMatcher ->
-            MulMatcher(this, other)
+            MulMatcher(this, other) to true
         is MulMatcher ->
             other * this
-        PassingPhonemeMatcher, null -> this
+        PassingPhonemeMatcher, null -> this to false
         BorderPhonemeMatcher -> null
         else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")
     }

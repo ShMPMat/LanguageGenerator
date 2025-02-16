@@ -17,49 +17,53 @@ class MulMatcher(val matchers: List<PhonemeMatcher>): PhonemeMatcher() {
     override fun match(changingPhoneme: ChangingPhoneme) =
         matchers.all { it.match(changingPhoneme) }
 
-    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+    override fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>? = when (other) {
         is MulMatcher ->
             if (matchers[0] !is TypePhonemeMatcher && other.matchers[0] is TypePhonemeMatcher)
                 other * this // Preserves the invariant "a type matcher should be the first matcher"
             else {
-                var newMatcher: MulMatcher? = this
-                for (otherMatcher in other.matchers)
-                    newMatcher = newMatcher?.mergeNonMulMatcher(otherMatcher)
+                val newMatcher = other.matchers.fold(this to false) { a: Pair<MulMatcher, Boolean>?, m ->
+                    a?.first?.mergeNonMulMatcher(m)
+                }
 
-                newMatcher?.matchers
-                    ?.distinct()
-                    ?.let {
-                        if (it.size == 1)
-                            it[0]
-                        else
-                            MulMatcher(it)
-                    }
+                newMatcher?.let { (matcher, isNarrowed) ->
+                    matcher.matchers
+                        .distinct()
+                        .let {
+                            if (it.size == 1)
+                                it[0]
+                            else
+                                MulMatcher(it)
+                        } to isNarrowed
+                }
             }
-        PassingPhonemeMatcher, null -> this
+        PassingPhonemeMatcher, null -> this to false
         BorderPhonemeMatcher -> null
         else -> this * MulMatcher(other)
     }
 
-    private fun mergeNonMulMatcher(other: PhonemeMatcher): MulMatcher? {
+    private fun mergeNonMulMatcher(other: PhonemeMatcher): Pair<MulMatcher, Boolean>? {
         if (other is MulMatcher)
             throw LanguageException("Can't merge a MulMatcher")
 
         var isOtherMerged = false
+        var isNarrowed = false
         val newMatchers = matchers.map {
             val newMatcher = (it * other)
                 ?: return null
 
-            if (newMatcher is MulMatcher)
+            if (newMatcher.first is MulMatcher)
                 it
             else {
                 isOtherMerged = true
-                newMatcher
+                isNarrowed = newMatcher.second
+                newMatcher.first
             }
         }
 
         return MulMatcher(
             newMatchers + if (isOtherMerged) listOf() else listOf(other)
-        )
+        ) to (!isOtherMerged || isNarrowed)
     }
 
     override fun any(predicate: (PhonemeMatcher) -> Boolean): Boolean =

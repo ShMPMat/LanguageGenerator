@@ -21,24 +21,25 @@ class AbsentCharacteristicPhonemeMatcher(val characteristics: Set<PhonemeCharact
         changingPhoneme is ChangingPhoneme.ExactPhoneme
                 && match(changingPhoneme.phoneme)
 
-    override fun times(other: PhonemeMatcher?): PhonemeMatcher? = when (other) {
+    override fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>? = when (other) {
         is AbsentCharacteristicPhonemeMatcher ->
-            AbsentCharacteristicPhonemeMatcher(characteristics + other.characteristics)
+            AbsentCharacteristicPhonemeMatcher(characteristics + other.characteristics) to
+                    ((characteristics + other.characteristics).size != characteristics.size)
         is CharacteristicPhonemeMatcher ->
             other * this
         is ExactPhonemeMatcher ->
             if (match(ChangingPhoneme.ExactPhoneme(other.phoneme)))
-                other
+                other to true
             else null
         is TypePhonemeMatcher ->
-            MulMatcher(other, this)
+            MulMatcher(other, this) to true
         is ProsodyMatcher ->
-            MulMatcher(other, this)
+            MulMatcher(other, this) to true
         is AbsentProsodyMatcher ->
-            MulMatcher(other, this)
+            MulMatcher(other, this) to true
         is MulMatcher ->
             other * this
-        PassingPhonemeMatcher, null -> this
+        PassingPhonemeMatcher, null -> this to false
         BorderPhonemeMatcher -> null
         else -> throw LanguageException("Cannot merge Phoneme matchers '$this' and '$other'")
     }

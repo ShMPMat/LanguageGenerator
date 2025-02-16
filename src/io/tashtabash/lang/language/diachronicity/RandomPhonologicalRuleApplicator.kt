@@ -124,7 +124,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
                 ?.let { subMatcher ->
                     val narrowedMatcher = narrowMatcher(subMatcher, language)
 
-                    matcher * narrowedMatcher
+                    (matcher * narrowedMatcher)?.first
                 }
                 ?: matcher
         }

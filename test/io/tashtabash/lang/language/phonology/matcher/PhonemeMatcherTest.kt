@@ -19,10 +19,43 @@ import java.util.stream.Stream
 internal class PhonemeMatcherTest {
     @ParameterizedTest(name = "{0} combined with {1} = {1} combined with {0}")
     @MethodSource("phonemeMatcherProvider")
-    fun `times method is commutative`(first: PhonemeMatcher, second: PhonemeMatcher) {
+    fun `times method is commutative for its first member`(first: PhonemeMatcher, second: PhonemeMatcher) {
         assertEquals(
-            first * second,
-            second * first
+            (first * second)?.first,
+            (second * first)?.first
+        )
+    }
+
+    @Test
+    fun `isNarrowed for CharacteristicPhonemeMatcher depends on the operand order`() {
+        assertEquals(
+            CharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long) to false,
+            CharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long) * CharacteristicPhonemeMatcher(Nasalized)
+        )
+        assertEquals(
+            CharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long) to true,
+            CharacteristicPhonemeMatcher(Nasalized) * CharacteristicPhonemeMatcher(Nasalized, PhonemeModifier.Long)
+        )
+    }
+
+    @Test
+    fun `ExactPhonemeMatcher is almost always not isNarrowed, but not vise versa`() {
+        assertEquals(
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) to false,
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) * CharacteristicPhonemeMatcher(Voiced)
+        )
+        assertEquals(
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) to true,
+            CharacteristicPhonemeMatcher(Voiced) * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d"))
+        )
+
+        assertEquals(
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) to false,
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) * TypePhonemeMatcher(Consonant)
+        )
+        assertEquals(
+            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d")) to true,
+            TypePhonemeMatcher(Consonant) * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("d"))
         )
     }
 
@@ -30,24 +63,25 @@ internal class PhonemeMatcherTest {
     fun `MulMatcher times MulMatcher filters out duplicate matchers`() {
         val matcher = MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long))
 
-        assertEquals(matcher * matcher, matcher)
+        assertEquals(matcher to false, matcher * matcher)
     }
 
     @Test
     fun `MulMatcher times MulMatcher merges ModifierPhonemeMatcher if possible`() {
         assertEquals(
+            MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long, Voiced)) to true,
             MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long))
-                    * AbsentCharacteristicPhonemeMatcher(Voiced),
-            MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(PhonemeModifier.Long, Voiced))
+                    * AbsentCharacteristicPhonemeMatcher(Voiced)
         )
     }
 
     @Test
     fun `MulMatcher times ExactPhonemeMatcher results in ExactPhonemeMatcher if the merge is possible`() {
+        val matcher = ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t"))
         assertEquals(
+            matcher to true,
             MulMatcher(TypePhonemeMatcher(Consonant), AbsentCharacteristicPhonemeMatcher(Voiced))
-                    * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t")),
-            ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t"))
+                    * ExactPhonemeMatcher(testPhonemeContainer.getPhoneme("t"))
         )
     }
 

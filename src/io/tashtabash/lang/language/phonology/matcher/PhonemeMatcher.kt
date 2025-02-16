@@ -18,7 +18,7 @@ abstract class PhonemeMatcher {
 
     abstract fun match(changingPhoneme: ChangingPhoneme): Boolean
 
-    abstract operator fun times(other: PhonemeMatcher?): PhonemeMatcher?
+    abstract operator fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>?
 
     open fun any(predicate: (PhonemeMatcher) -> Boolean) =
         predicate(this)
@@ -170,7 +170,7 @@ fun unitePhonemeMatchers(
                     isChanged = true
                     continue
                 }
-                is ModifierPhonemeSubstitution -> { //TODO we need possible phoneme context
+                is ModifierPhonemeSubstitution -> {
                     val possibleSubstitutionResults = curFirstSubstitution.phonemes
                         .phonemes
                         .filter { curFirst?.match(it) == true }
@@ -201,8 +201,11 @@ fun unitePhonemeMatchers(
                 }
         }
 
-        result += curFirst?.times(curSecond)
+        val (matcher, wasNarrowed) = curFirst?.times(curSecond)
             ?: curSecond?.times(curFirst)
+            ?: (null to false)
+        result += matcher
+        isNarrowed = isNarrowed || wasNarrowed
 
         // If the first PhonemeMatcher is null, it means that a completely new matcher is added
         if (curFirst == null)
