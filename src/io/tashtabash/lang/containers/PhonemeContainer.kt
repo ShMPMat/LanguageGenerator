@@ -17,6 +17,13 @@ interface PhonemeContainer {
         phonemes.firstOrNull { it.symbol == symbol }
             ?: throw NoPhonemeException("No phoneme with a symbol '$symbol' exist")
 
+    fun getPhonemes(vararg symbols: String): List<Phoneme> =
+        phonemes.filter { it.symbol in symbols }
+            .also {
+                if (it.size != symbols.size)
+                    throw NoPhonemeException("Some phonemes with symbols '${symbols.joinToString()}' don't exist")
+            }
+
     fun getPhonemeOrNull(symbol: String): Phoneme? =
         phonemes.firstOrNull { it.symbol == symbol }
 
