@@ -122,7 +122,7 @@ data class PhonologicalRule(
      * @return a PhonologicalRule which is identical to application of this and
      *  then application of other, applied at the point shifted by shift.
      *  If other can't be possibly applied with such shift, return null.
-     *///TODO return pair of Rule x isNarrowed?
+     */
     private fun applyWithShift(other: PhonologicalRule, shift: Int): Pair<PhonologicalRule, Boolean>? {
         // Preceding matchers + the matchers of other applied before the matchers of this start
         val thisSubstitutionsShift = precedingMatchers.size + max(0, -shift)
