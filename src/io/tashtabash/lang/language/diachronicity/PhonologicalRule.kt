@@ -42,6 +42,17 @@ data class PhonologicalRule(
     val matchers: List<PhonemeMatcher>
         get() = precedingMatchers + targetMatchers + followingMatchers
 
+    val substitutionPairs: List<Pair<PhonemeMatcher?, PhonemeSubstitution>> by lazy {
+        var matcherIdx = 0
+
+        substitutions.map { s ->
+            if (s is EpenthesisSubstitution)
+                null to s
+            else
+                targetMatchers[matcherIdx++] to s
+        }
+    }
+
     fun mirror() = PhonologicalRule(
         followingMatchers.reversed(),
         targetMatchers.reversed(),
