@@ -30,7 +30,7 @@ data class PhonologicalRule(
         precedingLength: Int,
         followingLength: Int,
         substitutions: List<PhonemeSubstitution>,
-        allowSyllableStructureChange: Boolean
+        allowSyllableStructureChange: Boolean = false
     ) : this(
         matchers.take(precedingLength),
         matchers.drop(precedingLength).dropLast(followingLength),
