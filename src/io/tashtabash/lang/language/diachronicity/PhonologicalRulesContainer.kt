@@ -23,6 +23,11 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         // Consonant shifts
         "d -> g / _ n",
         "s -> h / _ ",
+        "s -> h / _ \$",
+        "s -> h / \$ _ ",
+        "p -> f / _ ",
+        "p -> f / _ \$",
+        "p -> f / \$ _ ",
         "[+Stop] -> ʔ / _ ",
         "[+Stop] -> ʔ / _ $",
         "[+Stop] -> ʔ / $ _ ",
