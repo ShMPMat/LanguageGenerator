@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.diachronicity
 
+import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
@@ -84,9 +85,12 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
             sandhiRules = language.changeParadigm.wordChangeParadigm.sandhiRules + rule
         )
+        val newPhonemes = (language.phonemeContainer.phonemes + analyzePhonemes(rule, language.phonemeContainer))
+            .distinct()
 
         return language.copy(
-            changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm)
+            changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm),
+            phonemeContainer = ImmutablePhonemeContainer(newPhonemes)
         )
     }
 

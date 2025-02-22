@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.containers.DerivationClusterTemplate
+import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.NumeralSystemBase
@@ -20,12 +21,14 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
+import io.tashtabash.lang.utils.equalsByElement
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.random.Random
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 internal class PhonologicalRuleApplicatorTest {
