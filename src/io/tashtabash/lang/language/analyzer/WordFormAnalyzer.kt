@@ -17,14 +17,14 @@ fun getIdenticalWordForms(language: Language): List<List<Pair<WordSequence, Sour
         .map { (_, sequences) -> sequences }
 
 // Returns the fraction of identical word forms
-fun getIdenticalWordFormFraction(language: Language): Double {
+fun getIdenticalWordFormFraction(language: Language): HomophoneStats {
     val uniqueWordForms = getUniqueWordForms(language)
-
-    return uniqueWordForms.groupBy { it.first.toString() }
+    val homophoneFormsCount = uniqueWordForms.groupBy { it.first.toString() }
         .filter { it.value.size > 1 }
         .entries
         .sumOf { it.value.size }
-        .toDouble() / uniqueWordForms.size
+
+    return HomophoneStats(uniqueWordForms.size, homophoneFormsCount)
 }
 
 private fun getUniqueWordForms(language: Language): List<Pair<WordSequence, List<SourcedCategoryValue>>> =
@@ -34,3 +34,7 @@ private fun getUniqueWordForms(language: Language): List<Pair<WordSequence, List
                 .getAllWordForms(word, false)
                 .distinctBy { it.first.toString() }
         }
+
+data class HomophoneStats(val allWordFormsCount: Int, val homophoneFormsCount: Int) {
+    val homophoneFraction = homophoneFormsCount.toDouble() / allWordFormsCount
+}

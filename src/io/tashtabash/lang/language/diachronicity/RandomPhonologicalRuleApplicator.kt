@@ -33,12 +33,17 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
         val shiftedLanguage = ruleApplicator.applyPhonologicalRule(language, phonologicalRule)
         _messages += ruleApplicator.messages
 
-        val oldLangHomophoneFraction = getIdenticalWordFormFraction(language)
-        val shiftedLangHomophoneFraction = getIdenticalWordFormFraction(shiftedLanguage)
-        val homophoneFractionIncrease = max(0.0, shiftedLangHomophoneFraction - oldLangHomophoneFraction)
+        val oldLangHomophoneStats = getIdenticalWordFormFraction(language)
+        val shiftedLangHomophoneStats = getIdenticalWordFormFraction(shiftedLanguage)
+        val homophoneFractionIncrease = max(
+            0.0,
+            shiftedLangHomophoneStats.homophoneFraction - oldLangHomophoneStats.homophoneFraction
+        )
         (1 - (1 - homophoneFractionIncrease).pow(10)).chanceOf {
             _messages += "Can't apply rule $phonologicalRule: " +
-                    "the homophone fraction is too high: $oldLangHomophoneFraction -> $shiftedLangHomophoneFraction"
+                    "the homophone fraction is too high: " +
+                    "${oldLangHomophoneStats.homophoneFraction} -> ${shiftedLangHomophoneStats.homophoneFraction} " +
+                    "(${oldLangHomophoneStats.homophoneFormsCount} -> ${shiftedLangHomophoneStats.homophoneFormsCount})"
             return language
         }
 

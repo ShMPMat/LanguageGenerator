@@ -105,8 +105,8 @@ internal class WordFormAnalyzerTest {
         ).copy(prosodyChangeParadigm = ProsodyChangeParadigm(StressType.None))
         val language = makeDefLang(words, listOf(), nounChangeParadigm)
 
-        val wordFormFraction = getIdenticalWordFormFraction(language)
+        val homophoneStats = getIdenticalWordFormFraction(language)
 
-        assertEquals(2.0 / 12, wordFormFraction)
+        assertEquals(2.0 / 12, homophoneStats.homophoneFraction)
     }
 }

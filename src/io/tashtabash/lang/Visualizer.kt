@@ -180,6 +180,7 @@ class Visualizer(val language: Language) {
             .groupBy { it.semanticsCore.toString() }
             .map { it.value }
             .filter { it.size > 1 }
+        val homophoneStats = getIdenticalWordFormFraction(language)
 
         print(
             """
@@ -207,7 +208,7 @@ class Visualizer(val language: Language) {
                     .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
             }
         |
-        |Identical forms for different words (%.2f):
+        |Identical forms for all words (%.2f): ${homophoneStats.homophoneFormsCount}/${homophoneStats.allWordFormsCount}
         |${
                 getIdenticalWordForms(language)
                     .sortedBy { -it.size }
@@ -217,7 +218,7 @@ class Visualizer(val language: Language) {
                         getClauseAndInfoStr(joinedWords)
                     }
             }
-    """.trimMargin().format(getIdenticalWordFormFraction(language))
+    """.trimMargin().format(homophoneStats.homophoneFraction)
         )
     }
 }
