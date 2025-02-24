@@ -63,7 +63,10 @@ fun analyzePhonemes(phonologicalRule: PhonologicalRule, possiblePhonemes: Phonem
     phonologicalRule.substitutionPairs.flatMap { (m, s) ->
         possiblePhonemes.phonemes.flatMap {
             if (m?.match(it) != false)
-                s.substitute(it)
+                if (s is ModifierPhonemeSubstitution)
+                    listOfNotNull(s.substituteOrNull(it))
+                else
+                    s.substitute(it)
             else
                 listOf()
         }
