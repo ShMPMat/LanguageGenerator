@@ -112,7 +112,9 @@ data class PhonologicalRule(
     }
 
     private fun computeInternalShifts(other: PhonologicalRule): IntRange =
-        0..matchers.size - other.matchers.size
+        0..lengthWithEpenthesis - other.matchers.size
+
+    private val lengthWithEpenthesis = matchers.size + substitutions.count { it is EpenthesisSubstitution }
 
     /**
      * @return a PhonologicalRule which is identical to consecutive application
@@ -145,9 +147,7 @@ data class PhonologicalRule(
             thisShiftedSubstitutions,
             other.matchers,
             shift
-        )
-        newMatchers ?:
-            return null
+        ) ?: return null
         if (!isChanged)
             return null
 

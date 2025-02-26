@@ -130,31 +130,53 @@ fun unitePhonemeMatchers(
     firstSubstitutions: List<PhonemeSubstitution?>,
     second: List<PhonemeMatcher>,
     shift: Int = 0
-): UnitePhonemeMatchersResult {
+): UnitePhonemeMatchersResult? {
+    // Shift matchers so that Epenthesis substitutions always pair with nulls
+    val shiftedMatchers = mutableListOf<PhonemeMatcher?>()
+    var substitutionIdx = 0
+    for (i in first.indices) {
+        while (firstSubstitutions.getOrNull(substitutionIdx) is EpenthesisSubstitution) {
+            shiftedMatchers += null
+            substitutionIdx++
+        }
+        shiftedMatchers += first[i]
+        substitutionIdx++
+    }
+
+    return unitePhonemeMatchersInternal(shiftedMatchers, firstSubstitutions, second, shift)
+}
+
+
+fun unitePhonemeMatchersInternal(
+    first: List<PhonemeMatcher?>,
+    firstSubstitutions: List<PhonemeSubstitution?>,
+    second: List<PhonemeMatcher>,
+    shift: Int = 0
+): UnitePhonemeMatchersResult? {
     var firstIdx = min(shift, 0)
-    var substitutionShift = 0
     var secondIdx = min(-shift, 0)
-    val result = mutableListOf<PhonemeMatcher?>()
+    val result = mutableListOf<PhonemeMatcher>()
     var isNarrowed = false
     var isChanged = false
 
     while (firstIdx < first.size || secondIdx < second.size) {
         val curFirst = first.getOrNull(firstIdx)
-        val curFirstSubstitution = firstSubstitutions.getOrNull(firstIdx + substitutionShift)
+        val curFirstSubstitution = firstSubstitutions.getOrNull(firstIdx)
         val curSecond = second.getOrNull(secondIdx)
         if (curFirstSubstitution != null)
             when (curFirstSubstitution) {
                 is DeletingPhonemeSubstitution -> {
                     // curSecond should be compared with the next curFirst
                     result += curFirst
+                        ?: return null
                     firstIdx++
                     continue
                 }
                 is EpenthesisSubstitution -> {
                     // If the new phoneme matches, do nothing
-                    if (curSecond?.match(curFirstSubstitution.epenthesisPhoneme) != true)
-                        result += null
-                    substitutionShift++
+                    if (curSecond?.match(curFirstSubstitution.epenthesisPhoneme) == false)
+                        return null
+                    firstIdx++
                     secondIdx++
                     isChanged = true
                     continue
@@ -164,7 +186,8 @@ fun unitePhonemeMatchers(
                     result +=
                         if (curSecond?.match(curFirstSubstitution.exactPhoneme) == true)
                             curFirst
-                        else null
+                                ?: return null
+                        else return null
                     firstIdx++
                     secondIdx++
                     isChanged = true
@@ -178,7 +201,7 @@ fun unitePhonemeMatchers(
                         .filter { it.second != null }
                     val matchingPhonemes = possibleSubstitutionResults.filter { curSecond?.match(it.second) == true }
                     result += if (matchingPhonemes.isEmpty())
-                        null
+                        return null
                     else if (matchingPhonemes.size == 1)
                         ExactPhonemeMatcher(matchingPhonemes[0].first)
                     else
@@ -186,6 +209,7 @@ fun unitePhonemeMatchers(
                         //  and try applying the merged substitutions. This means that the new change
                         //  may fail to substitute phonemes, even if they were matched.
                         curFirst
+                            ?: return null
                     if (possibleSubstitutionResults.size != matchingPhonemes.size)
                         isNarrowed = true
                     firstIdx++
@@ -203,7 +227,7 @@ fun unitePhonemeMatchers(
 
         val (matcher, wasNarrowed) = curFirst?.times(curSecond)
             ?: curSecond?.times(curFirst)
-            ?: (null to false)
+            ?: return null
         result += matcher
         isNarrowed = isNarrowed || wasNarrowed
 
@@ -218,18 +242,11 @@ fun unitePhonemeMatchers(
         secondIdx++
     }
 
-    return UnitePhonemeMatchersResult(isNarrowed, isChanged, result)
+    return UnitePhonemeMatchersResult(result, isNarrowed, isChanged)
 }
 
 data class UnitePhonemeMatchersResult(
-    val phonemeMatchers: List<PhonemeMatcher>?,
+    val phonemeMatchers: List<PhonemeMatcher>,
     val isNarrowed: Boolean,
     val isChanged: Boolean
-) {
-    constructor(isNarrowed: Boolean, isChanged: Boolean, phonemeMatchers: List<PhonemeMatcher?>): this(
-        phonemeMatchers.takeIf { it.none { m -> m == null } }
-            ?.filterNotNull(),
-        isNarrowed,
-        isChanged
-    )
-}
+)

@@ -87,6 +87,22 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `times() applies changes to an epenthesis`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("V -> _(d)(n) / $ _ a")),
+            createTestPhonologicalRule("V -> _(d)(r) / $ _ a") * createTestPhonologicalRule("r -> n / _ ")
+        )
+    }
+
+    @Test
+    fun `times() apply changes if there's a matching epenthesis between matchers`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("V(C[-Voiced]) -> _(t)_ / _ ")),
+            createTestPhonologicalRule("V(C[-Voiced]) -> _(d)_ / _ ") * createTestPhonologicalRule("V(C[+Voiced]) -> _[-Voiced] / _ ")
+        )
+    }
+
+    @Test
     fun `plus() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
@@ -180,6 +196,22 @@ internal class PhonologicalRuleTest {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
             createTestPhonologicalRule("aC -> u_ / $ _ ") + createTestPhonologicalRule("a -> i / _ ")
+        )
+    }
+
+    @Test
+    fun `plus() applies changes to an epenthesis`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("V -> _(d)(n) / $ _ a")),
+            createTestPhonologicalRule("V -> _(d)(r) / $ _ a") + createTestPhonologicalRule("r -> n / _ ")
+        )
+    }
+
+    @Test
+    fun `plus() apply changes if there's a matching epenthesis between matchers`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("V(C[-Voiced]) -> _(t)_ / _ ")),
+            createTestPhonologicalRule("V(C[-Voiced]) -> _(d)_ / _ ") + createTestPhonologicalRule("V(C[+Voiced]) -> _[-Voiced] / _ ")
         )
     }
 }

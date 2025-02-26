@@ -243,7 +243,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             templateChange.phonemeMatchers,
             templateChange.matchedPhonemesSubstitution,
             stemMatchers
-        ).phonemeMatchers
+        )?.phonemeMatchers
             ?: return null
         // The morpheme can't be attached to a word border
         if (newMatchers == listOf(BorderPhonemeMatcher))

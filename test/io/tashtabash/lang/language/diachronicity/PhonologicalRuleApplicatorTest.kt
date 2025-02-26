@@ -1816,6 +1816,72 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
+    fun `applyPhonologicalRule adds new phonemes to the shiftedLanguage`() {
+        val words = listOf(createNoun("aba"))
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a- -> ob"),
+            createAffixCategoryApplicator("o-"),
+            SuppletionCategoryApplicator(createNoun("baboboba")),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+            .copy(phonemeContainer = ImmutablePhonemeContainer(testPhonemeContainer.getPhonemes("a", "b", "o")))
+        val phonologicalRule = createTestPhonologicalRule("o -> u / _ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        val expectedPhonemes = testPhonemeContainer.getPhonemes("a", "b", "u")
+        assertTrue(
+            shiftedLanguage.phonemeContainer.phonemes.equalsByElement(expectedPhonemes),
+            "Expected phonemes $expectedPhonemes, got ${shiftedLanguage.phonemeContainer.phonemes}"
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule adds new phonemes to the shiftedLanguage from the sandhi rules`() {
+        val words = listOf(createNoun("aba"))
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a- -> ob"),
+            createAffixCategoryApplicator("o-"),
+            SuppletionCategoryApplicator(createNoun("baboboba")),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+            .copy(phonemeContainer = ImmutablePhonemeContainer(testPhonemeContainer.getPhonemes("a", "b", "o")))
+        val phonologicalRule = createTestPhonologicalRule("o -> u / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        val expectedPhonemes = testPhonemeContainer.getPhonemes("a", "b", "o", "u")
+        assertTrue(
+            shiftedLanguage.phonemeContainer.phonemes.equalsByElement(expectedPhonemes),
+            "Expected phonemes $expectedPhonemes, got ${shiftedLanguage.phonemeContainer.phonemes}"
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule doesn't add to the shiftedLanguage phonemes which never happen`() {
+        val words = listOf(createNoun("aba"))
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a- -> ab"),
+            createAffixCategoryApplicator("a-"),
+            SuppletionCategoryApplicator(createNoun("dadababa")),
+            createAffixCategoryApplicator("-ab")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+            .copy(phonemeContainer = ImmutablePhonemeContainer(testPhonemeContainer.getPhonemes("a", "b", "d")))
+        val phonologicalRule = createTestPhonologicalRule("(C[+Voiced,Bilabial]) -> [-Voiced] / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        val expectedPhonemes = testPhonemeContainer.getPhonemes("a", "b", "p", "d")
+        assertTrue(
+            shiftedLanguage.phonemeContainer.phonemes.equalsByElement(expectedPhonemes),
+            "Expected phonemes $expectedPhonemes, got ${shiftedLanguage.phonemeContainer.phonemes}"
+        )
+    }
+
+    @Test
     fun `applyPhonologicalRule doesn't complicate an affix if a PhonologicalRule is always applicable (cross-boundary case)`() {
         val words = listOf(createNoun("aba"))
         val nounChangeParadigm = makeDefNounChangeParadigm(
