@@ -73,10 +73,15 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         "VC -> _- / _ \$",
         "CC -> -_ / \$ _ ",
         "CV -> -_ / \$ _ ",
+
         // Vowel epenthesis
         "C -> _(ə) / _ C ",
         "C -> _(a) / _ C ",
         "C -> _(i) / _ C ",
+        "C -> (ə)_ / $ _ C ",
+        "C -> (a)_ / $ _ C ",
+        "C -> (i)_ / $ _ C ",
+
         // Consonant epenthesis
         "V -> _(ʔ) / _ V ",
         "V -> _(ɦ) / _ V ",
