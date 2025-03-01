@@ -913,6 +913,62 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
+    fun `applyPhonologicalRule inserts a large suffix`() {
+        val words = listOf(
+            createNoun("aba"),
+            createNoun("abo"),
+            createNoun("ubo"),
+            createNoun("bacab"),
+            createNoun("bob"),
+            createNoun("ba")
+        )
+        val derivations = listOf(
+            Derivation(createAffix("-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+            Derivation(createAffix("-ob"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("-u"),
+            SuppletionCategoryApplicator(createNoun("baboboba")),
+            createAffixCategoryApplicator("-ob")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("V -> _(d)(o)(t) / _ $ ")
+
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("abadot"),
+                createNoun("abodot"),
+                createNoun("ubodot"),
+                createNoun("bacab"),
+                createNoun("bob"),
+                createNoun("badot")
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-adot"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-ob"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("a-"),
+                createAffixCategoryApplicator("-udot"),
+                SuppletionCategoryApplicator(createNoun("babobobadot")),
+                createAffixCategoryApplicator("-ob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
     fun `applyPhonologicalRule inserts multiple sounds`() {
         val words = listOf(
             createNoun("aba"),
