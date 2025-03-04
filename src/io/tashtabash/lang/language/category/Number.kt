@@ -126,7 +126,7 @@ enum class NumberPresence(
 
 sealed class NumberValue(meaning: Meaning, alias: String) : AbstractCategoryValue(numberName, meaning, alias) {
     object Singular : NumberValue("(singular number indicator)", "SN")
-    object Dual : NumberValue("(dual number indicator)", "DL")
+    object Dual : NumberValue("(dual number indicator)", "DU")
     object Paucal : NumberValue("(paucal number indicator)", "PC")
     object Plural : NumberValue("(plural number indicator)", "PL")
 }
