@@ -516,7 +516,7 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
-    fun `applyPhonologicalRule changes two sounds in a row`() {
+    fun `applyPhonologicalRule doesn't change two sounds in a row by overlapping the target matchers areas`() {
         val words = listOf(
             createNoun("aa"),
             createNoun("tao"),
@@ -564,8 +564,43 @@ internal class PhonologicalRuleApplicatorTest {
             makeDefNounChangeParadigm(
                 createAffixCategoryApplicator("V- -> oa", "a-"),
                 createAffixCategoryApplicator("-V -> oa", "-u"),
-                SuppletionCategoryApplicator(createNoun("babobooaba")),
+                SuppletionCategoryApplicator(createNoun("baboboaaba")),
                 createAffixCategoryApplicator("-V -> oaab", "-oab")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule can overlap preceding and following matchers`() {
+        val words = listOf(
+            createNoun("ta"),
+            createNoun("a")
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("ta-"),
+            createAffixCategoryApplicator("-u"),
+            SuppletionCategoryApplicator(createNoun("bababaoaba")),
+            createAffixCategoryApplicator("-oob")
+        )
+        val language = makeDefLang(words, listOf(), nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("a -> i / C _ C")
+
+        val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(
+                createNoun("ta"),
+                createNoun("a")
+            ),
+            shiftedLanguage.lexis.words
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("C- -> ti_", "ta-"),
+                createAffixCategoryApplicator("-u"),
+                SuppletionCategoryApplicator(createNoun("bibibaoaba")),
+                createAffixCategoryApplicator("-oob")
             ),
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )

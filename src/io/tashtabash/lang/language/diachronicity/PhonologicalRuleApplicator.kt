@@ -372,8 +372,10 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             if (isMatch) {
                 substitutePhonemes(result, i + rule.precedingMatchers.size, rule.substitutions)
                 isChangeApplied = true
+                i += rule.substitutions.size
+            } else {
+                i++
             }
-            i++
         }
 
         return result
