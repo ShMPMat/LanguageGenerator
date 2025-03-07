@@ -46,6 +46,9 @@ data class Word(
             }
         )
 
+    fun getPhoneticRepresentation(): String =
+        syllables.joinToString("")
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
