@@ -67,7 +67,7 @@ private fun constructChangeTree(previousWords: List<Word>, parentWord: Word, lex
         .lines()
 
     val (lanPrefix, commentPrefix) = prefixWithArrows.takeLast(2)
-    val (lanPostfix, commentPostfix) = lineUp(parentWord.toString(), parentWord.semanticsCore.toString())
+    val (lanPostfix, commentPostfix) = lineUp(parentWord.getPhoneticRepresentation(), parentWord.semanticsCore.toString())
 
     return prefixWithArrows.dropLast(2).joinToString("") { "$it\n" } +
             lanPrefix + lanPostfix + "\n" +
@@ -93,4 +93,4 @@ private fun getIndexes(maxDepthString: String): List<Int> {
 }
 
 private fun Word.printChange(lexis: AbstractLexis) = semanticsCore.changeHistory?.printHistory(this, lexis)
-    ?: lineUp(toString(), semanticsCore.toString()).let { (f, s) -> "$f\n$s" }
+    ?: lineUp(getPhoneticRepresentation(), semanticsCore.toString()).let { (f, s) -> "$f\n$s" }

@@ -16,4 +16,7 @@ data class MorphemeData(
         isRoot || other.isRoot,
         (derivationValues + other.derivationValues).distinct()
     )
+
+    override fun toString(): String =
+        "$size, isRoot: $isRoot, $categoryValues $derivationValues"
 }

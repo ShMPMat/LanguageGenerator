@@ -24,5 +24,5 @@ class SuppletionCategoryApplicator(word: Word) : WordCategoryApplicator(word, La
         return word.hashCode()
     }
 
-    override fun toString() = "Suppletion: $word"
+    override fun toString() = "Suppletion: ${word.getPhoneticRepresentation()}"
 }

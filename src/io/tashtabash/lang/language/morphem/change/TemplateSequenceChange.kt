@@ -21,7 +21,7 @@ open class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateC
     override fun change(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Word {
         for (changeTemplate in changes) {
             val changedWord = changeTemplate.change(word, categoryValues, derivationValues)
-            if (changedWord.toString() != word.toString())
+            if (changedWord.getPhoneticRepresentation() != word.getPhoneticRepresentation())
                 return changedWord
         }
         return word.copy()
@@ -30,7 +30,7 @@ open class TemplateSequenceChange(val changes: List<TemplateChange>) : TemplateC
     fun findAppliedChangeIndex(word: Word, categoryValues: SourcedCategoryValues, derivationValues: List<DerivationClass>): Int? {
         for ((i, changeTemplate) in changes.withIndex()) {
             val changedWord = changeTemplate.change(word, categoryValues, derivationValues)
-            if (changedWord.toString() != word.toString())
+            if (changedWord.getPhoneticRepresentation() != word.getPhoneticRepresentation())
                 return i
         }
         return null

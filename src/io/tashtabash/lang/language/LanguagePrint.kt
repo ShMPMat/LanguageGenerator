@@ -63,7 +63,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
 fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = true): String {
     val allWordForms = changeParadigm.wordChangeParadigm.getAllWordForms(word, printOptionalCategories)
 
-    return "Base - $word (${word.semanticsCore.meaningCluster})\n" +
+    return "Base - ${word.getPhoneticRepresentation()} (${word.semanticsCore.meaningCluster})\n" +
             allWordForms
                 .map { (ws, vs) ->
                     val categoryValues = vs.map { it.categoryValue }
@@ -86,7 +86,7 @@ fun getClauseAndInfoStr(wordSequence: WordSequence, printDerivation: Boolean = t
         .split(" ")
         .map { "$it " }
     val words = wordSequence.words
-        .map { it.toString() }
+        .map { it.getPhoneticRepresentation() }
         .map { "$it " }
 
     return listOf(words, morphemes, glosses).lineUpAll()

@@ -20,7 +20,9 @@ data class WordSequence(val words: List<Word> = listOf()) {
         else w
     }
 
-    override fun toString() = words.joinToString(" ")
+    override fun toString() = words.joinToString(" ") {
+        it.getPhoneticRepresentation()
+    }
 }
 
 

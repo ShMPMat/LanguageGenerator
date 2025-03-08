@@ -187,7 +187,7 @@ class Visualizer(val language: Language) {
         |Synonyms:
         |${
                 synonyms.joinToString("\n") { words ->
-                    "${words.joinToString { "$it (${it.semanticsCore.connotations})" }} - ${words[0].semanticsCore}"
+                    "${words.joinToString { "${it.getPhoneticRepresentation()} (${it.semanticsCore.connotations})" }} - ${words[0].semanticsCore}"
                 }
             }
         |
@@ -205,7 +205,9 @@ class Visualizer(val language: Language) {
         |${
                 language.lexis.words
                     .filter { it.semanticsCore.meaningCluster.size > 1 }
-                    .joinToString("\n") { "$it - ${it.semanticsCore.meaningCluster}" }
+                    .joinToString("\n") {
+                        "${it.getPhoneticRepresentation()} - ${it.semanticsCore.meaningCluster}"
+                    }
             }
         |
         |Identical forms for all words (%.2f): ${homophoneStats.homophoneFormsCount}/${homophoneStats.allWordFormsCount}

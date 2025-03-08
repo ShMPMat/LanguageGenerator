@@ -72,10 +72,10 @@ data class Lexis(
     }
 
     override fun toString() = """
-        |copula: ${copula.entries.joinToString { (t, v) -> "$t = ${v.resolve(this)}" }}
-        |question marker: ${questionMarker.entries.joinToString { (t, v) -> "$t = ${v.resolve(this)}" }}
+        |copula: ${copula.entries.joinToString { (t, v) -> "$t = ${v.resolve(this).getPhoneticRepresentation()}" }}
+        |question marker: ${questionMarker.entries.joinToString { (t, v) -> "$t = ${v.resolve(this).getPhoneticRepresentation()}" }}
         |word roots:
-        |${words.joinToString { it.toString() + " - " + it.semanticsCore }}
+        |${words.joinToString { it.getPhoneticRepresentation() + " - " + it.semanticsCore }}
     """.trimMargin()
 }
 

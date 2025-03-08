@@ -15,5 +15,5 @@ class SuffixWordCategoryApplicator(word: Word, latch: LatchType) : WordCategoryA
     override fun copy() = SuffixWordCategoryApplicator(word, latch)
     override fun copy(word: Word) = SuffixWordCategoryApplicator(word, latch)
 
-    override fun toString() = "$word, placed after the word $latch"
+    override fun toString() = "${word.getPhoneticRepresentation()}, placed after the word $latch"
 }

@@ -68,5 +68,5 @@ data class Word(
         return result
     }
 
-    override fun toString() = syllables.joinToString("")
+    override fun toString() = "${getPhoneticRepresentation()}: $semanticsCore $morphemes"
 }
