@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.derivation
 
 import io.tashtabash.lang.generator.util.GeneratorException
 import io.tashtabash.lang.language.lexis.AbstractLexis
-import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.lexis.WordPointer
 import io.tashtabash.lang.language.lineUp
