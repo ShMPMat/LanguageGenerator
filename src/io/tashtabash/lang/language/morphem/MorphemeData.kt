@@ -18,5 +18,5 @@ data class MorphemeData(
     )
 
     override fun toString(): String =
-        "$size, isRoot: $isRoot, $categoryValues $derivationValues"
+        "$size: isRoot: $isRoot: ${(categoryValues + derivationValues).joinToString()}"
 }
