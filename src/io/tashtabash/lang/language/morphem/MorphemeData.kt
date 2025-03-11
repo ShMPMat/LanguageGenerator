@@ -17,6 +17,9 @@ data class MorphemeData(
         (derivationValues + other.derivationValues).distinct()
     )
 
+    private fun constructRootString(): String =
+        if (isRoot) "root" else "not root"
+
     override fun toString(): String =
-        "$size: isRoot: $isRoot: ${(categoryValues + derivationValues).joinToString()}"
+        "$size ${constructRootString()}: ${(categoryValues + derivationValues).joinToString()}"
 }
