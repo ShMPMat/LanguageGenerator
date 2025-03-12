@@ -23,11 +23,11 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
         // Consonant shifts
         "d -> g / _ n",
         "s -> h / _ ",
-        "s -> h / _ \$",
-        "s -> h / \$ _ ",
+        "s -> h / _ $",
+        "s -> h / $ _ ",
         "p -> f / _ ",
-        "p -> f / _ \$",
-        "p -> f / \$ _ ",
+        "p -> f / _ $",
+        "p -> f / $ _ ",
         "[+Stop] -> ʔ / _ ",
         "[+Stop] -> ʔ / _ $",
         "[+Stop] -> ʔ / $ _ ",
@@ -65,14 +65,14 @@ fun createDefaultRules(phonemeContainer: PhonemeContainer): PhonologicalRulesCon
     val possibleSyllableStructureChangeRules = listOf(
         // Vowel deletion
         "V -> - / \$C _ CV",
-        "V -> - / VC _ C\$",
-        "V -> - / C _ \$",
+        "V -> - / VC _ C$",
+        "V -> - / C _ $",
         // Consonant deletion
-        "C -> - / _ \$",
-        "CC -> _- / _ \$",
-        "VC -> _- / _ \$",
-        "CC -> -_ / \$ _ ",
-        "CV -> -_ / \$ _ ",
+        "C -> - / _ $",
+        "CC -> _- / _ $",
+        "VC -> _- / _ $",
+        "CC -> -_ / $ _ ",
+        "CV -> -_ / $ _ ",
 
         // Vowel epenthesis
         "C -> _(ə) / _ C ",
