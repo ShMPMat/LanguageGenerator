@@ -704,7 +704,7 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )
         assertEquals(
-            listOf("Can't split the word 'bab: phony [3, isRoot: true, [] []]' on syllables after applying the rule, reverting the word"),
+            listOf("Can't split the word 'bab: phony [3 root: ]' on syllables after applying the rule, reverting the word"),
             phonologicalRuleApplicator.messages
         )
     }
