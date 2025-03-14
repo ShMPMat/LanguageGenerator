@@ -242,6 +242,10 @@ fun unitePhonemeMatchersInternal(
         secondIdx++
     }
 
+    // No BorderPhonemeMatcher in the middle
+    if (result.drop(1).dropLast(1).any { it == BorderPhonemeMatcher })
+        return null
+
     return UnitePhonemeMatchersResult(result, isNarrowed, isChanged)
 }
 
