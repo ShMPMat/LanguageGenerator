@@ -176,7 +176,7 @@ internal class PhonemeSubstitutionTest {
             Arguments.of(
                 listOf(EpenthesisSubstitution(getTestPhoneme("t"))),
                 listOf(DeletingPhonemeSubstitution),
-                listOf(DeletingPhonemeSubstitution)
+                listOf<PhonemeSubstitution>()
             ),
             Arguments.of(
                 listOf(EpenthesisSubstitution(getTestPhoneme("t"))),
