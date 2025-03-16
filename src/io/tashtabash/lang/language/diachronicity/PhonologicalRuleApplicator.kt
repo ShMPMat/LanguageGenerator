@@ -372,7 +372,10 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             if (isMatch) {
                 substitutePhonemes(result, i + rule.precedingMatchers.size, rule.substitutions)
                 isChangeApplied = true
-                i += rule.substitutions.size
+                i += max(rule.substitutions.size, 1)
+                // Stop if the end has been matched
+                if (rule.matchers.last() == BorderPhonemeMatcher)
+                    break
             } else {
                 i++
             }
