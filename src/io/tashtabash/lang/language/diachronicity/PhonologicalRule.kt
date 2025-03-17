@@ -69,7 +69,7 @@ data class PhonologicalRule(
     operator fun plus(other: PhonologicalRule): List<PhonologicalRule> {
         val bases = applyInside(other).toMutableList()
 
-        val modifications =  bases.toList().flatMap { base ->
+        val modifications = bases.toList().flatMap { base ->
             val leftBorderShifts = -other.matchers.size until 0
 
             val leftBorderApplications = leftBorderShifts
