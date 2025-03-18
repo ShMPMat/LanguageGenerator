@@ -53,6 +53,9 @@ data class PhonologicalRule(
         }
     }
 
+    private val spreadMatchers: List<PhonemeMatcher?>
+        get() = precedingMatchers + substitutionPairs.map { it.first } + followingMatchers
+
     fun mirror() = PhonologicalRule(
         followingMatchers.reversed(),
         targetMatchers.reversed(),
