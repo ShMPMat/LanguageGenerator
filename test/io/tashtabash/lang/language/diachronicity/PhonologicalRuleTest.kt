@@ -111,6 +111,14 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `times() keeps the original rules if it's narrowed on a passing matcher`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("a_ -> o_ / _ "), createTestPhonologicalRule("oC -> u_ / _ ")),
+            createTestPhonologicalRule("a_ -> o_ / _ ") * createTestPhonologicalRule("oC -> u_ / _ ")
+        )
+    }
+
+    @Test
     fun `plus() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
@@ -228,6 +236,14 @@ internal class PhonologicalRuleTest {
         assertEquals(
             listOf(createTestPhonologicalRule("VV -> __ / _ ")),
             createTestPhonologicalRule("VV -> _(d)_ / _ ") + createTestPhonologicalRule("d -> - / _ ")
+        )
+    }
+
+    @Test
+    fun `plus() keeps the original rule if it's narrowed on a passing matcher`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("aC -> u_ / _ "), createTestPhonologicalRule("a_ -> o_ / _ ")),
+            createTestPhonologicalRule("a_ -> o_ / _ ") + createTestPhonologicalRule("oC -> u_ / _ ")
         )
     }
 }

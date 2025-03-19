@@ -16,6 +16,6 @@ object PassingPhonemeMatcher: PhonemeMatcher() {
 
     override fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>? = when (other) {
         BorderPhonemeMatcher -> null
-        else -> (other ?: this) to false
+        else -> (other ?: this) to (other != null && other != this)
     }
 }
