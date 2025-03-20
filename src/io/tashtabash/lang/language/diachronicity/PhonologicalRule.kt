@@ -178,6 +178,29 @@ data class PhonologicalRule(
             " / ${precedingMatchers.joinToString("")}" +
             " _ ${followingMatchers.joinToString("")}" +
             if (allowSyllableStructureChange) "!" else ""
+
+    /**
+     * Move matchers on the borders of targetMatchers to precedingMatchers and followingMatchers
+     * if the substitutions are passing
+     */
+    fun trim(): PhonologicalRule {
+        var curRule = this
+
+        while (curRule.substitutions.lastOrNull() == PassingPhonemeSubstitution)
+            curRule = curRule.copy(
+                substitutions = curRule.substitutions.dropLast(1),
+                targetMatchers = curRule.targetMatchers.dropLast(1),
+                followingMatchers = curRule.targetMatchers.takeLast(1) + curRule.followingMatchers
+            )
+        while (curRule.substitutions.firstOrNull() == PassingPhonemeSubstitution)
+            curRule = curRule.copy(
+                substitutions = curRule.substitutions.drop(1),
+                targetMatchers = curRule.targetMatchers.drop(1),
+                followingMatchers = curRule.precedingMatchers + curRule.targetMatchers.take(1)
+            )
+
+        return curRule
+    }
 }
 
 
