@@ -184,7 +184,7 @@ fun unitePhonemeMatchersInternal(
                 is ExactPhonemeSubstitution -> {
                     // If the new phoneme matches, then all is fine & curSecond will be matched; return curFirst
                     result +=
-                        if (curSecond?.match(curFirstSubstitution.exactPhoneme) == true)
+                        if (curSecond?.match(curFirstSubstitution.exactPhoneme) != false)
                             curFirst
                                 ?: return null
                         else return null
