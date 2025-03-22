@@ -18,6 +18,9 @@ abstract class PhonemeMatcher {
 
     abstract fun match(changingPhoneme: ChangingPhoneme): Boolean
 
+    /**
+     * Returns a pair of a resulting Phoneme matcher and whether it is narrower than the original matcher
+     */
     abstract operator fun times(other: PhonemeMatcher?): Pair<PhonemeMatcher, Boolean>?
 
     open fun any(predicate: (PhonemeMatcher) -> Boolean) =
