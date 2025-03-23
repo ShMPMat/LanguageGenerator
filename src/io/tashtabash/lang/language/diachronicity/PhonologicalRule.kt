@@ -2,13 +2,8 @@ package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
-import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.createPhonemeSubstitutions
-import io.tashtabash.lang.language.morphem.change.substitution.unitePhonemeSubstitutions
-import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.createPhonemeMatchers
-import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
+import io.tashtabash.lang.language.morphem.change.substitution.*
+import io.tashtabash.lang.language.phonology.matcher.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -196,7 +191,7 @@ data class PhonologicalRule(
             curRule = curRule.copy(
                 substitutions = curRule.substitutions.drop(1),
                 targetMatchers = curRule.targetMatchers.drop(1),
-                followingMatchers = curRule.precedingMatchers + curRule.targetMatchers.take(1)
+                precedingMatchers = curRule.precedingMatchers + curRule.targetMatchers.take(1)
             )
 
         return curRule
