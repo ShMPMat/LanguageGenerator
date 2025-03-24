@@ -1222,7 +1222,7 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
-    fun `applyPhonologicalRule makes a deletes a consonant changing the syllable structure`() {
+    fun `applyPhonologicalRule changes the syllable structure when a vowel is deleted`() {
         val words = listOf(
             createNoun("tat"),
             createNoun("aba"),
