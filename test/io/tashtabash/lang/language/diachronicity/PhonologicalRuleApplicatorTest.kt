@@ -1580,7 +1580,7 @@ internal class PhonologicalRuleApplicatorTest {
             createAffixCategoryApplicator("-t")
         )
         val language = makeDefLang(words, derivations, nounChangeParadigm)
-        val phonologicalRule = createTestPhonologicalRule("[-Voiced] -> [+Voiced] / V _ ")
+        val phonologicalRule = createTestPhonologicalRule("(C[-Voiced]) -> [+Voiced] / V _ ")
 
         val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
 
