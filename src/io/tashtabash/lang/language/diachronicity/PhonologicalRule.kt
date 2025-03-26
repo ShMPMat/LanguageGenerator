@@ -110,9 +110,7 @@ data class PhonologicalRule(
     }
 
     private fun computeInternalShifts(other: PhonologicalRule): IntRange =
-        0..lengthWithEpenthesis - other.matchers.size
-
-    private val lengthWithEpenthesis = matchers.size + substitutions.count { it is EpenthesisSubstitution }
+        0..spreadMatchers.size - other.matchers.size
 
     /**
      * @return a PhonologicalRule which is identical to consecutive application
