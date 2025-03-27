@@ -3,21 +3,18 @@ package io.tashtabash.lang.generator
 import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
-import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.diachronicity.PhonologicalRule
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
-import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.change.*
+import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.PassingPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.*
-import io.tashtabash.lang.language.phonology.matcher.ExactPhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.PassingPhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.TypePhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.*
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.random.SampleSpaceObject
-import io.tashtabash.random.singleton.RandomSingleton
-import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 
 
@@ -33,7 +30,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             AffixTypes.UniversalAffix -> {
                 val affix = generateSyllableAffix(restrictions, hasInitial, hasFinal)
                 val templates = listOf(
-                    TemplateSingleChange(position, listOf(), listOf(), affix)
+                    GeneratedChange(position, listOf(), listOf(), affix)
                 )
 
                 eliminateCollisionsByEpenthesis(templates, restrictions)
@@ -47,7 +44,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                     )
                     val substitutions = listOf(PassingPhonemeSubstitution)
 
-                    TemplateSingleChange(position, listOf(TypePhonemeMatcher(it)), substitutions, affix)
+                    GeneratedChange(position, listOf(TypePhonemeMatcher(it)), substitutions, affix)
                 }
                 randomCollisionElimination(templates, restrictions)
             }
@@ -56,7 +53,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     }
 
     private fun eliminateCollisionsByEpenthesis(
-        templateChanges: List<TemplateSingleChange>,
+        templateChanges: List<GeneratedChange>,
         restrictions: PhoneticRestrictions
     ): List<TemplateChange> {
         return templateChanges.flatMap { change ->
@@ -73,22 +70,22 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 change.copy(
                     phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Consonant)),
                     matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution),
-                ),
+                ).toTemplateSingleChange(),
                 change.copy(
                     phonemeMatchers = listOf(TypePhonemeMatcher(PhonemeType.Vowel)),
                     matchedPhonemesSubstitution = listOf(PassingPhonemeSubstitution),
                     affix = vowelAdjacentAffix
-                ),
+                ).toTemplateSingleChange(),
             )
         }
     }
 
     private fun randomCollisionElimination(
-        templateChanges: List<TemplateSingleChange>,
+        templateChanges: List<GeneratedChange>,
         restrictions: PhoneticRestrictions
     ): List<TemplateChange> {
         return templateChanges.map { change ->
-            var result: TemplateChange = change
+            var result: TemplateChange = change.toTemplateSingleChange()
             val borderPhoneme = getBorderPhoneme(change)
             val borderAffixMatcher = when (change.position) {
                 Position.Beginning -> change.phonemeMatchers.firstOrNull()
@@ -108,7 +105,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     }
 
     private fun removeCollision(
-        wordChange: TemplateSingleChange,
+        wordChange: GeneratedChange,
         restrictions: PhoneticRestrictions,
         borderPhoneme: Phoneme
     ): TemplateChange? {
@@ -121,8 +118,8 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             }.exactPhoneme
             if (!doPhonemesCollide(newBorderPhoneme, borderPhoneme)) {
                 return createSimplifiedTemplateChange(listOf(
-                    makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme),
-                    wordChange
+                    makeTemplateChangeWithBorderPhoneme(wordChange, newChange, borderPhoneme).toTemplateSingleChange(),
+                    wordChange.toTemplateSingleChange()
                 ))
             }
         }
@@ -130,10 +127,10 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
     }
 
     private fun makeTemplateChangeWithBorderPhoneme(
-        oldChange: TemplateSingleChange,
+        oldChange: GeneratedChange,
         newAffix: List<ExactPhonemeSubstitution>,
         neededPhoneme: Phoneme
-    ): TemplateSingleChange {
+    ): GeneratedChange {
         val singleMatcher = listOf(ExactPhonemeMatcher(neededPhoneme))
         val singleSubstitution = listOf(PassingPhonemeSubstitution)
         var phonemeMatcher = oldChange.phonemeMatchers
@@ -148,10 +145,10 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             Position.End -> matchedPhonemeSubstitution.dropLast(1) + singleSubstitution
         } else singleSubstitution
 
-        return TemplateSingleChange(oldChange.position, phonemeMatcher, matchedPhonemeSubstitution, newAffix)
+        return GeneratedChange(oldChange.position, phonemeMatcher, matchedPhonemeSubstitution, newAffix)
     }
 
-    private fun getBorderPhoneme(singleChange: TemplateSingleChange) = when (singleChange.position) {
+    private fun getBorderPhoneme(singleChange: GeneratedChange) = when (singleChange.position) {
         Position.Beginning -> singleChange.affix.last()
         Position.End -> singleChange.affix.first()
     }.exactPhoneme
@@ -173,33 +170,15 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
 
     fun injectIrregularity(paradigm: ChangeParadigm, lexis: Lexis): ChangeParadigm {
-        val irregularityBias = RandomSingleton.random.nextDouble(0.1, 1.0)
-        val biasDecrease = 0.975
         val newChangeParadigms = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()
 
         for (speechPart in paradigm.wordChangeParadigm.speechParts) {
             val speechPartParadigm = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart)
             val newApplicators = speechPartParadigm.orderedApplicators
-                .mapIndexed { i, (c, m) ->
+                .mapIndexed { _, (c, m) ->
                     val newValueMap = m.map { (v, a) ->
-                        val spWords = lexis.getBySpeechPart(speechPart)
-                            .groupBy { it.semanticsCore.commonness }
-                            .map { (c, ws) -> c to ws.shuffled(RandomSingleton.random) }
-                            .sortedByDescending { (c) -> c }
-                            .flatMap { it.second }
-
-                        var currentBias = irregularityBias
-                        val irregularWords = spWords.takeWhile {
-                            (currentBias * it.semanticsCore.commonness).chanceOf<Boolean> {
-                                currentBias *= biasDecrease
-
-                                true
-                            } ?: false
-                        }
-
-                        v to generateIrregularApplicator(irregularWords, a, i)
+                        v to a
                     }.toMap()
-
                     c to newValueMap
                 }.toMap()
 
@@ -210,23 +189,35 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             wordChangeParadigm = paradigm.wordChangeParadigm.copy(speechPartChangeParadigms = newChangeParadigms)
         )
     }
+}
 
-    private fun generateIrregularApplicator(
-        words: List<Word>,
-        oldApplicator: CategoryApplicator,
-        applicatorIndex: Int
-    ): CategoryApplicator {
-        if (words.isEmpty())
-            return oldApplicator
-        else return oldApplicator
+data class GeneratedChange(
+    val position: Position,
+    val phonemeMatchers: List<PhonemeMatcher>,
+    val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
+    val affix: List<ExactPhonemeSubstitution>
+) {
+    fun toTemplateSingleChange(): TemplateSingleChange {
+        val stemPassingMatcher =
+            if (matchedPhonemesSubstitution.isEmpty())
+                listOf(PassingPhonemeMatcher)
+            else listOf()
 
-
-//        //TODO many new applicators
-//        //TODO only few remains
-////        val applicatorSequence = listOf(generateIrregularApplicator(app))
-//        val applicatorSequence = listOf(applica)
-//
-//        return FilterApplicator(applicatorSequence + (oldApplicator to listOf()))
+        return TemplateSingleChange(
+            position,
+            PhonologicalRule(
+                if (position == Position.Beginning)
+                    listOf(BorderPhonemeMatcher) + phonemeMatchers + stemPassingMatcher
+                else
+                    stemPassingMatcher + phonemeMatchers + listOf(BorderPhonemeMatcher),
+                if (position == Position.Beginning) 1 else stemPassingMatcher.size,
+                if (position == Position.Beginning) stemPassingMatcher.size else 1,
+                if (position == Position.Beginning)
+                    affix.map { EpenthesisSubstitution(it.exactPhoneme) } + matchedPhonemesSubstitution
+                else
+                    matchedPhonemesSubstitution + affix.map { EpenthesisSubstitution(it.exactPhoneme) }
+            ).trim()
+        )
     }
 }
 

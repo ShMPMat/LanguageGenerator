@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.util
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
+import io.tashtabash.lang.generator.GeneratedChange
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.diachronicity.createPhonologicalRule
@@ -73,7 +74,7 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
         if (matchers[0] == '-') {
             val parsedMatchers = createTestPhonemeMatchers(matchers.drop(1))
 
-            TemplateSingleChange(
+            GeneratedChange(
                 Position.End,
                 parsedMatchers,
                 parsedSubstitutions.take(parsedMatchers.size),
@@ -83,30 +84,30 @@ fun createTemplateChange(templateChange: String): TemplateSingleChange = when {
         } else {
             val parsedMatchers = createTestPhonemeMatchers(matchers.dropLast(1))
 
-            TemplateSingleChange(
+            GeneratedChange(
                 Position.Beginning,
                 parsedMatchers,
                 parsedSubstitutions.takeLast(parsedMatchers.size),
                 parsedSubstitutions.dropLast(parsedMatchers.size)
                     .map { s -> s as ExactPhonemeSubstitution },
             )
-        }
+        }.toTemplateSingleChange()
     }
     templateChange[0] == '-' -> {
-        TemplateSingleChange(
+        GeneratedChange(
             Position.End,
             listOf(),
             listOf(),
             templateChange.drop(1).map { ExactPhonemeSubstitution(testPhonemeContainer.getPhoneme(it.toString())) }
-        )
+        ).toTemplateSingleChange()
     }
     templateChange.last() == '-' -> {
-        TemplateSingleChange(
+        GeneratedChange(
             Position.Beginning,
             listOf(),
             listOf(),
             templateChange.dropLast(1).map { ExactPhonemeSubstitution(testPhonemeContainer.getPhoneme(it.toString())) }
-        )
+        ).toTemplateSingleChange()
     }
     else -> throw Exception("Incorrect test affix format: '$templateChange'")
 }

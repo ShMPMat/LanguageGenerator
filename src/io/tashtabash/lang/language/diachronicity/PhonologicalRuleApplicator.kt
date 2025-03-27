@@ -18,7 +18,6 @@ import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
 import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.unitePhonemeMatchers
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import kotlin.math.max
@@ -167,27 +166,14 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
                 when (templateChange.position) {
                     Position.Beginning -> {
                         try {
-                            val prefixPhonemes = templateChange.affix
-                                .map { it.exactPhoneme }
-                            var baseRawPhonemes: List<ChangingPhoneme> = getChangingPhonemes(
-                                prefixPhonemes.map { it to listOf() },
-                                addStartBoundary = true,
-                                addEndBoundary = false
-                            )
-                            baseRawPhonemes = applyPhonologicalRule(baseRawPhonemes, rule)
-                            val newBaseAffix = clearChangingPhonemes(baseRawPhonemes)
-                                .map { ExactPhonemeSubstitution(it) }
+                            val newRules = (templateChange.rule + rule).map {
+                                TemplateSingleChange(
+                                    templateChange.position,
+                                    it.copy(allowSyllableStructureChange = false)
+                                )
+                            }
 
-                            val changes = mutableListOf(
-                                templateChange.copy(affix = newBaseAffix)
-                            )
-
-                            // Calculate new TemplateChanges for all applications of the rule across morpheme boundaries
-                            for (i in 1 until rule.matchers.size)
-                                applyRuleAcrossBoundaries(rule, i, baseRawPhonemes, templateChange)
-                                    ?.let { changes += it }
-
-                            val resultChange = createSimplifiedTemplateChange(changes.reversed())
+                            val resultChange = createSimplifiedTemplateChange(newRules)
                             if (resultChange != templateChange)
                                 isChangeApplied = true
 
@@ -211,65 +197,6 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             }
             else -> throw LanguageException("Unknown template change '$templateChange'")
         }
-    }
-
-    private fun applyRuleAcrossBoundaries(
-        rule: PhonologicalRule,
-        i: Int,
-        baseRawPhonemes: List<ChangingPhoneme>,
-        templateChange: TemplateSingleChange,
-    ): TemplateSingleChange? {
-        val prefixMatchers = rule.matchers.dropLast(i)
-        val stemMatchers = rule.matchers.takeLast(i)
-        val phonemeWindow = baseRawPhonemes.takeLast(prefixMatchers.size)
-
-        // Check if the morpheme matches the prefix of the phonologicalRule
-        if (phonemeWindow.size != prefixMatchers.size)
-            return null
-        if (!prefixMatchers.match(phonemeWindow))
-            return null
-
-        val substitutionShift = baseRawPhonemes.size -
-                prefixMatchers.size +
-                rule.precedingMatchers.size
-
-        val rawPhonemes = baseRawPhonemes.toMutableList()
-        substitutePhonemes(rawPhonemes, substitutionShift, rule.substitutions)
-        val newAffix = clearChangingPhonemes(rawPhonemes)
-            .map { ExactPhonemeSubstitution(it) }
-
-        // Create new stem matchers accounting for the suffix of the phonologicalRule
-        val newMatchers = unitePhonemeMatchers(
-            templateChange.phonemeMatchers,
-            templateChange.matchedPhonemesSubstitution,
-            stemMatchers
-        )?.phonemeMatchers
-            ?: return null
-        // The morpheme can't be attached to a word border
-        if (newMatchers == listOf(BorderPhonemeMatcher))
-            return null
-
-        // Create new substitutions accounting for the suffix of the phonologicalRule
-        val stemSubstitutionsSize = max(0, stemMatchers.size - rule.followingMatchers.size)
-        val stemSubstitutions = rule.substitutions
-            .takeLast(stemSubstitutionsSize)
-        val stemSubstitutionsShift = max(
-            0,
-            stemMatchers.size - rule.followingMatchers.size - rule.targetMatchers.size
-        )
-        val newSubstitutions = unitePhonemeSubstitutions(
-            templateChange.matchedPhonemesSubstitution,
-            (1..stemSubstitutionsShift).map { null } + stemSubstitutions
-        )
-        val passingMatcherSuffix = (newSubstitutions.size until newMatchers.size)
-            .map { PassingPhonemeSubstitution }
-
-        return TemplateSingleChange(
-            templateChange.position,
-            newMatchers,
-            newSubstitutions + passingMatcherSuffix,
-            newAffix
-        )
     }
 
     fun applyPhonologicalRule(changeParadigm: ChangeParadigm, rule: PhonologicalRule): ChangeParadigm =
@@ -376,9 +303,8 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
                 // Stop if the end has been matched
                 if (rule.matchers.last() == BorderPhonemeMatcher)
                     break
-            } else {
+            } else
                 i++
-            }
         }
 
         return result
@@ -416,9 +342,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
 
             val oldPhoneme = phonemes.getOrNull(curShift)
             val newPhonemes = substitution.substitute(oldPhoneme?.phoneme)
-            if (newPhonemes.isEmpty())
-                phonemes[curShift] = ChangingPhoneme.DeletedPhoneme
-            else {
+            if (newPhonemes.isEmpty()) {
+                if (oldPhoneme != ChangingPhoneme.Boundary)
+                    phonemes[curShift] = ChangingPhoneme.DeletedPhoneme
+                curShift++
+            } else {
                 val newExactPhonemes =
                     if (substitution.isOriginalPhonemeChanged)
                         transferOldProsody(oldPhoneme!!, newPhonemes)

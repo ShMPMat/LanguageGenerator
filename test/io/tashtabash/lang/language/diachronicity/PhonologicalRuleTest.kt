@@ -119,6 +119,14 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `times() deletes epenthesis if it matches`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("VV -> __ / _ ")),
+            createTestPhonologicalRule("VV -> _(d)_ / _ ") * createTestPhonologicalRule("d -> - / _ ")
+        )
+    }
+
+    @Test
     fun `plus() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
@@ -242,8 +250,8 @@ internal class PhonologicalRuleTest {
     @Test
     fun `plus() keeps the original rule if it's narrowed on a passing matcher`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("aC -> u_ / _ "), createTestPhonologicalRule("a_ -> o_ / _ ")),
-            createTestPhonologicalRule("a_ -> o_ / _ ") + createTestPhonologicalRule("oC -> u_ / _ ")
+            listOf(createTestPhonologicalRule("aC -> u_ / _ "), createTestPhonologicalRule("a -> o / _ *")),
+            createTestPhonologicalRule("a -> o / _ *") + createTestPhonologicalRule("oC -> u_ / _ ")
         )
     }
 }

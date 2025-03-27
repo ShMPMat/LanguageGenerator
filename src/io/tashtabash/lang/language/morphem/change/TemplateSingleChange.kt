@@ -3,55 +3,27 @@ package io.tashtabash.lang.language.morphem.change
 import io.tashtabash.lang.containers.NoPhonemeException
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.derivation.DerivationClass
-import io.tashtabash.lang.language.diachronicity.ChangingPhoneme
-import io.tashtabash.lang.language.diachronicity.getChangingPhonemes
+import io.tashtabash.lang.language.diachronicity.*
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.ExactPhonemeSubstitution
-import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
-import io.tashtabash.lang.language.phonology.Phoneme
+import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.Syllable
 import io.tashtabash.lang.language.phonology.Syllables
-import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 
 
 data class TemplateSingleChange(
     override val position: Position,
-    val phonemeMatchers: List<PhonemeMatcher>,
-    val matchedPhonemesSubstitution: List<PhonemeSubstitution>,
-    val affix: List<ExactPhonemeSubstitution>
+    val rule: PhonologicalRule
 ) : TemplateChange() {
-    private fun findBeginningGoodIndex(phonemes: List<ChangingPhoneme>): Int? {
-        val isMatching = phonemeMatchers
-            .zip(getBeginningTestedPhonemes(phonemes))
-            .all { (matcher, phoneme) -> matcher.match(phoneme) }
-
-        return if (isMatching)
-            phonemeMatchers.size
-        else null
-    }
-
-    private fun getBeginningTestedPhonemes(phonemes: List<ChangingPhoneme>): List<ChangingPhoneme> {
-        val wordPhonemes = phonemes.take(phonemeMatchers.size)
-        val missingPhonemes = (wordPhonemes.size until phonemeMatchers.size).map { ChangingPhoneme.Boundary }
-
-        return wordPhonemes + missingPhonemes
-    }
-
-    private fun getFullChange() = when (position) {
-        Position.Beginning -> affix + matchedPhonemesSubstitution
-        Position.End -> matchedPhonemesSubstitution + affix
-    }
-
     override fun change(
         word: Word,
         categoryValues: SourcedCategoryValues,
         derivationValues: List<DerivationClass>
     ): Word {
         try {
-            val changingPhonemes = getChangingPhonemes(word, addStartBoundary = false, addEndBoundary = false)
+            val changingPhonemes = getChangingPhonemes(word, addStartBoundary = true, addEndBoundary = true)
             val changedPhonemes = changePhonemes(changingPhonemes)
                 ?: return word.copy()
             val noProsodySyllables = word.syllableTemplate.splitOnSyllables(changedPhonemes)
@@ -81,20 +53,10 @@ data class TemplateSingleChange(
     }
 
     private fun changePhonemes(phonemes: List<ChangingPhoneme>): PhonemeSequence? {
-        if (position == Position.End)
-            return mirror()
-                .changePhonemes(phonemes.reversed())
-                ?.reversed()
-
-        val testResult = findBeginningGoodIndex(phonemes)
-            ?: return null
-
-        val change: List<Phoneme> = getFullChange()
-            .zip(testResult - matchedPhonemesSubstitution.size - affix.size until testResult)
-            .flatMap { (substitution, i) -> substitution.substitute(phonemes.getOrNull(i)?.phoneme) }
-        return PhonemeSequence(
-            change + phonemes.drop(phonemeMatchers.size).mapNotNull { it.phoneme }
-        )
+        return PhonologicalRuleApplicator().applyPhonologicalRule(phonemes, rule)
+            .takeIf { it != phonemes }
+            ?.let { clearChangingPhonemes(it) }
+            ?.let { PhonemeSequence(it) }
     }
 
     private fun constructMorphemes(
@@ -107,12 +69,13 @@ data class TemplateSingleChange(
                 .constructMorphemes(morphemes.reversed(), categoryValues, derivationValues)
                 .reversed()
 
-        val newMorpheme = MorphemeData(affix.size, categoryValues, false, derivationValues)
+        val affixSize = rule.substitutions.takeWhile { it is EpenthesisSubstitution }.size
+        val newMorpheme = MorphemeData(affixSize, categoryValues, false, derivationValues)
 
         val updatedOriginalMorphemes = morphemes.toMutableList()
         var morphemeIdx = 0
         var phonemeIdx = 0
-        for (substitution in matchedPhonemesSubstitution) {
+        for (substitution in rule.substitutions.dropWhile { it is EpenthesisSubstitution }) {
             if (substitution == DeletingPhonemeSubstitution) {
                 val curMorpheme = updatedOriginalMorphemes[morphemeIdx]
                 if (curMorpheme.size == 0)
@@ -132,18 +95,10 @@ data class TemplateSingleChange(
 
     override fun mirror() = TemplateSingleChange(
         if (position == Position.Beginning) Position.End else Position.Beginning,
-        phonemeMatchers.reversed(),
-        matchedPhonemesSubstitution.reversed(),
-        affix.reversed()
+        rule.mirror()
     )
 
     override fun toString(): String {
-        val matcherString =
-            if (phonemeMatchers.isNotEmpty())
-                phonemeMatchers.joinToString("")
-            else
-                "with any phonemes"
-
-        return "$position $matcherString changes to ${getFullChange().joinToString("")}"
+        return rule.toString()
     }
 }

@@ -32,7 +32,7 @@ fun analyzePhonemes(
     phonemes += derivationParadigm.compounds
         .flatMap { it.infix.phonemes }
     phonemes += derivationParadigm.derivations
-        .flatMap { analyzePhonemes(it.affix.templateChange) }
+        .flatMap { analyzePhonemes(it.affix.templateChange, ImmutablePhonemeContainer(phonemes.toList())) }
     phonemes += changeParadigm.wordChangeParadigm
         .speechPartChangeParadigms
         .values
@@ -45,11 +45,9 @@ fun analyzePhonemes(
     return ImmutablePhonemeContainer(phonemes.toList())
 }
 
-
-private fun analyzePhonemes(templateChange: TemplateChange): List<Phoneme> = when (templateChange) {
-    is TemplateSingleChange -> templateChange.affix.map { it.exactPhoneme } +
-            templateChange.matchedPhonemesSubstitution.mapNotNull { analyzePhoneme(it) }
-    is TemplateSequenceChange -> templateChange.changes.flatMap { analyzePhonemes(it) }
+private fun analyzePhonemes(templateChange: TemplateChange, phonemeContainer: PhonemeContainer): List<Phoneme> = when (templateChange) {
+    is TemplateSingleChange -> analyzePhonemes(templateChange.rule, phonemeContainer)
+    is TemplateSequenceChange -> templateChange.changes.flatMap { analyzePhonemes(it, phonemeContainer) }
     else -> throw LanguageException("Unknown template change '$templateChange'")
 }
 
@@ -74,7 +72,7 @@ fun analyzePhonemes(phonologicalRule: PhonologicalRule, possiblePhonemes: Phonem
     }
 
 fun analyzePhoneme(categoryApplicator: CategoryApplicator, phonemeContainer: PhonemeContainer): List<Phoneme> = when (categoryApplicator) {
-    is AffixCategoryApplicator -> analyzePhonemes(categoryApplicator.affix.templateChange)
+    is AffixCategoryApplicator -> analyzePhonemes(categoryApplicator.affix.templateChange, phonemeContainer)
     is ConsecutiveApplicator -> categoryApplicator.applicators.flatMap { analyzePhoneme(it, phonemeContainer) }
     is FilterApplicator -> categoryApplicator.applicators.flatMap { (applicator, words) ->
             analyzePhoneme(applicator, phonemeContainer) + words.flatMap { it.toPhonemes() }

@@ -69,6 +69,7 @@ fun createPhonemeMatcher(matcher: String, phonemeContainer: PhonemeContainer): P
     matcher == "C" -> TypePhonemeMatcher(PhonemeType.Consonant)
     matcher == "V" -> TypePhonemeMatcher(PhonemeType.Vowel)
     matcher == "_" -> PassingPhonemeMatcher
+    matcher == "*" -> PassingPhonemeMatcher
     matcher == "$" -> BorderPhonemeMatcher
     mulModifierRegex.matches(matcher) -> MulMatcher(
         matcher.drop(1)

@@ -68,22 +68,20 @@ data class PhonologicalRule(
         val bases = applyInside(other).toMutableList()
 
         val modifications = bases.toList().flatMap { base ->
-            val leftBorderShifts = -other.matchers.size until 0
+            val leftBorderShifts = -other.spreadMatchers.size + 1 until 0
 
-            val leftBorderApplications = leftBorderShifts
+            bases += leftBorderShifts
                 .mapNotNull { shift -> base.applyWithShift(other, shift)?.first }
                 .distinct()
 
-            (bases + leftBorderApplications).flatMap { leftBorderBase ->
-                val rightBorderShifts = leftBorderBase.matchers.size - other.matchers.size until leftBorderBase.matchers.size
+            bases.toList().flatMap { leftBorderBase ->
+                // The first shift on which the matchers of other will cross the right boundary
+                val start = leftBorderBase.spreadMatchers.size - other.spreadMatchers.size + 1
+                // The last shift on which the matchers of other still overlap with this
+                val end = leftBorderBase.spreadMatchers.size - leftBorderBase.substitutions.count { it == DeletingPhonemeSubstitution }
+                val rightBorderShifts = start until end
 
-                rightBorderShifts.mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift) }
-                    .map { (rule, isNarrowed) ->
-                        if (isNarrowed)
-                            // Add the rule from before the narrowing
-                            bases += leftBorderBase
-                        rule
-                    }
+                rightBorderShifts.mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift)?.first }
                     .distinct()
             }
         }
@@ -133,13 +131,16 @@ data class PhonologicalRule(
      *  If other can't be possibly applied with such shift, return null.
      */
     private fun applyWithShift(other: PhonologicalRule, shift: Int): Pair<PhonologicalRule, Boolean>? {
+        if (shouldSkipApplication(other, shift))
+            return null
+
         // Preceding matchers + the matchers of other applied before the matchers of this start
         val thisSubstitutionsShift = precedingMatchers.size + max(0, -shift)
         val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
         val thisShiftedSubstitutions = createNullPadding(precedingMatchers.size) + substitutions
 
-        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchers(
-            matchers,
+        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchersInternal(
+            spreadMatchers,
             thisShiftedSubstitutions,
             other.matchers,
             shift
@@ -165,6 +166,24 @@ data class PhonologicalRule(
 
     private fun createNullPadding(size: Int): List<Nothing?> = (1..size)
         .map { null }
+
+    private fun shouldSkipApplication(other: PhonologicalRule, shift: Int): Boolean {
+        // Skip if the other matches the non-targetMatchers of this rule
+        // and the corresponding matchers are wider that the ones in the other
+        val matchedWindow = spreadMatchers.drop(max(0, shift))
+            .take(other.matchers.size)
+        if (shift + other.matchers.size < precedingMatchers.size) {
+            val matchedOther = other.spreadMatchers.takeLast(matchedWindow.size)
+            if (matchedWindow.zip(matchedOther).map { it.second?.times(it.first) }.all { it == null || !it.second })
+                return true
+        } else if (shift >= spreadMatchers.size - followingMatchers.size) {
+            val matchedOther = other.spreadMatchers.take(matchedWindow.size)
+            if (matchedWindow.zip(matchedOther).map { it.second?.times(it.first) }.all { it == null || !it.second })
+                return true
+        }
+
+        return false
+    }
 
     override fun toString() = targetMatchers.joinToString("") +
             " -> ${substitutions.joinToString("")}" +
