@@ -139,7 +139,7 @@ data class PhonologicalRule(
         val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
         val thisShiftedSubstitutions = createNullPadding(precedingMatchers.size) + substitutions
 
-        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchersInternal(
+        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchers(
             spreadMatchers,
             thisShiftedSubstitutions,
             other.matchers,

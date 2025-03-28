@@ -129,30 +129,8 @@ private val mulModifierRegex = "\\(.*\\)".toRegex()
 
 
 fun unitePhonemeMatchers(
-    first: List<PhonemeMatcher>,
-    // Substitutions applied after the first matchers, used to correctly determine shifts
-    firstSubstitutions: List<PhonemeSubstitution?>,
-    second: List<PhonemeMatcher>,
-    shift: Int = 0
-): UnitePhonemeMatchersResult? {
-    // Shift matchers so that Epenthesis substitutions always pair with nulls
-    val shiftedMatchers = mutableListOf<PhonemeMatcher?>()
-    var substitutionIdx = 0
-    for (i in first.indices) {
-        while (firstSubstitutions.getOrNull(substitutionIdx) is EpenthesisSubstitution) {
-            shiftedMatchers += null
-            substitutionIdx++
-        }
-        shiftedMatchers += first[i]
-        substitutionIdx++
-    }
-
-    return unitePhonemeMatchersInternal(shiftedMatchers, firstSubstitutions, second, shift)
-}
-
-
-fun unitePhonemeMatchersInternal(
     first: List<PhonemeMatcher?>,
+    // Substitutions applied after the first matchers, used to correctly determine shifts
     firstSubstitutions: List<PhonemeSubstitution?>,
     second: List<PhonemeMatcher>,
     shift: Int = 0
