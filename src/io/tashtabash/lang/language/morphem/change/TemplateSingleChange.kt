@@ -8,9 +8,12 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.morphem.change.substitution.DeletingPhonemeSubstitution
 import io.tashtabash.lang.language.morphem.change.substitution.EpenthesisSubstitution
+import io.tashtabash.lang.language.morphem.change.substitution.PhonemeSubstitution
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.Syllable
 import io.tashtabash.lang.language.phonology.Syllables
+import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.PassingPhonemeMatcher
 
 
 data class TemplateSingleChange(
@@ -98,7 +101,33 @@ data class TemplateSingleChange(
         rule.mirror()
     )
 
-    override fun toString(): String {
-        return rule.toString()
-    }
+    override fun toString(): String =
+        if (rule.precedingMatchers == listOf(BorderPhonemeMatcher))
+            printStemMatcher() + printSubstitutions(rule.substitutions) +
+                    printPassingFilling(rule.followingMatchers.size) +
+                    "-"
+        else if (rule.followingMatchers == listOf(BorderPhonemeMatcher))
+            printStemMatcher() + "-" +
+                    printPassingFilling(rule.followingMatchers.size) +
+                    printSubstitutions(rule.substitutions)
+        else
+            rule.toString()
+
+    private fun printStemMatcher(): String =
+        if (rule.precedingMatchers == listOf(BorderPhonemeMatcher) && rule.matchers.size > 1)
+            rule.matchers.drop(1).joinToString("") + "- -> "
+        else if (rule.followingMatchers == listOf(BorderPhonemeMatcher) && rule.matchers.size > 1)
+            "-" + rule.matchers.dropLast(1).joinToString("") + " -> "
+        else
+            ""
+
+    /**
+     * Strips brackets from epenthesis for clarity
+     */
+    private fun printSubstitutions(substitutions: List<PhonemeSubstitution>): String =
+        substitutions.joinToString("")
+            .replace(Regex("\\(.\\)")) { it.value.drop(1).dropLast(1) }
+
+    private fun printPassingFilling(size: Int): String =
+        (1..size).joinToString("") { PassingPhonemeMatcher.toString() }
 }
