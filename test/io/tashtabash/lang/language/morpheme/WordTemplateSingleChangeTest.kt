@@ -105,7 +105,7 @@ internal class WordTemplateSingleChangeTest {
 
     @Test
     fun `TemplateChange correctly deletes a boundary phoneme`() {
-        val changeTemplate = createTemplateChange("_- -> ba-")
+        val changeTemplate = createTemplateChange("*- -> ba-")
         val firstWord = createNoun("ba")
         val secondWord = createNoun("ca")
 

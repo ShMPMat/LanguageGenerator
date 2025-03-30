@@ -113,8 +113,8 @@ internal class PhonologicalRuleTest {
     @Test
     fun `times() keeps the original rules if it's narrowed on a passing matcher`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("a_ -> o_ / _ "), createTestPhonologicalRule("oC -> u_ / _ ")),
-            createTestPhonologicalRule("a_ -> o_ / _ ") * createTestPhonologicalRule("oC -> u_ / _ ")
+            listOf(createTestPhonologicalRule("a* -> o_ / _ "), createTestPhonologicalRule("oC -> u_ / _ ")),
+            createTestPhonologicalRule("a* -> o_ / _ ") * createTestPhonologicalRule("oC -> u_ / _ ")
         )
     }
 

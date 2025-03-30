@@ -27,7 +27,7 @@ internal class TemplateChangeSimplifierTest {
         assertEquals(
             TemplateSequenceChange(listOf(
                 createAffix("-t -> _b").templateChange,
-                createAffix("-_ -> ab").templateChange,
+                createAffix("-* -> ab").templateChange,
                 createAffix("-ab -> _t").templateChange,
             )),
             result

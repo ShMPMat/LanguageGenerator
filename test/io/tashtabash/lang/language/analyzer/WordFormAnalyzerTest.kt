@@ -59,7 +59,7 @@ internal class WordFormAnalyzerTest {
             createNoun("ubo"),
         )
         val nounChangeParadigm = makeDefNounChangeParadigm(
-            AffixCategoryApplicator(createAffix("_- -> o-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("*- -> o-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix),
@@ -97,7 +97,7 @@ internal class WordFormAnalyzerTest {
             createNoun("ubo"),
         )
         val nounChangeParadigm = makeDefNounChangeParadigm(
-            AffixCategoryApplicator(createAffix("_- -> o-"), CategoryRealization.Prefix),
+            AffixCategoryApplicator(createAffix("*- -> o-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("u-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("b-"), CategoryRealization.Prefix),
             AffixCategoryApplicator(createAffix("-ob"), CategoryRealization.Suffix),
