@@ -172,7 +172,7 @@ data class PhonologicalRule(
         // and the corresponding matchers are wider that the ones in the other
         val matchedWindow = spreadMatchers.drop(max(0, shift))
             .take(other.matchers.size)
-        if (shift + other.matchers.size < precedingMatchers.size) {
+        if (shift + other.matchers.size <= precedingMatchers.size) {
             val matchedOther = other.spreadMatchers.takeLast(matchedWindow.size)
             if (matchedWindow.zip(matchedOther).map { it.second?.times(it.first) }.all { it == null || !it.second })
                 return true
