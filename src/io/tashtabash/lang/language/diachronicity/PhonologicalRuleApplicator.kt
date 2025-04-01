@@ -163,30 +163,22 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     fun applyPhonologicalRule(templateChange: TemplateChange, rule: PhonologicalRule): TemplateChange {
         when (templateChange) {
             is TemplateSingleChange -> {
-                when (templateChange.position) {
-                    Position.Beginning -> {
-                        try {
-                            val newRules = (templateChange.rule + rule).map {
-                                TemplateSingleChange(
-                                    templateChange.position,
-                                    it.copy(allowSyllableStructureChange = false)
-                                )
-                            }
-
-                            val resultChange = createSimplifiedTemplateChange(newRules)
-                            if (resultChange != templateChange)
-                                isChangeApplied = true
-
-                            return resultChange
-                        } catch (e: NoPhonemeException) {
-                            _messages += "Can't apply the rule for the change '${templateChange}': ${e.message}"
-                            return templateChange
-                        }
+                try {
+                    val newRules = (templateChange.rule + rule).map {
+                        TemplateSingleChange(
+                            templateChange.position,
+                            it.copy(allowSyllableStructureChange = false)
+                        )
                     }
-                    Position.End -> {
-                        return applyPhonologicalRule(templateChange.mirror(), rule.mirror())
-                            .mirror()
-                    }
+
+                    val resultChange = createSimplifiedTemplateChange(newRules)
+                    if (resultChange != templateChange)
+                        isChangeApplied = true
+
+                    return resultChange
+                } catch (e: NoPhonemeException) {
+                    _messages += "Can't apply the rule for the change '${templateChange}': ${e.message}"
+                    return templateChange
                 }
             }
             is TemplateSequenceChange -> {
