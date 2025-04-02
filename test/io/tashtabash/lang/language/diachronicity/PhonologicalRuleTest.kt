@@ -195,7 +195,7 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
-    fun `plus() merges changes if the second rule applies on the both borders simultaneously`() {
+    fun `plus() applies the rule on the both borders simultaneously`() {
         assertEquals(
             listOf(
                 createTestPhonologicalRule("VCoCa -> _-a-a / _ "),
@@ -204,6 +204,19 @@ internal class PhonologicalRuleTest {
                 createTestPhonologicalRule("o -> a / _ ")
             ),
             createTestPhonologicalRule("o -> a /  _ ") + createTestPhonologicalRule("VCa -> _-a /  _ ")
+        )
+    }
+
+    @Test
+    fun `plus() applies the rule on the both borders simultaneously if the applications do not intersect`() {
+        assertEquals(
+            listOf(
+                createTestPhonologicalRule("VCouCa -> __ia_i / _ "),
+                createTestPhonologicalRule("ouCa -> aa_i / _ "),
+                createTestPhonologicalRule("VCou -> __ia /  _ "),
+                createTestPhonologicalRule("ou -> aa /  _ ")
+            ),
+            createTestPhonologicalRule("ou -> aa /  _ ") + createTestPhonologicalRule("VCa -> __i /  _ ")
         )
     }
 
