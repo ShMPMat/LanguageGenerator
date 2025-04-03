@@ -108,7 +108,7 @@ data class PhonologicalRule(
     }
 
     private fun computeInternalShifts(other: PhonologicalRule): IntRange =
-        0..spreadMatchers.size - other.matchers.size
+        0..spreadMatchers.size - other.matchers.size - substitutions.count { it is DeletingPhonemeSubstitution }
 
     /**
      * @return a PhonologicalRule which is identical to consecutive application

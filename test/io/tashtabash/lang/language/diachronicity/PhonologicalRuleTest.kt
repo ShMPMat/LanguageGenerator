@@ -221,6 +221,16 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `plus() merges substitutions after deletions correctly`() {
+        assertEquals(
+            listOf(
+                createTestPhonologicalRule("ou -> -u /  _ ")
+            ),
+            createTestPhonologicalRule("ou -> -a /  _ ") + createTestPhonologicalRule("a -> u /  _ ")
+        )
+    }
+
+    @Test
     fun `plus() returns the first rule if the second isn't applicable`() {
         assertEquals(
             listOf(createTestPhonologicalRule("o -> a / _ ")),
