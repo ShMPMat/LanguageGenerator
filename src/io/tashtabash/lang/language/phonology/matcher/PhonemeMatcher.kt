@@ -204,7 +204,7 @@ fun unitePhonemeMatchers(
                 else -> {
                     throw LanguageException("Can't handle substitution '$curFirstSubstitution'")
                 }
-        }
+            }
 
         val (matcher, wasNarrowed) = curFirst?.times(curSecond)
             ?: curSecond?.times(curFirst)
