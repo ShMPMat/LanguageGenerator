@@ -236,6 +236,7 @@ private fun extractSeed(args: Array<String>): Int =
         }
 
 val CHANGES_NUMBER = 10
+val visualizeBeforeChanges = false
 
 /**
  * One parameter expected: a generator seed in the Int range
@@ -247,6 +248,11 @@ fun main(args: Array<String>) {
     val generator = LanguageGenerator("SupplementFiles")
     val wordAmount = WordBase("SupplementFiles").baseWords.size
     var language = generator.generateLanguage(wordAmount)
+
+    if (visualizeBeforeChanges) {
+        Visualizer(language).visualize()
+        println("\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    }
 
     val phonologicalRulesContainer = createDefaultRules(generator.phonemeGenerator.allPossiblePhonemes)
     for (i in 0 until CHANGES_NUMBER) {
