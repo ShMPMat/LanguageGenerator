@@ -139,11 +139,21 @@ fun unitePhonemeMatchers(
     val result = mutableListOf<PhonemeMatcher>()
     var isNarrowed = false
     var isChanged = false
+    var applicationRange: IntRange? = null
 
     while (firstIdx < first.size || secondIdx < second.size) {
         val curFirst = first.getOrNull(firstIdx)
         val curFirstSubstitution = firstSubstitutions.getOrNull(firstIdx)
         val curSecond = second.getOrNull(secondIdx)
+
+        // The first matcher was applied on the previous step
+        if (secondIdx == 1)
+//            applicationRange = (result.size - 1) until result.size
+            applicationRange = (firstIdx - 1) until firstIdx
+        else if (secondIdx == second.size)
+//            applicationRange = applicationRange!!.first until result.size
+            applicationRange = applicationRange!!.first until firstIdx
+
         if (curFirstSubstitution != null)
             when (curFirstSubstitution) {
                 is DeletingPhonemeSubstitution -> {
@@ -223,15 +233,25 @@ fun unitePhonemeMatchers(
         secondIdx++
     }
 
+    // Possible only if the second has one matcher, and it's been applied the last
+    if (applicationRange == null)
+//        applicationRange = (result.size - 1)..result.size
+        applicationRange = (firstIdx - 1) until firstIdx
+    // Possible only if the second's last matcher has been applied the last
+    if (secondIdx == second.size)
+//        applicationRange = applicationRange.first until result.size
+        applicationRange = applicationRange.first until firstIdx
+
     // No BorderPhonemeMatcher in the middle
     if (result.drop(1).dropLast(1).any { it == BorderPhonemeMatcher })
         return null
 
-    return UnitePhonemeMatchersResult(result, isNarrowed, isChanged)
+    return UnitePhonemeMatchersResult(result, isNarrowed, isChanged, applicationRange)
 }
 
 data class UnitePhonemeMatchersResult(
     val phonemeMatchers: List<PhonemeMatcher>,
     val isNarrowed: Boolean,
-    val isChanged: Boolean
+    val isChanged: Boolean,
+    val applicationRange: IntRange
 )
