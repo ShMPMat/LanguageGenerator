@@ -4,7 +4,7 @@ package io.tashtabash.lang.language.morphem.change.substitution
 fun unitePhonemeSubstitutions(
     old: List<PhonemeSubstitution?>,
     new: List<PhonemeSubstitution?>
-): List<PhonemeSubstitution> {
+): List<PhonemeSubstitution>? {
     var oldIdx = 0
     var newIdx = 0
     val sizeSum = old.size + new.size
@@ -52,7 +52,8 @@ fun unitePhonemeSubstitutions(
             continue
         }
 
-        result += curNew * curOld
+        result += (curNew * curOld)
+            ?: return null
         oldIdx++
         newIdx++
     }

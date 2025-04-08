@@ -5,6 +5,7 @@ import io.tashtabash.lang.language.phonology.PhonemeModifier.*
 import io.tashtabash.lang.language.util.getTestPhoneme
 import io.tashtabash.lang.language.util.testPhonemeContainer
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -22,6 +23,17 @@ internal class PhonemeSubstitutionTest {
         assertEquals(
             result,
             unitePhonemeSubstitutions(old, new)
+        )
+    }
+
+    @Test
+    fun `times method returns null if the merge is impossible`() {
+        assertEquals(
+            null,
+            unitePhonemeSubstitutions(
+                listOf(ExactPhonemeSubstitution(testPhonemeContainer.getPhoneme("a"))),
+                listOf(ModifierPhonemeSubstitution(setOf(), setOf(Voiced), testPhonemeContainer))
+            )
         )
     }
 

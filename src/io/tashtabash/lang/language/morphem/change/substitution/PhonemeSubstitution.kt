@@ -13,7 +13,7 @@ interface PhonemeSubstitution {
 
     // Create a new PhonemeSubstitution which is equal in effect to
     // the sequential application of this instance after the other
-    operator fun times(other: PhonemeSubstitution): PhonemeSubstitution
+    operator fun times(other: PhonemeSubstitution): PhonemeSubstitution?
 }
 
 

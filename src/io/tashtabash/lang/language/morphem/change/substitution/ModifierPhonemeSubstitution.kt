@@ -20,7 +20,7 @@ data class ModifierPhonemeSubstitution(
     fun substituteOrNull(phoneme: Phoneme?): Phoneme? =
         phoneme?.let { phonemes.getPhonemeWithShiftedModifiersOrNull(it, addModifiers, removeModifiers) }
 
-    override fun times(other: PhonemeSubstitution): PhonemeSubstitution = when (other) {
+    override fun times(other: PhonemeSubstitution): PhonemeSubstitution? = when (other) {
         is PassingPhonemeSubstitution -> this
         is ModifierPhonemeSubstitution -> {
             val result = ModifierPhonemeSubstitution(
@@ -34,14 +34,12 @@ data class ModifierPhonemeSubstitution(
             else
                 result
         }
-        is ExactPhonemeSubstitution -> {
-            val newPhoneme = phonemes.getPhonemeWithShiftedModifiers(other.exactPhoneme, addModifiers, removeModifiers)
-            ExactPhonemeSubstitution(newPhoneme)
-        }
-        is EpenthesisSubstitution -> {
-            val newPhoneme = phonemes.getPhonemeWithShiftedModifiers(other.epenthesisPhoneme, addModifiers, removeModifiers)
-            EpenthesisSubstitution(newPhoneme)
-        }
+        is ExactPhonemeSubstitution ->
+            phonemes.getPhonemeWithShiftedModifiersOrNull(other.exactPhoneme, addModifiers, removeModifiers)
+                ?.let { ExactPhonemeSubstitution(it) }
+        is EpenthesisSubstitution ->
+            phonemes.getPhonemeWithShiftedModifiersOrNull(other.epenthesisPhoneme, addModifiers, removeModifiers)
+                ?.let { EpenthesisSubstitution(it) }
         else -> throw LanguageException("Unknown PhonemeSubstitution type '${other.javaClass.name}'")
     }
 
