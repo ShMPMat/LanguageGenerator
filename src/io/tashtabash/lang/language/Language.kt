@@ -38,10 +38,10 @@ data class Language(
      |${printParadigm(lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
      |
      |Noun:
-     |${printParadigm(lexis.words.first { it.semanticsCore.speechPart.type == Noun })}
+     |${printParadigm(Noun)}
      |
      |Verb:
-     |${printParadigm(lexis.words.first { it.semanticsCore.speechPart.type == Verb })}
+     |${printParadigm(Verb)}
      |
      |Numerals:
      |${getNumeralsPrinted()}

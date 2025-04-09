@@ -59,6 +59,10 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
     .lineUpAll()
     .joinToString("\n")
 
+fun Language.printParadigm(speechPart: SpeechPart, number: Int = 1, printOptionalCategories: Boolean = true): String =
+    lexis.words.filter { it.semanticsCore.speechPart.type == speechPart }
+        .take(number)
+        .joinToString("\n") { printParadigm(it, printOptionalCategories) }
 
 fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = true): String {
     val allWordForms = changeParadigm.wordChangeParadigm.getAllWordForms(word, printOptionalCategories)
