@@ -108,7 +108,7 @@ data class TemplateSingleChange(
                     "-"
         else if (rule.followingMatchers == listOf(BorderPhonemeMatcher))
             printStemMatcher() + "-" +
-                    printPassingFilling(rule.followingMatchers.size) +
+                    printPassingFilling(rule.precedingMatchers.size) +
                     printSubstitutions(rule.substitutions)
         else
             rule.toString()
