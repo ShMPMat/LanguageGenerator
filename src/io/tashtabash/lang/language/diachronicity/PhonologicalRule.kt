@@ -67,26 +67,37 @@ data class PhonologicalRule(
     operator fun plus(other: PhonologicalRule): List<PhonologicalRule> {
         val bases = applyInside(other).toMutableList()
 
-        val modifications = bases.toList().flatMap { base ->
+        val modifications = bases.toList().flatMap { (base, range) ->
             val leftBorderShifts = -other.spreadMatchers.size + 1 until 0
 
             bases += leftBorderShifts
-                .mapNotNull { shift -> base.applyWithShift(other, shift)?.first }
+                .filter { range == null || it + other.spreadMatchers.size < range.first }
+                .mapNotNull { shift ->
+                    base.applyWithShift(other, shift)
+                        ?.let { (rule, _, newRange) ->
+                            val lengthDiff = rule.spreadMatchers.size - base.spreadMatchers.size
+                            val shiftedOldRangeEnd = range?.last
+                                ?.let { it + lengthDiff }
+                            rule to newRange.first..(shiftedOldRangeEnd ?: newRange.last)
+                        }
+                }
                 .distinct()
 
-            bases.toList().flatMap { leftBorderBase ->
+            bases.toList().flatMap { (leftBorderBase, leftBorderRange) ->
                 // The first shift on which the matchers of other will cross the right boundary
                 val start = leftBorderBase.spreadMatchers.size - other.spreadMatchers.size + 1
                 // The last shift on which the matchers of other still overlap with this
                 val end = leftBorderBase.spreadMatchers.size - leftBorderBase.substitutions.count { it == DeletingPhonemeSubstitution }
                 val rightBorderShifts = start until end
 
-                rightBorderShifts.mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift)?.first }
+                rightBorderShifts
+                    .filter { leftBorderRange == null || it > leftBorderRange.last }
+                    .mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift)?.rule }
                     .distinct()
             }
         }
 
-        return (modifications.reversed() + bases.reversed()).distinct()
+        return (modifications.reversed() + bases.map { it.first }.reversed()).distinct()
     }
 
     /**
@@ -98,6 +109,7 @@ data class PhonologicalRule(
         val resultBase = applyInside(other)
             .takeIf { it.size == 1 }
             ?.get(0)
+            ?.first
             ?: return listOf(this, other)
 
         for (shift in -other.matchers.size + 1 until resultBase.matchers.size)
@@ -115,22 +127,28 @@ data class PhonologicalRule(
      *  of this and other, if the application of other is restricted to the area
      *  matched by this.
      */
-    private fun applyInside(other: PhonologicalRule): List<PhonologicalRule> =
-        computeInternalShifts(other).fold(listOf(this)) { prev, shift ->
-            prev.flatMap { curRule ->
-                curRule.applyWithShift(other, shift)
-                    ?.let { (rule, isNarrowed) ->
-                        listOfNotNull(curRule.takeIf { isNarrowed }, rule)
-                    } ?: prev
+    private fun applyInside(other: PhonologicalRule): List<Pair<PhonologicalRule, IntRange?>> =
+        computeInternalShifts(other)
+            .fold(listOf(this to null as IntRange?)) { prev, shift ->
+                prev.flatMap { (curRule, curRange ) ->
+                    if (curRange != null && shift <= curRange.last)
+                        listOf(curRule to curRange)
+                    else curRule.applyWithShift(other, shift)
+                        ?.let { (rule, isNarrowed, newRange) ->
+                            listOfNotNull(
+                                (curRule to curRange).takeIf { isNarrowed },
+                                rule to (curRange?.first ?: newRange.first)..newRange.last
+                            )
+                        } ?: listOf(curRule to curRange)
+                }
             }
-        }
 
     /**
      * @return a PhonologicalRule which is identical to application of this and
      *  then application of other, applied at the point shifted by shift.
      *  If other can't be possibly applied with such shift, return null.
      */
-    private fun applyWithShift(other: PhonologicalRule, shift: Int): Pair<PhonologicalRule, Boolean>? {
+    private fun applyWithShift(other: PhonologicalRule, shift: Int): ShiftedApplicationResult? {
         if (shouldSkipApplication(other, shift))
             return null
 
@@ -139,7 +157,7 @@ data class PhonologicalRule(
         val otherSubstitutionsShift = other.precedingMatchers.size + max(0, shift)
         val thisShiftedSubstitutions = createNullPadding(precedingMatchers.size) + substitutions
 
-        val (newMatchers, isNarrowed, isChanged) = unitePhonemeMatchers(
+        val (newMatchers, isNarrowed, isChanged, applicationRange) = unitePhonemeMatchers(
             spreadMatchers,
             thisShiftedSubstitutions,
             other.matchers,
@@ -151,17 +169,21 @@ data class PhonologicalRule(
         val newSubstitutions = unitePhonemeSubstitutions(
             createNullPadding(thisSubstitutionsShift - otherSubstitutionsShift) + substitutions,
             createNullPadding(otherSubstitutionsShift - thisSubstitutionsShift) + other.substitutions
-        )
+        ) ?: return null
         val newSubstitutionsShift = min(thisSubstitutionsShift, otherSubstitutionsShift)
         val directSubstitutionsCount = newSubstitutions.count { it !is EpenthesisSubstitution }
 
-        return PhonologicalRule(
-            newMatchers,
-            newSubstitutionsShift,
-            newMatchers.size - newSubstitutionsShift - directSubstitutionsCount,
-            newSubstitutions,
-            allowSyllableStructureChange || other.allowSyllableStructureChange
-        ) to isNarrowed
+        return ShiftedApplicationResult(
+            PhonologicalRule(
+                newMatchers,
+                newSubstitutionsShift,
+                newMatchers.size - newSubstitutionsShift - directSubstitutionsCount,
+                newSubstitutions,
+                allowSyllableStructureChange || other.allowSyllableStructureChange
+            ),
+            isNarrowed,
+            applicationRange
+        )
     }
 
     private fun createNullPadding(size: Int): List<Nothing?> = (1..size)
@@ -214,6 +236,13 @@ data class PhonologicalRule(
         return curRule
     }
 }
+
+
+private data class ShiftedApplicationResult(
+    val rule: PhonologicalRule,
+    val isNarrowed: Boolean,
+    val applicationRange: IntRange
+)
 
 
 fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer): PhonologicalRule {

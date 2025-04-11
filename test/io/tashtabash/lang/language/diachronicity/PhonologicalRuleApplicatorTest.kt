@@ -528,6 +528,9 @@ internal class PhonologicalRuleApplicatorTest {
         )
     }
 
+    /**
+     * It tests a pretty unnatural edge case, can be easily adjusted if the implementation details change
+     */
     @Test
     fun `applyPhonologicalRule doesn't change two sounds in a row by overlapping the target matchers areas`() {
         val words = listOf(
@@ -565,23 +568,23 @@ internal class PhonologicalRuleApplicatorTest {
             ),
             shiftedLanguage.lexis.words
         )
-//        assertEquals(
-//            listOf(//TODO the rule applications overlap: fix or accept
-//                Derivation(createAffix("-V -> oa", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("oac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
-//            ),
-//            shiftedLanguage.derivationParadigm.derivations
-//        )
-//        assertEquals(
-//            makeDefNounChangeParadigm(
-//                createAffixCategoryApplicator("V- -> oa", "a-"),
-//                createAffixCategoryApplicator("-V -> oa", "-u"),
-//                SuppletionCategoryApplicator(createNoun("baboboaaba")),
-//                createAffixCategoryApplicator("-V -> oaab", "-oab")
-//            ),
-//            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
-//        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-V -> oa", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("oac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("V- -> oa", "a-"),
+                createAffixCategoryApplicator("-V -> oa", "-u"),
+                SuppletionCategoryApplicator(createNoun("baboboaaba")),
+                createAffixCategoryApplicator("-V -> oaob", "-oab")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
     }
 
     @Test
@@ -656,23 +659,23 @@ internal class PhonologicalRuleApplicatorTest {
             ),
             shiftedLanguage.lexis.words
         )
-//        assertEquals(//TODO the rule applications overlap: fix or accept
-//            listOf(
-//                Derivation(createAffix("-V -> ia", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("iac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
-//            ),
-//            shiftedLanguage.derivationParadigm.derivations
-//        )
-//        assertEquals(
-//            makeDefNounChangeParadigm(
-//                createAffixCategoryApplicator("V- -> i_", "a-"),
-//                createAffixCategoryApplicator("-V -> iu", "-u"),
-//                SuppletionCategoryApplicator(createNoun("babobiiaba")),
-//                createAffixCategoryApplicator("-V -> iiob", "-iob")
-//            ),
-//            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
-//        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-V -> ia", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("iac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("V- -> i_", "a-"),
+                createAffixCategoryApplicator("-V -> iu", "-u"),
+                SuppletionCategoryApplicator(createNoun("babobiiaba")),
+                createAffixCategoryApplicator("-V -> ioob", "-iob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
     }
 
     @Test
@@ -1094,7 +1097,7 @@ internal class PhonologicalRuleApplicatorTest {
             createAffixCategoryApplicator("-oob")
         )
         val language = makeDefLang(words, derivations, nounChangeParadigm)
-        val phonologicalRule = createTestPhonologicalRule("V -> _(c) / _ V ")
+        val phonologicalRule = createTestPhonologicalRule(" -> (c) / V _ V ")
 
         val shiftedLanguage = PhonologicalRuleApplicator(true).applyPhonologicalRule(language, phonologicalRule)
 
@@ -1109,23 +1112,23 @@ internal class PhonologicalRuleApplicatorTest {
             ),
             shiftedLanguage.lexis.words
         )
-//        assertEquals(//TODO the rule applications overlap: fix or accept
-//            listOf(
-//                Derivation(createAffix("-V -> _ca", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("acac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
-//                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
-//            ),
-//            shiftedLanguage.derivationParadigm.derivations
-//        )
-//        assertEquals(
-//            makeDefNounChangeParadigm(
-//                createAffixCategoryApplicator("V- -> ac_", "a-"),
-//                createAffixCategoryApplicator("-V -> _cu", "-u"),
-//                SuppletionCategoryApplicator(createNoun("babobacocaba")),
-//                createAffixCategoryApplicator("-V -> _cocob", "-ocob")
-//            ),
-//            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
-//        )
+        assertEquals(
+            listOf(
+                Derivation(createAffix("-V -> _ca", "-a"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("acac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger),
+                Derivation(createAffix("-b"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+            ),
+            shiftedLanguage.derivationParadigm.derivations
+        )
+        assertEquals(
+            makeDefNounChangeParadigm(
+                createAffixCategoryApplicator("V- -> ac_", "a-"),
+                createAffixCategoryApplicator("-V -> _cu", "-u"),
+                SuppletionCategoryApplicator(createNoun("babobacocaba")),
+                createAffixCategoryApplicator("-V -> _cocob", "-ocob")
+            ),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
+        )
     }
 
     @Test
