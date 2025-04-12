@@ -41,15 +41,14 @@ class RuleApplicabilityAnalyser(val language: Language) {
     fun isSandhi(phonologicalRule: PhonologicalRule): Boolean {
         val isLanguageStressRuleBakeable = language.stressType in listOf(StressType.None, StressType.NotFixed)
         val hasStressRules = phonologicalRule.matchers.any { m -> m.any { it is ProsodyMatcher && Prosody.Stress in it.prosody }}
-
         if (!isLanguageStressRuleBakeable && hasStressRules)
             return true
 
-        val isStartBoundary = phonologicalRule.precedingMatchers.firstOrNull() == BorderPhonemeMatcher
+        val isStartBoundary = phonologicalRule.matchers.firstOrNull() == BorderPhonemeMatcher
         if (isStartBoundary && language.changeParadigm.wordChangeParadigm.hasPrefixes())
             return true
 
-        val isEndBoundary = phonologicalRule.followingMatchers.lastOrNull() == BorderPhonemeMatcher
+        val isEndBoundary = phonologicalRule.matchers.lastOrNull() == BorderPhonemeMatcher
         if (isEndBoundary && language.changeParadigm.wordChangeParadigm.hasSuffixes())
             return true
 
