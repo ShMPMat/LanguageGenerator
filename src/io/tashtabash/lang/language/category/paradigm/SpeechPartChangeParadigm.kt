@@ -56,13 +56,8 @@ data class SpeechPartChangeParadigm(
             throw ChangeException("SpeechPartChangeParadigm for $speechPart received ${word.semanticsCore.speechPart}")
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
-        for (exponenceCluster in exponenceClusters) {
-            //TODO why do we need this if? Find out and delete
-            if (word.categoryValues.map { it.parent }.containsAll(exponenceCluster.categories))
-                continue
-
+        for (exponenceCluster in exponenceClusters)
             wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster)
-        }
 
         val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
             it.copy(syntaxRole = word.syntaxRole)
