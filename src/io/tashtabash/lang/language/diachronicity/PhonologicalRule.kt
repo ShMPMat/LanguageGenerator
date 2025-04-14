@@ -34,8 +34,9 @@ data class PhonologicalRule(
         allowSyllableStructureChange
     )
 
-    val matchers: List<PhonemeMatcher>
-        get() = precedingMatchers + targetMatchers + followingMatchers
+    val matchers: List<PhonemeMatcher> by lazy {
+        precedingMatchers + targetMatchers + followingMatchers
+    }
 
     val substitutionPairs: List<Pair<PhonemeMatcher?, PhonemeSubstitution>> by lazy {
         var matcherIdx = 0
