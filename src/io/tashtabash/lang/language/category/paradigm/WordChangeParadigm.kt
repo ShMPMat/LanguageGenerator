@@ -151,7 +151,8 @@ data class WordChangeParadigm(
         val phonologicalRuleApplicator = PhonologicalRuleApplicator()
 
         return sandhiRules.fold(word) { curWord, rule ->
-            phonologicalRuleApplicator.applyPhonologicalRule(curWord, rule)
+            // Don't change word's history, it's not needed for word forms
+            phonologicalRuleApplicator.applyPhonologicalRule(curWord, rule, false)
         }
     }
 

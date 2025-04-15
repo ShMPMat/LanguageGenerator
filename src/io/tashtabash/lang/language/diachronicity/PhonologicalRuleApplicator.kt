@@ -230,7 +230,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         return lexis.shift(shiftedWords)
     }
 
-    fun applyPhonologicalRule(word: Word, rule: PhonologicalRule): Word {
+    fun applyPhonologicalRule(word: Word, rule: PhonologicalRule, doChangeHistory: Boolean = true): Word {
         try {
             val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
             val prosodies = rawPhonemes.filterIsInstance<ChangingPhoneme.ExactPhoneme>()
@@ -256,7 +256,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
                 return word
             }
 
-            val changeHistory = word.semanticsCore.changeHistory?.let { applyPhonologicalRule(it, rule) }
+            val changeHistory =
+                if (doChangeHistory)
+                    word.semanticsCore.changeHistory?.let { applyPhonologicalRule(it, rule) }
+                else
+                    word.semanticsCore.changeHistory
 
             return word.copy(
                 syllables = syllables,
