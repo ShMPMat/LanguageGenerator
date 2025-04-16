@@ -34,48 +34,49 @@ data class WordChangeParadigm(
             .filter { it.parent.compulsoryData.isApplicable(simpleCategoryValues) }
             .toSet()
 
+        val startingClause = speechPartChangeParadigms[word.semanticsCore.speechPart]
+            ?.apply(word, latchType, applicableValues)
+            ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
         val resultingClause = applyToNewWords(
-            speechPartChangeParadigms[word.semanticsCore.speechPart]
-                ?.apply(word, latchType, applicableValues)
-                ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}"),
+            startingClause,
             applicableValues + getStaticCategoryValues(word)
         )
 
         return resultingClause.map { applySandhiRules(it) }
     }
 
-    private fun applyToNewWords(
-        wordClause: WordClauseResult,
-        values: Set<SourcedCategoryValue>
-    ): WordClauseResult {
+    private fun applyToNewWords(wordClause: WordClauseResult, values: Set<SourcedCategoryValue>): WordClauseResult {
         val (ws, i) = wordClause
 
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
-            if (!isAlreadyProcessed(w, j, i)) {
-                applyToNewWord(w, l, values)
-            } else listOf(LatchedWord(w, l))
+            if (isAlreadyProcessed(w, j, i))
+                listOf(LatchedWord(w, l))
+            else {
+                val convertedValues = convertValuesForDependentClause(
+                    values,
+                    wordClause.mainWord.semanticsCore.speechPart.type
+                )
+                apply(w, l, convertedValues)
+                    .words
+                    .words
+            }
         }
         return WordClauseResult(FoldedWordSequence(newWs), i)
     }
 
-    private fun applyToNewWord(
-        word: Word,
-        latchType: LatchType,
-        values: Set<SourcedCategoryValue>
-    ): List<LatchedWord> {
-        val isAdnominal = word.semanticsCore.speechPart.subtype == adnominalSubtype
-        val isArticle = word.semanticsCore.speechPart.type == SpeechPart.Article
-        return if (isAdnominal || isArticle) {
-            val newCv = values.map {
-                it.copy(source = Agreement(SyntaxRelation.Agent, nominals))
-            }
-            apply(word, latchType, newCv).words.words
-        } else
-            listOf(LatchedWord(word, latchType))
+    private fun convertValuesForDependentClause(
+        values: Set<SourcedCategoryValue>,
+        rootSpeechPart: SpeechPart
+    ): SourcedCategoryValues = when (rootSpeechPart) {
+        SpeechPart.Noun -> values.map {
+            it.copy(source = Agreement(SyntaxRelation.Agent, nominals))
+        }
+        else -> throw ChangeException("Can't convert category values for a dependent clause of $rootSpeechPart")
     }
 
     private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int) =
-        mainWordIdx == curIdx || word.semanticsCore.speechPart.type == SpeechPart.Particle
+        mainWordIdx == curIdx
+                || word.semanticsCore.speechPart.type in listOf(SpeechPart.Particle, SpeechPart.Adposition)
 
     internal fun getDefaultState(word: Word): List<SourcedCategoryValue> {
         val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]
