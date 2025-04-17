@@ -46,10 +46,10 @@ interface PhonemeContainer {
         removeModifiers: Set<PhonemeModifier>
     ): Phoneme {
         val shiftedPhoneme = getPhonemeWithRemovedModifiersOrNull(phoneme, removeModifiers)
-            ?: throw NoPhonemeException("Can't remove modifiers '$removeModifiers' from phoneme '$phoneme' w/o them")
+            ?: throw NoPhonemeException("Can't remove modifiers '$removeModifiers' from phoneme '$phoneme'")
 
         return getPhonemeWithAddedModifiersOrNull(shiftedPhoneme, addModifiers)
-            ?: throw NoPhonemeException("Can't add modifiers '$addModifiers' to phoneme '$phoneme' already w/ them")
+            ?: throw NoPhonemeException("Can't add modifiers '$addModifiers' to phoneme '$phoneme'")
     }
 
     fun getPhonemeWithShiftedModifiersOrNull(
