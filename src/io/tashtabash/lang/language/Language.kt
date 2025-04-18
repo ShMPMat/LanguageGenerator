@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
-import io.tashtabash.lang.language.syntax.sequence.unfold
 
 
 data class Language(
