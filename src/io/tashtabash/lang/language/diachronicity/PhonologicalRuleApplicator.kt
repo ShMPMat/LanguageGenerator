@@ -79,6 +79,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
     }
 
     private fun addSandhiRule(language: Language, rule: PhonologicalRule): Language {
+        if (!isSandhiRuleApplied(language, rule)) {
+            _messages += "Rule $rule didn't have any effect on the language"
+            return language
+        }
+
         _messages += "Rule $rule is added to sandhi rules"
 
         val newWordChangeParadigm = language.changeParadigm.wordChangeParadigm.copy(
@@ -91,6 +96,13 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             changeParadigm = language.changeParadigm.copy(wordChangeParadigm = newWordChangeParadigm),
             phonemeContainer = ImmutablePhonemeContainer(newPhonemes)
         )
+    }
+
+    private fun isSandhiRuleApplied(language: Language, rule: PhonologicalRule): Boolean {
+        val forcedApplicator = PhonologicalRuleApplicator(true)
+        forcedApplicator.applyPhonologicalRule(language, rule)
+
+        return forcedApplicator.messages.lastOrNull() != "Rule $rule didn't have any effect on the language"
     }
 
     private fun changeSyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<Lexis, ChangeParadigm> {

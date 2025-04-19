@@ -1828,7 +1828,7 @@ internal class PhonologicalRuleApplicatorTest {
 
     @Test
     fun `applyPhonologicalRule changes only the eligible sandhi rules`() {
-        val words = listOf(createNoun("aca"), createNoun("oci"))
+        val words = listOf(createNoun("aco"), createNoun("toci"))
         val derivations = listOf(
             Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
         )
@@ -1839,17 +1839,17 @@ internal class PhonologicalRuleApplicatorTest {
             createAffixCategoryApplicator("-ob")
         )
         val language = makeDefLang(words, derivations, nounChangeParadigm)
-        val firstEligibleSandhiPhonologicalRule = createTestPhonologicalRule("a -> i / $ _ ")
-        val secondEligibleSandhiPhonologicalRule = createTestPhonologicalRule("o -> i / _ $")
-        val nonEligibleSandhiPhonologicalRule = createTestPhonologicalRule("t -> d / $ _ ")
+        val firstEligibleSandhi = createTestPhonologicalRule("a -> i / $ _ ")
+        val secondEligibleSandhi = createTestPhonologicalRule("o -> i / _ $")
+        val nonEligibleSandhi = createTestPhonologicalRule("t -> d / $ _ ")
         val phonologicalRule = createTestPhonologicalRule("i -> u / _ ")
 
         var shiftedLanguage = language
-        for (rule in listOf(firstEligibleSandhiPhonologicalRule, secondEligibleSandhiPhonologicalRule, nonEligibleSandhiPhonologicalRule, phonologicalRule))
+        for (rule in listOf(firstEligibleSandhi, secondEligibleSandhi, nonEligibleSandhi, phonologicalRule))
             shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(shiftedLanguage, rule)
 
         assertEquals(
-            listOf(createNoun("aca"), createNoun("ocu")),
+            listOf(createNoun("aco"), createNoun("tocu")),
             shiftedLanguage.lexis.words
         )
         assertEquals(
@@ -1878,8 +1878,8 @@ internal class PhonologicalRuleApplicatorTest {
     }
 
     @Test
-    fun `applyPhonologicalRule shouldn't add a rule to Sandhi if it's not applicable to any sandhi rules`() {
-        val words = listOf(createNoun("aca"), createNoun("oci"))
+    fun `applyPhonologicalRule shouldn't add a rule to sandhi if it's not applicable to any sandhi rules`() {
+        val words = listOf(createNoun("taca"), createNoun("oci"))
         val derivations = listOf(
             Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
         )
@@ -1898,7 +1898,7 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(shiftedLanguage, rule)
 
         assertEquals(
-            listOf(createNoun("aca"), createNoun("ocu")),
+            listOf(createNoun("taca"), createNoun("ocu")),
             shiftedLanguage.lexis.words
         )
         assertEquals(
@@ -1918,6 +1918,29 @@ internal class PhonologicalRuleApplicatorTest {
         )
         assertEquals(
             listOf(createTestPhonologicalRule("t -> - / $ _ ")),
+            shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
+        )
+    }
+
+    @Test
+    fun `applyPhonologicalRule shouldn't add a rule to sandhi if it's never applied to any word form`() {
+        val words = listOf(createNoun("aca"), createNoun("oci"))
+        val derivations = listOf(
+            Derivation(createAffix("ac-"), AbstractNounFromNoun, defSpeechPart, 1.0, defCategoryChanger)
+        )
+        val nounChangeParadigm = makeDefNounChangeParadigm(
+            createAffixCategoryApplicator("a-"),
+            createAffixCategoryApplicator("u-"),
+            createAffixCategoryApplicator("b-"),
+            createAffixCategoryApplicator("-o")
+        )
+        val language = makeDefLang(words, derivations, nounChangeParadigm)
+        val phonologicalRule = createTestPhonologicalRule("C -> - / _ $")
+
+        val shiftedLanguage = PhonologicalRuleApplicator().applyPhonologicalRule(language, phonologicalRule)
+
+        assertEquals(
+            listOf(),
             shiftedLanguage.changeParadigm.wordChangeParadigm.sandhiRules,
         )
     }
@@ -1946,7 +1969,7 @@ internal class PhonologicalRuleApplicatorTest {
 
     @Test
     fun `applyPhonologicalRule adds new phonemes to the shiftedLanguage from the sandhi rules`() {
-        val words = listOf(createNoun("aba"))
+        val words = listOf(createNoun("abo"))
         val nounChangeParadigm = makeDefNounChangeParadigm(
             createAffixCategoryApplicator("a- -> ob"),
             createAffixCategoryApplicator("o-"),
