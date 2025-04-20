@@ -247,6 +247,22 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `plus() returns the first rule if the second makes doesn't change the original matchers`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("o -> a / C _ C")),
+            createTestPhonologicalRule("o -> a / C _ C") + createTestPhonologicalRule("b -> t / _ ")
+        )
+    }
+
+    @Test
+    fun `plus() returns the first rule if the second makes it longer without changing the original matchers & substitutions`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule("o -> a / C _ C")),
+            createTestPhonologicalRule("o -> a / C _ C") + createTestPhonologicalRule("b -> t / i _ ")
+        )
+    }
+
+    @Test
     fun `plus() applies changes to an epenthesis`() {
         assertEquals(
             listOf(createTestPhonologicalRule("V -> _(d)(n) / $ _ a")),
