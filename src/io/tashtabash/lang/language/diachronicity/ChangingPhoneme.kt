@@ -51,9 +51,10 @@ fun getChangingPhonemes(
 
 private fun getProsodyContour(word: Word): List<List<Prosody>?> {
     return word.syllables.flatMap { syllable ->
-        val prefix = (0 until syllable.nucleusIdx).map<Int, List<Prosody>?> { null }
-        val postfix = (syllable.nucleusIdx + 1 until syllable.size).map<Int, List<Prosody>?> { null }
-
-        prefix + listOf(syllable.prosody) + postfix
+        (0 until syllable.size).map {
+            if (it == syllable.nucleusIdx)
+                syllable.prosody
+            else null
+        }
     }
 }
