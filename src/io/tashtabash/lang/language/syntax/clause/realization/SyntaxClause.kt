@@ -11,6 +11,10 @@ import io.tashtabash.lang.language.syntax.arranger.PassingArranger
 import kotlin.random.Random
 
 
+/**
+ * The basic building block of the meta-language for describing grammar, which can be
+ * transformed into a SentenceNode.
+ */
 interface SyntaxClause {
     fun toNode(language: Language, random: Random): SentenceNode
 }

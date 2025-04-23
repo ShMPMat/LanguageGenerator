@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.clause.realization.*
 import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
@@ -10,12 +9,7 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import kotlin.random.Random
 
 
-abstract class SentenceDescription : UnfoldableClauseDescription {
-    abstract override fun toClause(language: Language, context: Context, random: Random): UnfoldableClause
-
-    override fun unfold(language: Language, context: Context, random: Random): WordSequence =
-        toClause(language, context, random).unfold(language, random)
-}
+abstract class SentenceDescription : UnfoldableClauseDescription
 
 
 class TransitiveVerbMainClauseDescription(
