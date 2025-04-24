@@ -48,3 +48,5 @@ sealed class CategorySource {
 data class PSpeechPart(val speechPart: SpeechPart, val source: CategorySource)
 
 data class SourceTemplate(val source: CategorySource, override val probability: Double): SampleSpaceObject
+
+infix fun SpeechPart.sourcedFrom(source: CategorySource) = PSpeechPart(this, source)

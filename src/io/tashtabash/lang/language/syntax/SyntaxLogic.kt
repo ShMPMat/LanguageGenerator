@@ -16,15 +16,15 @@ import kotlin.math.abs
 
 
 class SyntaxLogic(
-    private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues>,
-    private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues>,
-    private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues>,
-    private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues>,
-    private val numberCategorySolver: NumberCategorySolver?,
-    private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>?,
-    private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues>,
-    private val personalPronounDropSolver: PersonalPronounDropSolver,
-    private val personalPronounInclusivity: SourcedCategory? // WALS only knows about separate inclusive
+    private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
+    private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mapOf(),
+    private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
+    private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mapOf(),
+    private val numberCategorySolver: NumberCategorySolver? = null,
+    private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = mapOf(),
+    private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
+    private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
+    private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive
 ) {
     val defaultInclusivity = if (personalPronounInclusivity != null) InclusivityValue.Exclusive else null
 

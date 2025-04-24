@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.syntax.clause.description
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.NumeralSystemBase
 import io.tashtabash.lang.language.category.*
+import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.derivation.DerivationParadigm
@@ -13,10 +14,14 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
-import io.tashtabash.lang.language.syntax.context.Context
-import io.tashtabash.lang.language.syntax.context.ContextValue
-import io.tashtabash.lang.language.syntax.context.PrioritizedValue
-import io.tashtabash.lang.language.syntax.context.Priority
+import io.tashtabash.lang.language.syntax.context.*
+import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
+import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.*
+import io.tashtabash.lang.language.syntax.context.Priority.Explicit
+import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.syntax.features.CopulaPresence
 import io.tashtabash.lang.language.syntax.features.PredicatePossessionPresence
 import io.tashtabash.lang.language.syntax.features.QuestionMarkerPresence
@@ -94,18 +99,11 @@ internal class SentenceDescriptionTest {
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
                 SyntaxLogic(
                     mapOf(
-                        SpeechPart.Verb.toIntransitive() to ContextValue.TimeContext.Past to listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory))
+                        SpeechPart.Verb.toIntransitive() to Past to listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory))
                     ),
                     mapOf(
                         SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
                     ),
-                    mapOf(),
-                    mapOf(),
-                    null,
-                    mapOf(),
-                    mapOf(),
-                    listOf(),
-                    null
                 )
             )
         )
@@ -115,13 +113,13 @@ internal class SentenceDescriptionTest {
                 NominalDescription(
                     "dog",
                     listOf(),
-                    ContextValue.ActorComplimentValue(ContextValue.Amount.AmountValue(3), null)
+                    ContextValue.ActorComplimentValue(AmountValue(3), null)
                 )
             )
         )
         val context = Context(
-            PrioritizedValue(ContextValue.TimeContext.Past, Priority.Implicit),
-            PrioritizedValue(ContextValue.TypeContext.Simple, Priority.Explicit)
+            PrioritizedValue(Past, Implicit),
+            PrioritizedValue(Simple, Explicit)
         )
 
         assertEquals(
@@ -203,17 +201,9 @@ internal class SentenceDescriptionTest {
                 ),
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
                 SyntaxLogic(
-                    mapOf(),
-                    mapOf(
+                    verbCasesSolver = mapOf(
                         SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
-                    ),
-                    mapOf(),
-                    mapOf(),
-                    null,
-                    mapOf(),
-                    mapOf(),
-                    listOf(),
-                    null
+                    )
                 )
             )
         )
@@ -223,13 +213,13 @@ internal class SentenceDescriptionTest {
                 NominalDescription(
                     "dog",
                     listOf(AdjectiveDescription("new")),
-                    ContextValue.ActorComplimentValue(ContextValue.Amount.AmountValue(3), null)
+                    ContextValue.ActorComplimentValue(AmountValue(3), null)
                 )
             )
         )
         val context = Context(
-            PrioritizedValue(ContextValue.TimeContext.Past, Priority.Implicit),
-            PrioritizedValue(ContextValue.TypeContext.Simple, Priority.Explicit)
+            PrioritizedValue(Past, Implicit),
+            PrioritizedValue(Simple, Explicit)
         )
 
         assertEquals(
@@ -242,6 +232,87 @@ internal class SentenceDescriptionTest {
                     .withMeaning("new"),
                 createNoun("i").withMeaning("dog"),
                 createIntransVerb("o").withMeaning("sleep")
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+
+    @Test
+    fun `Personal pronouns receive the gender from the context`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val personalPronoun = createWord("o", SpeechPart.PersonalPronoun)
+            .withMeaning("_personal_pronoun")
+        val verb = createIntransVerb("do")
+            .withMeaning("sleep")
+        // Set up noun class
+        val nounClassCategory = NounClass(
+            listOf(NounClassValue.Female, NounClassValue.Male),
+            setOf(SpeechPart.PersonalPronoun sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.PersonalPronoun)
+        )
+        val nounClassSourcedCategory = SourcedCategory(
+            nounClassCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val nounClassExponenceCluster = ExponenceCluster(listOf(nounClassSourcedCategory))
+        // Set up WordChangeParadigm
+        val nounClassApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.PersonalPronoun.toDefault(),
+            listOf(nounClassExponenceCluster),
+            mapOf(nounClassExponenceCluster to nounClassExponenceCluster.possibleValues.zip(nounClassApplicators).toMap()),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Verb.toIntransitive(),
+            listOf(),
+            mapOf(),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(nounClassCategory),
+            mapOf(
+                SpeechPart.PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                SpeechPart.Verb.toIntransitive() to intransitiveVerbChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(personalPronoun, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                ),
+                nounClassCategorySolver = mapOf(NounClassValue.Female to NounClassValue.Female)
+            )
+        )
+        // Set up descriptions
+        val personalPronounDescription = PronounDescription(
+            "_personal_pronoun",
+            listOf(),
+            ActorType.Agent,
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null)
+        )
+        val verbDescription = SimpleIntransitiveVerbDescription("sleep", personalPronounDescription)
+        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val context = Context(
+            LongGonePast to Implicit,
+            Simple to Explicit
+        )
+
+        assertEquals(
+            listOf(
+                createWord("oda", SpeechPart.PersonalPronoun).withMeaning("_personal_pronoun")
+                    .withMorphemes(
+                        MorphemeData(1, listOf(), true),
+                        MorphemeData(2, listOf(SourcedCategoryValue(NounClassValue.Female, CategorySource.Self, nounClassSourcedCategory)))
+                    ),
+                createIntransVerb("do").withMeaning("sleep")
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))

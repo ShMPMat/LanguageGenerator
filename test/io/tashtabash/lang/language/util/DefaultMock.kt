@@ -19,8 +19,10 @@ import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
+import io.tashtabash.random.toSampleSpaceObject
 
 
 val defSpeechPart = TypedSpeechPart(SpeechPart.Noun)
@@ -60,6 +62,17 @@ fun makeDefLang(
     words: List<Word>,
     derivations: List<Derivation>,
     nounChangeParadigm: SpeechPartChangeParadigm
+): Language = makeDefLang(
+    words,
+    WordChangeParadigm(listOf(defNumberCategory), mapOf(defSpeechPart to nounChangeParadigm)),
+    derivations
+)
+
+fun makeDefLang(
+    words: List<Word>,
+    wordChangeParadigm: WordChangeParadigm,
+    derivations: List<Derivation> = listOf(),
+    syntaxLogic: SyntaxLogic = SyntaxLogic()
 ) = Language(
     Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
@@ -67,14 +80,20 @@ fun makeDefLang(
     RestrictionsParadigm(mutableMapOf()),
     DerivationParadigm(derivations, listOf()),
     ChangeParadigm(
-        WordOrder(mapOf(), mapOf(), NominalGroupOrder.DNP),
-        WordChangeParadigm(listOf(defNumberCategory), mapOf(defSpeechPart to nounChangeParadigm)),
+        WordOrder(
+            mapOf(
+                VerbSentenceType.MainVerbClause to
+                        SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb).toSampleSpaceObject(1.0)), "Name")),
+            mapOf(),
+            NominalGroupOrder.DNP
+        ),
+        wordChangeParadigm,
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaType.None.toSso(1.0))),
             QuestionMarkerPresence(null),
             PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
         ),
         NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
-        SyntaxLogic(mapOf(), mapOf(), mapOf(), mapOf(), null, mapOf(), mapOf(), listOf(), null)
+        syntaxLogic
     )
 )
