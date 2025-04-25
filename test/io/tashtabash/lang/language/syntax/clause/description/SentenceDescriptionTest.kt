@@ -108,12 +108,11 @@ internal class SentenceDescriptionTest {
             )
         )
         val sentenceDescription = IntransitiveVerbMainClauseDescription(
-            SimpleIntransitiveVerbDescription(
+            IntransitiveVerbDescription(
                 "sleep",
                 NominalDescription(
                     "dog",
-                    listOf(),
-                    ContextValue.ActorComplimentValue(AmountValue(3), null)
+                    ContextValue.ActorComplimentValue(AmountValue(3), null),
                 )
             )
         )
@@ -208,12 +207,12 @@ internal class SentenceDescriptionTest {
             )
         )
         val sentenceDescription = IntransitiveVerbMainClauseDescription(
-            SimpleIntransitiveVerbDescription(
+            IntransitiveVerbDescription(
                 "sleep",
                 NominalDescription(
                     "dog",
-                    listOf(AdjectiveDescription("new")),
-                    ContextValue.ActorComplimentValue(AmountValue(3), null)
+                    ContextValue.ActorComplimentValue(AmountValue(3), null),
+                    listOf(AdjectiveDescription("new"))
                 )
             )
         )
@@ -295,10 +294,9 @@ internal class SentenceDescriptionTest {
         val personalPronounDescription = PronounDescription(
             "_personal_pronoun",
             listOf(),
-            ActorType.Agent,
             ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null)
         )
-        val verbDescription = SimpleIntransitiveVerbDescription("sleep", personalPronounDescription)
+        val verbDescription = IntransitiveVerbDescription("sleep", personalPronounDescription)
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,

@@ -75,7 +75,7 @@ class SyntaxLogic(
         }
     }
 
-    fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: ActorType): Boolean =
+    fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: ActorType?): Boolean =
         personalPronounDropSolver
             .any { (a, cs) ->
                 a == actorType

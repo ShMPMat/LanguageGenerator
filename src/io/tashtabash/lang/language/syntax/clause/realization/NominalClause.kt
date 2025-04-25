@@ -13,11 +13,11 @@ import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
-class NominalClause(
+data class NominalClause(
     val nominal: Word,
     val definitions: List<NounDefinerClause>,
     val additionalCategories: CategoryValues = listOf(),
-    private val actorType: ActorType?
+    private val actorType: ActorType? = null
 ) : SyntaxClause {
     init {
         val validNominals = listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun, SpeechPart.DeixisPronoun)
@@ -50,10 +50,9 @@ class NominalClause(
                 node.addStrayChild(it.first, it.second)
             }
 
-        if (nominal.semanticsCore.hasMeaning("_personal_pronoun")) {
+        if (nominal.semanticsCore.hasMeaning("_personal_pronoun"))
             node.isDropped =
-                language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType!!)
-        }
+                language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType)
 
         return node
     }

@@ -40,7 +40,7 @@ class PredicatePossessionDescription(
                 CaseValue.Dative
             )
             GenitiveOblique -> IntransitiveVerbMainClauseDescription(
-                SimpleIntransitiveVerbDescription(
+                IntransitiveVerbDescription(
                     "exist",
                     ownedDescription.copyAndAddDefinitions(listOf(PossessorDescription(ownerDescription)))
                 )

@@ -13,7 +13,6 @@ import io.tashtabash.lang.language.diachronicity.RandomPhonologicalRuleApplicato
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.syntax.clause.description.*
-import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.*
@@ -38,86 +37,79 @@ class Visualizer(val language: Language) {
     private fun printTestSentences() {
         val lightPossessor = NominalDescription(
             "light",
-            listOf(),
-            ActorComplimentValue(AmountValue(1), null)
+            ActorComplimentValue(AmountValue(1), null),
         )
-        val mothersSubj = NominalDescription(
+        val mothers = NominalDescription(
             "mother",
+            ActorComplimentValue(AmountValue(4), DeixisValue.Proximal),
             listOf(
                 AdjectiveDescription("new"),
                 PossessorDescription(lightPossessor)
-            ),
-            ActorComplimentValue(AmountValue(4), DeixisValue.Proximal)
+            )
         )
-        val fathersSubj = NominalDescription(
+        val fathers = NominalDescription(
             "father",
+            ActorComplimentValue(AmountValue(2), DeixisValue.Undefined),
             listOf(
                 AdjectiveDescription("new"),
                 AdjectiveDescription("high")
-            ),
-            ActorComplimentValue(AmountValue(2), DeixisValue.Undefined)
+            )
         )
-        val iSubj = PronounDescription(
+        val i = PronounDescription(
             "_personal_pronoun",
             listOf(),
-            ActorType.Agent,
             ActorValue(First, Female, AmountValue(1), DeixisValue.Proximal, null)
         )
-        val weSubj = PronounDescription(
+        val we = PronounDescription(
             "_personal_pronoun",
             listOf(),
-            ActorType.Agent,
             ActorValue(First, Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
         )
-        val timeObj = NominalDescription(
+        val time = NominalDescription(
             "time",
-            listOf(AdjectiveDescription("small")),
-            ActorComplimentValue(AmountValue(1), DeixisValue.Medial)
+            ActorComplimentValue(AmountValue(1), DeixisValue.Medial),
+            listOf(AdjectiveDescription("small"))
         )
-        val youPlObj = PronounDescription(
+        val youPl = PronounDescription(
             "_personal_pronoun",
             listOf(),
-            ActorType.Agent,
             ActorValue(Second, Neutral, AmountValue(2), DeixisValue.ProximalAddressee, null)
         )
-        val theseObj = PronounDescription(
+        val these = PronounDescription(
             "_deixis_pronoun",
             listOf(),
-            ActorType.Patient,
             ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null)
         )
         val handsObj = NominalDescription(
             "hand",
-            listOf(),
-            ActorComplimentValue(AmountValue(2), DeixisValue.Proximal)
+            ActorComplimentValue(AmountValue(2), DeixisValue.Proximal),
         )
         val homeObj = NominalDescription(
             "home",
-            listOf(),
-            ActorComplimentValue(AmountValue(1), null)
+            ActorComplimentValue(AmountValue(1), null),
         )
-        val firstSeeVerb = TransitiveVerbDescription("see", mothersSubj, timeObj)
-        val secondSeeVerb = TransitiveVerbDescription("see", fathersSubj, timeObj)
-        val thirdSeeVerb = TransitiveVerbDescription("see", iSubj, timeObj)
+        val firstSeeVerb = TransitiveVerbDescription("see", mothers, time)
+        val secondSeeVerb = TransitiveVerbDescription("see", fathers, time)
+        val thirdSeeVerb = TransitiveVerbDescription("see", i, time)
         val fourthSeeVerb = TransitiveVerbDescription(
             "see",
-            iSubj,
-            theseObj,
+            i,
+            these,
             listOf(IndirectObjectDescription(homeObj, IndirectObjectType.Location))
         )
-        val firstHearVerb = TransitiveVerbDescription("hear", iSubj, youPlObj)
-        val existVerb = SimpleIntransitiveVerbDescription("exist", iSubj)
+        val firstHearVerb = TransitiveVerbDescription("hear", i, youPl)
+        val existVerb = IntransitiveVerbDescription("exist", i)
         val firstBuildVerb = TransitiveVerbDescription(
             "build",
-            iSubj,
+            i,
             homeObj,
             listOf(IndirectObjectDescription(handsObj, IndirectObjectType.Instrument))
         )
         val secondBuildVerb = TransitiveVerbDescription(
             "build",
-            weSubj,
+            we,
             homeObj,
-            listOf(IndirectObjectDescription(theseObj, IndirectObjectType.Instrument))
+            listOf(IndirectObjectDescription(these, IndirectObjectType.Instrument))
         )
 
         val testSentencesMain = listOf(
@@ -131,11 +123,11 @@ class Visualizer(val language: Language) {
             TransitiveVerbMainClauseDescription(secondBuildVerb)
         )
         val testSentencesCopula = listOf(
-            CopulaMainClauseDescription(CopulaDescription(mothersSubj, timeObj)),
-            CopulaMainClauseDescription(CopulaDescription(fathersSubj, timeObj)),
-            CopulaMainClauseDescription(CopulaDescription(iSubj, timeObj)),
-            PredicatePossessionDescription(iSubj, theseObj),
-            PredicatePossessionDescription(mothersSubj, timeObj)
+            CopulaMainClauseDescription(CopulaDescription(mothers, time)),
+            CopulaMainClauseDescription(CopulaDescription(fathers, time)),
+            CopulaMainClauseDescription(CopulaDescription(i, time)),
+            PredicatePossessionDescription(i, these),
+            PredicatePossessionDescription(mothers, time)
         )
 
         val firstContext = Context(
@@ -172,7 +164,10 @@ class Visualizer(val language: Language) {
     }
 
     private fun printSampleClause(clause: UnfoldableClauseDescription, context: Context) {
-        println(getClauseAndInfoStr(clause.unfold(language, context, Random(10))))
+        val wordSequence = clause.toClause(language, context, Random(10))
+            .unfold(language, Random(10))
+
+        println(getClauseAndInfoStr(wordSequence))
     }
 
     private fun printAdditionalLexisInfo() {
