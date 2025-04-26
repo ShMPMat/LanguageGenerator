@@ -52,6 +52,8 @@ data class PhonologicalRule(
     private val spreadMatchers: List<PhonemeMatcher?>
         get() = precedingMatchers + substitutionPairs.map { it.first } + followingMatchers
 
+    private val lastIdx = spreadMatchers.size - substitutions.count { it == DeletingPhonemeSubstitution }
+
     fun mirror() = PhonologicalRule(
         followingMatchers.reversed(),
         targetMatchers.reversed(),
@@ -88,7 +90,7 @@ data class PhonologicalRule(
                 // The first shift on which the matchers of other will cross the right boundary
                 val start = leftBorderBase.spreadMatchers.size - other.spreadMatchers.size + 1
                 // The last shift on which the matchers of other still overlap with this
-                val end = leftBorderBase.spreadMatchers.size - leftBorderBase.substitutions.count { it == DeletingPhonemeSubstitution }
+                val end = leftBorderBase.lastIdx
                 val rightBorderShifts = start until end
 
                 rightBorderShifts
@@ -113,7 +115,7 @@ data class PhonologicalRule(
             ?.first
             ?: return listOf(this, other)
 
-        for (shift in -other.matchers.size + 1 until resultBase.matchers.size)
+        for (shift in -other.matchers.size + 1 until resultBase.lastIdx)
             if (shift !in computeInternalShifts(other) && resultBase.applyWithShift(other, shift) != null)
                 return listOf(this, other)
 
@@ -121,7 +123,7 @@ data class PhonologicalRule(
     }
 
     private fun computeInternalShifts(other: PhonologicalRule): IntRange =
-        0..spreadMatchers.size - other.matchers.size - substitutions.count { it is DeletingPhonemeSubstitution }
+        0..lastIdx - other.matchers.size
 
     /**
      * @return a PhonologicalRule which is identical to consecutive application
