@@ -1,19 +1,14 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
-import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.NumeralSystemBase
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.value.CategoryValue
-import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
-import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
-import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
@@ -22,14 +17,8 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.*
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
-import io.tashtabash.lang.language.syntax.features.CopulaPresence
-import io.tashtabash.lang.language.syntax.features.PredicatePossessionPresence
-import io.tashtabash.lang.language.syntax.features.QuestionMarkerPresence
-import io.tashtabash.lang.language.syntax.features.toSso
-import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
-import io.tashtabash.random.toSampleSpaceObject
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -42,9 +31,7 @@ internal class SentenceDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(
-                PSpeechPart(SpeechPart.Verb, CategorySource.Self)
-            ),
+            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
             setOf(SpeechPart.Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
@@ -68,43 +55,19 @@ internal class SentenceDescriptionTest {
                 SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
             )
         )
-        val lexis = Lexis(
+        val language = makeDefLang(
             listOf(
                 createNoun("i").withMeaning("dog"),
                 createIntransVerb("o").withMeaning("sleep")
             ),
-            mapOf(),
-            mapOf()
-        )
-        val language = Language(
-            lexis,
-            testPhonemeContainer,
-            StressType.Initial,
-            RestrictionsParadigm(mutableMapOf()),
-            DerivationParadigm(listOf(), listOf()),
-            ChangeParadigm(
-                WordOrder(
-                    mapOf(
-                        VerbSentenceType.MainVerbClause to
-                                SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb).toSampleSpaceObject(1.0)), "Name")),
-                    mapOf(),
-                    NominalGroupOrder.DNP
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                mapOf(
+                    SpeechPart.Verb.toIntransitive() to Past to listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory))
                 ),
-                wordChangeParadigm,
-                SyntaxParadigm(
-                    CopulaPresence(listOf(io.tashtabash.lang.language.syntax.features.CopulaType.None.toSso(1.0))),
-                    QuestionMarkerPresence(null),
-                    PredicatePossessionPresence(listOf(io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb.toSso(1.0)))
+                mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
                 ),
-                NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
-                SyntaxLogic(
-                    mapOf(
-                        SpeechPart.Verb.toIntransitive() to Past to listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory))
-                    ),
-                    mapOf(
-                        SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
-                    ),
-                )
             )
         )
         val sentenceDescription = IntransitiveVerbMainClauseDescription(
@@ -142,9 +105,7 @@ internal class SentenceDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(
-                PSpeechPart(SpeechPart.Adjective, CategorySource.Self)
-            ),
+            setOf(SpeechPart.Adjective sourcedFrom CategorySource.Self),
             setOf(SpeechPart.Adjective)
         )
         val tenseSourcedCategory = SourcedCategory(
@@ -169,40 +130,16 @@ internal class SentenceDescriptionTest {
                 SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
             )
         )
-        val lexis = Lexis(
+        val language = makeDefLang(
             listOf(
                 createWord("a", SpeechPart.Adjective).withMeaning("new"),
                 createNoun("i").withMeaning("dog"),
                 createIntransVerb("o").withMeaning("sleep")
             ),
-            mapOf(),
-            mapOf()
-        )
-        val language = Language(
-            lexis,
-            testPhonemeContainer,
-            StressType.Initial,
-            RestrictionsParadigm(mutableMapOf()),
-            DerivationParadigm(listOf(), listOf()),
-            ChangeParadigm(
-                WordOrder(
-                    mapOf(
-                        VerbSentenceType.MainVerbClause to
-                                SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb).toSampleSpaceObject(1.0)), "Name")),
-                    mapOf(),
-                    NominalGroupOrder.DNP
-                ),
-                wordChangeParadigm,
-                SyntaxParadigm(
-                    CopulaPresence(listOf(io.tashtabash.lang.language.syntax.features.CopulaType.None.toSso(1.0))),
-                    QuestionMarkerPresence(null),
-                    PredicatePossessionPresence(listOf(io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb.toSso(1.0)))
-                ),
-                NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
-                SyntaxLogic(
-                    verbCasesSolver = mapOf(
-                        SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
-                    )
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
                 )
             )
         )
