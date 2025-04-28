@@ -15,6 +15,8 @@ class ExponenceCluster(
     val categories: List<SourcedCategory>,
     possibleValues: Set<SourcedCategoryValues> = categories.map { it.actualSourcedValues }.cartesianProduct().toSet()
 ) {
+    constructor(vararg categories: SourcedCategory): this(categories.toList())
+
     val possibleValues: List<ExponenceValue> = possibleValues
         .map { ExponenceValue(it, this) }
 

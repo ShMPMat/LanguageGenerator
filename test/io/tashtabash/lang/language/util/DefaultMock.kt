@@ -40,11 +40,7 @@ fun getDefNumberSourcedCategory(isCompulsory: Boolean) = SourcedCategory(
 )
 
 fun makeDefExponenceCluster(isCompulsory: Boolean) = ExponenceCluster(
-    listOf(getDefNumberSourcedCategory(isCompulsory)),
     getDefNumberSourcedCategory(isCompulsory)
-        .actualSourcedValues
-        .map { listOf(it) }
-        .toSet()
 )
 
 fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulsory: Boolean = false) =
