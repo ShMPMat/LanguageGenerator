@@ -52,7 +52,6 @@ class StaticOrder(val order: List<SyntaxRelation>): RelationOrder {
 }
 
 class SovOrder(override val references: List<GenericSSO<SyntaxRelations>>, val name: String) : RelationOrder {
-
     override fun toString() = name
 }
 
