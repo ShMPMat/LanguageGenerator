@@ -20,7 +20,8 @@ class IndirectObjectDescription(val nominal: NominalDescription, val type: Indir
 enum class IndirectObjectType(val caseValue: CaseValue, val relation: SyntaxRelation) {
     Instrument(CaseValue.Instrumental, SyntaxRelation.Instrument),
     Addressee(CaseValue.Dative, SyntaxRelation.Addressee),
-    Location(CaseValue.Locative, SyntaxRelation.Location);
+    Location(CaseValue.Locative, SyntaxRelation.Location),
+    Benefactor(CaseValue.Benefactive, SyntaxRelation.Benefactor);
 
     override fun toString() = name
 }

@@ -84,7 +84,7 @@ class Visualizer(val language: Language) {
             "hand",
             ActorComplimentValue(AmountValue(2), DeixisValue.Proximal),
         )
-        val homeObj = NominalDescription(
+        val home = NominalDescription(
             "home",
             ActorComplimentValue(AmountValue(1), null),
         )
@@ -95,21 +95,33 @@ class Visualizer(val language: Language) {
             "see",
             i,
             these,
-            listOf(IndirectObjectDescription(homeObj, IndirectObjectType.Location))
+            listOf(IndirectObjectDescription(home, IndirectObjectType.Location))
         )
         val firstHearVerb = TransitiveVerbDescription("hear", i, youPl)
         val existVerb = IntransitiveVerbDescription("exist", i)
         val firstBuildVerb = TransitiveVerbDescription(
             "build",
             i,
-            homeObj,
+            home,
             listOf(IndirectObjectDescription(handsObj, IndirectObjectType.Instrument))
         )
         val secondBuildVerb = TransitiveVerbDescription(
             "build",
             we,
-            homeObj,
-            listOf(IndirectObjectDescription(these, IndirectObjectType.Instrument))
+            home,
+            listOf(
+                IndirectObjectDescription(these, IndirectObjectType.Instrument),
+                IndirectObjectDescription(youPl, IndirectObjectType.Benefactor)
+            )
+        )
+        val nounBeneficiaryBuildVerb = TransitiveVerbDescription(
+            "build",
+            we,
+            home,
+            listOf(
+                IndirectObjectDescription(these, IndirectObjectType.Instrument),
+                IndirectObjectDescription(fathers, IndirectObjectType.Benefactor)
+            )
         )
 
         val testSentencesMain = listOf(
@@ -120,7 +132,8 @@ class Visualizer(val language: Language) {
             TransitiveVerbMainClauseDescription(firstHearVerb),
             IntransitiveVerbMainClauseDescription(existVerb),
             TransitiveVerbMainClauseDescription(firstBuildVerb),
-            TransitiveVerbMainClauseDescription(secondBuildVerb)
+            TransitiveVerbMainClauseDescription(secondBuildVerb),
+            TransitiveVerbMainClauseDescription(nounBeneficiaryBuildVerb),
         )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(mothers, time)),

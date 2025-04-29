@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.syntax
 
+
 enum class SyntaxRelation(val shortName: String) {
     Agent("AG"),
     Patient("PAT"),
@@ -11,6 +12,7 @@ enum class SyntaxRelation(val shortName: String) {
     Instrument("INSTR"),
     Addressee("ADRSEE"),
     Location("LOCATION"),
+    Benefactor("BENEFACTOR"),
 
     CopulaParticle("COP"),
     QuestionMarker("QM"),

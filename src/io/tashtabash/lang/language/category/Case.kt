@@ -175,6 +175,7 @@ sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
     object Oblique : CaseValue("(oblique case ind)", "OBL")
     object Genitive : CaseValue("(genitive case ind)", "GEN")
     object Dative : CaseValue("(dative case ind)", "DAT")
+    object Benefactive : CaseValue("(benefactive case ind)", "BEN")
     object Instrumental : CaseValue("(instrumental case ind)", "INS")
     object Locative : CaseValue("(locative case ind)", "LOC")
 }

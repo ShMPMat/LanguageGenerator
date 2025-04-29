@@ -24,8 +24,13 @@ open class SimpleMutableLexis: AbstractLexis() {
 
         return word.copy(
             semanticsCore = word.semanticsCore.copy(
-                tags = word.semanticsCore.tags + SemanticsTag("location")
+                tags = word.semanticsCore.tags + universalVerbTags
             )
         )
     }
+
+    private val universalVerbTags = listOf(
+        SemanticsTag("location"),
+        SemanticsTag("benefactor")
+    )
 }

@@ -103,6 +103,12 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                 nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, caseValue)
                     ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, caseValue))
 
+                // Equate Ben with Dat
+                if (caseValue == CaseValue.Benefactive) 0.5.chanceOf {
+                    nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Dative)
+                        ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, CaseValue.Dative))
+                }
+
 //                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
 //                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
             }

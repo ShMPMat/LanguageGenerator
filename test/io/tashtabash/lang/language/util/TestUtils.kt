@@ -47,9 +47,9 @@ infix fun Word.withMeaning(meaning: Meaning) =
         semanticsCore = semanticsCore.copy(meaningCluster = MeaningCluster(meaning))
     )
 
-fun Word.withTags(vararg tags: SemanticsTag) =
+fun Word.withTags(vararg tags: String) =
     copy(
-        semanticsCore = semanticsCore.copy(tags = tags.toSet())
+        semanticsCore = semanticsCore.copy(tags = tags.map { SemanticsTag(it) }.toSet())
     )
 
 fun getPhonySyllableTemplate(): SyllableTemplate =

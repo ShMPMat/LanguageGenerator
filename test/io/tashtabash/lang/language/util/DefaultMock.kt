@@ -79,7 +79,7 @@ fun makeDefLang(
         WordOrder(
             mapOf(
                 VerbSentenceType.MainVerbClause to
-                        SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb).toSampleSpaceObject(1.0)), "Name")),
+                        SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb, SyntaxRelation.Benefactor).toSampleSpaceObject(1.0)), "Name")),
             mapOf(),
             NominalGroupOrder.DNP
         ),

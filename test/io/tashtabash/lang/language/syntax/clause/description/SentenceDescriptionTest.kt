@@ -39,7 +39,7 @@ internal class SentenceDescriptionTest {
             CategorySource.Self,
             CompulsoryData(true)
         )
-        val tenseExponenceCluster = ExponenceCluster(listOf(tenseSourcedCategory))
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
@@ -57,8 +57,8 @@ internal class SentenceDescriptionTest {
         )
         val language = makeDefLang(
             listOf(
-                createNoun("i").withMeaning("dog"),
-                createIntransVerb("o").withMeaning("sleep")
+                createNoun("i") withMeaning "dog",
+                createIntransVerb("o") withMeaning "sleep"
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
@@ -86,12 +86,12 @@ internal class SentenceDescriptionTest {
 
         assertEquals(
             listOf(
-                createNoun("i").withMeaning("dog"),
-                createIntransVerb("oto").withMeaning("sleep")
+                createNoun("i") withMeaning "dog",
+                createIntransVerb("oto")
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
                         MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
-                    )
+                    ) withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
@@ -113,7 +113,7 @@ internal class SentenceDescriptionTest {
             CategorySource.Self,
             CompulsoryData(true)
         )
-        val tenseExponenceCluster = ExponenceCluster(listOf(tenseSourcedCategory))
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
@@ -132,9 +132,9 @@ internal class SentenceDescriptionTest {
         )
         val language = makeDefLang(
             listOf(
-                createWord("a", SpeechPart.Adjective).withMeaning("new"),
-                createNoun("i").withMeaning("dog"),
-                createIntransVerb("o").withMeaning("sleep")
+                createWord("a", SpeechPart.Adjective) withMeaning "new",
+                createNoun("i") withMeaning "dog",
+                createIntransVerb("o") withMeaning "sleep"
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
@@ -164,10 +164,9 @@ internal class SentenceDescriptionTest {
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
                         MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
-                    )
-                    .withMeaning("new"),
-                createNoun("i").withMeaning("dog"),
-                createIntransVerb("o").withMeaning("sleep")
+                    ) withMeaning "new",
+                createNoun("i") withMeaning "dog",
+                createIntransVerb("o") withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
@@ -175,15 +174,12 @@ internal class SentenceDescriptionTest {
         )
     }
 
-
     @Test
     fun `Personal pronouns receive the gender from the context`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
-        val personalPronoun = createWord("o", SpeechPart.PersonalPronoun)
-            .withMeaning("_personal_pronoun")
-        val verb = createIntransVerb("do")
-            .withMeaning("sleep")
+        val personalPronoun = createWord("o", SpeechPart.PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createIntransVerb("do") withMeaning "sleep"
         // Set up noun class
         val nounClassCategory = NounClass(
             listOf(NounClassValue.Female, NounClassValue.Male),
@@ -195,7 +191,7 @@ internal class SentenceDescriptionTest {
             CategorySource.Self,
             CompulsoryData(true)
         )
-        val nounClassExponenceCluster = ExponenceCluster(listOf(nounClassSourcedCategory))
+        val nounClassExponenceCluster = ExponenceCluster(nounClassSourcedCategory)
         // Set up WordChangeParadigm
         val nounClassApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val personalPronounChangeParadigm = SpeechPartChangeParadigm(
@@ -242,12 +238,99 @@ internal class SentenceDescriptionTest {
 
         assertEquals(
             listOf(
-                createWord("oda", SpeechPart.PersonalPronoun).withMeaning("_personal_pronoun")
+                createWord("oda", SpeechPart.PersonalPronoun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
                         MorphemeData(2, listOf(SourcedCategoryValue(NounClassValue.Female, CategorySource.Self, nounClassSourcedCategory)))
-                    ),
-                createIntransVerb("do").withMeaning("sleep")
+                    ) withMeaning "_personal_pronoun",
+                createIntransVerb("do") withMeaning "sleep"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Beneficiary case is resolved`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val dog = createNoun("o") withMeaning "dog"
+        val verb = createIntransVerb("do")
+            .withTags("benefactor", "intrans") withMeaning "sleep"
+        // Set up noun class
+        val caseCategory = Case(
+            listOf(CaseValue.Absolutive, CaseValue.Benefactive),
+            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.Noun)
+        )
+        val caseSourcedCategory = SourcedCategory(
+            caseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val caseExponenceCluster = ExponenceCluster(caseSourcedCategory)
+        // Set up WordChangeParadigm
+        val nounClassApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val nounChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Noun.toDefault(),
+            listOf(caseExponenceCluster),
+            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(nounClassApplicators).toMap()),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Verb.toIntransitive(),
+            listOf(),
+            mapOf(),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(caseCategory),
+            mapOf(
+                SpeechPart.Noun.toDefault() to nounChangeParadigm,
+                SpeechPart.Verb.toIntransitive() to intransitiveVerbChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(dog, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                ),
+                nonCoreCaseSolver = mapOf(CaseValue.Benefactive to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
+            )
+        )
+        // Set up descriptions
+        val dogDescription = NominalDescription(
+            "dog",
+            ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
+        )
+        val verbDescription = IntransitiveVerbDescription(
+            "sleep",
+            dogDescription,
+            listOf(IndirectObjectDescription(dogDescription, IndirectObjectType.Benefactor))
+        )
+        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val context = Context(
+            LongGonePast to Implicit,
+            Simple to Explicit
+        )
+
+        assertEquals(
+            listOf(
+                createWord("oda", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(), true),
+                        MorphemeData(2, listOf(SourcedCategoryValue(CaseValue.Absolutive, CategorySource.Self, caseSourcedCategory)))
+                    ) withMeaning "dog",
+                createIntransVerb("do").withTags("benefactor", "intrans")
+                        withMeaning "sleep",
+                createWord("oto", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(), true),
+                        MorphemeData(2, listOf(SourcedCategoryValue(CaseValue.Benefactive, CategorySource.Self, caseSourcedCategory)))
+                    ) withMeaning "dog"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
