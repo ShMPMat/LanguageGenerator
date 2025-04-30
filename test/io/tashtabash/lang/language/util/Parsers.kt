@@ -119,7 +119,7 @@ fun createNoun(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySy
     createWord(phonemes, SpeechPart.Noun, syllableTemplate)
 
 fun createIntransVerb(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
-    createWord(phonemes, SpeechPart.Verb.toIntransitive(), syllableTemplate, setOf(SemanticsTag("intrans")))
+    createWord(phonemes, SpeechPart.Verb.toIntransitive(), syllableTemplate, setOf("intrans"))
 
 fun createWord(
     phonemes: String,
@@ -133,9 +133,9 @@ fun createWord(
     phonemes: String,
     speechPart: TypedSpeechPart,
     syllableTemplate: SyllableTemplate = getPhonySyllableTemplate(),
-    tags: Set<SemanticsTag> = setOf()
-) =
-    createWord(createPhonemes(phonemes), speechPart, syllableTemplate, tags)
+    tags: Set<String> = setOf()
+): Word =
+    createWord(createPhonemes(phonemes), speechPart, syllableTemplate, tags.map { SemanticsTag(it) }.toSet())
 
 fun getTestPhoneme(symbol: String): Phoneme =
     testPhonemeContainer.getPhoneme(symbol)
