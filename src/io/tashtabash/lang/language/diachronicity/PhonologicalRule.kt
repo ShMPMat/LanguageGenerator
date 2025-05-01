@@ -68,39 +68,32 @@ data class PhonologicalRule(
      *  it in the first place.
      */
     operator fun plus(other: PhonologicalRule): List<PhonologicalRule> {
-        val bases = applyInside(other).toMutableList()
+        val resultRules = mutableListOf<Pair<PhonologicalRule, IntRange?>>(this to null)
+        var i = 0
 
-        val modifications = bases.toList().flatMap { (base, range) ->
-            val leftBorderShifts = -other.spreadMatchers.size + 1 until 0
+        while (i < resultRules.size) {
+            // Larger by 1 than the first possible index
+            var shift = -other.spreadMatchers.size
 
-            bases += leftBorderShifts
-                .filter { range == null || it + other.spreadMatchers.size < range.first }
-                .mapNotNull { shift ->
-                    base.applyWithShift(other, shift)
-                        ?.let { (rule, _, newRange) ->
-                            val lengthDiff = rule.spreadMatchers.size - base.spreadMatchers.size
-                            val shiftedOldRangeEnd = range?.last
-                                ?.let { it + lengthDiff }
-                            rule to newRange.first..(shiftedOldRangeEnd ?: newRange.last)
-                        }
-                }
-                .distinct()
+            while (true) {
+                val (currentBase, currentRange) = resultRules[i]
+                // Don't apply shifts before the range: they are either unavailable or handled already
+                shift = max(shift + 1, (currentRange?.last ?: Int.MIN_VALUE) + 1)
 
-            bases.toList().flatMap { (leftBorderBase, leftBorderRange) ->
-                // The first shift on which the matchers of other will cross the right boundary
-                val start = leftBorderBase.spreadMatchers.size - other.spreadMatchers.size + 1
-                // The last shift on which the matchers of other still overlap with this
-                val end = leftBorderBase.lastIdx
-                val rightBorderShifts = start until end
+                if (shift >= currentBase.lastIdx)
+                    break
+                val result = currentBase.applyWithShift(other, shift)
+                    ?: continue
 
-                rightBorderShifts
-                    .filter { leftBorderRange == null || it > leftBorderRange.last }
-                    .mapNotNull { shift -> leftBorderBase.applyWithShift(other, shift)?.rule }
-                    .distinct()
+                if (result.isNarrowed)
+                    resultRules += result.rule to result.applicationRange
+                else
+                    resultRules[i] = result.rule to result.applicationRange
             }
+            i++
         }
 
-        return (modifications.reversed() + bases.map { it.first }.reversed()).distinct()
+        return resultRules.map { it.first }.reversed()
     }
 
     /**
@@ -109,17 +102,17 @@ data class PhonologicalRule(
      *  of this and other.
      */
     operator fun times(other: PhonologicalRule): List<PhonologicalRule> {
-        val resultBase = applyInside(other)
-            .takeIf { it.size == 1 }
-            ?.get(0)
-            ?.first
-            ?: return listOf(this, other)
+        var resultRule = this
 
-        for (shift in -other.matchers.size + 1 until resultBase.lastIdx)
-            if (shift !in computeInternalShifts(other) && resultBase.applyWithShift(other, shift) != null)
+        for (shift in -other.matchers.size + 1 until resultRule.lastIdx) {
+            val result = resultRule.applyWithShift(other, shift)
+                ?: continue
+            if (result.isNarrowed)
                 return listOf(this, other)
+            resultRule = result.rule
+        }
 
-        return listOf(resultBase)
+        return listOf(resultRule)
     }
 
     private fun computeInternalShifts(other: PhonologicalRule): IntRange =
