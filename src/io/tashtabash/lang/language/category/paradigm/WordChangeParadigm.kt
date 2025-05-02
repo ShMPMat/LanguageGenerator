@@ -9,6 +9,9 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
 import io.tashtabash.lang.utils.listCartesianProduct
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 
 
 data class WordChangeParadigm(
@@ -127,9 +130,15 @@ data class WordChangeParadigm(
     fun getAllWordForms(
         word: Word,
         includeOptionalCategories: Boolean
-    ): List<Pair<WordSequence, SourcedCategoryValues>> =
+    ): List<Pair<WordSequence, SourcedCategoryValues>> = runBlocking {
         getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
-            .map { apply(word, categoryValues = it).unfold() to it }
+            .map {
+                async {
+                    apply(word, categoryValues = it).unfold() to it
+                }
+            }.awaitAll()
+    }
+
 
     val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
 
