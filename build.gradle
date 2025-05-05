@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.30'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.20'
     id 'org.jetbrains.kotlinx.kover' version '0.9.0-RC'
 }
 
@@ -24,8 +24,8 @@ dependencies {
     runtimeOnly group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.4.31'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 jar {
@@ -38,14 +38,14 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    duplicatesStrategy 'exclude'
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
 
 test {
     useJUnitPlatform()
 }
 
-task run(type: Exec) {
+tasks.register('run', Exec) {
     dependsOn build
     group = "Execution"
     commandLine "java", "-classpath", sourceSets.main.runtimeClasspath.getAsPath(), "io.tashtabash.lang.VisualizerKt"
