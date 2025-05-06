@@ -107,7 +107,10 @@ data class WordChangeParadigm(
                 SourcedCategoryValue(it, Self, parentCategory)
             }
 
-    fun getSpeechPartParadigm(speechPart: TypedSpeechPart) = speechPartChangeParadigms.getValue(speechPart)
+    fun getSpeechPartParadigm(speechPart: TypedSpeechPart) =
+        speechPartChangeParadigms[speechPart]
+            ?: throw ChangeException("The change paradigm for '$speechPart' doesn't exist")
+
     fun getSpeechPartParadigms(speechPart: SpeechPart) = speechPartChangeParadigms
         .entries.filter { it.key.type == speechPart }
         .map { it.value }
