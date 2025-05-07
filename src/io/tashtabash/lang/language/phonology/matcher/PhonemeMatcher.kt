@@ -148,10 +148,8 @@ fun unitePhonemeMatchers(
 
         // The first matcher was applied on the previous step
         if (secondIdx == 1)
-//            applicationRange = (result.size - 1) until result.size
             applicationRange = (firstIdx - 1) until firstIdx
         else if (secondIdx == second.size)
-//            applicationRange = applicationRange!!.first until result.size
             applicationRange = applicationRange!!.first until firstIdx
 
         if (curFirstSubstitution != null)
@@ -235,11 +233,9 @@ fun unitePhonemeMatchers(
 
     // Possible only if the second has one matcher, and it's been applied the last
     if (applicationRange == null)
-//        applicationRange = (result.size - 1)..result.size
         applicationRange = (firstIdx - 1) until firstIdx
     // Possible only if the second's last matcher has been applied the last
     if (secondIdx == second.size)
-//        applicationRange = applicationRange.first until result.size
         applicationRange = applicationRange.first until firstIdx
 
     // No BorderPhonemeMatcher in the middle
