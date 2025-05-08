@@ -1,6 +1,5 @@
 package io.tashtabash.lang.language.diachronicity
 
-import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.matcher.*
@@ -115,30 +114,6 @@ data class PhonologicalRule(
         return listOf(resultRule)
     }
 
-    private fun computeInternalShifts(other: PhonologicalRule): IntRange =
-        0..lastIdx - other.matchers.size
-
-    /**
-     * @return a PhonologicalRule which is identical to consecutive application
-     *  of this and other, if the application of other is restricted to the area
-     *  matched by this.
-     */
-    private fun applyInside(other: PhonologicalRule): List<Pair<PhonologicalRule, IntRange?>> =
-        computeInternalShifts(other)
-            .fold(listOf(this to null as IntRange?)) { prev, shift ->
-                prev.flatMap { (curRule, curRange ) ->
-                    if (curRange != null && shift <= curRange.last)
-                        listOf(curRule to curRange)
-                    else curRule.applyWithShift(other, shift)
-                        ?.let { (rule, isNarrowed, newRange) ->
-                            listOfNotNull(
-                                (curRule to curRange).takeIf { isNarrowed },
-                                rule to (curRange?.first ?: newRange.first)..newRange.last
-                            )
-                        } ?: listOf(curRule to curRange)
-                }
-            }
-
     /**
      * @return a PhonologicalRule which is identical to application of this and
      *  then application of other, applied at the point shifted by shift.
@@ -239,34 +214,3 @@ private data class ShiftedApplicationResult(
     val isNarrowed: Boolean,
     val applicationRange: IntRange
 )
-
-
-fun createPhonologicalRule(rule: String, phonemeContainer: PhonemeContainer): PhonologicalRule {
-    val allowSyllableStructureChange = rule.last() == '!'
-    val clearedRule = rule.dropLastWhile { it == '!' }
-
-    return PhonologicalRule(
-        clearedRule.dropWhile { it != '/' }
-            .drop(1)
-            .dropLastWhile { it != '_' }
-            .dropLast(1)
-            .replace(" ", "")
-            .let { createPhonemeMatchers(it, phonemeContainer) },
-        clearedRule.dropLastWhile { it != '>' }
-            .dropLast(2)
-            .replace(" ", "")
-            .let { createPhonemeMatchers(it, phonemeContainer) },
-        clearedRule.dropWhile { it != '/' }
-            .dropWhile { it != '_' }
-            .drop(1)
-            .replace(" ", "")
-            .let { createPhonemeMatchers(it, phonemeContainer) },
-        clearedRule.dropWhile { it != '>' }
-            .drop(1)
-            .dropLastWhile { it != '/' }
-            .dropLast(1)
-            .replace(" ", "")
-            .let { createPhonemeSubstitutions(it, phonemeContainer) },
-        allowSyllableStructureChange
-    )
-}
