@@ -87,6 +87,9 @@ interface PhonemeContainer {
     fun getPhonemes(phonemeMatcher: PhonemeMatcher): List<Phoneme> =
         phonemes.filter { phonemeMatcher.match(it) }
 
+    fun getPhonemes(characteristic: PhonemeCharacteristic): List<Phoneme> =
+        phonemes.filter { it.characteristics.contains(characteristic) }
+
     fun getPhonemes(characteristics: Set<PhonemeCharacteristic>): List<Phoneme> =
         phonemes.filter { it.characteristics.containsAll(characteristics) }
 
@@ -95,6 +98,9 @@ interface PhonemeContainer {
 
     fun getPhonemesNot(phonemeMatcher: PhonemeMatcher): List<Phoneme> =
         phonemes.filter { !phonemeMatcher.match(it) }
+
+    fun getPhonemesNot(characteristic: PhonemeCharacteristic): List<Phoneme> =
+        phonemes.filter { !it.characteristics.contains(characteristic) }
 
     fun getPhonemesNot(characteristics: Set<PhonemeCharacteristic>): List<Phoneme> =
         phonemes.filter { characteristics.none { m -> m in it.modifiers } }
