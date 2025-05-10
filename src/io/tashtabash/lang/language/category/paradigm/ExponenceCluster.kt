@@ -128,6 +128,9 @@ data class SourcedCategory(val category: Category, val source: CategorySource, v
 
     fun containsValue(value: SourcedCategoryValue) = allPossibleSourcedValues.contains(value)
 
+    fun getValue(categoryValue: CategoryValue): SourcedCategoryValue =
+        allPossibleSourcedValues.first { it.categoryValue == categoryValue }
+
     override fun toString(): String {
         val categoriesString = category.toString() + getSourceString(source)
         val compulsoryString = if (compulsoryData.isCompulsory)
