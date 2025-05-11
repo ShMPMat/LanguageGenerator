@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.category.NumberValue
 import io.tashtabash.lang.language.category.PSpeechPart
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.derivation.PassingCategoryChanger
@@ -56,8 +57,13 @@ fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulso
 
 fun makeDefLang(
     words: List<Word>,
-    derivations: List<Derivation>,
-    nounChangeParadigm: SpeechPartChangeParadigm
+    derivations: List<Derivation> = listOf(),
+    nounChangeParadigm: SpeechPartChangeParadigm = makeDefNounChangeParadigm(
+        PassingCategoryApplicator,
+        PassingCategoryApplicator,
+        PassingCategoryApplicator,
+        PassingCategoryApplicator
+    )
 ): Language = makeDefLang(
     words,
     WordChangeParadigm(listOf(defNumberCategory), mapOf(defSpeechPart to nounChangeParadigm)),
