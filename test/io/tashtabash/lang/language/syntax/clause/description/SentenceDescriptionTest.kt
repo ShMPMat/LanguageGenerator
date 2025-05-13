@@ -1,8 +1,11 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.category.*
+import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
+import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
+import io.tashtabash.lang.language.category.realization.WordReduplicationCategoryApplicator
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
@@ -63,7 +66,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory))
+                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory.getValue(TenseValue.Past))
                 ),
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
@@ -75,7 +78,7 @@ internal class SentenceDescriptionTest {
                 "sleep",
                 NominalDescription(
                     "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3), null),
+                    ContextValue.ActorComplimentValue(AmountValue(3)),
                 )
             )
         )
@@ -90,7 +93,7 @@ internal class SentenceDescriptionTest {
                 createIntransVerb("oto")
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
+                        MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Past)))
                     ) withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
@@ -148,7 +151,7 @@ internal class SentenceDescriptionTest {
                 "sleep",
                 NominalDescription(
                     "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3), null),
+                    ContextValue.ActorComplimentValue(AmountValue(3)),
                     listOf(AdjectiveDescription("new"))
                 )
             )
@@ -163,7 +166,7 @@ internal class SentenceDescriptionTest {
                 createWord("ato", SpeechPart.Adjective)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Past, CategorySource.Self, tenseSourcedCategory)))
+                        MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Past)))
                     ) withMeaning "new",
                 createNoun("i") withMeaning "dog",
                 createIntransVerb("o") withMeaning "sleep"
@@ -241,7 +244,7 @@ internal class SentenceDescriptionTest {
                 createWord("oda", SpeechPart.PersonalPronoun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(NounClassValue.Female, CategorySource.Self, nounClassSourcedCategory)))
+                        MorphemeData(2, listOf(nounClassSourcedCategory.getValue(NounClassValue.Female)))
                     ) withMeaning "_personal_pronoun",
                 createIntransVerb("do") withMeaning "sleep"
             ),
@@ -322,15 +325,91 @@ internal class SentenceDescriptionTest {
                 createWord("oda", SpeechPart.Noun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(CaseValue.Absolutive, CategorySource.Self, caseSourcedCategory)))
+                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Absolutive)))
                     ) withMeaning "dog",
                 createIntransVerb("do").withTags("benefactor", "intrans")
                         withMeaning "sleep",
                 createWord("oto", SpeechPart.Noun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(CaseValue.Benefactive, CategorySource.Self, caseSourcedCategory)))
+                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Benefactive)))
                     ) withMeaning "dog"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Reduplicated plurals work`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up tense
+        val numberCategory = Number(
+            listOf(NumberValue.Singular, NumberValue.Plural),
+            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.Noun)
+        )
+        val numberSourcedCategory = SourcedCategory(
+            numberCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val numberExponenceCluster = ExponenceCluster(numberSourcedCategory)
+        // Set up WordChangeParadigm
+        val numberApplicators = listOf(PassingCategoryApplicator, WordReduplicationCategoryApplicator())
+        val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Noun.toDefault(),
+            listOf(numberExponenceCluster),
+            mapOf(numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap()),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(numberCategory),
+            mapOf(
+                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
+                SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(
+                createNoun("i") withMeaning "dog",
+                createIntransVerb("o") withMeaning "sleep"
+            ),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                ),
+                numberCategorySolver = NumberCategorySolver(
+                    mapOf(NumberValue.Singular to 1..1, NumberValue.Plural to 2..Int.MAX_VALUE),
+                    NumberValue.Plural
+                )
+            )
+        )
+        val sentenceDescription = IntransitiveVerbMainClauseDescription(
+            IntransitiveVerbDescription(
+                "sleep",
+                NominalDescription(
+                    "dog",
+                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                )
+            )
+        )
+        val context = Context(
+            PrioritizedValue(Past, Implicit),
+            PrioritizedValue(Simple, Explicit)
+        )
+
+        assertEquals(
+            listOf(
+                createNoun("i").withMorphemes(
+                    MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true)
+                ) withMeaning "dog",
+                createNoun("i").withMorphemes(
+                    MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true)
+                ) withMeaning "dog",
+                createIntransVerb("o") withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))

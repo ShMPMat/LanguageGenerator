@@ -52,7 +52,7 @@ data class WordChangeParadigm(
         val (ws, i) = wordClause
 
         val newWs = ws.words.flatMapIndexed { j, (w, l) ->
-            if (isAlreadyProcessed(w, j, i))
+            if (isAlreadyProcessed(w, j, i, wordClause.mainWord))
                 listOf(LatchedWord(w, l))
             else {
                 val convertedValues = convertValuesForDependentClause(
@@ -77,9 +77,10 @@ data class WordChangeParadigm(
         else -> throw ChangeException("Can't convert category values for a dependent clause of $rootSpeechPart")
     }
 
-    private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int) =
+    private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int, mainWord: Word) =
         mainWordIdx == curIdx
                 || word.semanticsCore.speechPart.type in listOf(SpeechPart.Particle, SpeechPart.Adposition)
+                || word == mainWord
 
     internal fun getDefaultState(word: Word): List<SourcedCategoryValue> {
         val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]
