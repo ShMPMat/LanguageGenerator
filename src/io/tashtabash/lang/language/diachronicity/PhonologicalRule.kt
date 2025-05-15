@@ -84,9 +84,15 @@ data class PhonologicalRule(
                 val result = currentBase.applyWithShift(other, shift)
                     ?: continue
 
-                if (result.isNarrowed)
-                    resultRules += result.rule to result.applicationRange
-                else
+                if (result.isNarrowed) {
+                    // Exclude endless loops when other's beginning matches its end
+                    val applicationRange = if (shift + other.spreadMatchers.size > currentBase.spreadMatchers.size)
+                        result.rule.spreadMatchers.indices
+                    else
+                        result.applicationRange
+
+                    resultRules += result.rule to applicationRange
+                } else
                     resultRules[i] = result.rule to result.applicationRange
             }
             i++
@@ -153,7 +159,12 @@ data class PhonologicalRule(
                 allowSyllableStructureChange || other.allowSyllableStructureChange
             ),
             isNarrowed,
-            applicationRange
+            applicationRange.first..
+                    applicationRange.last
+                    // Account for length inflation which epenthesis causes
+                    + other.substitutions.count { it is EpenthesisSubstitution }
+                    // Account for the fact that a glottal stop added between all vowels should do "oao -> o'a'o"
+                    - other.followingMatchers.size
         )
     }
 
