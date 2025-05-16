@@ -127,6 +127,14 @@ internal class PhonologicalRuleTest {
     }
 
     @Test
+    fun `times() correctly handles multiple epenthesis`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule(" -> (u) / $ _ V"), createTestPhonologicalRule(" -> (t) / V _ a")),
+            createTestPhonologicalRule(" -> (u) / $ _ V") * createTestPhonologicalRule(" -> (t) / V _ a")
+        )
+    }
+
+    @Test
     fun `plus() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
@@ -291,6 +299,14 @@ internal class PhonologicalRuleTest {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / _ "), createTestPhonologicalRule("a -> o / _ *")),
             createTestPhonologicalRule("a -> o / _ *") + createTestPhonologicalRule("oC -> u_ / _ ")
+        )
+    }
+
+    @Test
+    fun `plus() correctly handles multiple epenthesis`() {
+        assertEquals(
+            listOf(createTestPhonologicalRule(" -> (u)(t) / $ _ a"), createTestPhonologicalRule(" -> (u) / $ _ V")),
+            createTestPhonologicalRule(" -> (u) / $ _ V") + createTestPhonologicalRule(" -> (t) / V _ a")
         )
     }
 }
