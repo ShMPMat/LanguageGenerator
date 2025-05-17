@@ -108,8 +108,7 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
                 MulMatcher(matcher, ProsodyMatcher(Prosody.Stress))
             else
                 matcher
-        is PassingPhonemeMatcher -> PhonemeType.values()
-            .asList()
+        is PassingPhonemeMatcher -> PhonemeType.entries
             .randomElement()
             .let { TypePhonemeMatcher(it) }
         is CharacteristicPhonemeMatcher -> language.phonemeContainer
