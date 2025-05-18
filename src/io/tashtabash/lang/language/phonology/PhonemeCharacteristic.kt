@@ -6,10 +6,10 @@ import io.tashtabash.lang.language.LanguageException
 interface PhonemeCharacteristic
 
 fun parseCharacteristic(name: String): PhonemeCharacteristic =
-    PhonemeModifier.values().firstOrNull { it.name == name }
-        ?: ArticulationManner.values().firstOrNull { it.name == name }
-        ?: ArticulationPlace.values().firstOrNull { it.name == name }
-        ?: throw LanguageException("Cannot parse phoneme characteristic ${name}")
+    PhonemeModifier.entries.firstOrNull { it.name == name }
+        ?: ArticulationManner.entries.firstOrNull { it.name == name }
+        ?: ArticulationPlace.entries.firstOrNull { it.name == name }
+        ?: throw LanguageException("Cannot parse phoneme characteristic $name")
 
 enum class ArticulationPlace(val positionIndex: Int): PhonemeCharacteristic {
     Bilabial(0),
@@ -32,7 +32,7 @@ enum class ArticulationPlace(val positionIndex: Int): PhonemeCharacteristic {
 }
 
 val vowelArticulationPlaces = listOf(ArticulationPlace.Front, ArticulationPlace.Central, ArticulationPlace.Back)
-val consonantArticulationPlaces = ArticulationPlace.values()
+val consonantArticulationPlaces = ArticulationPlace.entries
     .filter { it !in vowelArticulationPlaces }
 
 //TODO positions for consonants aren't final

@@ -72,7 +72,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         RealizationBox(Suppletion, 3.0)
     ) else emptyRealization
 
-    override fun randomRealization() = InclusivityPresence.values().randomElement().possibilities
+    override fun randomRealization() = InclusivityPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         PersonalPronoun -> true withCoCategories listOf(nonSingularNumbers, listOf(First))

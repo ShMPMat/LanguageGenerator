@@ -46,7 +46,7 @@ class ChangeParadigmGenerator(
 
         val oldCategoryData = mutableListOf<SpeechPartCategoryData>()
         val oldSpeechParts = mutableListOf<TypedSpeechPart>()
-        val speechParts = SpeechPart.values().map { it.toDefault() }.toMutableList()
+        val speechParts = SpeechPart.entries.map { it.toDefault() }.toMutableList()
         val newSpeechParts = mutableSetOf<TypedSpeechPart>()
 
         val speechPartChangesMap = mutableMapOf<TypedSpeechPart, SpeechPartChangeParadigm>()

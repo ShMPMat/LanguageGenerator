@@ -74,13 +74,12 @@ class CategoryGenerator {
     }
 
     private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<PSpeechPart> {
-        val max = SpeechPart.values()
+        val max = SpeechPart.entries
             .flatMap { supplements.speechPartProbabilities(it) }
-            .map { it.probability }
-            .maxOrNull()
+            .maxOfOrNull { it.probability }
             ?: throw DataConsistencyException("No SpeechPart exists")
 
-        return SpeechPart.values().flatMap { speechPart ->
+        return SpeechPart.entries.flatMap { speechPart ->
             supplements.speechPartProbabilities(speechPart).mapNotNull {
                 val probability = it.probability / max
 

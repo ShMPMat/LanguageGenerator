@@ -177,7 +177,7 @@ class AddRandomConsonantMannerRowApplicator(
     private val gapProbability: Double = 0.2,
 ) : ConsonantGenerationApplicator() {
     override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
-        val articulationManner = ArticulationManner.values()
+        val articulationManner = ArticulationManner.entries
             .filter { it.sonorityLevel > 0 }
             .randomElement()
         val newPhonemes = phonemePool.getPhonemes(PhonemeType.Consonant)

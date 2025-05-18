@@ -321,7 +321,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
         val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
 
-        for (actor in ActorType.values()) {
+        for (actor in ActorType.entries) {
             val source = when (actor) {
                 Agent -> SyntaxRelation.Agent
                 Patient -> SyntaxRelation.Patient

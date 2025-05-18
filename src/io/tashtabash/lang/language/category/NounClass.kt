@@ -74,8 +74,9 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == nounClassName }
-        if (acceptableValues.size != 1) return emptyRealization
-        val value = acceptableValues.first()
+        if (acceptableValues.size != 1)
+            return emptyRealization
+
         return when (speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
@@ -90,7 +91,7 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization(): List<NounClassValue> {
-        val type = NounClassPresence.values().randomElement()
+        val type = NounClassPresence.entries.randomElement()
 
         return if (type == NounClassPresence.NonGendered)
             randomSublist(type.possibilities, RandomSingleton.random, min = 4)

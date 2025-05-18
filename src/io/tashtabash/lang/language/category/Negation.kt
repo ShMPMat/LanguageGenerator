@@ -62,7 +62,7 @@ object NegationRandomSupplements : CategoryRandomSupplements {
         return emptyRealization
     }
 
-    override fun randomRealization() = NegationPresence.values().randomElement().possibilities
+    override fun randomRealization() = NegationPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = false withCoCategories listOf()
 }

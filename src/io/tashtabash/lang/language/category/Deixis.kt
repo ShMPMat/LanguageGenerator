@@ -76,8 +76,8 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = DeixisPresence.values().randomElement().possibilities +
-            RisePresence.values().randomElement().possibilities
+    override fun randomRealization() = DeixisPresence.entries.randomElement().possibilities +
+            RisePresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> false

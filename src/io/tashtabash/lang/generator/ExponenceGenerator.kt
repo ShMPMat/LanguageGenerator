@@ -79,7 +79,7 @@ class ExponenceGenerator {
         val currentCategories = currentCategoriesWithSupplement.map { it.first }
 
         val mapper = makeMapper(currentCategoriesWithSupplement, order)
-        val default = CategoryRealization.values().randomElement { mapper(it) }
+        val default = CategoryRealization.entries.randomElement { mapper(it) }
         val realizationTemplate = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
         for (value in cluster.possibleValues) {
             val types = getRealizationTypes(value, supplements, speechPart, currentCategories, order)
@@ -118,7 +118,7 @@ class ExponenceGenerator {
     ) : (CategoryRealization) -> Double {
         return { c: CategoryRealization ->
             if (i == 0 || c != Suppletion)
-                currentCategoriesWithSupplement.sumByDouble { it.second.realizationTypeProbability(c) }
+                currentCategoriesWithSupplement.sumOf { it.second.realizationTypeProbability(c) }
             else 0.0
         }
     }

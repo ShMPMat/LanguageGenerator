@@ -29,7 +29,7 @@ class NumeralParadigmGenerator {
         private set
 
     fun generateNumeralParadigm(): NumeralParadigm {
-        val base = NumeralSystemBase.values().randomElement()
+        val base = NumeralSystemBase.entries.randomElement()
         when (base) {
             NumeralSystemBase.Decimal -> generateBasedSystem(10, (1..4).zipSSO(1.0, 1.0, 1.0, 0.5))
             NumeralSystemBase.Vigesimal -> generateBasedSystem(20, (1..4).zipSSO(1.0, 1.0, 0.75, 0.25))

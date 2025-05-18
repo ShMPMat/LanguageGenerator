@@ -98,7 +98,7 @@ object NumberRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = NumberPresence.values().randomElement().possibilities
+    override fun randomRealization() = NumberPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> 0.95.testProbability()

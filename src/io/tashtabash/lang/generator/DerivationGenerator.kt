@@ -60,7 +60,7 @@ class DerivationGenerator(
 
     private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
         val bannedTypes = setOf(Big, Old, Smallness, Young)
-        for (derivationType in DerivationType.values().filter { it !in bannedTypes })
+        for (derivationType in entries.filter { it !in bannedTypes })
             for (from in words.filter { it.speechPart == derivationType.fromSpeechPart })
                 for (to in words.filter { it.speechPart == derivationType.toSpeechPart }) {
                     val derivationLink = createDerivationByConnotation(derivationType, from, to)
@@ -189,7 +189,7 @@ class DerivationGenerator(
     }
 
     private fun generateDerivations(changeGenerator: ChangeGenerator, categoryPool: CategoryPool) =
-        randomSublist(DerivationClass.values().toList(), random, 2, DerivationClass.values().size + 1)
+        randomSublist(DerivationClass.entries, random, 2, DerivationClass.entries.size + 1)
             .flatMap { derivationClass ->
                 val affectedSpeechParts = restrictionsParadigm.getSpeechParts(derivationClass.toSpeechPart)
 

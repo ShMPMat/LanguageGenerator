@@ -120,7 +120,7 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
         .let { symbols -> ImmutablePhonemeContainer(phonemePool.phonemes.filter { it.symbol in symbols }) }
 
     private fun generateVowels(): List<Phoneme> {
-        val vowelQualityAmount = VowelQualityAmount.values()
+        val vowelQualityAmount = VowelQualityAmount.entries
             .randomElement()
         var vowels = generateStartVowels(vowelQualityAmount)
 

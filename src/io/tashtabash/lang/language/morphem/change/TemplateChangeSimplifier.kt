@@ -35,7 +35,7 @@ private fun flattenHierarchy(templateChanges: List<TemplateChange>): List<Templa
     }
 
 private fun simplifyTypePairsInRules(templateChanges: List<TemplateChange>): List<TemplateChange> {
-    val phonemeTypeNumber = PhonemeType.values().size
+    val phonemeTypeNumber = PhonemeType.entries.size
     val resultTemplateChanges = templateChanges.toMutableList()
 
     for (i in 0..resultTemplateChanges.size - phonemeTypeNumber) {
@@ -61,7 +61,7 @@ private fun simplifyTypePairsInRules(templateChanges: List<TemplateChange>): Lis
         val matcherPhonemeTypes = window.map { it.rule.matchers[0] }
             .filterIsInstance<TypePhonemeMatcher>()
             .map { it.phonemeType }
-        if (!PhonemeType.values().all { it in matcherPhonemeTypes })
+        if (!PhonemeType.entries.all { it in matcherPhonemeTypes })
             continue
 
         val croppedTemplateChanges = window.map {

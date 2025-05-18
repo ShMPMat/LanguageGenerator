@@ -8,5 +8,5 @@ enum class PhonemeType(val char: Char) {
     Vowel('V')
 }
 
-fun Char.toPhonemeType() = PhonemeType.values().find { it.char == this }
+fun Char.toPhonemeType() = PhonemeType.entries.find { it.char == this }
     ?: throw ParseException("No phoneme type exist for Char $this", 0)

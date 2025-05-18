@@ -79,7 +79,7 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = DefinitenessPresence.values().randomElement().possibilities
+    override fun randomRealization() = DefinitenessPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> 0.8.testProbability()

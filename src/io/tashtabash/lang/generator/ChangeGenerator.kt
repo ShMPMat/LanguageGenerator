@@ -26,7 +26,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
             Position.Beginning -> null to true
             Position.End -> true to null
         }
-        val rawSubstitutions: List<TemplateChange> = when (AffixTypes.values().randomElement()) {
+        val rawSubstitutions: List<TemplateChange> = when (AffixTypes.entries.randomElement()) {
             AffixTypes.UniversalAffix -> {
                 val affix = generateSyllableAffix(restrictions, hasInitial, hasFinal)
                 val templates = listOf(
@@ -36,7 +36,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
                 eliminateCollisionsByEpenthesis(templates, restrictions)
             }
             AffixTypes.PhonemeTypeAffix -> {
-                val templates = PhonemeType.values().map {
+                val templates = PhonemeType.entries.map {
                     val affix = generateSyllableAffix(
                         restrictions,
                         hasInitial == true || it == PhonemeType.Vowel,

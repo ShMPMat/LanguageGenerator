@@ -3,7 +3,6 @@ package io.tashtabash.lang.generator
 import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.generator.phoneme.PhonemeGenerator
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.category.CategoryPool
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
@@ -26,10 +25,9 @@ class LanguageGenerator(private val supplementPath: String) {
 
     private val syllableGenerator = randomSyllableGenerator()
     private val restrictionsParadigm = generateRestrictionParadigm(
-        SpeechPart.values()
-            .map { it.toDefault() } + DeixisPronoun.toAdnominal()
+        entries.map { it.toDefault() } + DeixisPronoun.toAdnominal()
     )
-    private val stressPattern = StressType.values().randomElement()
+    private val stressPattern = StressType.entries.randomElement()
     private val lexisGenerator = LexisGenerator(
         supplementPath,
         syllableGenerator,

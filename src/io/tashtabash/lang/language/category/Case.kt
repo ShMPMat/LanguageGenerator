@@ -97,7 +97,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
     }
 
     override fun randomRealization(): List<CaseValue> {
-        val coreCases = CoreCasePresence.values().randomElement().possibilities.toMutableList()
+        val coreCases = CoreCasePresence.entries.randomElement().possibilities.toMutableList()
 
         if (coreCases.isNotEmpty())
             0.3.chanceOf { coreCases += Topic }
@@ -107,7 +107,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
                 NonCoreCasePresence.ObliqueOnly.possibilities
             } ?: listOf()
         else
-            NonCoreCasePresence.values().randomElement().possibilities
+            NonCoreCasePresence.entries.randomElement().possibilities
 
         return coreCases + nonCoreCases
     }

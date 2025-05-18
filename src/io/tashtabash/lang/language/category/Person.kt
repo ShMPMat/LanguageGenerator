@@ -70,8 +70,9 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         categories: List<SourcedCategory>
     ): Set<RealizationBox> {
         val acceptableValues = values.filter { it.parentClassName == personName }
-        if (acceptableValues.size != 1) return emptyRealization
-        val value = acceptableValues.first()
+        if (acceptableValues.size != 1)
+            return emptyRealization
+
         return when(speechPart) {
             PersonalPronoun -> setOf(//TODO no actual data
                 noValue(1.0),
@@ -86,7 +87,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = PersonPresence.values().randomElement().possibilities
+    override fun randomRealization() = PersonPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Verb -> 0.95.testProbability()

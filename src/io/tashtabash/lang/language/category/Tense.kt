@@ -66,7 +66,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = TensePresence.values().randomElement().possibilities
+    override fun randomRealization() = TensePresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Verb -> true

@@ -12,7 +12,7 @@ import io.tashtabash.random.singleton.testProbability
 
 class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm): SyntaxParadigm {
-        val mainCopulaType = CopulaType.values().randomElement()
+        val mainCopulaType = CopulaType.entries.randomElement()
         val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
             .let {
                 if (it <= mainCopulaType.probability / 5) 0.0
@@ -27,7 +27,7 @@ class SyntaxParadigmGenerator {
 
         val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
 
-        val possiblePossessionType = PredicatePossessionType.values().toMutableList()
+        val possiblePossessionType = PredicatePossessionType.entries.toMutableList()
 
         if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic)) {
             possiblePossessionType.remove(PredicatePossessionType.Topic)

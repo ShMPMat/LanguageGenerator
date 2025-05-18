@@ -88,7 +88,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
         }
     }
 
-    override fun randomRealization() = AnimosityPresence.values().randomElement().possibilities
+    override fun randomRealization() = AnimosityPresence.entries.randomElement().possibilities
 
     override fun randomStaticSpeechParts() = setOf(Noun)
 
