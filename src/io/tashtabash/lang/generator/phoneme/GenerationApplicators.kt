@@ -117,7 +117,7 @@ class AddRandomVowelApplicator(private val phonemePool: PhonemePool) : VowelGene
     override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val newPhoneme = phonemePool.getPhonemes(PhonemeType.Vowel)
             .filter { it !in vowels }
-            .randomElementOrNull { newVowel -> vowels.sumBy { calculateDistance(newVowel, it) }.toDouble() }
+            .randomElementOrNull { newVowel -> vowels.sumOf { calculateDistance(newVowel, it) }.toDouble() }
 
         if (newPhoneme != null)
             return vowels + listOf(newPhoneme)
@@ -162,7 +162,7 @@ class AddRandomConsonantApplicator(private val phonemePool: PhonemePool) : Conso
     override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
         val newPhoneme = phonemePool.getPhonemes(PhonemeType.Consonant)
             .filter { it !in consonants }
-            .randomElementOrNull { newVowel -> consonants.sumBy { calculateDistance(newVowel, it) }.toDouble() }
+            .randomElementOrNull { newVowel -> consonants.sumOf { calculateDistance(newVowel, it) }.toDouble() }
 
         if (newPhoneme != null)
             return consonants + listOf(newPhoneme)
