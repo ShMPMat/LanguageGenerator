@@ -143,6 +143,18 @@ data class WordChangeParadigm(
             }.awaitAll()
     }
 
+    fun getAllWordForms(
+        lexis: Lexis,
+        includeOptionalCategories: Boolean
+    ): List<Pair<WordSequence, SourcedCategoryValues>> = runBlocking {
+        lexis.words
+            .map {
+                async {
+                    getAllWordForms(it, includeOptionalCategories)
+                }
+            }.awaitAll()
+            .flatten()
+    }
 
     val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
 
