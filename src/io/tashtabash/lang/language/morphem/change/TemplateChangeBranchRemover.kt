@@ -12,8 +12,7 @@ import io.tashtabash.lang.language.morphem.Suffix
 
 fun Language.removeUnusedRules(): Language {
     val trackableLanguage = injectChangeTrackers(this)
-    for (word in trackableLanguage.lexis.words)
-        trackableLanguage.changeParadigm.wordChangeParadigm.getAllWordForms(word, true)
+    trackableLanguage.changeParadigm.wordChangeParadigm.getAllWordForms(trackableLanguage.lexis, true)
 
     return removeUnusedChanges(trackableLanguage)
 }

@@ -7,8 +7,7 @@ import io.tashtabash.lang.language.syntax.ChangeParadigm
 
 fun areChangesValid(lexis: Lexis, changeParadigm: ChangeParadigm): Result<Unit> {
     try {
-        for (word in lexis.words)
-            changeParadigm.wordChangeParadigm.getAllWordForms(word, true)
+        changeParadigm.wordChangeParadigm.getAllWordForms(lexis, true)
     } catch (e: ChangeException) {
         return Result.failure(e)
     }
