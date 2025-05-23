@@ -42,6 +42,14 @@ abstract class PhonemeMatcher {
     override fun toString() = name
 }
 
+fun List<PhonemeMatcher>.match(phonemeWindow: List<ChangingPhoneme>): Boolean =
+    zip(phonemeWindow)
+        .all { (matcher, phoneme) -> matcher.match(phoneme) }
+
+fun List<PhonemeMatcher>.matchAll(phonemes: List<ChangingPhoneme>): Boolean =
+    (0..phonemes.size - size)
+        .any { match(phonemes.drop(it)) }
+
 fun createPhonemeMatchers(matchers: String, phonemeContainer: PhonemeContainer): List<PhonemeMatcher> {
     var currentPostfix = matchers
     val resultMatchers = mutableListOf<PhonemeMatcher>()

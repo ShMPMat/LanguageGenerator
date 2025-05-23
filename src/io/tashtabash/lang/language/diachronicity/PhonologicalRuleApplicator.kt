@@ -17,7 +17,7 @@ import io.tashtabash.lang.language.morphem.change.*
 import io.tashtabash.lang.language.morphem.change.substitution.*
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.phonology.matcher.BorderPhonemeMatcher
-import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
+import io.tashtabash.lang.language.phonology.matcher.match
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import kotlin.math.max
@@ -328,10 +328,6 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         val changedPhonemes = applyPhonologicalRule(rawPhonemes, rule)
         return clearChangingPhonemes(changedPhonemes)
     }
-
-    private fun List<PhonemeMatcher>.match(phonemeWindow: List<ChangingPhoneme>): Boolean =
-        zip(phonemeWindow)
-            .all { (matcher, phoneme) -> matcher.match(phoneme) }
 
     private fun substitutePhonemes(
         phonemes: MutableList<ChangingPhoneme>,
