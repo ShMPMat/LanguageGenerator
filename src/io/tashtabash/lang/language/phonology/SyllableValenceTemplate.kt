@@ -44,7 +44,7 @@ data class SyllableValenceTemplate(val valencies: List<ValencyPlace>) : Syllable
                 ?: return null
             if (range.first != lastIndex)
                 return null
-            val nucleusIdx = findNucleus(phonemes.phonemes.drop(lastIndex))
+            val nucleusIdx = findNucleus(phonemes.phonemes.subList(lastIndex, phonemes.size))
             syllables += Syllable(phonemes.phonemes.subList(range.first, range.last + 1), nucleusIdx)
             lastIndex = range.last + 1
         }

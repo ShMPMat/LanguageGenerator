@@ -247,7 +247,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
             val rawPhonemes = applyPhonologicalRule(getChangingPhonemes(word), rule)
             val prosodies = rawPhonemes.filterIsInstance<ChangingPhoneme.ExactPhoneme>()
                 .mapNotNull { it.prosody }
-            val morphemes = matchMorphemes(word, rawPhonemes.drop(1).dropLast(1))
+            val morphemes = matchMorphemes(word, rawPhonemes.subList(1, rawPhonemes.size - 1))
             val resultPhonemes = clearChangingPhonemes(rawPhonemes)
 
             val syllableTemplate =
@@ -301,7 +301,7 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         var i = 0
 
         while (i + rule.matchers.size <= result.size) {
-            val phonemeWindow = result.drop(i)
+            val phonemeWindow = result.subList(i, result.size)
             val isMatch = rule.matchers
                 .match(phonemeWindow)
             if (isMatch) {

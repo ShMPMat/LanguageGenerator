@@ -16,7 +16,7 @@ data class Syllable(val phonemes: PhonemeSequence, val prosody: List<Prosody>, v
     override fun toString() =
         phonemes.phonemes.take(nucleusIdx + 1).joinToString("") +
                 prosody.joinToString("") { it.mark } +
-                phonemes.phonemes.drop(nucleusIdx + 1).joinToString("")
+                phonemes.phonemes.subList(nucleusIdx + 1, phonemes.size).joinToString("")
 
 }
 
