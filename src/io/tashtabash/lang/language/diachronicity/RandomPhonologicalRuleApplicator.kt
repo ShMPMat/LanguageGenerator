@@ -42,7 +42,10 @@ class RandomPhonologicalRuleApplicator(private val narrowingProbability: Double 
         (1 - (1 - homophoneFractionIncrease).pow(10)).chanceOf {
             _messages += "Can't apply rule $phonologicalRule: " +
                     "the homophone fraction is too high: " +
-                    "${oldLangHomophoneStats.homophoneFraction} -> ${shiftedLangHomophoneStats.homophoneFraction} " +
+                    "%.3f -> %.3f ".format(
+                        oldLangHomophoneStats.homophoneFraction,
+                        shiftedLangHomophoneStats.homophoneFraction
+                    ) +
                     "(${oldLangHomophoneStats.homophoneFormsCount} -> ${shiftedLangHomophoneStats.homophoneFormsCount})"
             return language
         }
