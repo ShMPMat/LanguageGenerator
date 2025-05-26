@@ -43,8 +43,7 @@ abstract class PhonemeMatcher {
 }
 
 fun List<PhonemeMatcher>.match(phonemeWindow: List<ChangingPhoneme>): Boolean =
-    zip(phonemeWindow)
-        .all { (matcher, phoneme) -> matcher.match(phoneme) }
+    indices.all { get(it).match(phonemeWindow[it]) }
 
 fun List<PhonemeMatcher>.matchAll(phonemes: List<ChangingPhoneme>): Boolean =
     (0..phonemes.size - size)
