@@ -13,6 +13,9 @@ interface PhonemeContainer {
     val size: Int
         get() = phonemes.size
 
+    fun any(predicate: (Phoneme) -> Boolean): Boolean =
+        phonemes.any(predicate)
+
     fun getPhoneme(symbol: String): Phoneme =
         phonemes.firstOrNull { it.symbol == symbol }
             ?: throw NoPhonemeException("No phoneme with a symbol '$symbol' exist")
