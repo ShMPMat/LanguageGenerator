@@ -41,10 +41,10 @@ fun getChangingPhonemes(
     val rawPhonemes = mutableListOf<ChangingPhoneme>()
 
     if (addStartBoundary)
-        rawPhonemes += listOf(ChangingPhoneme.Boundary)
+        rawPhonemes += ChangingPhoneme.Boundary
     rawPhonemes += phonemes.map { (phoneme, prosody) -> ChangingPhoneme.ExactPhoneme(phoneme, prosody) }
     if (addEndBoundary)
-        rawPhonemes += listOf(ChangingPhoneme.Boundary)
+        rawPhonemes += ChangingPhoneme.Boundary
 
     return rawPhonemes
 }
