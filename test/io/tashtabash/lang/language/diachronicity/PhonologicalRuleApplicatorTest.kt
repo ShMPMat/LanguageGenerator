@@ -319,9 +319,9 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )
         assertDoesNotThrow {
-            val wordForms = shiftedLanguage.lexis
-                .words
-                .flatMap { language.changeParadigm.wordChangeParadigm.getAllWordForms(it, true) }
+            val wordForms = shiftedLanguage.changeParadigm
+                .wordChangeParadigm
+                .getAllWordForms(shiftedLanguage.lexis, true)
             for ((wordSequence) in wordForms)
                 printWordMorphemes(wordSequence.words[0])
         }
@@ -395,9 +395,9 @@ internal class PhonologicalRuleApplicatorTest {
             shiftedLanguage.changeParadigm.wordChangeParadigm.speechPartChangeParadigms[defSpeechPart],
         )
         assertDoesNotThrow {
-            val wordForms = shiftedLanguage.lexis
-                .words
-                .flatMap { language.changeParadigm.wordChangeParadigm.getAllWordForms(it, true) }
+            val wordForms = shiftedLanguage.changeParadigm
+                .wordChangeParadigm
+                .getAllWordForms(shiftedLanguage.lexis, true)
             for ((wordSequence) in wordForms)
                 printWordMorphemes(wordSequence.words[0])
         }
