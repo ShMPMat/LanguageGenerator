@@ -80,7 +80,7 @@ data class WordChangeParadigm(
     private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int, mainWord: Word) =
         mainWordIdx == curIdx
                 || word.semanticsCore.speechPart.type in listOf(SpeechPart.Particle, SpeechPart.Adposition)
-                || word == mainWord
+                || word.semanticsCore == mainWord.semanticsCore
 
     internal fun getDefaultState(word: Word): List<SourcedCategoryValue> {
         val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]

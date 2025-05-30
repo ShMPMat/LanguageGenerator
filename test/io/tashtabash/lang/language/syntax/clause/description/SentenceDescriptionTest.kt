@@ -274,11 +274,11 @@ internal class SentenceDescriptionTest {
         )
         val caseExponenceCluster = ExponenceCluster(caseSourcedCategory)
         // Set up WordChangeParadigm
-        val nounClassApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(caseExponenceCluster),
-            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(nounClassApplicators).toMap()),
+            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap()),
             ProsodyChangeParadigm(StressType.None)
         )
         val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
@@ -410,6 +410,114 @@ internal class SentenceDescriptionTest {
                     MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true)
                 ) withMeaning "dog",
                 createIntransVerb("o") withMeaning "sleep"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Reduplicated plurals work even if reduplication isn't the last operation`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up number
+        val numberCategory = Number(
+            listOf(NumberValue.Singular, NumberValue.Plural),
+            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.Noun)
+        )
+        val numberSourcedCategory = SourcedCategory(
+            numberCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val numberExponenceCluster = ExponenceCluster(numberSourcedCategory)
+        // Set up case
+        val caseCategory = Case(
+            listOf(CaseValue.Absolutive, CaseValue.Benefactive),
+            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.Noun)
+        )
+        val caseSourcedCategory = SourcedCategory(
+            caseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val caseExponenceCluster = ExponenceCluster(caseSourcedCategory)
+        // Set up WordChangeParadigm
+        val numberApplicators = listOf(PassingCategoryApplicator, WordReduplicationCategoryApplicator())
+        val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Noun.toDefault(),
+            listOf(numberExponenceCluster, caseExponenceCluster),
+            mapOf(
+                numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap(),
+                caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap()
+            ),
+            ProsodyChangeParadigm(StressType.None)
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(numberCategory),
+            mapOf(
+                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
+                SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(
+                createNoun("o") withMeaning "dog",
+                createIntransVerb("do")
+                    .withTags("benefactor", "intrans") withMeaning "sleep"
+            ),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                numberCategorySolver = NumberCategorySolver(
+                    mapOf(NumberValue.Singular to 1..1, NumberValue.Plural to 2..Int.MAX_VALUE),
+                    NumberValue.Plural
+                ),
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                ),
+                nonCoreCaseSolver = mapOf(CaseValue.Benefactive to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
+            )
+        )
+        val dogDescription = NominalDescription(
+            "dog",
+            ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
+        )
+        val verbDescription = IntransitiveVerbDescription(
+            "sleep",
+            dogDescription,
+            listOf(IndirectObjectDescription(dogDescription, IndirectObjectType.Benefactor))
+        )
+        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val context = Context(
+            LongGonePast to Implicit,
+            Simple to Explicit
+        )
+
+        assertEquals(
+            listOf(
+                createWord("oda", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Absolutive)))
+                    ) withMeaning "dog",
+                createWord("o", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                    ) withMeaning "dog",
+                createIntransVerb("do").withTags("benefactor", "intrans")
+                        withMeaning "sleep",
+                createWord("oto", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Benefactive)))
+                    ) withMeaning "dog",
+                createWord("o", SpeechPart.Noun)
+                    .withMorphemes(
+                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                    ) withMeaning "dog"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
