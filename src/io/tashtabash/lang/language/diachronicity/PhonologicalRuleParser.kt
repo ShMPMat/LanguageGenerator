@@ -79,6 +79,9 @@ class LanguagePhonologicalRuleCreationDsl(
             escape(symbol)
         else if (symbol.first() == '(' && symbol.last() == ')')
             symbol.dropLast(1) + "{-Stress})"
+        else if (symbol.first() == '<' && symbol.last() == '>')
+            // The template creator will take care of escaping
+            "($symbol{-Stress})"
         else
             "(${escape(symbol)}{-Stress})"
 
