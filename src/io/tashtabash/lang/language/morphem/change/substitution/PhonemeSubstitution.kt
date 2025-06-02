@@ -65,4 +65,4 @@ fun createPhonemeSubstitution(substitution: String, phonemeContainer: PhonemeCon
 }
 
 private val modifierRegex = "\\[.*]".toRegex()
-private val epenthesisRegex = "\\(.\\)".toRegex()
+private val epenthesisRegex = "\\(.*\\)".toRegex()
