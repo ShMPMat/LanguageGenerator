@@ -27,8 +27,8 @@ enum class ArticulationPlace(val positionIndex: Int): PhonemeCharacteristic {
     Glottal(12),
 
     Front(0),
-    Central(3),
-    Back(5)
+    Central(2),
+    Back(4)
 }
 
 val vowelArticulationPlaces = listOf(ArticulationPlace.Front, ArticulationPlace.Central, ArticulationPlace.Back)
