@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.util
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
+import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.generator.GeneratedChange
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
@@ -156,4 +157,8 @@ val testPhonemeContainer = ImmutablePhonemeContainer(
         Phoneme("n", PhonemeType.Consonant, Alveolar, Nasal, setOf(Voiced)),
         Phoneme("r", PhonemeType.Consonant, Alveolar, Trill, setOf(Voiced)),
     ).flatMap { listOf(it, it.copy(it.symbol + it.symbol, modifiers = it.modifiers + PhonemeModifier.Long)) }
+)
+
+val testPhonemeContainerExtended = ImmutablePhonemeContainer(
+    (PhonemePool("SupplementFiles").phonemes + testPhonemeContainer.phonemes).distinct()
 )
