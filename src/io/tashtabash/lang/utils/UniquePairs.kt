@@ -6,3 +6,6 @@ fun <T, U> composeUniquePairs(c1: Collection<T>, c2: Collection<U>): List<Pair<T
         c2.drop(i)
             .map { y -> x to y }
     }
+
+fun <T> composeUniquePairs(collection: Collection<T>): List<Pair<T, T>> =
+    composeUniquePairs(collection, collection)
