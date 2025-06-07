@@ -28,7 +28,7 @@ const val numberName = "Number"
 class Number(
     categories: List<NumberValue>,
     affected: Set<PSpeechPart>,
-    staticSpeechParts: Set<SpeechPart>
+    staticSpeechParts: Set<SpeechPart> = setOf()
 ) : AbstractChangeCategory(
     categories,
     NumberValue::class.valuesSet(),

@@ -30,8 +30,7 @@ val defSpeechPart = TypedSpeechPart(SpeechPart.Noun)
 val defCategoryChanger = PassingCategoryChanger(0)
 val defNumberCategory = Number(
     listOf(NumberValue.Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural),
-    setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
-    setOf()
+    setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self))
 )
 
 fun getDefNumberSourcedCategory(isCompulsory: Boolean) = SourcedCategory(
