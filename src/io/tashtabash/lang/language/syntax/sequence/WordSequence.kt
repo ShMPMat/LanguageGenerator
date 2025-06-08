@@ -27,3 +27,5 @@ data class WordSequence(val words: List<Word> = listOf()) {
 
 
 fun List<Word>.toWordSequence() = WordSequence(this)
+
+fun Word.toWordSequence() = WordSequence(this)
