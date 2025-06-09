@@ -98,7 +98,18 @@ class LanguagePhonologicalRuleCreationDsl(
         val matcher = createPhonemeMatcher(matcherString, phonemeContainer)
         val matchedPhonemes = language.phonemeContainer.getPhonemes(matcher)
 
-        return matchedPhonemes.flatMap { createRules(templateRule.replaceRange(matchResult.range, escape(it))) }
+        // Don't escape templates inside epenthesis
+        val shouldEscape = templateRule.getOrNull(matchResult.range.first - 1) != '(' &&
+                templateRule.getOrNull(matchResult.range.last + 1) != ')'
+
+        return matchedPhonemes.flatMap {
+            val escapedSymbol = if (shouldEscape)
+                escape(it)
+            else
+                it.symbol
+
+            createRules(templateRule.replaceRange(matchResult.range, escapedSymbol))
+        }
     }
 
     override fun createWeakRules(rule: String): List<PhonologicalRule> {
