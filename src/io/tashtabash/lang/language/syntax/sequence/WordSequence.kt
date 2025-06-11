@@ -4,6 +4,7 @@ import io.tashtabash.lang.language.lexis.Word
 
 
 data class WordSequence(val words: List<Word> = listOf()) {
+    constructor(vararg words: Word): this(words.toList())
     constructor(word: Word): this(listOf(word))
 
     val size = words.size
