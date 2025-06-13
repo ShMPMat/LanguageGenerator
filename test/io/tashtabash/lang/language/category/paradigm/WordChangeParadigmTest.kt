@@ -1,17 +1,21 @@
 package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.language.category.*
+import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.SuffixWordCategoryApplicator
+import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.nominals
+import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.LatchType
+import io.tashtabash.lang.language.syntax.sequence.WordSequence
+import io.tashtabash.lang.language.syntax.sequence.toWordSequence
 import io.tashtabash.lang.language.util.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -28,14 +32,14 @@ internal class WordChangeParadigmTest {
         val definitenessCategory = Definiteness(
             listOf(DefinitenessValue.Definite),
             setOf(
-                PSpeechPart(SpeechPart.Noun, CategorySource.Self),
-                PSpeechPart(SpeechPart.Article, CategorySource.Self)
+                SpeechPart.Noun sourcedFrom Self,
+                SpeechPart.Article sourcedFrom Self
             ),
             setOf(SpeechPart.Article)
         )
         val definitenessSourcedCategory = SourcedCategory(
             definitenessCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(false)
         )
         val definitenessExponenceCluster = ExponenceCluster(definitenessSourcedCategory)
@@ -43,20 +47,20 @@ internal class WordChangeParadigmTest {
         val nounClassCategory = NounClass(
             listOf(NounClassValue.LongObject, NounClassValue.Fruit),
             setOf(
-                PSpeechPart(SpeechPart.Noun, CategorySource.Self),
-                PSpeechPart(SpeechPart.Article, CategorySource.Agreement(SyntaxRelation.Agent, nominals))
+                SpeechPart.Noun sourcedFrom Self,
+                SpeechPart.Article sourcedFrom Agreement(SyntaxRelation.Agent, nominals)
             ),
             setOf(SpeechPart.Noun)
         )
         val articleNounClassSourcedCategory = SourcedCategory(
             nounClassCategory,
-            CategorySource.Agreement(SyntaxRelation.Agent, nominals),
+            Agreement(SyntaxRelation.Agent, nominals),
             CompulsoryData(true)
         )
         val articleNounClassExponenceCluster = ExponenceCluster(articleNounClassSourcedCategory)
         val nounNounClassSourcedCategory = SourcedCategory(
             nounClassCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(true)
         )
         val nounNounClassExponenceCluster = ExponenceCluster(nounNounClassSourcedCategory)
@@ -65,7 +69,7 @@ internal class WordChangeParadigmTest {
         val nounClassApplicatiors = listOf(PassingCategoryApplicator, PassingCategoryApplicator)
         val articleApplicators = listOf(createAffixCategoryApplicator("b-"), createAffixCategoryApplicator("p-"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Noun),
+            SpeechPart.Noun.toDefault(),
             listOf(definitenessExponenceCluster, nounNounClassExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
@@ -74,7 +78,7 @@ internal class WordChangeParadigmTest {
             ProsodyChangeParadigm(StressType.None)
         )
         val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Article),
+            SpeechPart.Article.toDefault(),
             listOf(articleNounClassExponenceCluster),
             mapOf(articleNounClassExponenceCluster to articleNounClassExponenceCluster.possibleValues.zip(articleApplicators).toMap()),
             ProsodyChangeParadigm(StressType.None)
@@ -82,8 +86,8 @@ internal class WordChangeParadigmTest {
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory, definitenessCategory),
             mapOf(
-                TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm,
-                TypedSpeechPart(SpeechPart.Article) to articleSpeechPartChangeParadigm
+                SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm,
+                SpeechPart.Article.toDefault() to articleSpeechPartChangeParadigm
             )
         )
 
@@ -96,12 +100,11 @@ internal class WordChangeParadigmTest {
         assertEquals(
             listOf(
                 noun.withMorphemes(
-                    MorphemeData(4, listOf(), true),
-                    MorphemeData(0, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Self, nounNounClassSourcedCategory)))
+                    MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
                 ),
                 createWord("pa", SpeechPart.Article).withMorphemes(
-                    MorphemeData(1, listOf(SourcedCategoryValue(NounClassValue.Fruit, CategorySource.Agreement(SyntaxRelation.Agent, nominals), articleNounClassSourcedCategory))),
-                    MorphemeData(1, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)), true)
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
+                    MorphemeData(1, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)), true)
                 )
             ),
             result.unfold().words
@@ -113,21 +116,19 @@ internal class WordChangeParadigmTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(
-                PSpeechPart(SpeechPart.Adjective, CategorySource.Self)
-            ),
+            setOf(SpeechPart.Adjective sourcedFrom Self),
             setOf(SpeechPart.Adjective)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(true)
         )
         val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Adjective),
+            SpeechPart.Adjective.toDefault(),
             listOf(tenseExponenceCluster),
             mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap()),
             ProsodyChangeParadigm(StressType.None)
@@ -135,7 +136,7 @@ internal class WordChangeParadigmTest {
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                TypedSpeechPart(SpeechPart.Adjective) to adjectiveSpeechPartChangeParadigm,
+                SpeechPart.Adjective.toDefault() to adjectiveSpeechPartChangeParadigm,
             )
         )
 
@@ -149,7 +150,7 @@ internal class WordChangeParadigmTest {
             listOf(
                 createWord("ada", SpeechPart.Adjective).withMorphemes(
                     MorphemeData(1, listOf(), true),
-                    MorphemeData(2, listOf(SourcedCategoryValue(TenseValue.Present, CategorySource.Self, tenseSourcedCategory)))
+                    MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Present)))
                 )
             ),
             result.unfold().words
@@ -161,19 +162,19 @@ internal class WordChangeParadigmTest {
         // Set up definiteness
         val definitenessCategory = Definiteness(
             listOf(DefinitenessValue.Definite),
-            setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
+            setOf(SpeechPart.Noun sourcedFrom Self),
             setOf()
         )
         val definitenessSourcedCategory = SourcedCategory(
             definitenessCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(false)
         )
         val definitenessExponenceCluster = ExponenceCluster(definitenessSourcedCategory)
         // Set up WordChangeParadigm
         val nounDefinitenessApplicators = listOf(createAffixCategoryApplicator("-dac"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Noun),
+            SpeechPart.Noun.toDefault(),
             listOf(definitenessExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
@@ -182,7 +183,7 @@ internal class WordChangeParadigmTest {
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(definitenessCategory),
-            mapOf(TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm)
+            mapOf(SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm)
         )
 
         val result = wordChangeParadigm.apply(
@@ -197,7 +198,7 @@ internal class WordChangeParadigmTest {
                     .withProsodyOn(2, Prosody.Stress)
                     .withMorphemes(
                         MorphemeData(4, listOf(), true),
-                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
+                        MorphemeData(3, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
                     )
             ),
             result.unfold().words
@@ -207,14 +208,14 @@ internal class WordChangeParadigmTest {
     @Test
     fun `Sandhi rules are applied`() {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Noun),
+            SpeechPart.Noun.toDefault(),
             listOf(),
             mapOf(),
             ProsodyChangeParadigm(StressType.None)
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
-            mapOf(TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm),
+            mapOf(SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm),
             listOf(createTestPhonologicalRule("[+Voiced] -> [-Voiced] / _ $"))
         )
 
@@ -235,19 +236,18 @@ internal class WordChangeParadigmTest {
         // Set up definiteness
         val definitenessCategory = Definiteness(
             listOf(DefinitenessValue.Definite),
-            setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
-            setOf()
+            setOf(SpeechPart.Noun sourcedFrom Self)
         )
         val definitenessSourcedCategory = SourcedCategory(
             definitenessCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(false)
         )
         val definitenessExponenceCluster = ExponenceCluster(definitenessSourcedCategory)
         // Set up WordChangeParadigm
         val nounDefinitenessApplicators = listOf(createAffixCategoryApplicator("-cad"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Noun),
+            SpeechPart.Noun.toDefault(),
             listOf(definitenessExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
@@ -256,7 +256,7 @@ internal class WordChangeParadigmTest {
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(definitenessCategory),
-            mapOf(TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm),
+            mapOf(SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm),
             listOf(createTestPhonologicalRule("[+Voiced] -> [-Voiced] / _ $"))
         )
 
@@ -271,7 +271,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabcat")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(3, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
+                        MorphemeData(3, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
                     )
             ),
             result.unfold().words
@@ -283,19 +283,19 @@ internal class WordChangeParadigmTest {
         // Set up definiteness
         val definitenessCategory = Definiteness(
             listOf(DefinitenessValue.Definite),
-            setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self)),
+            setOf(SpeechPart.Noun sourcedFrom Self),
             setOf()
         )
         val definitenessSourcedCategory = SourcedCategory(
             definitenessCategory,
-            CategorySource.Self,
+            Self,
             CompulsoryData(false)
         )
         val definitenessExponenceCluster = ExponenceCluster(definitenessSourcedCategory)
         // Set up WordChangeParadigm
         val nounDefinitenessApplicators = listOf(createAffixCategoryApplicator("-cad"))
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            TypedSpeechPart(SpeechPart.Noun),
+            SpeechPart.Noun.toDefault(),
             listOf(definitenessExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
@@ -304,7 +304,7 @@ internal class WordChangeParadigmTest {
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(definitenessCategory),
-            mapOf(TypedSpeechPart(SpeechPart.Noun) to nounSpeechPartChangeParadigm),
+            mapOf(SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm),
             listOf(createTestPhonologicalRule("d -> - / _ $"))
         )
 
@@ -319,7 +319,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabca")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(2, listOf(SourcedCategoryValue(DefinitenessValue.Definite, CategorySource.Self, definitenessSourcedCategory)))
+                        MorphemeData(2, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
                     )
             ),
             result.unfold().words
