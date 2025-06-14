@@ -1,13 +1,13 @@
 package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.generator.ApplicatorMap
-import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
+import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
 import io.tashtabash.lang.language.syntax.sequence.LatchType
@@ -17,9 +17,9 @@ import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val exponenceClusters: List<ExponenceCluster>,
-    val applicators: ApplicatorMap,
-    val prosodyChangeParadigm: ProsodyChangeParadigm
+    val exponenceClusters: List<ExponenceCluster> = listOf(),
+    val applicators: ApplicatorMap = mapOf(),
+    val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
     val categories = exponenceClusters.flatMap { it.categories }
 
@@ -78,7 +78,7 @@ data class SpeechPartChangeParadigm(
                 .firstOrNull { it.category.outType == v.parentClassName }
                 ?: return@mapNotNull null
 
-            SourcedCategoryValue(v, CategorySource.Self, parent)
+            parent.getValue(v)
         }
         val allCategoryValues = categoryValues + staticCategoryValues
         val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)

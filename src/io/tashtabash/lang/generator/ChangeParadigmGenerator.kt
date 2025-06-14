@@ -34,12 +34,7 @@ class ChangeParadigmGenerator(
     private val syntaxParadigmGenerator = SyntaxParadigmGenerator()
     val numeralParadigmGenerator = NumeralParadigmGenerator()
 
-    private val emptyArticleParadigm = SpeechPartChangeParadigm(
-        Article.toDefault(),
-        listOf(),
-        mapOf(),
-        ProsodyChangeParadigm(StressType.None)
-    )
+    private val emptyArticleParadigm = SpeechPartChangeParadigm(Article.toDefault())
 
     internal fun generateChangeParadigm(categoriesWithMappers: List<SupplementedCategory>): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }

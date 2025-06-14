@@ -74,14 +74,12 @@ internal class WordChangeParadigmTest {
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
                 nounNounClassExponenceCluster to nounNounClassExponenceCluster.possibleValues.zip(nounClassApplicatiors).toMap()
-            ),
-            ProsodyChangeParadigm(StressType.None)
+            )
         )
         val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
             listOf(articleNounClassExponenceCluster),
-            mapOf(articleNounClassExponenceCluster to articleNounClassExponenceCluster.possibleValues.zip(articleApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(articleNounClassExponenceCluster to articleNounClassExponenceCluster.possibleValues.zip(articleApplicators).toMap())
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory, definitenessCategory),
@@ -130,8 +128,7 @@ internal class WordChangeParadigmTest {
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Adjective.toDefault(),
             listOf(tenseExponenceCluster),
-            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap())
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -208,10 +205,7 @@ internal class WordChangeParadigmTest {
     @Test
     fun `Sandhi rules are applied`() {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Noun.toDefault(),
-            listOf(),
-            mapOf(),
-            ProsodyChangeParadigm(StressType.None)
+            SpeechPart.Noun.toDefault()
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
@@ -251,8 +245,7 @@ internal class WordChangeParadigmTest {
             listOf(definitenessExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
-            ),
-            ProsodyChangeParadigm(StressType.None)
+            )
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(definitenessCategory),
@@ -299,8 +292,7 @@ internal class WordChangeParadigmTest {
             listOf(definitenessExponenceCluster),
             mapOf(
                 definitenessExponenceCluster to definitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
-            ),
-            ProsodyChangeParadigm(StressType.None)
+            )
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(definitenessCategory),

@@ -1503,15 +1503,11 @@ internal class PhonologicalRuleApplicatorTest {
         val words = listOf(copulaWord, questionMarkerWord)
         val nounChangeParadigm = SpeechPartChangeParadigm(
             defSpeechPart,
-            listOf(),
-            mapOf(),
-            ProsodyChangeParadigm(StressType.Initial)
+            prosodyChangeParadigm = ProsodyChangeParadigm(StressType.Initial)
         )
         val particleChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Particle.toDefault(),
-            listOf(),
-            mapOf(),
-            ProsodyChangeParadigm(StressType.Initial)
+            prosodyChangeParadigm = ProsodyChangeParadigm(StressType.Initial)
         )
         val lexis = Lexis(
             words,

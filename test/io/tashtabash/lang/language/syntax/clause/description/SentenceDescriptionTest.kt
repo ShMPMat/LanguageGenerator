@@ -48,14 +48,13 @@ internal class SentenceDescriptionTest {
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
             listOf(tenseExponenceCluster),
-            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap())
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
                 SpeechPart.Verb.toIntransitive() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
+                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault()),
             )
         )
         val language = makeDefLang(
@@ -122,15 +121,14 @@ internal class SentenceDescriptionTest {
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Adjective.toDefault(),
             listOf(tenseExponenceCluster),
-            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap())
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
                 SpeechPart.Adjective.toDefault() to adjectiveSpeechPartChangeParadigm,
-                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
-                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
+                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive()),
+                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault()),
             )
         )
         val language = makeDefLang(
@@ -200,14 +198,10 @@ internal class SentenceDescriptionTest {
         val personalPronounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.PersonalPronoun.toDefault(),
             listOf(nounClassExponenceCluster),
-            mapOf(nounClassExponenceCluster to nounClassExponenceCluster.possibleValues.zip(nounClassApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(nounClassExponenceCluster to nounClassExponenceCluster.possibleValues.zip(nounClassApplicators).toMap())
         )
         val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
-            listOf(),
-            mapOf(),
-            ProsodyChangeParadigm(StressType.None)
+            SpeechPart.Verb.toIntransitive()
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory),
@@ -278,14 +272,10 @@ internal class SentenceDescriptionTest {
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(caseExponenceCluster),
-            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap())
         )
         val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
-            listOf(),
-            mapOf(),
-            ProsodyChangeParadigm(StressType.None)
+            SpeechPart.Verb.toIntransitive()
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(caseCategory),
@@ -361,13 +351,12 @@ internal class SentenceDescriptionTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(numberExponenceCluster),
-            mapOf(numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap()),
-            ProsodyChangeParadigm(StressType.None)
+            mapOf(numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap())
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(numberCategory),
             mapOf(
-                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive(), listOf(), mapOf(), ProsodyChangeParadigm(StressType.None)),
+                SpeechPart.Verb.toIntransitive() to SpeechPartChangeParadigm(SpeechPart.Verb.toIntransitive()),
                 SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm,
             )
         )
@@ -453,8 +442,7 @@ internal class SentenceDescriptionTest {
             mapOf(
                 numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap(),
                 caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap()
-            ),
-            ProsodyChangeParadigm(StressType.None)
+            )
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(numberCategory),
