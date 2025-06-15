@@ -111,9 +111,11 @@ fun List<List<String>>.lineUpAll(): List<String> {
         return emptyList()
 
     return if (maxOf { it.size } == 1)
-        map { if (it.isEmpty()) "" else it[0] }.lineUp()
+        map { if (it.isEmpty()) "" else it[0] }
+            .lineUp()
     else {
-        val linedPrefixes = map { it.first() }.lineUp()
+        val linedPrefixes = map { it.firstOrNull() ?: "" }
+            .lineUp()
 
         map { if (it.isEmpty()) listOf("") else it.drop(1) }
             .lineUpAll()
