@@ -125,14 +125,29 @@ data class WordChangeParadigm(
     fun getAllCategoryValueCombinations(
         speechPart: TypedSpeechPart,
         includeOptionalCategories: Boolean,
-    ): List<SourcedCategoryValues> =
-        listCartesianProduct(
+    ): List<SourcedCategoryValues> {
+        val compulsoryCategoryProduct = listCartesianProduct(
             getSpeechPartParadigm(speechPart)
                 .categories
-                .filter { if (includeOptionalCategories) true else it.compulsoryData.isCompulsory }
+                .filter { it.compulsoryData.isCompulsory }
                 .filter { !it.category.staticSpeechParts.contains(speechPart.type) }
                 .map { it.actualSourcedValues }
         )
+
+        if (!includeOptionalCategories)
+            return compulsoryCategoryProduct
+
+        val optionalCategoryProduct = compulsoryCategoryProduct.toMutableList()
+        val optionalCategories = getSpeechPartParadigm(speechPart)
+            .categories
+            .filter { !it.compulsoryData.isCompulsory }
+            .filter { !it.category.staticSpeechParts.contains(speechPart.type) }
+        for (optionalCategory in optionalCategories)
+            optionalCategoryProduct += optionalCategory.actualSourcedValues
+                .flatMap { v -> optionalCategoryProduct.map { it + v } }
+
+        return optionalCategoryProduct
+    }
 
     fun getAllWordForms(
         word: Word,

@@ -317,4 +317,111 @@ internal class WordChangeParadigmTest {
             result.unfold().words
         )
     }
+
+    @Test
+    fun `getAllWordForms gets all word forms`() {
+        // Set up words
+        val article = createWord("a", SpeechPart.Article)
+            .withStaticCategories(DefinitenessValue.Definite)
+        val noun = createNoun("daba")
+            .withStaticCategories(NounClassValue.Fruit)
+        val lexis = Lexis(listOf(article, noun), mapOf(), mapOf())
+            .reifyPointers()
+        // Set up definiteness
+        val definitenessCategory = Definiteness(
+            listOf(DefinitenessValue.Definite),
+            setOf(
+                SpeechPart.Noun sourcedFrom Self,
+                SpeechPart.Article sourcedFrom Self
+            ),
+            setOf(SpeechPart.Article)
+        )
+        val nounDefinitenessSourcedCategory = SourcedCategory(
+            definitenessCategory,
+            Self,
+            CompulsoryData(false)
+        )
+        val nounDefinitenessExponenceCluster = ExponenceCluster(nounDefinitenessSourcedCategory)
+        // Set up noun class
+        val nounClassCategory = NounClass(
+            listOf(NounClassValue.LongObject, NounClassValue.Fruit),
+            setOf(
+                SpeechPart.Noun sourcedFrom Self,
+                SpeechPart.Article sourcedFrom Agreement(SyntaxRelation.Agent, nominals)
+            ),
+            setOf(SpeechPart.Noun)
+        )
+        val articleNounClassSourcedCategory = SourcedCategory(
+            nounClassCategory,
+            Agreement(SyntaxRelation.Agent, nominals),
+            CompulsoryData(true)
+        )
+        val articleNounClassExponenceCluster = ExponenceCluster(articleNounClassSourcedCategory)
+        val nounNounClassSourcedCategory = SourcedCategory(
+            nounClassCategory,
+            Self,
+            CompulsoryData(true)
+        )
+        val nounNounClassExponenceCluster = ExponenceCluster(nounNounClassSourcedCategory)
+        // Set up WordChangeParadigm
+        val nounDefinitenessApplicators = listOf(SuffixWordCategoryApplicator(article, LatchType.ClauseLatch))
+        val nounClassApplicatiors = listOf(PassingCategoryApplicator, PassingCategoryApplicator)
+        val articleApplicators = listOf(createAffixCategoryApplicator("b-"), createAffixCategoryApplicator("p-"))
+        val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Noun.toDefault(),
+            listOf(nounDefinitenessExponenceCluster, nounNounClassExponenceCluster),
+            mapOf(
+                nounDefinitenessExponenceCluster to nounDefinitenessExponenceCluster.possibleValues.zip(nounDefinitenessApplicators).toMap(),
+                nounNounClassExponenceCluster to nounNounClassExponenceCluster.possibleValues.zip(nounClassApplicatiors).toMap()
+            )
+        )
+        val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Article.toDefault(),
+            listOf(articleNounClassExponenceCluster),
+            mapOf(articleNounClassExponenceCluster to articleNounClassExponenceCluster.possibleValues.zip(articleApplicators).toMap())
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(nounClassCategory, definitenessCategory),
+            mapOf(
+                SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm,
+                SpeechPart.Article.toDefault() to articleSpeechPartChangeParadigm
+            )
+        )
+
+        assertEquals(
+            listOf(
+                // Noun forms
+                WordSequence(
+                    noun.withMorphemes(
+                        MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
+                    ),
+                ) to listOf(),
+                WordSequence(
+                    noun.withMorphemes(
+                        MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
+                    ),
+                    createWord("pa", SpeechPart.Article).withMorphemes(
+                        MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
+                        MorphemeData(1, listOf(nounDefinitenessSourcedCategory.getValue(DefinitenessValue.Definite)), true)
+                    ).withStaticCategories(DefinitenessValue.Definite)
+                ) to listOf(
+                    nounDefinitenessSourcedCategory.getValue(DefinitenessValue.Definite)
+                ),
+                // Article forms
+                createWord("pa", SpeechPart.Article).withMorphemes(
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
+                    MorphemeData(1, listOf(), true)
+                ).withStaticCategories(DefinitenessValue.Definite).toWordSequence() to listOf(
+                    articleNounClassSourcedCategory.getValue(NounClassValue.Fruit)
+                ),
+                createWord("ba", SpeechPart.Article).withMorphemes(
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.LongObject))),
+                    MorphemeData(1, listOf(), true)
+                ).withStaticCategories(DefinitenessValue.Definite).toWordSequence() to listOf(
+                    articleNounClassSourcedCategory.getValue(NounClassValue.LongObject)
+                )
+            ).sortedBy { it.toString() },
+            wordChangeParadigm.getAllWordForms(lexis, true).sortedBy { it.toString() }
+        )
+    }
 }
