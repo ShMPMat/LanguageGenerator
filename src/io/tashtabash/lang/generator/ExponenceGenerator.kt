@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.category.paradigm.ExponenceCluster
 import io.tashtabash.lang.language.category.paradigm.ExponenceValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
+import io.tashtabash.lang.language.category.realization.CategoryRealization.Passing
 import io.tashtabash.lang.language.category.realization.categoryRealizationClusters
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.random.singleton.RandomSingleton
@@ -19,12 +20,23 @@ import io.tashtabash.random.singleton.testProbability
 
 class ExponenceGenerator {
     private val categoryCollapseProbability = 0.5
-    private val rawRealizationProb = 0.01
+    private val keepNonPreferableRealizationProb = 0.01
 
-    private val categoryClusterPriority = categoryRealizationClusters
+    // Defines whether the lang tends to use Suffixes or Prefixes
+    private val preferableRealizations = categoryRealizationClusters
         .map { it to it.randomElement() }
 
-    internal fun splitCategoriesOnClusters(categories: List<SupplementedSourcedCategory>, speechPart: TypedSpeechPart): List<ExponenceTemplate> {
+    // If the language tends to use Suffixes, stochastically return Suffix if realization = Prefix & vice versa
+    private fun usePreferableRealization(realization: CategoryRealization): CategoryRealization =
+        preferableRealizations.firstOrNull { realization in it.first }
+            ?.second
+            ?.takeIf { (1 - keepNonPreferableRealizationProb).testProbability() }
+            ?: realization
+
+    internal fun splitCategoriesOnClusters(
+        categories: List<SupplementedSourcedCategory>,
+        speechPart: TypedSpeechPart
+    ): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
             .let { cs ->
                 val nonCompulsory = cs.filter { (c) -> !c.compulsoryData.isCompulsory }
@@ -77,20 +89,20 @@ class ExponenceGenerator {
     ): RealizationTemplate {
         val supplements = currentCategoriesWithSupplement.map { it.second }
         val currentCategories = currentCategoriesWithSupplement.map { it.first }
+        val areCategoriesCompulsory = currentCategories.all { it.compulsoryData.isCompulsory }
 
         val mapper = makeMapper(currentCategoriesWithSupplement, order)
         val default = CategoryRealization.entries.randomElement { mapper(it) }
-        val realizationTemplate = mutableMapOf<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>()
+        val realizationTemplate = mutableMapOf<ExponenceValue, Realizations>()
         for (value in cluster.possibleValues) {
-            val types = getRealizationTypes(value, supplements, speechPart, currentCategories, order)
-            val rawType = types.randomUnwrappedElementOrNull()
+            val possibleTypes = getRealizationTypes(value, supplements, speechPart, currentCategories, order)
+                // Exclude the probability of Passing types if the categories are optional (makes no sense)
+                .filter { areCategoriesCompulsory || it.realization != Passing }
+            val rawType = possibleTypes.randomUnwrappedElementOrNull()
                 ?: default
-            val type = categoryClusterPriority.firstOrNull { rawType in it.first }
-                ?.second
-                ?.takeIf { (1 - rawRealizationProb).testProbability() }
-                ?: rawType
+            val chosenType = usePreferableRealization(rawType)
 
-            realizationTemplate[value] = type to types
+            realizationTemplate[value] = Realizations(chosenType, possibleTypes)
         }
 
         return realizationTemplate
@@ -103,8 +115,8 @@ class ExponenceGenerator {
         categories: List<SourcedCategory>,
         position: Int
     ): List<RealizationBox> {
-        val categoryValues = value.categoryValues.map { it.categoryValue }
-        val variants = supplements.map {
+        val categoryValues: CategoryValues = value.categoryValues.map { it.categoryValue }
+        val variants: List<Set<RealizationBox>> = supplements.map {
             it.specialRealization(categoryValues, speechPart.type, categories)
         }
 
@@ -221,4 +233,6 @@ data class ExponenceTemplate(
     val supplements: List<CategoryRandomSupplements>
 )
 
-typealias RealizationTemplate = Map<ExponenceValue, Pair<CategoryRealization, List<RealizationBox>>>
+data class Realizations(val chosen: CategoryRealization, val possible: List<RealizationBox>)
+
+typealias RealizationTemplate = Map<ExponenceValue, Realizations>

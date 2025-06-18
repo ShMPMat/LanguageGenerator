@@ -148,6 +148,8 @@ class ChangeParadigmGenerator(
             c.categories.none { it.source is Agreement && it.source.relation == Patient }
         }
 
+    // Fixes edge cases when a speech part with a compulsory category agrees with a speech part in which
+    // this category isn't compulsory
     private fun checkCompulsoryConsistency(
         targetCategoryData: List<SpeechPartCategoryData>,
         allCategoryData: MutableList<SpeechPartCategoryData>
@@ -160,25 +162,25 @@ class ChangeParadigmGenerator(
                 for (sourcedCategory in data.categories) {
                     if (sourcedCategory.category.outType in compulsoryConsistencyExceptions)
                         continue
+                    if (sourcedCategory.source !is Agreement || !sourcedCategory.compulsoryData.isCompulsory)
+                        continue
 
-                    if (sourcedCategory.source is Agreement && sourcedCategory.compulsoryData.isCompulsory) {
-                        val relevantCategories = sourcedCategory.source.possibleSpeechParts
-                            .flatMap { sp -> allCategoryData.filter { it.speechPart.type == sp } }
-                            .map { d -> d.categories.firstOrNull { it.category == sourcedCategory.category } }
-                        val areAllRelationsCompulsory = relevantCategories.all { c ->
-                            c?.compulsoryData?.isCompulsory ?: false
-                        }
-                        val allCoCategories = relevantCategories
-                            .mapNotNull { it?.compulsoryData?.compulsoryCoCategories }
-                            .flatten()
-
-                        val newCompulsoryData = CompulsoryData(areAllRelationsCompulsory, allCoCategories)
-
-                        if (newCompulsoryData != sourcedCategory.compulsoryData)
-                            shouldCheck = true
-
-                        sourcedCategory.compulsoryData = newCompulsoryData
+                    val relevantCategories = sourcedCategory.source.possibleSpeechParts
+                        .flatMap { sp -> allCategoryData.filter { it.speechPart.type == sp } }
+                        .map { d -> d.categories.firstOrNull { it.category == sourcedCategory.category } }
+                    val areAllRelationsCompulsory = relevantCategories.all { c ->
+                        c?.compulsoryData?.isCompulsory ?: false
                     }
+                    val allCoCategories = relevantCategories
+                        .mapNotNull { it?.compulsoryData?.compulsoryCoCategories }
+                        .flatten()
+
+                    val newCompulsoryData = CompulsoryData(areAllRelationsCompulsory, allCoCategories)
+
+                    if (newCompulsoryData != sourcedCategory.compulsoryData)
+                        shouldCheck = true
+
+                    sourcedCategory.compulsoryData = newCompulsoryData
                 }
         }
     }

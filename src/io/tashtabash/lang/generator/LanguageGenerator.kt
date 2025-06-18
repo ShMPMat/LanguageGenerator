@@ -102,7 +102,7 @@ class LanguageGenerator(private val supplementPath: String) {
     private fun randomSyllableGenerator(): SyllableValenceGenerator {
         val syllableTemplates = HashMap<SyllableValenceTemplate, Double>()
         File("$supplementPath/SyllableTypes").forEachLine {
-            if (!it.isBlank()) {
+            if (it.isNotBlank()) {
                 val (template, syllableProbability) = it.split(" +".toRegex())
                 val valencies = ArrayList<ValencyPlace>()
                 var i = 0

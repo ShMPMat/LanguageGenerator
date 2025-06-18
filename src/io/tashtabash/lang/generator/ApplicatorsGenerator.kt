@@ -29,37 +29,33 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     ): Result {
         words.clear()
 
-        val map = HashMap<ExponenceCluster, MutableMap<ExponenceValue, CategoryApplicator>>()
-
         val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
-        orderedTemplates.forEach { map[it.cluster] = mutableMapOf() }
+        val resultMap = orderedTemplates.associate { it.cluster to mutableMapOf<ExponenceValue, CategoryApplicator>() }
 
         val realizations = mutableListOf<RealizationTemplate>()
 
-        for (i in orderedTemplates.indices) {
-            val (cluster, allRealizations) = orderedTemplates[i]
-            val clusterMap = map.getValue(cluster)
+        for ((cluster, allRealizations) in orderedTemplates) {
+            val clusterMap = resultMap.getValue(cluster)
 
-            for ((value, pair) in allRealizations) {
-                clusterMap[value] = getApplicator(pair.first, phoneticRestrictions, value.core)
-            }
+            for ((exponenceValue, realization) in allRealizations)
+                clusterMap[exponenceValue] = getApplicator(realization.chosen, phoneticRestrictions, exponenceValue.core)
             realizations += allRealizations
         }
 
         val i = findFirstMorphemeCluster(realizations)
         if (i != null) {
             val exponenceCluster = orderedTemplates[i].cluster
-            val clusterMap = map.getValue(exponenceCluster)
+            val clusterMap = resultMap.getValue(exponenceCluster)
             val currentRealizations = realizations[i]
 
             injectDerivationMorpheme(exponenceCluster, clusterMap, phoneticRestrictions, currentRealizations)
         }
-        return Result(words, map, orderedTemplates.map { it.cluster })
+        return Result(words, resultMap, orderedTemplates.map { it.cluster })
     }
 
     private fun findFirstMorphemeCluster(realizations: MutableList<RealizationTemplate>): Int? {
         for ((i, map) in realizations.withIndex()) {
-            val isFullyOuter = map.all { it.value.first in listOf(SuffixWord, PrefixWord) }
+            val isFullyOuter = map.all { it.value.chosen in listOf(SuffixWord, PrefixWord) }
             if (isFullyOuter)
                 continue
 
@@ -73,51 +69,39 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         type: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
         core: SemanticsCore
-    ): CategoryApplicator {
-        val (applicator, word) = randomCategoryApplicator(type, phoneticRestrictions, core)
-
-        word?.let { words += it }
-
-        return applicator
-    }
+    ): CategoryApplicator = randomCategoryApplicator(type, phoneticRestrictions, core)
+        .also {
+            if (it is WordCategoryApplicator)
+                words += it.word
+        }
 
     private fun randomCategoryApplicator(
         realizationType: CategoryRealization,
         phoneticRestrictions: PhoneticRestrictions,
         semanticsCore: SemanticsCore
     ) = when (realizationType) {
-        PrefixWord -> {
-            val word = lexisGenerator.generateWord(semanticsCore)
-            val latch = clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
-
-            PrefixWordCategoryApplicator(word, latch) to word
-        }
-        SuffixWord -> {
-            val word = lexisGenerator.generateWord(semanticsCore)
-            val latch = clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
-
-            SuffixWordCategoryApplicator(word, latch) to word
-        }
-        Prefix -> {
-            val changes = changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)
-            AffixCategoryApplicator(
-                Prefix(changes),
-                Prefix
-            ) to null
-        }
-        Suffix -> {
-            val change = changeGenerator.generateChanges(Position.End, phoneticRestrictions)
-            AffixCategoryApplicator(
-                Suffix(change),
-                Suffix
-            ) to null
-        }
-        Reduplication -> WordReduplicationCategoryApplicator() to null
-        Passing -> PassingCategoryApplicator to null
-        Suppletion -> {
-            val word = lexisGenerator.generateWord(semanticsCore)
-            SuppletionCategoryApplicator(word) to word
-        }
+        PrefixWord -> PrefixWordCategoryApplicator(
+            lexisGenerator.generateWord(semanticsCore),
+            clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
+        )
+        SuffixWord -> SuffixWordCategoryApplicator(
+            lexisGenerator.generateWord(semanticsCore),
+            clauseLatchProb.chanceOf<LatchType> { LatchType.ClauseLatch } ?: LatchType.InPlace
+        )
+        Prefix ->
+        AffixCategoryApplicator(
+            Prefix(changeGenerator.generateChanges(Position.Beginning, phoneticRestrictions)),
+            Prefix
+        )
+        Suffix -> AffixCategoryApplicator(
+            Suffix(changeGenerator.generateChanges(Position.End, phoneticRestrictions)),
+            Suffix
+        )
+        Reduplication -> WordReduplicationCategoryApplicator()
+        Passing -> PassingCategoryApplicator
+        Suppletion -> SuppletionCategoryApplicator(
+            lexisGenerator.generateWord(semanticsCore)
+        )
     }
 
     private fun injectDerivationMorpheme(
@@ -127,7 +111,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         realizations: RealizationTemplate
     ) {
         if (exponenceCluster.isCompulsory && exponenceCluster.possibleValues.size > 2) {
-            val distinctRealizations = realizations.map { it.value.first }
+            val distinctRealizations = realizations.map { it.value.chosen }
                 .distinct()
                 .subtract(listOf(Passing))
 
@@ -160,24 +144,24 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     }
 
     private fun constructUnderivedValues(realizations: RealizationTemplate): List<ExponenceValue> {
-        val passingValues = realizations.filter { it.value.first == Passing }
+        val passingValues = realizations.filter { it.value.chosen == Passing }
             .map { it.key }
-        val probablePassingValues = realizations.mapNotNull { (e, p) ->
-            p.second.firstOrNull { it.realization == Passing }
+        val possiblePassingValues = realizations.mapNotNull { (e, p) ->
+            p.possible.firstOrNull { it.realization == Passing }
                 ?.let { e.toSampleSpaceObject(it.probability) }
         }
 
         val result = passingValues.toMutableList()
-        val maxProb = probablePassingValues.maxByOrNull { it.probability }
+        val maxProb = possiblePassingValues.maxByOrNull { it.probability }
             ?.probability
 
         if (maxProb != null)
             result += if (result.isEmpty())
-                probablePassingValues.mapNotNull { v ->
+                possiblePassingValues.mapNotNull { v ->
                     v.value.takeIf { (v.probability / maxProb).testProbability() }
                 }
             else
-                probablePassingValues.mapNotNull { v ->
+                possiblePassingValues.mapNotNull { v ->
                     v.value.takeIf { (v.probability / (maxProb * 2)).testProbability() }
                 }
 
