@@ -108,7 +108,7 @@ data class WordChangeParadigm(
                     ?.getCategoryOrNull(it.parentClassName)
                     ?: return@mapNotNull null
 
-                parentCategory.getValue(it)
+                parentCategory[it]
             }
 
     fun getSpeechPartParadigm(speechPart: TypedSpeechPart) =

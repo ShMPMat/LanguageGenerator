@@ -33,7 +33,7 @@ class PassingCategoryApplicatorTest {
             CategorySource.Self,
             CompulsoryData(false)
         )
-        val definiteValue = definitenessSourcedCategory.getValue(DefinitenessValue.Definite)
+        val definiteValue = definitenessSourcedCategory[DefinitenessValue.Definite]
 
         assertEquals(
             PassingCategoryApplicator.apply(wordSequence, 0, listOf(definiteValue)),

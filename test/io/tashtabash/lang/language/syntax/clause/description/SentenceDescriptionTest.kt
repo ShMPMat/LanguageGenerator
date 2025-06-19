@@ -65,7 +65,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory.getValue(TenseValue.Past))
+                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
@@ -92,7 +92,7 @@ internal class SentenceDescriptionTest {
                 createIntransVerb("oto")
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Past)))
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
                     ) withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
@@ -164,7 +164,7 @@ internal class SentenceDescriptionTest {
                 createWord("ato", SpeechPart.Adjective)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Past)))
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
                     ) withMeaning "new",
                 createNoun("i") withMeaning "dog",
                 createIntransVerb("o") withMeaning "sleep"
@@ -238,7 +238,7 @@ internal class SentenceDescriptionTest {
                 createWord("oda", SpeechPart.PersonalPronoun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(nounClassSourcedCategory.getValue(NounClassValue.Female)))
+                        MorphemeData(2, listOf(nounClassSourcedCategory[NounClassValue.Female]))
                     ) withMeaning "_personal_pronoun",
                 createIntransVerb("do") withMeaning "sleep"
             ),
@@ -315,14 +315,14 @@ internal class SentenceDescriptionTest {
                 createWord("oda", SpeechPart.Noun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Absolutive)))
+                        MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Absolutive]))
                     ) withMeaning "dog",
                 createIntransVerb("do").withTags("benefactor", "intrans")
                         withMeaning "sleep",
                 createWord("oto", SpeechPart.Noun)
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
-                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Benefactive)))
+                        MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Benefactive]))
                     ) withMeaning "dog"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
@@ -393,10 +393,10 @@ internal class SentenceDescriptionTest {
         assertEquals(
             listOf(
                 createNoun("i").withMorphemes(
-                    MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true)
+                    MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true)
                 ) withMeaning "dog",
                 createNoun("i").withMorphemes(
-                    MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true)
+                    MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true)
                 ) withMeaning "dog",
                 createIntransVerb("o") withMeaning "sleep"
             ),
@@ -488,23 +488,23 @@ internal class SentenceDescriptionTest {
             listOf(
                 createWord("oda", SpeechPart.Noun)
                     .withMorphemes(
-                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
-                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Absolutive)))
+                        MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true),
+                        MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Absolutive]))
                     ) withMeaning "dog",
                 createWord("o", SpeechPart.Noun)
                     .withMorphemes(
-                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                        MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true),
                     ) withMeaning "dog",
                 createIntransVerb("do").withTags("benefactor", "intrans")
                         withMeaning "sleep",
                 createWord("oto", SpeechPart.Noun)
                     .withMorphemes(
-                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
-                        MorphemeData(2, listOf(caseSourcedCategory.getValue(CaseValue.Benefactive)))
+                        MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true),
+                        MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Benefactive]))
                     ) withMeaning "dog",
                 createWord("o", SpeechPart.Noun)
                     .withMorphemes(
-                        MorphemeData(1, listOf(numberSourcedCategory.getValue(NumberValue.Plural)), true),
+                        MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural]), true),
                     ) withMeaning "dog"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))

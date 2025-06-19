@@ -4,10 +4,7 @@ import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.SuffixWordCategoryApplicator
-import io.tashtabash.lang.language.lexis.Lexis
-import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.nominals
-import io.tashtabash.lang.language.lexis.toDefault
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.prosody.Prosody
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
@@ -98,11 +95,11 @@ internal class WordChangeParadigmTest {
         assertEquals(
             listOf(
                 noun.withMorphemes(
-                    MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
+                    MorphemeData(4, listOf(nounNounClassSourcedCategory[NounClassValue.Fruit]), true),
                 ),
                 createWord("pa", SpeechPart.Article).withMorphemes(
-                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
-                    MorphemeData(1, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)), true)
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory[NounClassValue.Fruit])),
+                    MorphemeData(1, listOf(definitenessSourcedCategory[DefinitenessValue.Definite]), true)
                 )
             ),
             result.unfold().words
@@ -147,7 +144,7 @@ internal class WordChangeParadigmTest {
             listOf(
                 createWord("ada", SpeechPart.Adjective).withMorphemes(
                     MorphemeData(1, listOf(), true),
-                    MorphemeData(2, listOf(tenseSourcedCategory.getValue(TenseValue.Present)))
+                    MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Present]))
                 )
             ),
             result.unfold().words
@@ -195,7 +192,7 @@ internal class WordChangeParadigmTest {
                     .withProsodyOn(2, Prosody.Stress)
                     .withMorphemes(
                         MorphemeData(4, listOf(), true),
-                        MorphemeData(3, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
+                        MorphemeData(3, listOf(definitenessSourcedCategory[DefinitenessValue.Definite]))
                     )
             ),
             result.unfold().words
@@ -264,7 +261,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabcat")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(3, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
+                        MorphemeData(3, listOf(definitenessSourcedCategory[DefinitenessValue.Definite]))
                     )
             ),
             result.unfold().words
@@ -311,7 +308,7 @@ internal class WordChangeParadigmTest {
                 createNoun("dabca")
                     .withMorphemes(
                         MorphemeData(3, listOf(), true),
-                        MorphemeData(2, listOf(definitenessSourcedCategory.getValue(DefinitenessValue.Definite)))
+                        MorphemeData(2, listOf(definitenessSourcedCategory[DefinitenessValue.Definite]))
                     )
             ),
             result.unfold().words
@@ -319,7 +316,7 @@ internal class WordChangeParadigmTest {
     }
 
     @Test
-    fun `getAllWordForms gets all word forms`() {
+    fun `getAllWordForms returns all word forms`() {
         // Set up words
         val article = createWord("a", SpeechPart.Article)
             .withStaticCategories(DefinitenessValue.Definite)
@@ -391,34 +388,32 @@ internal class WordChangeParadigmTest {
         assertEquals(
             listOf(
                 // Noun forms
+                noun.withMorphemes(
+                    MorphemeData(4, listOf(nounNounClassSourcedCategory[NounClassValue.Fruit]), true),
+                ).toWordSequence() to listOf(),
                 WordSequence(
                     noun.withMorphemes(
-                        MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
-                    ),
-                ) to listOf(),
-                WordSequence(
-                    noun.withMorphemes(
-                        MorphemeData(4, listOf(nounNounClassSourcedCategory.getValue(NounClassValue.Fruit)), true),
+                        MorphemeData(4, listOf(nounNounClassSourcedCategory[NounClassValue.Fruit]), true),
                     ),
                     createWord("pa", SpeechPart.Article).withMorphemes(
-                        MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
-                        MorphemeData(1, listOf(nounDefinitenessSourcedCategory.getValue(DefinitenessValue.Definite)), true)
+                        MorphemeData(1, listOf(articleNounClassSourcedCategory[NounClassValue.Fruit])),
+                        MorphemeData(1, listOf(nounDefinitenessSourcedCategory[DefinitenessValue.Definite]), true)
                     ).withStaticCategories(DefinitenessValue.Definite)
                 ) to listOf(
-                    nounDefinitenessSourcedCategory.getValue(DefinitenessValue.Definite)
+                    nounDefinitenessSourcedCategory[DefinitenessValue.Definite]
                 ),
                 // Article forms
                 createWord("pa", SpeechPart.Article).withMorphemes(
-                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.Fruit))),
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory[NounClassValue.Fruit])),
                     MorphemeData(1, listOf(), true)
                 ).withStaticCategories(DefinitenessValue.Definite).toWordSequence() to listOf(
-                    articleNounClassSourcedCategory.getValue(NounClassValue.Fruit)
+                    articleNounClassSourcedCategory[NounClassValue.Fruit]
                 ),
                 createWord("ba", SpeechPart.Article).withMorphemes(
-                    MorphemeData(1, listOf(articleNounClassSourcedCategory.getValue(NounClassValue.LongObject))),
+                    MorphemeData(1, listOf(articleNounClassSourcedCategory[NounClassValue.LongObject])),
                     MorphemeData(1, listOf(), true)
                 ).withStaticCategories(DefinitenessValue.Definite).toWordSequence() to listOf(
-                    articleNounClassSourcedCategory.getValue(NounClassValue.LongObject)
+                    articleNounClassSourcedCategory[NounClassValue.LongObject]
                 )
             ).sortedBy { it.toString() },
             wordChangeParadigm.getAllWordForms(lexis, true).sortedBy { it.toString() }

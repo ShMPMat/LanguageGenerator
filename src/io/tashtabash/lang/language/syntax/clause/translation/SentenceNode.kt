@@ -83,7 +83,7 @@ data class SentenceNode(
                     else
                         return@mapNotNull null
                 }
-            sourcedCategory.getValue(res)
+            sourcedCategory[res]
         }
 }
 
