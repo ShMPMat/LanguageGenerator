@@ -3,12 +3,14 @@ package io.tashtabash.lang.language.category.paradigm
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.WordCategoryApplicator
 import io.tashtabash.lang.language.diachronicity.PhonologicalRule
 import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
 import io.tashtabash.lang.utils.listCartesianProduct
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
@@ -172,6 +174,47 @@ data class WordChangeParadigm(
                 }
             }.awaitAll()
             .flatten()
+    }
+
+    private fun getUniqueWordForms(
+        word: Word,
+        includeOptionalCategories: Boolean
+    ): List<Deferred<Word>> = runBlocking {
+        getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
+            .map {
+                async {
+                    apply(word, categoryValues = it).mainWord
+                }
+            }
+    }
+
+    // May contain duplicates
+    fun getUniqueWordForms(
+        lexis: Lexis,
+        includeOptionalCategories: Boolean
+    ): List<Word> = runBlocking {
+        val contentWords = lexis.words
+            .map {
+                async {
+                    getUniqueWordForms(it, includeOptionalCategories)
+                }
+            }
+        val functionWords =  speechPartChangeParadigms.values
+            .flatMap { p ->
+                p.applicators
+                    .values
+                    .flatMap { it.values }
+            }
+            .filterIsInstance<WordCategoryApplicator>()
+            .map {
+                async {
+                    getUniqueWordForms(it.word, includeOptionalCategories)
+                }
+            }
+
+        (contentWords + functionWords).awaitAll()
+            .flatten()
+            .awaitAll()
     }
 
     val speechParts = speechPartChangeParadigms.keys.sortedBy { it.type }
