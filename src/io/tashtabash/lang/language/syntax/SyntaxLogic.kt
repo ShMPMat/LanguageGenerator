@@ -12,6 +12,7 @@ import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.Priority
 import io.tashtabash.lang.language.syntax.features.CopulaType
+import io.tashtabash.lang.utils.equalsByElement
 import kotlin.math.abs
 
 
@@ -21,7 +22,7 @@ class SyntaxLogic(
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val numberCategorySolver: NumberCategorySolver? = null,
-    private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = mapOf(),
+    private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
     private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive
@@ -78,9 +79,7 @@ class SyntaxLogic(
     fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: ActorType?): Boolean =
         personalPronounDropSolver
             .any { (a, cs) ->
-                a == actorType
-                        && categories.all { it in cs }
-                        && cs.size == categories.size
+                a == actorType && categories.equalsByElement(cs)
             }
 
     fun resolveVerbCase(
