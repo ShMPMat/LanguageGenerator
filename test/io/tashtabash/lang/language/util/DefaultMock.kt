@@ -12,10 +12,7 @@ import io.tashtabash.lang.language.category.realization.PassingCategoryApplicato
 import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.derivation.PassingCategoryChanger
-import io.tashtabash.lang.language.lexis.Lexis
-import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.TypedSpeechPart
-import io.tashtabash.lang.language.lexis.Word
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
@@ -65,7 +62,14 @@ fun makeDefLang(
     )
 ): Language = makeDefLang(
     words,
-    WordChangeParadigm(listOf(defNumberCategory), mapOf(defSpeechPart to nounChangeParadigm)),
+    WordChangeParadigm(
+        listOf(defNumberCategory),
+        mapOf(
+            defSpeechPart to nounChangeParadigm,
+            // Set a paradigm for particles in case the lang has them
+            SpeechPart.Particle.toDefault() to SpeechPartChangeParadigm(SpeechPart.Particle.toDefault())
+        )
+    ),
     derivations
 )
 
