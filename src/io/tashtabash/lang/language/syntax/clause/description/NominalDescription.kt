@@ -33,8 +33,8 @@ open class NominalDescription(
 
 class PronounDescription(
     type: String,
-    definitions: List<NounDefinerDescription>,
-    private val actor: ActorValue
+    private val actor: ActorValue,
+    definitions: List<NounDefinerDescription> = listOf()
 ): NominalDescription(type, ActorComplimentValue(actor.number, actor.deixis), definitions) {
     override fun toClause(language: Language, context: Context, random: Random): NominalClause {
         val clause = super.toClause(language, context, random)
@@ -49,7 +49,7 @@ class PronounDescription(
 
     override fun copyAndAddDefinitions(newDefinitions: List<NounDefinerDescription>) = PronounDescription(
         noun,
-        definitions + newDefinitions,
-        actor
+        actor,
+        definitions + newDefinitions
     )
 }

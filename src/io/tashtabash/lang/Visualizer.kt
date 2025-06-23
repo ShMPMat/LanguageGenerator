@@ -57,13 +57,11 @@ class Visualizer(val language: Language) {
         )
         val i = PronounDescription(
             "_personal_pronoun",
-            listOf(),
-            ActorValue(First, Female, AmountValue(1), DeixisValue.Proximal, null)
+            ActorValue(First, Female, AmountValue(1), DeixisValue.Proximal, null),
         )
         val we = PronounDescription(
             "_personal_pronoun",
-            listOf(),
-            ActorValue(First, Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive)
+            ActorValue(First, Female, AmountValue(4), DeixisValue.Proximal, InclusivityValue.Inclusive),
         )
         val time = NominalDescription(
             "time",
@@ -72,13 +70,11 @@ class Visualizer(val language: Language) {
         )
         val youPl = PronounDescription(
             "_personal_pronoun",
-            listOf(),
-            ActorValue(Second, Neutral, AmountValue(2), DeixisValue.ProximalAddressee, null)
+            ActorValue(Second, Neutral, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
         val these = PronounDescription(
             "_deixis_pronoun",
-            listOf(),
-            ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null)
+            ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null),
         )
         val handsObj = NominalDescription(
             "hand",

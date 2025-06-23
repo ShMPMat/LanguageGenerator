@@ -223,8 +223,7 @@ internal class SentenceDescriptionTest {
         // Set up descriptions
         val personalPronounDescription = PronounDescription(
             "_personal_pronoun",
-            listOf(),
-            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null)
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
         val verbDescription = IntransitiveVerbDescription("sleep", personalPronounDescription)
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
