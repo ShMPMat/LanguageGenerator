@@ -511,5 +511,57 @@ internal class SentenceDescriptionTest {
                 .words
         )
     }
+
+    @Test
+    fun `Personal pronouns can be dropped`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val personalPronoun = createWord("o", SpeechPart.PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createIntransVerb("do") withMeaning "sleep"
+        // Set up WordChangeParadigm
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.PersonalPronoun.toDefault(),
+        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Verb.toIntransitive()
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                SpeechPart.PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                SpeechPart.Verb.toIntransitive() to intransitiveVerbChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(personalPronoun, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                ),
+                personalPronounDropSolver = listOf(ActorType.Agent to listOf(Second))
+            )
+        )
+        // Set up descriptions
+        val personalPronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val verbDescription = IntransitiveVerbDescription("sleep", personalPronounDescription)
+        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val context = Context(
+            LongGonePast to Implicit,
+            Simple to Explicit
+        )
+
+        assertEquals(
+            listOf(
+                createIntransVerb("do") withMeaning "sleep"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
 }
 
