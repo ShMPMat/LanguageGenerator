@@ -1,10 +1,9 @@
 package io.tashtabash.lang.generator.util
 
+import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.paradigm.ExponenceCluster
-import io.tashtabash.lang.language.category.paradigm.ExponenceValue
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
-import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.random.singleton.chanceOf
@@ -13,9 +12,9 @@ import io.tashtabash.random.singleton.testProbability
 
 fun copyApplicators(
     cluster: ExponenceCluster,
-    applicator: Map<ExponenceValue, CategoryApplicator>,
+    applicator: ValueMap,
     sourceMap: Map<SyntaxRelation, SyntaxRelation>
-): Pair<ExponenceCluster, Map<ExponenceValue, CategoryApplicator>> {
+): Pair<ExponenceCluster, ValueMap> {
     val newCategories = cluster.categories.map {
         it.copy(
             source = when (it.source) {
@@ -40,7 +39,7 @@ fun copyApplicators(
         }
 
         newValue to applicator.copy()
-    }.toMap()
+    }
 }
 
 fun SpeechPartChangeParadigm.copyForNewSpeechPart(

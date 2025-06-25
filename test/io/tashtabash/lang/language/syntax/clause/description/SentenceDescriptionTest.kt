@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
+import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.PersonValue.Second
@@ -48,7 +49,7 @@ internal class SentenceDescriptionTest {
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
             listOf(tenseExponenceCluster),
-            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap())
+            mapOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -121,7 +122,7 @@ internal class SentenceDescriptionTest {
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Adjective.toDefault(),
             listOf(tenseExponenceCluster),
-            mapOf(tenseExponenceCluster to tenseExponenceCluster.possibleValues.zip(tenseApplicators).toMap())
+            mapOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -198,7 +199,7 @@ internal class SentenceDescriptionTest {
         val personalPronounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.PersonalPronoun.toDefault(),
             listOf(nounClassExponenceCluster),
-            mapOf(nounClassExponenceCluster to nounClassExponenceCluster.possibleValues.zip(nounClassApplicators).toMap())
+            mapOf(nounClassExponenceCluster to ValueMap(nounClassExponenceCluster.possibleValues, nounClassApplicators))
         )
         val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive()
@@ -271,7 +272,7 @@ internal class SentenceDescriptionTest {
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(caseExponenceCluster),
-            mapOf(caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap())
+            mapOf(caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive()
@@ -350,7 +351,7 @@ internal class SentenceDescriptionTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(numberExponenceCluster),
-            mapOf(numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap())
+            mapOf(numberExponenceCluster to ValueMap(numberExponenceCluster.possibleValues, numberApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(numberCategory),
@@ -439,8 +440,8 @@ internal class SentenceDescriptionTest {
             SpeechPart.Noun.toDefault(),
             listOf(numberExponenceCluster, caseExponenceCluster),
             mapOf(
-                numberExponenceCluster to numberExponenceCluster.possibleValues.zip(numberApplicators).toMap(),
-                caseExponenceCluster to caseExponenceCluster.possibleValues.zip(caseApplicators).toMap()
+                numberExponenceCluster to ValueMap(numberExponenceCluster.possibleValues, numberApplicators),
+                caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators)
             )
         )
         val wordChangeParadigm = WordChangeParadigm(

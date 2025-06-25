@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.category.paradigm
 
+import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
@@ -132,7 +133,7 @@ data class WordChangeParadigm(
             getSpeechPartParadigm(speechPart)
                 .categories
                 .filter { it.compulsoryData.isCompulsory }
-                .filter { !it.category.staticSpeechParts.contains(speechPart.type) }
+                .filter { speechPart.type !in it.category.staticSpeechParts }
                 .map { it.actualSourcedValues }
         )
 
@@ -143,7 +144,7 @@ data class WordChangeParadigm(
         val optionalCategories = getSpeechPartParadigm(speechPart)
             .categories
             .filter { !it.compulsoryData.isCompulsory }
-            .filter { !it.category.staticSpeechParts.contains(speechPart.type) }
+            .filter { speechPart.type !in it.category.staticSpeechParts }
         for (optionalCategory in optionalCategories)
             optionalCategoryProduct += optionalCategory.actualSourcedValues
                 .flatMap { v -> optionalCategoryProduct.map { it + v } }
@@ -224,9 +225,11 @@ data class WordChangeParadigm(
         speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
                 .mapValues { (_, exponenceToApplicator) ->
-                    exponenceToApplicator.mapValues { (_, applicator) ->
-                        mapper(applicator)
-                    }
+                    ValueMap(
+                        exponenceToApplicator.mapValues { (_, applicator) ->
+                            mapper(applicator)
+                        }
+                    )
                 }
 
             speechPartChangeParadigm.copy(applicators = mappedApplicators)
