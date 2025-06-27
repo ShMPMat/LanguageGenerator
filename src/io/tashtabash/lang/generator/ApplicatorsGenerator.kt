@@ -183,7 +183,8 @@ class ValueMap(): LinkedHashMap<ExponenceValue, CategoryApplicator>() {
             this[k] = v
     }
 
-    val isAnalytical: Boolean = values.all { it.type in analyticalRealizations }
+    val isAnalytical: Boolean
+        get() = values.all { it.type in analyticalRealizations }
 
     fun map(mapper: (Map.Entry<ExponenceValue, CategoryApplicator>) -> Pair<ExponenceValue, CategoryApplicator>): ValueMap {
         val newMap = ValueMap()
