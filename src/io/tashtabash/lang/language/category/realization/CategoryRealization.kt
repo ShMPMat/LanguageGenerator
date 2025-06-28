@@ -1,5 +1,7 @@
 package io.tashtabash.lang.language.category.realization
 
+import io.tashtabash.lang.language.category.realization.CategoryRealization.*
+
 
 enum class CategoryRealization {
     Suppletion,
@@ -13,6 +15,8 @@ enum class CategoryRealization {
 
 
 val categoryRealizationClusters = listOf(
-    listOf(CategoryRealization.Prefix, CategoryRealization.Suffix),
-    listOf(CategoryRealization.PrefixWord, CategoryRealization.SuffixWord)
+    listOf(Prefix, Suffix),
+    listOf(PrefixWord, SuffixWord)
 )
+
+val analyticalRealizations = listOf(Passing, PrefixWord, SuffixWord)
