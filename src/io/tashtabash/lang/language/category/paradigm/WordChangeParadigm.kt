@@ -10,7 +10,7 @@ import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
-import io.tashtabash.lang.utils.listCartesianProduct
+import io.tashtabash.lang.utils.cartesianProduct
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -129,13 +129,12 @@ data class WordChangeParadigm(
         speechPart: TypedSpeechPart,
         includeOptionalCategories: Boolean,
     ): List<SourcedCategoryValues> {
-        val compulsoryCategoryProduct = listCartesianProduct(
-            getSpeechPartParadigm(speechPart)
-                .categories
-                .filter { it.compulsoryData.isCompulsory }
-                .filter { speechPart.type !in it.category.staticSpeechParts }
-                .map { it.actualSourcedValues }
-        )
+        val compulsoryCategoryProduct = getSpeechPartParadigm(speechPart)
+            .categories
+            .filter { it.compulsoryData.isCompulsory }
+            .filter { speechPart.type !in it.category.staticSpeechParts }
+            .map { it.actualSourcedValues }
+            .cartesianProduct()
 
         if (!includeOptionalCategories)
             return compulsoryCategoryProduct
