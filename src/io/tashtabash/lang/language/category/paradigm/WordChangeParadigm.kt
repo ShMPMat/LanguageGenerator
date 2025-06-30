@@ -4,7 +4,9 @@ import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
+import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordCategoryApplicator
+import io.tashtabash.lang.language.category.realization.analyticalRealizations
 import io.tashtabash.lang.language.diachronicity.PhonologicalRule
 import io.tashtabash.lang.language.diachronicity.PhonologicalRuleApplicator
 import io.tashtabash.lang.language.lexis.*
@@ -151,6 +153,31 @@ data class WordChangeParadigm(
         return optionalCategoryProduct
     }
 
+    // Includes compulsory analytically expressed categories, but minimizes them
+    private fun getAllSyntheticCategoryValueCombinations(speechPart: TypedSpeechPart): List<SourcedCategoryValues> =
+        getSpeechPartParadigm(speechPart)
+            .applicators.filter { (cluster, valueMap) -> cluster.isCompulsory || !valueMap.isAnalytical }
+            .entries.map { (_, valueMap) ->
+                val analyticClusterValues: List<List<SourcedCategoryValue>> = valueMap.entries
+                    .filter { it.value.type !in analyticalRealizations }
+                    .map { it.key.categoryValues } +
+                        // Add one of the passing matchers if exists
+                        listOfNotNull(
+                            valueMap.entries
+                                .firstOrNull { it.value == PassingCategoryApplicator }
+                                ?.key
+                                ?.categoryValues
+                        )
+                val chosenClusterValues = analyticClusterValues.takeIf { it.isNotEmpty() }
+                    ?: listOf(valueMap.keys.first().categoryValues)
+
+                chosenClusterValues.map { categoryValues ->
+                    categoryValues.filter { speechPart.type !in it.parent.category.staticSpeechParts }
+                }
+            }.cartesianProduct()
+            // Unite separate exponence clusters
+            .map { it.flatten() }
+
     fun getAllWordForms(
         word: Word,
         includeOptionalCategories: Boolean
@@ -176,11 +203,8 @@ data class WordChangeParadigm(
             .flatten()
     }
 
-    private fun getUniqueWordForms(
-        word: Word,
-        includeOptionalCategories: Boolean
-    ): List<Deferred<Word>> = runBlocking {
-        getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
+    fun getUniqueWordForms(word: Word): List<Deferred<Word>> = runBlocking {
+        getAllSyntheticCategoryValueCombinations(word.semanticsCore.speechPart)
             .map {
                 async {
                     apply(word, categoryValues = it).mainWord
@@ -189,14 +213,11 @@ data class WordChangeParadigm(
     }
 
     // May contain duplicates
-    fun getUniqueWordForms(
-        lexis: Lexis,
-        includeOptionalCategories: Boolean
-    ): List<Word> = runBlocking {
+    fun getUniqueWordForms(lexis: Lexis): List<Word> = runBlocking {
         val contentWords = lexis.words
             .map {
                 async {
-                    getUniqueWordForms(it, includeOptionalCategories)
+                    getUniqueWordForms(it)
                 }
             }
         val functionWords =  speechPartChangeParadigms.values
@@ -208,7 +229,7 @@ data class WordChangeParadigm(
             .filterIsInstance<WordCategoryApplicator>()
             .map {
                 async {
-                    getUniqueWordForms(it.word, includeOptionalCategories)
+                    getUniqueWordForms(it.word)
                 }
             }
 

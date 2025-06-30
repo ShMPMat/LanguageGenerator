@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.category.paradigm
 import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.CategorySource.*
+import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.SuffixWordCategoryApplicator
 import io.tashtabash.lang.language.lexis.*
@@ -507,7 +508,87 @@ internal class WordChangeParadigmTest {
                     MorphemeData(1, listOf(), true)
                 ).withStaticCategories(DefinitenessValue.Definite)
             ).sortedBy { it.toString() },
-            wordChangeParadigm.getUniqueWordForms(lexis, true)
+            wordChangeParadigm.getUniqueWordForms(lexis)
+                .distinct()
+                .sortedBy { it.toString() }
+        )
+    }
+
+    @Test
+    fun `getUniqueWordForms works correctly with multiple exponence clusters`() {
+        // Set up words
+        val noun = createNoun("daba")
+        val lexis = Lexis(listOf(noun), mapOf(), mapOf())
+            .reifyPointers()
+        // Set up definiteness
+        val definitenessCategory = Definiteness(
+            listOf(DefinitenessValue.Definite, DefinitenessValue.Indefinite),
+            setOf(
+                SpeechPart.Noun sourcedFrom Self
+            )
+        )
+        val definitenessSourcedCategory = SourcedCategory(
+            definitenessCategory,
+            Self,
+            CompulsoryData(true)
+        )
+        val nounDefinitenessExponenceCluster = ExponenceCluster(definitenessSourcedCategory)
+        // Set up number
+        val numberCategory = Number(
+            listOf(NumberValue.Singular, NumberValue.Plural),
+            setOf(
+                SpeechPart.Noun sourcedFrom Self,
+            )
+        )
+        val numberSourcedCategory = SourcedCategory(
+            numberCategory,
+            Self,
+            CompulsoryData(true)
+        )
+        val nounNumberExponenceCluster = ExponenceCluster(numberSourcedCategory)
+        // Set up WordChangeParadigm
+        val definitenessApplicators = listOf(
+            createAffixCategoryApplicator("o-"),
+            createAffixCategoryApplicator("a-")
+        )
+        val numberApplicatiors = listOf(PassingCategoryApplicator, createAffixCategoryApplicator("-i"))
+        val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Noun.toDefault(),
+            listOf(nounDefinitenessExponenceCluster, nounNumberExponenceCluster),
+            mapOf(
+                nounDefinitenessExponenceCluster to ValueMap(nounDefinitenessExponenceCluster.possibleValues, definitenessApplicators),
+                nounNumberExponenceCluster to ValueMap(nounNumberExponenceCluster.possibleValues, numberApplicatiors)
+            )
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(numberCategory, definitenessCategory),
+            mapOf(
+                SpeechPart.Noun.toDefault() to nounSpeechPartChangeParadigm
+            )
+        )
+
+        assertEquals(
+            listOf(
+                createNoun("odaba").withMorphemes(
+                    MorphemeData(1, listOf(definitenessSourcedCategory[DefinitenessValue.Definite])),
+                    MorphemeData(4, listOf(numberSourcedCategory[NumberValue.Singular]), true),
+                ),
+                createNoun("odabai").withMorphemes(
+                    MorphemeData(1, listOf(definitenessSourcedCategory[DefinitenessValue.Definite])),
+                    MorphemeData(4, listOf(), true),
+                    MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural])),
+                ),
+                createNoun("adaba").withMorphemes(
+                    MorphemeData(1, listOf(definitenessSourcedCategory[DefinitenessValue.Indefinite])),
+                    MorphemeData(4, listOf(numberSourcedCategory[NumberValue.Singular]), true),
+                ),
+                createNoun("adabai").withMorphemes(
+                    MorphemeData(1, listOf(definitenessSourcedCategory[DefinitenessValue.Indefinite])),
+                    MorphemeData(4, listOf(), true),
+                    MorphemeData(1, listOf(numberSourcedCategory[NumberValue.Plural])),
+                )
+            ).sortedBy { it.toString() },
+            wordChangeParadigm.getUniqueWordForms(lexis)
                 .distinct()
                 .sortedBy { it.toString() }
         )

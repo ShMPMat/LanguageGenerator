@@ -65,7 +65,8 @@ fun fixSyllableStructure(
             val fixedWord = template.applyOrNull(word)
                 ?: continue
             currentChangeParadigm = mergeSyllableTemplate(changeParadigm, template)
-            currentChangeParadigm.wordChangeParadigm.getAllWordForms(fixedWord, true)
+            currentChangeParadigm.wordChangeParadigm
+                .getUniqueWordForms(fixedWord)
 
             return Result.success(fixedWord to currentChangeParadigm)
         } catch (e: ChangeException) {

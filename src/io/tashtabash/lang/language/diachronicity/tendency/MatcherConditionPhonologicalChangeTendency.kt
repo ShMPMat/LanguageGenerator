@@ -34,7 +34,7 @@ fun List<PhonemeMatcher>.countMatches(language: Language) =
         }
 
 fun List<PhonemeMatcher>.countMatchesUnique(language: Language) =
-    language.changeParadigm.wordChangeParadigm.getUniqueWordForms(language.lexis, true)
+    language.changeParadigm.wordChangeParadigm.getUniqueWordForms(language.lexis)
         .count { word ->
             val changingPhonemes = getChangingPhonemes(
                 word,
