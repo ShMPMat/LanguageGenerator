@@ -78,7 +78,7 @@ data class SpeechPartChangeParadigm(
                 .firstOrNull { it.category.outType == v.parentClassName }
                 ?: return@mapNotNull null
 
-            parent.getValue(v)
+            parent[v]
         }
         val allCategoryValues = categoryValues + staticCategoryValues
         val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
