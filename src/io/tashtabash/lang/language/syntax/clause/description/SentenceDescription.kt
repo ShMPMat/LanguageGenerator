@@ -19,7 +19,7 @@ class TransitiveVerbMainClauseDescription(
         TransitiveVerbSentenceClause(
             verbClause.toClause(language, context, random),
             when (context.type.first) {
-                Simple -> VerbSentenceType.MainVerbClause
+                Indicative -> VerbSentenceType.MainVerbClause
                 GeneralQuestion -> VerbSentenceType.QuestionVerbClause
                 Negative -> VerbSentenceType.NegatedVerbClause
             }
@@ -33,7 +33,7 @@ class IntransitiveVerbMainClauseDescription(
         IntransitiveVerbSentenceClause(
             verbClause.toClause(language, context, random),
             when (context.type.first) {
-                Simple -> VerbSentenceType.MainVerbClause
+                Indicative -> VerbSentenceType.MainVerbClause
                 GeneralQuestion -> VerbSentenceType.QuestionVerbClause
                 Negative -> VerbSentenceType.NegatedVerbClause
             }
@@ -48,7 +48,7 @@ class CopulaMainClauseDescription(
         CopulaSentenceClause(
             copulaClause.toClause(language, context, random),
             when (context.type.first) {
-                Simple -> CopulaSentenceType.MainCopulaClause
+                Indicative -> CopulaSentenceType.MainCopulaClause
                 GeneralQuestion -> CopulaSentenceType.QuestionCopulaClause
                 Negative -> CopulaSentenceType.NegatedCopulaClause
             }

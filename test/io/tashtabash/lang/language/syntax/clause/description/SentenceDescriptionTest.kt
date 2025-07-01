@@ -84,7 +84,7 @@ internal class SentenceDescriptionTest {
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Simple, Explicit)
+            PrioritizedValue(Indicative, Explicit)
         )
 
         assertEquals(
@@ -157,7 +157,7 @@ internal class SentenceDescriptionTest {
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Simple, Explicit)
+            PrioritizedValue(Indicative, Explicit)
         )
 
         assertEquals(
@@ -230,7 +230,7 @@ internal class SentenceDescriptionTest {
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
-            Simple to Explicit
+            Indicative to Explicit
         )
 
         assertEquals(
@@ -307,7 +307,7 @@ internal class SentenceDescriptionTest {
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
-            Simple to Explicit
+            Indicative to Explicit
         )
 
         assertEquals(
@@ -387,7 +387,7 @@ internal class SentenceDescriptionTest {
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Simple, Explicit)
+            PrioritizedValue(Indicative, Explicit)
         )
 
         assertEquals(
@@ -481,7 +481,7 @@ internal class SentenceDescriptionTest {
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
-            Simple to Explicit
+            Indicative to Explicit
         )
 
         assertEquals(
@@ -552,7 +552,7 @@ internal class SentenceDescriptionTest {
         val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
-            Simple to Explicit
+            Indicative to Explicit
         )
 
         assertEquals(

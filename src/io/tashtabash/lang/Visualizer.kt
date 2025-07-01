@@ -141,7 +141,7 @@ class Visualizer(val language: Language) {
 
         val firstContext = Context(
             LongGonePast to Implicit,
-            Simple to Explicit
+            Indicative to Explicit
         )
         val secondContext = Context(
             FarFuture to Implicit,

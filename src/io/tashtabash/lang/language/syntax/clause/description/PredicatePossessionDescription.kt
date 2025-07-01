@@ -80,7 +80,7 @@ class ObliquePredicatePossessionDescription(
             }
                 ?: throw SyntaxException("No verb 'exist' in Language"),
             when (context.type.first) {
-                ContextValue.TypeContext.Simple -> VerbSentenceType.MainVerbClause
+                ContextValue.TypeContext.Indicative -> VerbSentenceType.MainVerbClause
                 ContextValue.TypeContext.GeneralQuestion -> VerbSentenceType.QuestionVerbClause
                 ContextValue.TypeContext.Negative -> VerbSentenceType.NegatedVerbClause
             }
