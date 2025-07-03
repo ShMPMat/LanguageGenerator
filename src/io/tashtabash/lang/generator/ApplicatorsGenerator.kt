@@ -37,8 +37,10 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         for ((cluster, allRealizations) in orderedTemplates) {
             val clusterMap = resultMap.getValue(cluster)
 
-            for ((exponenceValue, realization) in allRealizations)
-                clusterMap[exponenceValue] = getApplicator(realization.chosen, phoneticRestrictions, exponenceValue.core)
+            for ((exponenceValue, realization) in allRealizations) {
+                val semanticsCore = adjustSemanticsCore(exponenceValue.core, realization.chosen, speechPart)
+                clusterMap[exponenceValue] = getApplicator(realization.chosen, phoneticRestrictions, semanticsCore)
+            }
             realizations += allRealizations
         }
 
@@ -51,6 +53,21 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
             injectDerivationMorpheme(exponenceCluster, clusterMap, phoneticRestrictions, currentRealizations)
         }
         return Result(words, resultMap, orderedTemplates.map { it.cluster })
+    }
+
+    private fun adjustSemanticsCore(
+        core: SemanticsCore,
+        realization: CategoryRealization,
+        speechPart: TypedSpeechPart
+    ): SemanticsCore {
+        // Suppleted word should have the same speech part
+        if (realization == Suppletion)
+            return core.copy(speechPart = speechPart)
+        // Catch function words entering endless loop of modifying themselves
+        if (core.speechPart.type == speechPart.type)
+            return core.copy(speechPart = SpeechPart.Particle.toDefault())
+
+        return core
     }
 
     private fun findFirstMorphemeCluster(realizations: MutableList<RealizationTemplate>): Int? {
