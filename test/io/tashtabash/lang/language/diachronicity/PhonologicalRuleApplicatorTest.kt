@@ -25,6 +25,7 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
+import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.lang.utils.equalsByElement
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Test
@@ -1521,7 +1522,7 @@ internal class PhonologicalRuleApplicatorTest {
             RestrictionsParadigm(mutableMapOf()),
             DerivationParadigm(listOf(), listOf()),
             ChangeParadigm(
-                WordOrder(mapOf(), mapOf(), NominalGroupOrder.DNP),
+                WordOrder(MapWithDefault(defOrder), mapOf(), NominalGroupOrder.DNP),
                 WordChangeParadigm(
                     listOf(),
                     mapOf(defSpeechPart to nounChangeParadigm, SpeechPart.Particle.toDefault() to particleChangeParadigm)

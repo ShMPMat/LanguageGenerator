@@ -2,10 +2,11 @@ package io.tashtabash.lang.language.syntax
 
 import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.arranger.Arranger
+import io.tashtabash.lang.utils.MapWithDefault
 
 
 data class WordOrder(
-    val sovOrder: Map<VerbSentenceType, SovOrder>,
+    val sovOrder: MapWithDefault<VerbSentenceType, SovOrder>,
     val copulaOrder: Map<CopulaWordOrder, Arranger>,
     val nominalGroupOrder: NominalGroupOrder
 ) {
@@ -15,6 +16,5 @@ data class WordOrder(
         |$copulaOrder
         |
         |$nominalGroupOrder
-        |
     """.trimMargin()
 }

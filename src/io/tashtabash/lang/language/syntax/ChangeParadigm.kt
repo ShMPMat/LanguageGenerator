@@ -23,6 +23,7 @@ data class ChangeParadigm(
         |Word order:
         |$wordOrder
         |
+        |
         |$syntaxParadigm
         |
         |$wordChangeParadigm

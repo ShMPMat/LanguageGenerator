@@ -18,9 +18,9 @@ import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
-import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
+import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.toSampleSpaceObject
 
 
@@ -29,6 +29,10 @@ val defCategoryChanger = PassingCategoryChanger(0)
 val defNumberCategory = Number(
     listOf(NumberValue.Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural),
     setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self))
+)
+val defOrder = SovOrder(
+    listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb, SyntaxRelation.Benefactor).toSampleSpaceObject(1.0)),
+    "Name"
 )
 
 fun getDefNumberSourcedCategory(isCompulsory: Boolean) = SourcedCategory(
@@ -87,9 +91,7 @@ fun makeDefLang(
     DerivationParadigm(derivations, listOf()),
     ChangeParadigm(
         WordOrder(
-            mapOf(
-                VerbSentenceType.MainVerbClause to
-                        SovOrder(listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb, SyntaxRelation.Benefactor).toSampleSpaceObject(1.0)), "Name")),
+            MapWithDefault(defOrder),
             mapOf(),
             NominalGroupOrder.DNP
         ),

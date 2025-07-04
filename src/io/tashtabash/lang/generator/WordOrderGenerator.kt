@@ -6,6 +6,7 @@ import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType
 import io.tashtabash.lang.language.syntax.clause.translation.*
 import io.tashtabash.lang.language.syntax.features.CopulaType
+import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.GenericSSO
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.RandomSingleton
@@ -102,12 +103,12 @@ class WordOrderGenerator {
         })
     }
 
-    private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): Map<VerbSentenceType, SovOrder> {
+    private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): MapWithDefault<VerbSentenceType, SovOrder> {
         val mainOrder = generateSimpleSovOrder(syntaxParadigm)
-        val resultMap = mutableMapOf(VerbSentenceType.MainVerbClause to mainOrder)
+        val exceptions = mutableMapOf<VerbSentenceType, SovOrder>()
 
         fun writeSentenceType(sentenceType: VerbSentenceType, order: SovOrder) {
-            resultMap[sentenceType] = order
+            exceptions[sentenceType] = order
 
             sentenceOrderPropagation[sentenceType]
                 ?.filterIsInstance<VerbSentenceType>()
@@ -116,15 +117,13 @@ class WordOrderGenerator {
                 }
         }
 
-        for (sentenceType in VerbSentenceType.entries.filter { it != VerbSentenceType.MainVerbClause }) {
-            val order = differentWordOrderProbability(sentenceType).chanceOf<SovOrder> {
-                generateSimpleSovOrder(syntaxParadigm)
-            } ?: mainOrder
+        for (sentenceType in VerbSentenceType.entries.filter { it != VerbSentenceType.MainVerbClause })
+            differentWordOrderProbability(sentenceType).chanceOf {
+                val differentOrder = generateSimpleSovOrder(syntaxParadigm)
+                writeSentenceType(sentenceType, differentOrder)
+            }
 
-            writeSentenceType(sentenceType, order)
-        }
-
-        return resultMap
+        return MapWithDefault(mainOrder, exceptions)
     }
 
     private fun generateSimpleSovOrder(syntaxParadigm: SyntaxParadigm): SovOrder {
