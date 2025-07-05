@@ -20,6 +20,8 @@ class IntervocalicConsonantInsertion : MatcherConditionPhonologicalChangeTendenc
             createPhonemeMatchers("VV", phonemeContainer)
         )
 
+    override val defaultRetentionChance: Double = 0.0
+
     override fun getOptions(language: Language, phonemes: PhonemeContainer): List<GenericSSO<PhonologicalRule>> =
         phonemes.createPhonologicalRulesFor(language) {
             allowSyllableStructureChange = true
