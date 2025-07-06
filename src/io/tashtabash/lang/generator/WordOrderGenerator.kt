@@ -37,13 +37,11 @@ class WordOrderGenerator {
 
         for (copulaType in syntaxParadigm.copulaPresence.copulaType.map { it.feature })
             when (copulaType) {
-                CopulaType.Verb -> {
-                    for (type in CopulaSentenceType.entries) {
+                CopulaType.Verb ->
+                    for (type in CopulaSentenceType.entries)
                         result[CopulaWordOrder(type, CopulaType.Verb)] =
                             generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm, false)
-                    }
-                }
-                CopulaType.Particle -> {
+                CopulaType.Particle ->
                     for (type in CopulaSentenceType.entries) {
                         val externalOrder = generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm)
                             .relationOrder
@@ -62,8 +60,7 @@ class WordOrderGenerator {
                                 SyntaxRelation.Agent
                             ))
                     }
-                }
-                CopulaType.None -> {
+                CopulaType.None ->
                     for (type in CopulaSentenceType.entries) {
                         val externalOrder = generateCopulaVerbOrderer(type, sovOrder, syntaxParadigm)
                             .relationOrder
@@ -76,7 +73,6 @@ class WordOrderGenerator {
                                 SyntaxRelation.Agent
                             ))
                     }
-                }
             }
 
         return result
@@ -92,14 +88,15 @@ class WordOrderGenerator {
             RelationArranger(generateSimpleSovOrder(syntaxParadigm))
         } ?: RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
 
+        if (!swapObject)
+            return RelationArranger(newOrderer.relationOrder)
+
         return RelationArranger(SubstitutingOrder(newOrderer.relationOrder) { lst ->
-            if (swapObject)
             lst.map { r ->
                 if (r == SyntaxRelation.Patient)
                     SyntaxRelation.SubjectCompliment
                 else r
             }
-            else lst
         })
     }
 
