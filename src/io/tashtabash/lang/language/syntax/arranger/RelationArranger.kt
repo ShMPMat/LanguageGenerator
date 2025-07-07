@@ -17,7 +17,7 @@ class RelationArranger(val relationOrder: RelationOrder) : Arranger {
     override fun toString() = "In order of $relationOrder"
 }
 
-//Relations are listed from most to least close
+// Relations are listed from the most to the least close
 class RelationsArranger(val relationOrders: List<Pair<RelationOrder, SyntaxRelation>>) : Arranger {
     override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
         val relations = relationOrders
