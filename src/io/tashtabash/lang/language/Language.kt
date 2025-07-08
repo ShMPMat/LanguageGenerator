@@ -37,10 +37,10 @@ data class Language(
      |${printParadigm(lexis.words.first { it.semanticsCore.hasMeaning("_deixis_pronoun") })}
      |
      |Noun:
-     |${printParadigm(Noun)}
+     |${printParadigm(Noun, 10)}
      |
      |Verb:
-     |${printParadigm(Verb)}
+     |${printParadigm(Verb, 10)}
      |
      |Numerals:
      |${getNumeralsPrinted()}
