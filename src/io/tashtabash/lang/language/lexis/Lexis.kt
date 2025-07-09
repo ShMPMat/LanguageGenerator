@@ -57,9 +57,8 @@ data class Lexis(
         is IndexWordPointer -> pointer
         is SimpleWordPointer -> {
             val i = words.indexOf(pointer.word)
-            if (i == -1) {
+            if (i == -1)
                 throw LanguageException("Cannot reify WordPointer $pointer: no word '${pointer.word}' found")
-            }
 
             IndexWordPointer(i)
         }
