@@ -22,10 +22,10 @@ data class Phoneme(
 }
 
 
-fun doPhonemesCollide(first: Phoneme, second: Phoneme) =
+fun doPhonemesCollide(first: Phoneme, second: Phoneme): Boolean =
     first == second
 
-fun calculateDistance(first: Phoneme, second: Phoneme) =
+fun calculateDistance(first: Phoneme, second: Phoneme): Int =
     abs(first.articulationPlace.positionIndex - second.articulationPlace.positionIndex) +
             abs(first.articulationManner.positionIndex - second.articulationManner.positionIndex) +
             (first.modifiers - second.modifiers).size + (second.modifiers - first.modifiers).size
