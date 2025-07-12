@@ -1533,7 +1533,7 @@ internal class PhonologicalRuleApplicatorTest {
                     PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
                 ),
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
-                SyntaxLogic(mapOf(), mapOf(), mapOf(), mapOf(), null, mapOf(), mapOf(), listOf(), null)
+                SyntaxLogic()
             )
         )
         val phonologicalRule = createTestPhonologicalRule("a -> o / _ ")
