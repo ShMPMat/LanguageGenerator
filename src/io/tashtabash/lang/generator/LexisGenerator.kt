@@ -41,17 +41,9 @@ class LexisGenerator(
     private val wordBase = WordBase(supplementPath)
 
     init {
-        val allConnotations = File("$supplementPath/Connotations")
-            .readLines()
-            .filter { it.isNotBlank() }
-            .associate {
-                if (it[0] == '-')
-                    it.drop(1) to true
-                else
-                    it to false
-            }
+        val allConnotations = parseConnotations("$supplementPath/Connotations")
 
-        for (template in wordBase.allWords) {
+        for (template in wordBase.allWords)
             template.connotations.values
                 .forEach {
                     if (it.name[0] == 'T') {
@@ -63,7 +55,6 @@ class LexisGenerator(
                         it.isGlobal = allConnotations[it.name]
                             ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
                 }
-        }
 
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
         wordBase.allWords += newWords
@@ -263,3 +254,15 @@ class LexisGenerator(
                 && (leftBorder.type != PhonemeType.Vowel || rightBorder.type != PhonemeType.Vowel)
     }
 }
+
+typealias Connotations = Map<String, Boolean>
+
+private fun parseConnotations(filePath: String): Connotations = File(filePath)
+    .readLines()
+    .filter { it.isNotBlank() }
+    .associate {
+        if (it[0] == '-')
+            it.drop(1) to true
+        else
+            it to false
+    }
