@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
-import io.tashtabash.lang.language.syntax.CopulaWordOrder
 import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTranslator
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
@@ -85,7 +84,10 @@ class CopulaSentenceClause(
             if (type == CopulaSentenceType.NegatedCopulaClause)
                 categoryValues += NegationValue.Negative
 
-            arranger =
-                language.changeParadigm.wordOrder.copulaOrder.getValue(CopulaWordOrder(type, copulaClause.copulaType))
+            arranger = language.changeParadigm
+                .wordOrder
+                .copulaOrder
+                .getValue(copulaClause.copulaType)
+                .getValue(type)
         }
 }
