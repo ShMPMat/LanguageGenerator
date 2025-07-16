@@ -24,4 +24,27 @@ class WordOrderGeneratorTest {
             }.any { it.sovOrder.map.isNotEmpty() }
         }
     }
+
+    @Test
+    fun `Can generate languages with all copula types`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        val syntaxParadigm = SyntaxParadigm(
+            CopulaPresence(listOf(
+                CopulaType.None.toSso(1.0),
+                CopulaType.Verb.toSso(1.0),
+                CopulaType.Particle.toSso(1.0)
+            )),
+            QuestionMarkerPresence(null),
+            PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
+        )
+
+        assertEquals(
+            CopulaType.entries.sorted(),
+            (1..100).map {
+                WordOrderGenerator().generateWordOrder(syntaxParadigm)
+            }.flatMap { it.copulaOrder.keys }
+                .distinct()
+                .sorted()
+        )
+    }
 }
