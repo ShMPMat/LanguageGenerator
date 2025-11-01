@@ -154,8 +154,8 @@ data class WordChangeParadigm(
     }
 
     // Includes compulsory analytically expressed categories, but minimizes them
-    private fun getAllSyntheticCategoryValueCombinations(speechPart: TypedSpeechPart): List<SourcedCategoryValues> =
-        getSpeechPartParadigm(speechPart)
+    private fun getAllSyntheticCategoryValueCombinations(word: Word): List<SourcedCategoryValues> =
+        getSpeechPartParadigm(word.semanticsCore.speechPart)
             .applicators.filter { (cluster, valueMap) -> cluster.isCompulsory || !valueMap.isAnalytical }
             .entries.map { (_, valueMap) ->
                 val analyticClusterValues: List<List<SourcedCategoryValue>> = valueMap.entries
@@ -171,8 +171,19 @@ data class WordChangeParadigm(
                 val chosenClusterValues = analyticClusterValues.takeIf { it.isNotEmpty() }
                     ?: listOf(valueMap.keys.first().categoryValues)
 
-                chosenClusterValues.map { categoryValues ->
-                    categoryValues.filter { speechPart.type !in it.parent.category.staticSpeechParts }
+                // Filter out values which can't be applied to the word's static categories
+                val wordStaticCategories = word.semanticsCore.staticCategories.map { it.parentClassName }
+                val wordRelevantClusterValues = chosenClusterValues.filter { values ->
+                    val valuesFromStaticCategories = values
+                        .filter { it.source == Self && it.categoryValue.parentClassName in wordStaticCategories }
+                        .map { it.categoryValue }
+
+                    valuesFromStaticCategories.isEmpty()
+                            || word.semanticsCore.staticCategories.all { it in valuesFromStaticCategories }
+                }
+
+                wordRelevantClusterValues.map { categoryValues ->
+                    categoryValues.filter { word.semanticsCore.speechPart.type !in it.parent.category.staticSpeechParts }
                 }
             }.cartesianProduct()
             // Unite separate exponence clusters
@@ -204,7 +215,7 @@ data class WordChangeParadigm(
     }
 
     fun getUniqueWordForms(word: Word): List<Deferred<Word>> = runBlocking {
-        getAllSyntheticCategoryValueCombinations(word.semanticsCore.speechPart)
+        getAllSyntheticCategoryValueCombinations(word)
             .map {
                 async {
                     apply(word, categoryValues = it).mainWord

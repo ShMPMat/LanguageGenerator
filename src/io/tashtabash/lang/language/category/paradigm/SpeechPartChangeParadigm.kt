@@ -81,8 +81,9 @@ data class SpeechPartChangeParadigm(
             parent[v]
         }
         val allCategoryValues = categoryValues + staticCategoryValues
+        val allUnsourcedCategoryValues = allCategoryValues.map { it.categoryValue }
         val exponenceUnion = getExponenceUnion(allCategoryValues, exponenceCluster)
-            ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allCategoryValues.map { it.categoryValue }) })
+            ?: if (exponenceCluster.categories.any { c -> c.compulsoryData.mustExist(allUnsourcedCategoryValues) })
                 throw SyntaxException("No value for compulsory cluster $exponenceCluster")
             else
                 return wordClauseResult
