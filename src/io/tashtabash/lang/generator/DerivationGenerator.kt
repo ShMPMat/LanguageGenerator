@@ -33,11 +33,15 @@ class DerivationGenerator(
 ) {
     private var derivationParadigm = DerivationParadigm(listOf(), listOf())
 
-    internal fun injectDerivationOptions(words: List<SemanticsCoreTemplate>): List<SemanticsCoreTemplate> {
+    internal fun injectDerivationOptions(
+        words: List<SemanticsCoreTemplate>,
+        injectByConnotations: Boolean = true
+    ): List<SemanticsCoreTemplate> {
         val newWords = internalInjectDerivationOptions(words, mainInjectors)
             .toMutableList()
 
-        injectionByConnotations(newWords + words)
+        if (injectByConnotations)
+            injectionByConnotations(newWords + words)
 
         newWords += internalInjectDerivationOptions(words, additionalInjectors)
 
@@ -58,7 +62,14 @@ class DerivationGenerator(
         return newWords + internalInjectDerivationOptions(newWords, injectors)
     }
 
-    private fun injectionByConnotations(words: List<SemanticsCoreTemplate>) {
+    private fun injectionByConnotations(words: List<SemanticsCoreTemplate>, injectCompounds: Boolean = true) {
+        injectDerivations(words)
+
+        if (injectCompounds)
+            injectCompounds(words)
+    }
+
+    private fun injectDerivations(words: List<SemanticsCoreTemplate>) {
         val bannedTypes = setOf(Big, Old, Smallness, Young)
         for (derivationType in entries.filter { it !in bannedTypes })
             for (from in words.filter { it.speechPart == derivationType.fromSpeechPart })
@@ -71,8 +82,6 @@ class DerivationGenerator(
                         .getOrPut(derivationType) { mutableListOf() }
                         .add(derivationLink)
                 }
-
-        injectCompounds(words)
     }
 
     private fun createDerivationByConnotation(
@@ -115,6 +124,7 @@ class DerivationGenerator(
         return DerivationLink(to.word, probability)
     }
 
+    // O(n^3), use with caution
     private fun injectCompounds(words: List<SemanticsCoreTemplate>) {
         for (target in words)
             for ((i, left) in words.withIndex())
