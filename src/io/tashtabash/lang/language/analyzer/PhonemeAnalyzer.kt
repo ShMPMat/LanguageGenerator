@@ -28,7 +28,7 @@ fun analyzePhonemes(
     val phonemes = mutableSetOf<Phoneme>()
 
     phonemes += lexis.words
-        .flatMap { it.toPhonemes() }
+        .flatMap { it.phonemes }
     phonemes += derivationParadigm.compounds
         .flatMap { it.infix.phonemes }
     phonemes += derivationParadigm.derivations
@@ -75,9 +75,9 @@ fun analyzePhoneme(categoryApplicator: CategoryApplicator, phonemeContainer: Pho
     is AffixCategoryApplicator -> analyzePhonemes(categoryApplicator.affix.templateChange, phonemeContainer)
     is ConsecutiveApplicator -> categoryApplicator.applicators.flatMap { analyzePhoneme(it, phonemeContainer) }
     is FilterApplicator -> categoryApplicator.applicators.flatMap { (applicator, words) ->
-            analyzePhoneme(applicator, phonemeContainer) + words.flatMap { it.toPhonemes() }
+            analyzePhoneme(applicator, phonemeContainer) + words.flatMap { it.phonemes }
         }
-    is WordCategoryApplicator -> categoryApplicator.word.toPhonemes()
+    is WordCategoryApplicator -> categoryApplicator.word.phonemes
     is WordReduplicationCategoryApplicator, PassingCategoryApplicator -> listOf()
     else -> throw LanguageException("Unknown category applicator '$categoryApplicator'")
 }

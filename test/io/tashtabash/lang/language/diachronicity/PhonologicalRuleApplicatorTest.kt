@@ -1429,7 +1429,7 @@ internal class PhonologicalRuleApplicatorTest {
                 createPhonemes("bobo"),
                 createPhonemes("bobobo"),
             ),
-            shiftedLanguage.lexis.words.map { it.toPhonemes() }
+            shiftedLanguage.lexis.words.map { it.phonemes }
         )
         assertEquals(
             "bobo  ->AbstractNounFromNoun-> bobobo       \n" +
@@ -1486,7 +1486,7 @@ internal class PhonologicalRuleApplicatorTest {
                 createPhonemes("popo"),
                 createPhonemes("bobotopopo"),
             ),
-            shiftedLanguage.lexis.words.map { it.toPhonemes() }
+            shiftedLanguage.lexis.words.map { it.phonemes }
         )
         assertEquals(
             "bobo  ->to-> \n" +

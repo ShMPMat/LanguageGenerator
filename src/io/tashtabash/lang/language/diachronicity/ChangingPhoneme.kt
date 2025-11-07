@@ -31,7 +31,7 @@ fun getChangingPhonemes(
     addStartBoundary: Boolean = true,
     addEndBoundary: Boolean = true
 ): MutableList<ChangingPhoneme> =
-    getChangingPhonemes(word.toPhonemes().zip(getProsodyContour(word)), addStartBoundary, addEndBoundary)
+    getChangingPhonemes(word.phonemes.zip(getProsodyContour(word)), addStartBoundary, addEndBoundary)
 
 fun getChangingPhonemes(
     phonemes: List<Pair<Phoneme, List<Prosody>?>>,

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.lexis
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.morphem.MorphemeData
+import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.SyllableTemplate
 import io.tashtabash.lang.language.phonology.Syllables
 import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
@@ -16,13 +17,17 @@ data class Word(
     val morphemes: List<MorphemeData> = listOf(MorphemeData(syllables.flatMap { it.phonemes.phonemes }.size, listOf(), true)),
     val syntaxRole: WordSyntaxRole? = null
 ) {
-    val size: Int = toPhonemes().size
+    val size: Int by lazy {
+        phonemes.size
+    }
 
-    fun toPhonemes() = syllables.flatMap { it.phonemes.phonemes }
+    val phonemes: List<Phoneme> by lazy {
+        syllables.flatMap { it.phonemes.phonemes }
+    }
 
-    operator fun get(position: Int) = toPhonemes()[position]
+    operator fun get(position: Int) = phonemes[position]
 
-    fun getOrNull(position: Int) = toPhonemes().getOrNull(position)
+    fun getOrNull(position: Int) = phonemes.getOrNull(position)
 
     fun copyAndAddValues(values: Collection<SourcedCategoryValue>) =
         copy(

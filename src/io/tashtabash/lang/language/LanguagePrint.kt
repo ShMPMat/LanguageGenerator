@@ -155,7 +155,7 @@ fun printWordMorphemes(word: Word, printDerivation: Boolean = false): String {
             mergeDerivationMorphemes(word.morphemes)
     var morphemeEndIdx = 0
     var symbolEndIdx = 0
-    val phonemes = word.toPhonemes()
+    val phonemes = word.phonemes
     val symbols = word.toString()
 
     return morphemes.joinToString("-") { (size, categoryValues) ->

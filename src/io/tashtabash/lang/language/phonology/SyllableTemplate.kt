@@ -28,7 +28,7 @@ interface SyllableTemplate {
         }
 
     fun applyOrNull(word: Word): Word? {
-        val newSyllables = splitOnSyllables(word.toPhonemes())
+        val newSyllables = splitOnSyllables(word.phonemes)
             ?: return null
         var exactPhonemes = getChangingPhonemes(word, false, false)
             .map { it as ChangingPhoneme.ExactPhoneme }
