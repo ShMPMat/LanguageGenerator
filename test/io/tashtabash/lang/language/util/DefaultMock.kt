@@ -19,6 +19,7 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.features.*
+import io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.toSampleSpaceObject
@@ -31,7 +32,17 @@ val defNumberCategory = Number(
     setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self))
 )
 val defOrder = SovOrder(
-    listOf(listOf(SyntaxRelation.Agent, SyntaxRelation.Verb, SyntaxRelation.Benefactor).toSampleSpaceObject(1.0)),
+    // This word order is kinda weird to be applicable to transitive and intransitive clauses
+    listOf(
+        listOf(
+            SyntaxRelation.Agent,
+            SyntaxRelation.Argument,
+            SyntaxRelation.Patient,
+            SyntaxRelation.Verb,
+            SyntaxRelation.Benefactor,
+            SyntaxRelation.Location
+        ).toSampleSpaceObject(1.0)
+    ),
     "Name"
 )
 
@@ -82,7 +93,8 @@ fun makeDefLang(
     words: List<Word>,
     wordChangeParadigm: WordChangeParadigm,
     derivations: List<Derivation> = listOf(),
-    syntaxLogic: SyntaxLogic = SyntaxLogic()
+    syntaxLogic: SyntaxLogic = SyntaxLogic(),
+    predicatePossessionType: PredicatePossessionType = HaveVerb
 ) = Language(
     Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
@@ -99,7 +111,7 @@ fun makeDefLang(
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaType.None.toSso(1.0))),
             QuestionMarkerPresence(null),
-            PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
+            PredicatePossessionPresence(listOf(predicatePossessionType.toSso(1.0)))
         ),
         NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
         syntaxLogic

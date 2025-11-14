@@ -2,9 +2,9 @@ package io.tashtabash.lang.language.syntax
 
 
 enum class SyntaxRelation(val shortName: String) {
-    Agent("AG"),
+    Agent("AG"), // Of trans verb
     Patient("PAT"),
-    Argument("ARG"),
+    Argument("ARG"), // Of intrans verb
     SubjectCompliment("SC"),
     Verb("VRB"),
 

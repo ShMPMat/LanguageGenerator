@@ -122,6 +122,9 @@ fun createNoun(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySy
 fun createIntransVerb(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
     createWord(phonemes, SpeechPart.Verb.toIntransitive(), syllableTemplate, setOf("intrans"))
 
+fun createTransVerb(phonemes: String, syllableTemplate: SyllableTemplate = getPhonySyllableTemplate()) =
+    createWord(phonemes, SpeechPart.Verb.toDefault(), syllableTemplate, setOf("trans"))
+
 fun createWord(
     phonemes: String,
     speechPart: SpeechPart,
