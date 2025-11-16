@@ -182,9 +182,11 @@ data class WordChangeParadigm(
                             || word.semanticsCore.staticCategories.all { it in valuesFromStaticCategories }
                 }
 
-                wordRelevantClusterValues.map { categoryValues ->
-                    categoryValues.filter { word.semanticsCore.speechPart.type !in it.parent.category.staticSpeechParts }
-                }
+                if (wordRelevantClusterValues.isNotEmpty())
+                    wordRelevantClusterValues.map { categoryValues ->
+                        categoryValues.filter { word.semanticsCore.speechPart.type !in it.parent.category.staticSpeechParts }
+                    }
+                else listOf(listOf()) // Return one element of empty values representing "zero marking"
             }.cartesianProduct()
             // Unite separate exponence clusters
             .map { it.flatten() }
@@ -231,7 +233,7 @@ data class WordChangeParadigm(
                     getUniqueWordForms(it)
                 }
             }
-        val functionWords =  speechPartChangeParadigms.values
+        val functionWords = speechPartChangeParadigms.values
             .flatMap { p ->
                 p.applicators
                     .values
