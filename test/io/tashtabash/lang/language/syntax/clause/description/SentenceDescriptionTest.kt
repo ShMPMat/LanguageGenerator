@@ -30,7 +30,7 @@ import kotlin.random.Random
 
 internal class SentenceDescriptionTest {
     @Test
-    fun `Verbs with Tense pick up it from context`() {
+    fun `Intransitive verbs with Tense pick up it from context`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up tense
         val tenseCategory = Tense(
@@ -95,6 +95,85 @@ internal class SentenceDescriptionTest {
                         MorphemeData(1, listOf(), true),
                         MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
                     ) withMeaning "sleep"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Transitive verbs with Tense pick up it from context`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up tense
+        val tenseCategory = Tense(
+            listOf(TenseValue.Present, TenseValue.Past),
+            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
+            setOf(SpeechPart.Verb)
+        )
+        val tenseSourcedCategory = SourcedCategory(
+            tenseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
+        // Set up WordChangeParadigm
+        val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            SpeechPart.Verb.toDefault(),
+            listOf(tenseExponenceCluster),
+            mapOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(tenseCategory),
+            mapOf(
+                SpeechPart.Verb.toDefault() to verbSpeechPartChangeParadigm,
+                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault()),
+            )
+        )
+        val language = makeDefLang(
+            listOf(
+                createNoun("i") withMeaning "dog",
+                createTransVerb("o") withMeaning "see"
+            ),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                mapOf(
+                    SpeechPart.Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                ),
+                mapOf(
+                    SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Agent to listOf(),
+                    SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Patient to listOf()
+                ),
+            )
+        )
+        val sentenceDescription = TransitiveVerbMainClauseDescription(
+            TransitiveVerbDescription(
+                "see",
+                NominalDescription(
+                    "dog",
+                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                ),
+                NominalDescription(
+                    "dog",
+                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                )
+            )
+        )
+        val context = Context(
+            PrioritizedValue(Past, Implicit),
+            PrioritizedValue(Indicative, Explicit)
+        )
+
+        assertEquals(
+            listOf(
+                createNoun("i") withMeaning "dog",
+                createNoun("i") withMeaning "dog",
+                createTransVerb("oto")
+                    .withMorphemes(
+                        MorphemeData(1, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
+                    ) withMeaning "see"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
