@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.category.CaseValue
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
