@@ -20,7 +20,7 @@ class SyntaxLogic(
     private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
     private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mapOf(),
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
-    private val nonCoreCaseSolver: Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mapOf(),
+    private val syntaxRelationSolver: Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val numberCategorySolver: NumberCategorySolver? = null,
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
@@ -98,11 +98,8 @@ class SyntaxLogic(
         return copulaCaseSolver.getValue(copulaType to syntaxRelation to speechPart)
     }
 
-    fun resolveNonCoreCase(caseValue: CaseValue, speechPart: TypedSpeechPart): CategoryValues {
-        if (caseValue !in nonCoreCases)
-            throw SyntaxException("Cannot resolve core cases")
-
-        return nonCoreCaseSolver.getValue(caseValue to speechPart)
+    fun resolveSyntaxRelationToCase(syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart): CategoryValues {
+        return syntaxRelationSolver.getValue(syntaxRelation to speechPart)
     }
 
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
@@ -227,7 +224,7 @@ class SyntaxLogic(
     }
         |
         |${
-        nonCoreCaseSolver.entries.map { (context, categories) ->
+        syntaxRelationSolver.entries.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",

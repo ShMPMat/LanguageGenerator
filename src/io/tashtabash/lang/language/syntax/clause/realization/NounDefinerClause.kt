@@ -41,8 +41,8 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause(Synt
                 isDropped = true
 
             categoryValues.removeIf { it is CaseValue }
-            val newCaseMarkers = language.changeParadigm.syntaxLogic.resolveNonCoreCase(
-                CaseValue.Genitive,
+            val newCaseMarkers = language.changeParadigm.syntaxLogic.resolveSyntaxRelationToCase(
+                SyntaxRelation.Possessor,
                 word.semanticsCore.speechPart
             )
             categoryValues += newCaseMarkers

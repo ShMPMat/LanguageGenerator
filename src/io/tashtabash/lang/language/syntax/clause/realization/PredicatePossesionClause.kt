@@ -23,7 +23,6 @@ class ObliquePredicatePossessionClause(
                     lst.map { r ->
                         when (r) {
                             Patient -> Argument
-                            Agent -> PossessorAdjunct
                             else -> r
                         }
                     }

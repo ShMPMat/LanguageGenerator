@@ -73,12 +73,14 @@ internal class SentenceDescriptionTest {
                 ),
             )
         )
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(
-            IntransitiveVerbDescription(
+        val sentenceDescription = VerbMainClauseDescription(
+            VerbDescription(
                 "sleep",
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                mapOf(
+                    MainObjectType.Argument to NominalDescription(
+                        "dog",
+                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                    )
                 )
             )
         )
@@ -147,16 +149,18 @@ internal class SentenceDescriptionTest {
                 ),
             )
         )
-        val sentenceDescription = TransitiveVerbMainClauseDescription(
-            TransitiveVerbDescription(
+        val sentenceDescription = VerbMainClauseDescription(
+            VerbDescription(
                 "see",
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3)),
-                ),
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                mapOf(
+                    MainObjectType.Agent to NominalDescription(
+                        "dog",
+                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                    ),
+                    MainObjectType.Patient to NominalDescription(
+                        "dog",
+                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                    )
                 )
             )
         )
@@ -224,13 +228,15 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(
-            IntransitiveVerbDescription(
+        val sentenceDescription = VerbMainClauseDescription(
+            VerbDescription(
                 "sleep",
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3)),
-                    listOf(AdjectiveDescription("new"))
+                mapOf(
+                    MainObjectType.Argument to NominalDescription(
+                        "dog",
+                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                        listOf(AdjectiveDescription("new"))
+                    )
                 )
             )
         )
@@ -305,8 +311,8 @@ internal class SentenceDescriptionTest {
             "_personal_pronoun",
             ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
-        val verbDescription = IntransitiveVerbDescription("sleep", personalPronounDescription)
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to personalPronounDescription))
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
             Indicative to Explicit
@@ -370,7 +376,7 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Benefactive to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
             )
         )
         // Set up descriptions
@@ -378,12 +384,11 @@ internal class SentenceDescriptionTest {
             "dog",
             ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
         )
-        val verbDescription = IntransitiveVerbDescription(
+        val verbDescription = VerbDescription(
             "sleep",
-            dogDescription,
-            listOf(IndirectObjectDescription(dogDescription, IndirectObjectType.Benefactor))
+            mapOf(MainObjectType.Argument to dogDescription, IndirectObjectType.Benefactor to dogDescription)
         )
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
             Indicative to Explicit
@@ -455,12 +460,14 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(
-            IntransitiveVerbDescription(
+        val sentenceDescription = VerbMainClauseDescription(
+            VerbDescription(
                 "sleep",
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(3)),
+                mapOf(
+                    MainObjectType.Argument to NominalDescription(
+                        "dog",
+                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                    )
                 )
             )
         )
@@ -545,19 +552,21 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Benefactive to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Benefactive))
             )
         )
         val dogDescription = NominalDescription(
             "dog",
             ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
         )
-        val verbDescription = IntransitiveVerbDescription(
+        val verbDescription = VerbDescription(
             "sleep",
-            dogDescription,
-            listOf(IndirectObjectDescription(dogDescription, IndirectObjectType.Benefactor))
+            mapOf(
+                MainObjectType.Argument to dogDescription,
+                IndirectObjectType.Benefactor to dogDescription
+            )
         )
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
             Indicative to Explicit
@@ -627,8 +636,8 @@ internal class SentenceDescriptionTest {
             "_personal_pronoun",
             ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
-        val verbDescription = IntransitiveVerbDescription("sleep", personalPronounDescription)
-        val sentenceDescription = IntransitiveVerbMainClauseDescription(verbDescription)
+        val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to personalPronounDescription))
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
             Indicative to Explicit

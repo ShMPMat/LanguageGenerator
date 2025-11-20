@@ -35,6 +35,8 @@ val defOrder = SovOrder(
     // This word order is kinda weird to be applicable to transitive and intransitive clauses
     listOf(
         listOf(
+            SyntaxRelation.Topic,
+            SyntaxRelation.Addressee,
             SyntaxRelation.Agent,
             SyntaxRelation.Argument,
             SyntaxRelation.Patient,

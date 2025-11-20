@@ -22,33 +22,37 @@ class PredicatePossessionDescription(
     override fun toClause(language: Language, context: Context, random: Random) =
         when (language.changeParadigm.syntaxParadigm.predicatePossessionPresence.predicatePossessionType.randomUnwrappedElement()) {
             HaveVerb ->
-                TransitiveVerbMainClauseDescription(
-                    TransitiveVerbDescription(
+                VerbMainClauseDescription(
+                    VerbDescription(
                         "have",
-                        ownerDescription,
-                        ownedDescription
+                        mapOf(
+                            MainObjectType.Agent to ownerDescription,
+                            MainObjectType.Patient to ownedDescription
+                        )
                     )
                 )
             LocativeOblique -> ObliquePredicatePossessionDescription(
                 ownerDescription,
                 ownedDescription,
-                CaseValue.Locative
+                SyntaxRelation.Location
             )
             DativeOblique -> ObliquePredicatePossessionDescription(
                 ownerDescription,
                 ownedDescription,
-                CaseValue.Dative
+                SyntaxRelation.Addressee
             )
-            GenitiveOblique -> IntransitiveVerbMainClauseDescription(
-                IntransitiveVerbDescription(
+            GenitiveOblique -> VerbMainClauseDescription(
+                VerbDescription(
                     "exist",
-                    ownedDescription.copyAndAddDefinitions(listOf(PossessorDescription(ownerDescription)))
+                    mapOf(
+                        MainObjectType.Argument to ownedDescription.copyAndAddDefinitions(PossessorDescription(ownerDescription))
+                    )
                 )
             )
             Topic -> ObliquePredicatePossessionDescription(
                 ownerDescription,
                 ownedDescription,
-                CaseValue.Topic
+                SyntaxRelation.Topic
             )
         }.toClause(language, context, random)
 }
@@ -56,7 +60,7 @@ class PredicatePossessionDescription(
 class ObliquePredicatePossessionDescription(
     val ownerDescription: NominalDescription,
     val ownedDescription: NominalDescription,
-    val case: CaseValue
+    val possessorSyntaxRelation: SyntaxRelation
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         ObliquePredicatePossessionClause(
@@ -72,8 +76,7 @@ class ObliquePredicatePossessionDescription(
                     listOf(
                         CaseAdjunctClause(
                             ownerDescription.toClause(language, context, random),
-                            case,
-                            SyntaxRelation.PossessorAdjunct
+                            possessorSyntaxRelation
                         )
                     )
                 )

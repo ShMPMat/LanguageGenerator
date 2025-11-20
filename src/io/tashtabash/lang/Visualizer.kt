@@ -13,6 +13,8 @@ import io.tashtabash.lang.language.diachronicity.TendencyBasedPhonologicalRuleAp
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.syntax.clause.description.*
+import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType.*
+import io.tashtabash.lang.language.syntax.clause.description.MainObjectType.*
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.*
@@ -68,7 +70,7 @@ class Visualizer(val language: Language) {
             ActorComplimentValue(AmountValue(1), DeixisValue.Medial),
             listOf(AdjectiveDescription("small"))
         )
-        val youPl = PronounDescription(
+        val youDu = PronounDescription(
             "_personal_pronoun",
             ActorValue(Second, Neutral, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
@@ -84,52 +86,32 @@ class Visualizer(val language: Language) {
             "home",
             ActorComplimentValue(AmountValue(1), null),
         )
-        val firstSeeVerb = TransitiveVerbDescription("see", mothers, time)
-        val secondSeeVerb = TransitiveVerbDescription("see", fathers, time)
-        val thirdSeeVerb = TransitiveVerbDescription("see", i, time)
-        val fourthSeeVerb = TransitiveVerbDescription(
-            "see",
-            i,
-            these,
-            listOf(IndirectObjectDescription(home, IndirectObjectType.Location))
-        )
-        val firstHearVerb = TransitiveVerbDescription("hear", i, youPl)
-        val existVerb = IntransitiveVerbDescription("exist", i)
-        val firstBuildVerb = TransitiveVerbDescription(
+        val firstSeeVerb = VerbDescription("see", mapOf(Agent to mothers, Patient to time))
+        val secondSeeVerb = VerbDescription("see", mapOf(Agent to fathers, Patient to time))
+        val thirdSeeVerb = VerbDescription("see", mapOf(Agent to i, Patient to time))
+        val fourthSeeVerb = VerbDescription("see", mapOf(Agent to i, Patient to these, Location to home))
+        val firstHearVerb = VerbDescription("hear", mapOf(Agent to i, Patient to youDu))
+        val existVerb = VerbDescription("exist", mapOf(Argument to i))
+        val firstBuildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
+        val secondBuildVerb = VerbDescription(
             "build",
-            i,
-            home,
-            listOf(IndirectObjectDescription(handsObj, IndirectObjectType.Instrument))
+            mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to youDu)
         )
-        val secondBuildVerb = TransitiveVerbDescription(
+        val nounBeneficiaryBuildVerb = VerbDescription(
             "build",
-            we,
-            home,
-            listOf(
-                IndirectObjectDescription(these, IndirectObjectType.Instrument),
-                IndirectObjectDescription(youPl, IndirectObjectType.Benefactor)
-            )
-        )
-        val nounBeneficiaryBuildVerb = TransitiveVerbDescription(
-            "build",
-            we,
-            home,
-            listOf(
-                IndirectObjectDescription(these, IndirectObjectType.Instrument),
-                IndirectObjectDescription(fathers, IndirectObjectType.Benefactor)
-            )
+            mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to fathers)
         )
 
         val testSentencesMain = listOf(
-            TransitiveVerbMainClauseDescription(firstSeeVerb),
-            TransitiveVerbMainClauseDescription(secondSeeVerb),
-            TransitiveVerbMainClauseDescription(thirdSeeVerb),
-            TransitiveVerbMainClauseDescription(fourthSeeVerb),
-            TransitiveVerbMainClauseDescription(firstHearVerb),
-            IntransitiveVerbMainClauseDescription(existVerb),
-            TransitiveVerbMainClauseDescription(firstBuildVerb),
-            TransitiveVerbMainClauseDescription(secondBuildVerb),
-            TransitiveVerbMainClauseDescription(nounBeneficiaryBuildVerb),
+            VerbMainClauseDescription(firstSeeVerb),
+            VerbMainClauseDescription(secondSeeVerb),
+            VerbMainClauseDescription(thirdSeeVerb),
+            VerbMainClauseDescription(fourthSeeVerb),
+            VerbMainClauseDescription(firstHearVerb),
+            VerbMainClauseDescription(existVerb),
+            VerbMainClauseDescription(firstBuildVerb),
+            VerbMainClauseDescription(secondBuildVerb),
+            VerbMainClauseDescription(nounBeneficiaryBuildVerb),
         )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(mothers, time)),

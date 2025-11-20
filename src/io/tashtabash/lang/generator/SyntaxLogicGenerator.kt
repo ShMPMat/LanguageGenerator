@@ -13,6 +13,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.ActorType.Agent
 import io.tashtabash.lang.language.syntax.context.ActorType.Patient
@@ -33,7 +34,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateVerbFormSolver(),
         generateVerbCaseSolver(),
         generateCopulaCaseSolver(),
-        generateNonCoreCasesSolver(),
+        generateSyntaxRelationSolver(),
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
@@ -88,8 +89,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         ?.let { listOf(it) }
         ?: emptyList()
 
-    private fun generateNonCoreCasesSolver(): Map<Pair<CaseValue, TypedSpeechPart>, CategoryValues> {
-        val nonCoreCaseSolver: MutableMap<Pair<CaseValue, TypedSpeechPart>, CategoryValues> = mutableMapOf()
+    private fun generateSyntaxRelationSolver(): Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> {
+        val syntaxRelationSolver: MutableMap<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mutableMapOf()
 
         for (speechPartParadigm in nominalParadigms) {
             val caseValues = speechPartParadigm.getCategoryValues(caseName)
@@ -99,22 +100,25 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                 ?: findCaseWrapped(caseValues, CaseValue.Nominative)
                 ?: emptyList()
 
-            for (caseValue in nonCoreCases) {
-                nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, caseValue)
-                    ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, caseValue))
+            for ((case, syntaxRelation) in IndirectObjectType.entries.map { it.caseValue to it.relation }) {
+                syntaxRelationSolver[syntaxRelation to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, case)
+                    ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, case))
 
                 // Equate Ben with Dat
-                if (caseValue == CaseValue.Benefactive) 0.5.chanceOf {
-                    nonCoreCaseSolver[caseValue to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Dative)
+                if (syntaxRelation == SyntaxRelation.Benefactor) 0.5.chanceOf {
+                    syntaxRelationSolver[SyntaxRelation.Benefactor to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Dative)
                         ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, CaseValue.Dative))
                 }
 
 //                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
 //                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
             }
+
+            syntaxRelationSolver[SyntaxRelation.Possessor to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Genitive)
+                ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, CaseValue.Genitive))
         }
 
-        return nonCoreCaseSolver
+        return syntaxRelationSolver
     }
 
     private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {

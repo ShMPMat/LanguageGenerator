@@ -29,6 +29,9 @@ open class NominalDescription(
         actorCompliment,
         definitions + newDefinitions
     )
+
+    open fun copyAndAddDefinitions(vararg newDefinitions: NounDefinerDescription) =
+        copyAndAddDefinitions(newDefinitions.toList())
 }
 
 class PronounDescription(

@@ -164,7 +164,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Locative to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Location to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
             ),
             predicatePossessionType = PredicatePossessionType.LocativeOblique
         )
@@ -185,10 +185,6 @@ internal class PredicatePossessionDescriptionTest {
 
         assertEquals(
             listOf(
-                createNoun("ito").withMorphemes(
-                    MorphemeData(1, listOf(), true),
-                    MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Locative]))
-                ) withMeaning "dog",
                 createNoun("ida").withMorphemes(
                     MorphemeData(1, listOf(), true),
                     MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Absolutive]))
@@ -197,7 +193,11 @@ internal class PredicatePossessionDescriptionTest {
                     .withMorphemes(
                         MorphemeData(1, listOf(), true),
                         MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
-                    ) withMeaning "exist"
+                    ) withMeaning "exist",
+                createNoun("ito").withMorphemes(
+                    MorphemeData(1, listOf(), true),
+                    MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Locative]))
+                ) withMeaning "dog"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
@@ -265,7 +265,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Dative to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
             ),
             predicatePossessionType = PredicatePossessionType.DativeOblique
         )
@@ -366,7 +366,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Genitive to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
             ),
             predicatePossessionType = PredicatePossessionType.GenitiveOblique
         )
@@ -467,7 +467,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                nonCoreCaseSolver = mapOf(CaseValue.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))
             ),
             predicatePossessionType = PredicatePossessionType.Topic
         )

@@ -13,7 +13,6 @@ interface AdjunctClause : SyntaxClause {
 
 class CaseAdjunctClause(
     val nominal: NominalClause,
-    val case: CaseValue,
     override val relation: SyntaxRelation
 ) : AdjunctClause {
     override fun toNode(language: Language, random: Random): SentenceNode {
@@ -21,7 +20,7 @@ class CaseAdjunctClause(
         val node = nominal.toNode(language, random)
 
         node.categoryValues.removeIf { it is CaseValue }
-        node.categoryValues += language.changeParadigm.syntaxLogic.resolveNonCoreCase(case, speechPart)
+        node.categoryValues += language.changeParadigm.syntaxLogic.resolveSyntaxRelationToCase(relation, speechPart)
 
         return node
     }

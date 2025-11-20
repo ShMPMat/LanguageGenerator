@@ -1,23 +1,21 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
-import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.CaseValue
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
-import io.tashtabash.lang.language.syntax.context.Context
-import kotlin.random.Random
 
 
-class IndirectObjectDescription(val nominal: NominalDescription, val type: IndirectObjectType): ClauseDescription {
-    override fun toClause(language: Language, context: Context, random: Random) = CaseAdjunctClause(
-        nominal.toClause(language, context, random),
-        type.caseValue,
-        type.relation
-    )
+interface ObjectType {
+    val relation: SyntaxRelation
+}
+
+enum class MainObjectType(override val relation: SyntaxRelation): ObjectType {
+    Argument(SyntaxRelation.Argument),
+    Agent(SyntaxRelation.Agent),
+    Patient(SyntaxRelation.Patient);
 }
 
 
-enum class IndirectObjectType(val caseValue: CaseValue, val relation: SyntaxRelation) {
+enum class IndirectObjectType(val caseValue: CaseValue, override val relation: SyntaxRelation): ObjectType {
     Instrument(CaseValue.Instrumental, SyntaxRelation.Instrument),
     Addressee(CaseValue.Dative, SyntaxRelation.Addressee),
     Location(CaseValue.Locative, SyntaxRelation.Location),
