@@ -14,7 +14,6 @@ enum class MainObjectType(override val relation: SyntaxRelation): ObjectType {
     Patient(SyntaxRelation.Patient);
 }
 
-
 enum class IndirectObjectType(val caseValue: CaseValue, override val relation: SyntaxRelation): ObjectType {
     Instrument(CaseValue.Instrumental, SyntaxRelation.Instrument),
     Addressee(CaseValue.Dative, SyntaxRelation.Addressee),
