@@ -174,7 +174,8 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
 
         for (speechPart in paradigm.wordChangeParadigm.speechParts) {
             val speechPartParadigm = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart)
-            val newApplicators = speechPartParadigm.orderedApplicators
+            val newApplicators = speechPartParadigm.applicators
+                .entries
                 .mapIndexed { _, (c, m) ->
                     c to ValueMap(m)
                 }.toMap()

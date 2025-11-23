@@ -82,9 +82,9 @@ class ChangeParadigmGenerator(
             newSpeechParts.clear()
         }
 
-        val verbParadigm = speechPartChangesMap.getValue(Verb.toDefault())
+        val transVerbParadigm = speechPartChangesMap.getValue(Verb.toDefault())
         val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
-        speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(verbParadigm)
+        speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(transVerbParadigm)
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
 
         simplifyParadigm(speechPartChangesMap)
