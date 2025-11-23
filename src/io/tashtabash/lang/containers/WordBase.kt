@@ -122,9 +122,13 @@ class WordBase(private val supplementPath: String) {
 
 fun parseSemanticsTagTemplates(string: String) = string.split(",")
     .map {
-        val (name, prob) = it.split(":")
+        if (it.contains(':')) {
+            val (name, prob) = it.split(":")
 
-        SemanticsTagTemplate(name, prob.toDouble())
+            SemanticsTagTemplate(name, prob.toDouble())
+        } else
+            SemanticsTagTemplate(it)
+
     }
 
 fun getType(string: String) = when (string) {
@@ -137,8 +141,7 @@ fun getType(string: String) = when (string) {
 }
 
 fun getInstantiationType(string: String) = when (string) {
-    "G" -> false
-    "A" -> false
+    "G", "A" -> false
     "T" -> true
     else ->
         if (string.length > 1)

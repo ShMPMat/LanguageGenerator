@@ -79,4 +79,4 @@ data class SemanticsTagCluster(
     val shouldBeInstantiated: Boolean
 )
 
-data class SemanticsTagTemplate(val name: String, override val probability: Double) : UnwrappableSSO<String>(name)
+data class SemanticsTagTemplate(val name: String, override val probability: Double = 1.0) : UnwrappableSSO<String>(name)

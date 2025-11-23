@@ -99,46 +99,46 @@ ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                
                                       *ice:1.0*water:0.5*cold:0.7*sturdy:0.6*transparent:0.1*object:0.2*substance:0.8
 
 
-be                 Verb        1.0    T|trans:1,intrans:0
+be                 Verb        1.0    T|trans
                                       VNPlace@world:0.8 VNAbstract@time:0.01
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
                                       *life:0.6*exist:0.8*abstract:0.3
-exist              Verb        1.0    T|trans:0,intrans:1
+exist              Verb        1.0    T|intrans
                                       VNPlace@world:0.8 VNAbstract@time:0.01
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
                                       *life:0.6*exist:1.0*abstract:0.3
-have               Verb        1.0    T|trans:1,intrans:0
+have               Verb        1.0    T|trans
                                       VNPlace@warehouse:0.3        VNPerson@owner:0.9
                                       VNAbstract@ownership:0.8,power(control):0.4,control:0.1
-do                 Verb        1.0    T|trans:1,intrans:0 T|instrument:1
+do                 Verb        1.0    T|trans T|instrument
                                       *help:0.01*work:0.01*Taction:0.09*Tability:0.05
-say                Verb        1.0    T|trans:100,intrans:1 T|addressee:1
+say                Verb        1.0    T|trans:100,intrans:1 T|addressee
                                       VNPlace@forum_(place):0.3        VNAbstract@memory:0.2
                                       *talk:1.0*language:0.8*hear:0.1*action:0.95
-write              Verb        0.7    T|trans:100,intrans:1 T|instrument:1 T|addressee:1
+write              Verb        0.7    T|trans:100,intrans:1 T|instrument T|addressee
                                       VNPerson@actor:0.1      VNAbstract@inspiration:0.5,memory:0.2
                                       *write:1.0*language:0.3*smart:0.2*action:0.95
 think              Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@actor:0.01     VNAbstract@inspiration:0.05
                                       *think:1.0*language:0.1*smart:0.1*learn:0.1*remember:0.2*action:0.95*abstract:0.5
-want               Verb        1.0    T|trans:1,intrans:0
+want               Verb        1.0    T|trans
                                       VNPerson@one_who_wants_smth:0.8,one_needing:0.3,poor_person:0.1
                                       VNAbstract@wish:0.8,love:0.1,power(control):0.1,control:0.05
 play               Verb        0.99   T|trans:100,intrans:1
                                       VNPlace@playground:0.2  VNPerson@child:0.8  VNAbstract@play(noun):0.8,game:0.5
-end                Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+end                Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       VNPerson@dead(being):0.5,moribund(being):0.3
                                       *end:1.0*abstract:0.6
-start              Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+start              Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       VNPerson@born(being):0.5,one_being_born_soon:0.05  VNAbstract@cause(reason):0.5
                                       *start:1.0*abstract:0.6
 put                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@warehouse:0.1   VNPerson@owner:0.1,keeper:0.1
                                       VNAbstract@answer:0.1,control:0.05
-read               Verb        1.0    T|trans:1,intrans:0 T|addressee:1
+read               Verb        1.0    T|trans T|addressee
                                       VNAbstract@reading:0.8
                                       smart:0.1*learn:0.1*read:1.0*remember:0.2*action:0.95
-add                Verb        0.9    T|trans:100,intrans:1 T|addressee:1
+add                Verb        0.9    T|trans:100,intrans:1 T|addressee
                                       VNPlace@shop:0.1,market:0.1
                                       VNPerson@owner:0.1,keeper:0.1
                                       VNAbstract@increase(noun):0.8
@@ -158,48 +158,48 @@ eat                Verb        1.0    T|trans:100,intrans:1
 cook               Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@market:0.08              VNAbstract@consumption:0.5
                                       *create:0.8*eat:0.3*life:0.1*action:1.0
-know               Verb        1.0    T|trans:100,intrans:1
+know               Verb        1.0    T|trans:100,intrans:1  verbType|perception:0.1
                                       smart:0.9*understand:0.4*remember:0.5*learn:0.1*action:0.2*abstract:0.1
-change             Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+change             Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       *change:1.0*abstract:0.7*action:0.5
 need               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@one_who_wants_smth:0.1,poor_person:0.1
                                       VNAbstract@need(noun):0.8,ownership:0.2,power(control):0.1,control:0.01
                                       want&see:0.09
-picture            Verb        0.9    T|trans:100,intrans:1 T|instrument:1
+picture            Verb        0.9    T|trans:100,intrans:1 T|instrument
                                       VNPlace@beautiful_place:0.05  VNPerson@artist:0.8
                                       VNAbstract@appearance:0.2,thought:0.03,memory:0.05,thinking:0.03,sight(sense):0.07
                                       think&see:0.05
 point(toward)      Verb        0.9    T|trans:100,intrans:1
                                       VNPlace@destination:0.4  VNPerson@traveller:0.05
                                       VNAbstract@motivation:0.5,cause(reason):0.1
-build              Verb        1.0    T|trans:100 T|instrument:1
+build              Verb        1.0    T|trans T|instrument
                                       *Tbuilding:0.4*abstract:0.1*action:0.9
-work               Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+work               Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       VNAbstract@activity:0.7
                                       *work:1.0*help:0.01*action:0.95
-see                Verb        1.0    T|trans:100
+see                Verb        1.0    T|trans verbType|perception
                                       VNPlace@scene:0.03,beautiful_place:0.05
                                       VNPerson@owner:0.04,master:0.02,ruler:0.005  VNAbstract@life:0.05
                                       *see:1.0*understand:0.05*learn:0.05*light:0.05*action:0.8
-hear               Verb        1.0    T|trans:100,intrans:1
+hear               Verb        1.0    T|trans:100,intrans:1 verbType|perception
                                       VNPlace@scene:0.01    VNPerson@master:0.01,ruler:0.001
                                       *hear:1.0*understand:0.05*learn:0.05*air:0.05*action:0.8
-part               Verb        0.9    T|trans:100,intrans:1 T|instrument:1
+part               Verb        0.9    T|trans:100,intrans:1 T|instrument
                                       VNPlace@canyon:0.6    VNPerson@traveller:0.2,adventurer:0.1   VNAbstract@understanding:0.1
                                       *part:0.9*action:0.9*abstract:0.1
-take               Verb        1.0    T|trans:100,intrans:1 T|instrument:1
+take               Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       VNPlace@shop:0.1,market:0.1    VNPerson@owner:0.2
                                       VNAbstract@wish:0.4,power(control):0.1,control:0.05,deprivation:0.4,hardship:0.2
 live               Verb        1.0    T|trans:100,intrans:1
                                       VNPerson@living_thing:0.7,animal:0.6
                                       *Tlife:0.9*reside:0.3*exist:0.4*abstract:0.3
-flow               Verb        0.85   T|trans:0,intrans:1
+flow               Verb        0.85   T|intrans
                                       change&see:0.07 impermanence&see:0.07
                                       *water:0.7*change:0.2*follow:0.1*move:0.5*abstract:0.2*action:0.7
-fly                Verb        0.95   T|trans:0,intrans:1
+fly                Verb        0.95   T|intrans
                                       *fly:1.0*air:0.6*move:0.6*action:0.85
-swim               Verb        0.95   T|trans:0,intrans:1
+swim               Verb        0.95   T|intrans
                                       *swim:1.0*water:0.6*move:0.6*action:0.85
 return_home        Verb        0.1    T|trans:1,intrans:100
                                       *home:0.9*return:0.9*action:0.8
