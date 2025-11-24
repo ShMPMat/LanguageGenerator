@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.category.paradigm
 
 import io.tashtabash.lang.generator.ApplicatorMap
+import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
@@ -17,13 +18,15 @@ import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val exponenceClusters: List<ExponenceCluster> = listOf(),
+    val exponenceClusters: List<ExponenceCluster> = listOf(), // The order represents the order of application
     val applicators: ApplicatorMap = mapOf(),
     val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
-    val categories = exponenceClusters.flatMap { it.categories }
+    val categories by lazy {
+        exponenceClusters.flatMap { it.categories }
+    }
 
-    fun getCluster(cluster: ExponenceCluster) = exponenceClusters
+    fun getCluster(cluster: ExponenceCluster): ExponenceCluster? = exponenceClusters
         .firstOrNull { it == cluster }
 
     fun getCategoryOrNull(name: String) = categories
@@ -37,7 +40,7 @@ data class SpeechPartChangeParadigm(
         ?.actualValues
         ?: emptyList()
 
-    fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
+    private fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
         applicators.values
             .flatMap { it.values }
             .any(predicate)
@@ -54,7 +57,12 @@ data class SpeechPartChangeParadigm(
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
         for (exponenceCluster in exponenceClusters)
-            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster)
+            wordClauseResult = useExponenceCluster(
+                wordClauseResult,
+                categoryValues,
+                exponenceCluster,
+                applicators.getValue(exponenceCluster)
+            )
 
         val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
             it.copy(syntaxRole = word.syntaxRole)
@@ -68,7 +76,8 @@ data class SpeechPartChangeParadigm(
     private fun useExponenceCluster(
         wordClauseResult: WordClauseResult,
         categoryValues: Set<SourcedCategoryValue>,
-        exponenceCluster: ExponenceCluster
+        exponenceCluster: ExponenceCluster,
+        applicator: ValueMap
     ): WordClauseResult {
         val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { v ->
             val parent = exponenceCluster.categories
@@ -88,7 +97,7 @@ data class SpeechPartChangeParadigm(
         val newClause = useCategoryApplicator(
             wordClauseResult.words,
             wordClauseResult.mainWordIdx,
-            exponenceCluster,
+            applicator,
             exponenceUnion,
             actualValues
         )
@@ -107,12 +116,11 @@ data class SpeechPartChangeParadigm(
     private fun useCategoryApplicator(
         wordSequence: FoldedWordSequence,
         wordPosition: Int,
-        exponenceCluster: ExponenceCluster,
+        applicator: ValueMap,
         exponenceValue: ExponenceValue,
         actualValues: List<SourcedCategoryValue>
-    ) = if (applicators[exponenceCluster]?.containsKey(exponenceValue) == true)
-        applicators[exponenceCluster]
-            ?.get(exponenceValue)
+    ) = if (applicator.containsKey(exponenceValue))
+        applicator[exponenceValue]
             ?.apply(wordSequence, wordPosition, actualValues)
             ?: throw ChangeException(
                 "Tried to change word \"${wordSequence[wordPosition].word}\" for categories $exponenceValue " +
