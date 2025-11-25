@@ -55,7 +55,7 @@ class ChangeParadigmGenerator(
             checkCompulsoryConsistency(categoryData, oldCategoryData)
 
             categoryData.map { (speechPart, restrictions, categoriesAndSupply) ->
-                val (words, applicators, orderedClusters) = applicatorsGenerator.randomApplicatorsForSpeechPart(
+                val (words, applicators) = applicatorsGenerator.randomApplicatorsForSpeechPart(
                     speechPart,
                     restrictions,
                     categoriesAndSupply
@@ -66,14 +66,13 @@ class ChangeParadigmGenerator(
 
                 val changeParadigm = SpeechPartChangeParadigm(
                     speechPart,
-                    orderedClusters,
                     applicators,
                     ProsodyChangeParadigm(stressPattern)
                 )
                 speechPartChangesMap[speechPart] = changeParadigm
 
                 restrictionsParadigm.restrictionsMapper[speechPart] = restrictions.copy(
-                    avgWordLength = max(2, restrictions.avgWordLength - changeParadigm.exponenceClusters.size)
+                    avgWordLength = max(2, restrictions.avgWordLength - changeParadigm.applicators.size)
                 )
             }
             println(newSpeechParts)
@@ -205,7 +204,7 @@ class ChangeParadigmGenerator(
         speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>
     ) = if (categories.first { it.outType == definitenessName }.actualValues.isNotEmpty())
         speechPartChangesMap.any { (_, u) ->
-            u.applicators.values
+            u.applicatorMaps
                 .flatMap { it.values }
                 .any { it is WordCategoryApplicator && it.word.semanticsCore.speechPart.type == Article }
         }

@@ -47,10 +47,8 @@ fun SpeechPartChangeParadigm.copyForNewSpeechPart(
     sourceMap: Map<SyntaxRelation, SyntaxRelation> = mapOf(),
     clusterPredicate: (ExponenceCluster) -> Boolean
 ): SpeechPartChangeParadigm {
-    val newApplicators = exponenceClusters
-        .mapNotNull { cluster ->
-            val applicator = applicators.getValue(cluster)
-
+    val newApplicators = applicators
+        .mapNotNull { (cluster, applicator) ->
             if (!clusterPredicate(cluster))
                 return@mapNotNull null
 
@@ -59,8 +57,7 @@ fun SpeechPartChangeParadigm.copyForNewSpeechPart(
 
     return SpeechPartChangeParadigm(
         speechPart,
-        newApplicators.map { it.first },
-        newApplicators.toMap(),
+        newApplicators,
         prosodyChangeParadigm.copy()
     )
 }
@@ -83,15 +80,9 @@ private fun SpeechPartChangeParadigm.partialSubstituteWith(from: SpeechPartChang
 }
 
 private fun combineParadigms(old: SpeechPartChangeParadigm, new: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
-    val newOrder = old.exponenceClusters.map { new.getCluster(it) ?: it }
-    val newApplicators = newOrder.map {
-        it to (new.applicators[it] ?: old.applicators.getValue(it))
-    }.toMap()
+    val newApplicators = old.applicators.map { applicator ->
+        new.applicators.firstOrNull { it.first == applicator.first } ?: applicator
+    }
 
-    return old.copy(exponenceClusters = newOrder, applicators = newApplicators)
+    return old.copy(applicators = newApplicators)
 }
-
-//private fun hasSameCategorySet(first: SpeechPartChangeParadigm, second: SpeechPartChangeParadigm) =
-//    first.exponenceClusters.size == second.exponenceClusters.size && first.exponenceClusters.all { cluster ->
-//        second.getCluster(cluster) != null
-//    }

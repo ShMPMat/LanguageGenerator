@@ -94,8 +94,7 @@ data class WordChangeParadigm(
         val paradigm = speechPartChangeParadigms[word.semanticsCore.speechPart]
             ?: throw ChangeException("No SpeechPartChangeParadigm for ${word.semanticsCore.speechPart}")
 
-        return paradigm.exponenceClusters
-            .flatMap { it.categories }
+        return paradigm.categories
             .filter { it.actualSourcedValues.isNotEmpty() && it.compulsoryData.isCompulsory }
             .map { it.actualSourcedValues[0] }//TODO another method for static categories swap
             .filter { v ->
@@ -157,7 +156,7 @@ data class WordChangeParadigm(
     private fun getAllSyntheticCategoryValueCombinations(word: Word): List<SourcedCategoryValues> =
         getSpeechPartParadigm(word.semanticsCore.speechPart)
             .applicators.filter { (cluster, valueMap) -> cluster.isCompulsory || !valueMap.isAnalytical }
-            .entries.map { (_, valueMap) ->
+            .map { (_, valueMap) ->
                 val analyticClusterValues: List<List<SourcedCategoryValue>> = valueMap.entries
                     .filter { it.value.type !in analyticalRealizations }
                     .map { it.key.categoryValues } +
@@ -235,8 +234,7 @@ data class WordChangeParadigm(
             }
         val functionWords = speechPartChangeParadigms.values
             .flatMap { p ->
-                p.applicators
-                    .values
+                p.applicatorMaps
                     .flatMap { it.values }
             }
             .filterIsInstance<WordCategoryApplicator>()
@@ -257,8 +255,8 @@ data class WordChangeParadigm(
         categories,
         speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
-                .mapValues { (_, exponenceToApplicator) ->
-                    ValueMap(
+                .map { (exponenceCluster, exponenceToApplicator) ->
+                    exponenceCluster to ValueMap(
                         exponenceToApplicator.mapValues { (_, applicator) ->
                             mapper(applicator)
                         }

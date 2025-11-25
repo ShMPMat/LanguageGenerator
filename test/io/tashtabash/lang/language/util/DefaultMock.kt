@@ -61,8 +61,7 @@ fun makeDefExponenceCluster(isCompulsory: Boolean) = ExponenceCluster(
 fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulsory: Boolean = false) =
     SpeechPartChangeParadigm(
         defSpeechPart,
-        listOf(makeDefExponenceCluster(isCompulsory)),
-        mapOf(makeDefExponenceCluster(isCompulsory) to ValueMap(
+        listOf(makeDefExponenceCluster(isCompulsory) to ValueMap(
             makeDefExponenceCluster(isCompulsory).possibleValues,
             applicators.toList()
         )),

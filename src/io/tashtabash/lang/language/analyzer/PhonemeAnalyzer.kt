@@ -37,7 +37,7 @@ fun analyzePhonemes(
         .speechPartChangeParadigms
         .values
         .flatMap { speechPartChangeParadigm ->
-            speechPartChangeParadigm.applicators.values.flatMap { applicators ->
+            speechPartChangeParadigm.applicators.flatMap { (_, applicators) ->
                 applicators.values.flatMap { analyzePhoneme(it, ImmutablePhonemeContainer(phonemes.toList())) }
             }
         }

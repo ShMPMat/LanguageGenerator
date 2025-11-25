@@ -30,12 +30,13 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         words.clear()
 
         val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
-        val resultMap = orderedTemplates.associate { it.cluster to ValueMap() }
+        val resultMap = orderedTemplates.map { it.cluster to ValueMap() }
 
         val realizations = mutableListOf<RealizationTemplate>()
 
-        for ((cluster, allRealizations) in orderedTemplates) {
-            val clusterMap = resultMap.getValue(cluster)
+        for (i in orderedTemplates.indices) {
+            val clusterMap = resultMap[i].second
+            val allRealizations = orderedTemplates[i].realizations
 
             for ((exponenceValue, realization) in allRealizations) {
                 val semanticsCore = adjustSemanticsCore(exponenceValue.core, realization.chosen, speechPart)
@@ -46,13 +47,12 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
         val i = findFirstMorphemeCluster(realizations)
         if (i != null) {
-            val exponenceCluster = orderedTemplates[i].cluster
-            val clusterMap = resultMap.getValue(exponenceCluster)
+            val (exponenceCluster, clusterMap) = resultMap[i]
             val currentRealizations = realizations[i]
 
             injectDerivationMorpheme(exponenceCluster, clusterMap, phoneticRestrictions, currentRealizations)
         }
-        return Result(words, resultMap, orderedTemplates.map { it.cluster })
+        return Result(words, resultMap)
     }
 
     private fun adjustSemanticsCore(
@@ -215,9 +215,7 @@ class ValueMap(): LinkedHashMap<ExponenceValue, CategoryApplicator>() {
     }
 }
 
-typealias ApplicatorMap = Map<ExponenceCluster, ValueMap>
-
-data class Result(val words: List<Word>, val solver: ApplicatorMap, val orderedClusters: List<ExponenceCluster>)
+data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ValueMap>>)
 
 fun <E : SampleSpaceObject> uniteMutualProbabilities(
     objectLists: List<Collection<E>>,

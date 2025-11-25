@@ -33,7 +33,7 @@ fun fixSyllableStructure(
 fun unifySyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<Lexis, ChangeParadigm> {
     val changeParadigmWords = changeParadigm.wordChangeParadigm
         .speechPartChangeParadigms
-        .flatMap { (_, paradigm) -> paradigm.applicators.values }
+        .flatMap { (_, paradigm) -> paradigm.applicatorMaps }
         .flatMap { it.values.filterIsInstance<WordCategoryApplicator>() }
         .map { it.word }
 

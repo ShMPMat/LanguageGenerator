@@ -175,10 +175,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         for (speechPart in paradigm.wordChangeParadigm.speechParts) {
             val speechPartParadigm = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart)
             val newApplicators = speechPartParadigm.applicators
-                .entries
-                .mapIndexed { _, (c, m) ->
-                    c to ValueMap(m)
-                }.toMap()
+                .map { (c, m) -> c to ValueMap(m) }
 
             newChangeParadigms[speechPart] = speechPartParadigm.copy(applicators = newApplicators)
         }

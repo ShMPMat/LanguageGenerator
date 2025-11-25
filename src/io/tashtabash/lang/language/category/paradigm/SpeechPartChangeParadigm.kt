@@ -1,6 +1,5 @@
 package io.tashtabash.lang.language.category.paradigm
 
-import io.tashtabash.lang.generator.ApplicatorMap
 import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
@@ -18,16 +17,20 @@ import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val exponenceClusters: List<ExponenceCluster> = listOf(), // The order represents the order of application
-    val applicators: ApplicatorMap = mapOf(),
+    val applicators: List<Pair<ExponenceCluster, ValueMap>> = listOf(),
     val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
-    val categories by lazy {
-        exponenceClusters.flatMap { it.categories }
+    val applicatorMaps by lazy {
+        applicators.map { (_, map) -> map }
     }
 
-    fun getCluster(cluster: ExponenceCluster): ExponenceCluster? = exponenceClusters
-        .firstOrNull { it == cluster }
+    val categories by lazy {
+        applicators.flatMap { it.first.categories }
+    }
+
+    fun getCluster(cluster: ExponenceCluster): ExponenceCluster? = applicators
+        .firstOrNull { it.first == cluster }
+        ?.first
 
     fun getCategoryOrNull(name: String) = categories
         .firstOrNull { it.category.outType == name }
@@ -41,8 +44,7 @@ data class SpeechPartChangeParadigm(
         ?: emptyList()
 
     private fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
-        applicators.values
-            .flatMap { it.values }
+        applicators.flatMap { it.second.values }
             .any(predicate)
 
     fun hasPrefixes(): Boolean =
@@ -56,13 +58,8 @@ data class SpeechPartChangeParadigm(
             throw ChangeException("SpeechPartChangeParadigm for $speechPart received ${word.semanticsCore.speechPart}")
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
-        for (exponenceCluster in exponenceClusters)
-            wordClauseResult = useExponenceCluster(
-                wordClauseResult,
-                categoryValues,
-                exponenceCluster,
-                applicators.getValue(exponenceCluster)
-            )
+        for ((exponenceCluster, applicatorMap) in applicators)
+            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicatorMap)
 
         val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
             it.copy(syntaxRole = word.syntaxRole)
@@ -133,7 +130,11 @@ data class SpeechPartChangeParadigm(
         exponenceCluster: ExponenceCluster
     ) = exponenceCluster.filterExponenceUnion(categoryValues)
 
-    private fun applyProsodyParadigm(wordSequence: FoldedWordSequence, wordPosition: Int, oldWord: Word): FoldedWordSequence {
+    private fun applyProsodyParadigm(
+        wordSequence: FoldedWordSequence,
+        wordPosition: Int,
+        oldWord: Word
+    ): FoldedWordSequence {
         val (word, latch) = wordSequence[wordPosition]
 
         return FoldedWordSequence(
@@ -143,14 +144,13 @@ data class SpeechPartChangeParadigm(
         )
     }
 
-    fun hasChanges() = applicators.any { it.value.isNotEmpty() }
+    fun hasChanges() = applicators.any { it.second.isNotEmpty() }
 
     override fun toString() = "$speechPart changes on: \n" +
-            exponenceClusters.map { it to applicators.getValue(it) }
-                .joinToString("\n\n") { (c, m) ->
-                    "$c:\n" + m.entries
-                        .map { it.key.toString() + ": " + it.value }
-                        .sortedWith(naturalOrder())
-                        .joinToString("\n")
-                }
+            applicators.joinToString("\n\n") { (c, m) ->
+                "$c:\n" + m.entries
+                    .map { it.key.toString() + ": " + it.value }
+                    .sortedWith(naturalOrder())
+                    .joinToString("\n")
+            }
 }
