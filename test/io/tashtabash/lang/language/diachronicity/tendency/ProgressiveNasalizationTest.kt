@@ -1,6 +1,6 @@
 package io.tashtabash.lang.language.diachronicity.tendency
 
-import io.tashtabash.lang.generator.ValueMap
+import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.paradigm.*
@@ -121,16 +121,17 @@ class ProgressiveNasalizationTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to ValueMap(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
-                nounNumberExponenceCluster to ValueMap(nounNumberExponenceCluster.possibleValues, nounNumberApplicatiors)
+                definitenessExponenceCluster to ApplicatorMap(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                nounNumberExponenceCluster to ApplicatorMap(nounNumberExponenceCluster.possibleValues, nounNumberApplicatiors)
             )
         )
         val articleChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
-            listOf(articleNumberExponenceCluster to ValueMap(
+            listOf(articleNumberExponenceCluster to ApplicatorMap(
                 articleNumberExponenceCluster.possibleValues,
                 listOf(PassingCategoryApplicator, createAffixCategoryApplicator("-o"))
-            )),
+            )
+            ),
             ProsodyChangeParadigm(StressType.Initial)
         )
         // Set up language

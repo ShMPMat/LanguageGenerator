@@ -1,6 +1,6 @@
 package io.tashtabash.lang.generator.util
 
-import io.tashtabash.lang.generator.ValueMap
+import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.paradigm.ExponenceCluster
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
@@ -12,9 +12,9 @@ import io.tashtabash.random.singleton.testProbability
 
 fun copyApplicators(
     cluster: ExponenceCluster,
-    applicator: ValueMap,
+    applicator: ApplicatorMap,
     sourceMap: Map<SyntaxRelation, SyntaxRelation>
-): Pair<ExponenceCluster, ValueMap> {
+): Pair<ExponenceCluster, ApplicatorMap> {
     val newCategories = cluster.categories.map {
         it.copy(
             source = when (it.source) {

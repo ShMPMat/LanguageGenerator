@@ -1,6 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
-import io.tashtabash.lang.generator.ValueMap
+import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.value.CategoryValue
@@ -46,7 +46,7 @@ internal class PredicatePossessionDescriptionTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toDefault(),
-            listOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to ApplicatorMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -134,12 +134,12 @@ internal class PredicatePossessionDescriptionTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
-            listOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to ApplicatorMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
-            listOf(caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to ApplicatorMap(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -233,12 +233,12 @@ internal class PredicatePossessionDescriptionTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
-            listOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to ApplicatorMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
-            listOf(caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to ApplicatorMap(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -332,12 +332,12 @@ internal class PredicatePossessionDescriptionTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
-            listOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to ApplicatorMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
-            listOf(caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to ApplicatorMap(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -431,12 +431,12 @@ internal class PredicatePossessionDescriptionTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toIntransitive(),
-            listOf(tenseExponenceCluster to ValueMap(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to ApplicatorMap(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
-            listOf(caseExponenceCluster to ValueMap(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to ApplicatorMap(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),

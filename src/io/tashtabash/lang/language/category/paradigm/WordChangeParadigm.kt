@@ -1,6 +1,5 @@
 package io.tashtabash.lang.language.category.paradigm
 
-import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
@@ -256,7 +255,7 @@ data class WordChangeParadigm(
         speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
                 .map { (exponenceCluster, exponenceToApplicator) ->
-                    exponenceCluster to ValueMap(
+                    exponenceCluster to ApplicatorMap(
                         exponenceToApplicator.mapValues { (_, applicator) ->
                             mapper(applicator)
                         }

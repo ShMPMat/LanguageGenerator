@@ -1,6 +1,5 @@
 package io.tashtabash.lang.language.category.paradigm
 
-import io.tashtabash.lang.generator.ValueMap
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
@@ -17,7 +16,7 @@ import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val applicators: List<Pair<ExponenceCluster, ValueMap>> = listOf(),
+    val applicators: List<Pair<ExponenceCluster, ApplicatorMap>> = listOf(),
     val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
     val applicatorMaps by lazy {
@@ -74,7 +73,7 @@ data class SpeechPartChangeParadigm(
         wordClauseResult: WordClauseResult,
         categoryValues: Set<SourcedCategoryValue>,
         exponenceCluster: ExponenceCluster,
-        applicator: ValueMap
+        applicator: ApplicatorMap
     ): WordClauseResult {
         val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { v ->
             val parent = exponenceCluster.categories
@@ -113,7 +112,7 @@ data class SpeechPartChangeParadigm(
     private fun useCategoryApplicator(
         wordSequence: FoldedWordSequence,
         wordPosition: Int,
-        applicator: ValueMap,
+        applicator: ApplicatorMap,
         exponenceValue: ExponenceValue,
         actualValues: List<SourcedCategoryValue>
     ) = if (applicator.containsKey(exponenceValue))

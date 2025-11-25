@@ -1,10 +1,10 @@
 package io.tashtabash.lang.generator
 
-import io.tashtabash.lang.language.category.realization.CategoryRealization
-import io.tashtabash.lang.language.category.realization.CategoryRealization.*
 import io.tashtabash.lang.language.category.paradigm.ExponenceCluster
 import io.tashtabash.lang.language.category.paradigm.ExponenceValue
+import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.category.realization.*
+import io.tashtabash.lang.language.category.realization.CategoryRealization.*
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
@@ -12,7 +12,9 @@ import io.tashtabash.lang.language.morphem.change.Position
 import io.tashtabash.lang.language.phonology.PhoneticRestrictions
 import io.tashtabash.lang.language.syntax.sequence.LatchType
 import io.tashtabash.random.SampleSpaceObject
-import io.tashtabash.random.singleton.*
+import io.tashtabash.random.singleton.chanceOf
+import io.tashtabash.random.singleton.randomElement
+import io.tashtabash.random.singleton.testProbability
 import io.tashtabash.random.toSampleSpaceObject
 
 
@@ -30,7 +32,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         words.clear()
 
         val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
-        val resultMap = orderedTemplates.map { it.cluster to ValueMap() }
+        val resultMap = orderedTemplates.map { it.cluster to ApplicatorMap() }
 
         val realizations = mutableListOf<RealizationTemplate>()
 
@@ -189,33 +191,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 }
 
 
-class ValueMap(): LinkedHashMap<ExponenceValue, CategoryApplicator>() {
-    constructor(values: List<ExponenceValue>, applicators: List<CategoryApplicator>) : this() {
-        for (i in values.indices)
-            this[values[i]] = applicators[i]
-    }
-
-    constructor(map: Map<ExponenceValue, CategoryApplicator>): this() {
-        for ((k, v) in map)
-            this[k] = v
-    }
-
-    val isAnalytical: Boolean
-        get() = values.all { it.type in analyticalRealizations }
-
-    fun map(mapper: (Map.Entry<ExponenceValue, CategoryApplicator>) -> Pair<ExponenceValue, CategoryApplicator>): ValueMap {
-        val newMap = ValueMap()
-
-        for (entry: MutableMap.MutableEntry<ExponenceValue, CategoryApplicator> in entries) {
-            val (newK, newV) = mapper(entry)
-            newMap[newK] = newV
-        }
-
-        return newMap
-    }
-}
-
-data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ValueMap>>)
+data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ApplicatorMap>>)
 
 fun <E : SampleSpaceObject> uniteMutualProbabilities(
     objectLists: List<Collection<E>>,
