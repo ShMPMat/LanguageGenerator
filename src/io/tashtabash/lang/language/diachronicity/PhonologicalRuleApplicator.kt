@@ -334,15 +334,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         shift: Int,
         substitutions: List<PhonemeSubstitution>
     ) {
-        var curShift = shift
+        var curShift = max(shift, 0) // Skip to changes, there's nothing to apply with curShift < 0
         for (substitution in substitutions) {
             //Allow adding to the end only if a substitution is an epenthesis
             if (curShift >= phonemes.size && substitution !is EpenthesisSubstitution)
                 break
-            if (curShift < 0) {
-                curShift++
-                continue
-            }
 
             val oldPhoneme = phonemes.getOrNull(curShift)
             val newPhonemes = substitution.substitute(oldPhoneme?.phoneme)
