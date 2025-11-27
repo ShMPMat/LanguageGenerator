@@ -16,10 +16,10 @@ import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val applicators: List<Pair<ExponenceCluster, ApplicatorMap>> = listOf(),
+    val applicators: List<Pair<ExponenceCluster, ApplicatorSource>> = listOf(),
     val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
-    val applicatorMaps by lazy {
+    val sources by lazy {
         applicators.map { (_, map) -> map }
     }
 
@@ -43,7 +43,7 @@ data class SpeechPartChangeParadigm(
         ?: emptyList()
 
     private fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
-        applicators.flatMap { it.second.values }
+        applicators.flatMap { it.second.map.values }
             .any(predicate)
 
     fun hasPrefixes(): Boolean =
@@ -57,8 +57,8 @@ data class SpeechPartChangeParadigm(
             throw ChangeException("SpeechPartChangeParadigm for $speechPart received ${word.semanticsCore.speechPart}")
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
-        for ((exponenceCluster, applicatorMap) in applicators)
-            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicatorMap)
+        for ((exponenceCluster, applicator) in applicators)
+            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicator.map)
 
         val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
             it.copy(syntaxRole = word.syntaxRole)
@@ -143,11 +143,11 @@ data class SpeechPartChangeParadigm(
         )
     }
 
-    fun hasChanges() = applicators.any { it.second.isNotEmpty() }
+    fun hasChanges() = applicators.any { it.second.map.isNotEmpty() }
 
     override fun toString() = "$speechPart changes on: \n" +
-            applicators.joinToString("\n\n") { (c, m) ->
-                "$c:\n" + m.entries
+            applicators.joinToString("\n\n") { (c, a) ->
+                "$c:$a\n" + a.map.entries
                     .map { it.key.toString() + ": " + it.value }
                     .sortedWith(naturalOrder())
                     .joinToString("\n")

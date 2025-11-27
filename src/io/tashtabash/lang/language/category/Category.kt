@@ -35,10 +35,8 @@ internal fun noValue(probability: Double) = RealizationBox(null, probability)
 internal val emptyRealization = setOf(noValue(1.0))
 
 sealed class CategorySource {
-    object Self : CategorySource() {
-        override fun toString() =
-            "Self"
-    }
+    data object Self : CategorySource()
+
     data class Agreement(val relation: SyntaxRelation, val possibleSpeechParts: List<SpeechPart>) : CategorySource() {
         override fun toString() =
             "Agree with $relation ($possibleSpeechParts)"

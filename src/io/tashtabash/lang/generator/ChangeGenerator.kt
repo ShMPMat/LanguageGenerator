@@ -3,7 +3,6 @@ package io.tashtabash.lang.generator
 import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
-import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.diachronicity.PhonologicalRule
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
@@ -176,7 +175,7 @@ class ChangeGenerator(val lexisGenerator: LexisGenerator) {
         for (speechPart in paradigm.wordChangeParadigm.speechParts) {
             val speechPartParadigm = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart)
             val newApplicators = speechPartParadigm.applicators
-                .map { (c, m) -> c to ApplicatorMap(m) }
+                .map { (c, a) -> c to a.copy() }
 
             newChangeParadigms[speechPart] = speechPartParadigm.copy(applicators = newApplicators)
         }

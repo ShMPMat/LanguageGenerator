@@ -1,8 +1,6 @@
 package io.tashtabash.lang.generator
 
-import io.tashtabash.lang.language.category.paradigm.ExponenceCluster
-import io.tashtabash.lang.language.category.paradigm.ExponenceValue
-import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
+import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.category.realization.CategoryRealization.*
 import io.tashtabash.lang.language.lexis.*
@@ -32,12 +30,12 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         words.clear()
 
         val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
-        val resultMap = orderedTemplates.map { it.cluster to ApplicatorMap() }
+        val resultMap = orderedTemplates.map { it.cluster to MapApplicatorSource() }
 
         val realizations = mutableListOf<RealizationTemplate>()
 
         for (i in orderedTemplates.indices) {
-            val clusterMap = resultMap[i].second
+            val clusterMap = resultMap[i].second.map
             val allRealizations = orderedTemplates[i].realizations
 
             for ((exponenceValue, realization) in allRealizations) {
@@ -49,10 +47,10 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
         val i = findFirstMorphemeCluster(realizations)
         if (i != null) {
-            val (exponenceCluster, clusterMap) = resultMap[i]
+            val (exponenceCluster, applicatorSource) = resultMap[i]
             val currentRealizations = realizations[i]
 
-            injectDerivationMorpheme(exponenceCluster, clusterMap, phoneticRestrictions, currentRealizations)
+            injectDerivationMorpheme(exponenceCluster, applicatorSource.map, phoneticRestrictions, currentRealizations)
         }
         return Result(words, resultMap)
     }
@@ -125,7 +123,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
     private fun injectDerivationMorpheme(
         exponenceCluster: ExponenceCluster,
-        clusterMap: MutableMap<ExponenceValue, CategoryApplicator>,
+        clusterMap: ApplicatorMap,
         phoneticRestrictions: PhoneticRestrictions,
         realizations: RealizationTemplate
     ) {
@@ -191,7 +189,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 }
 
 
-data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ApplicatorMap>>)
+data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ApplicatorSource>>)
 
 fun <E : SampleSpaceObject> uniteMutualProbabilities(
     objectLists: List<Collection<E>>,

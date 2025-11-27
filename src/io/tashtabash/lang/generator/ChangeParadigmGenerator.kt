@@ -204,8 +204,8 @@ class ChangeParadigmGenerator(
         speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>
     ) = if (categories.first { it.outType == definitenessName }.actualValues.isNotEmpty())
         speechPartChangesMap.any { (_, u) ->
-            u.applicatorMaps
-                .flatMap { it.values }
+            u.sources
+                .flatMap { it.map.values }
                 .any { it is WordCategoryApplicator && it.word.semanticsCore.speechPart.type == Article }
         }
     else false

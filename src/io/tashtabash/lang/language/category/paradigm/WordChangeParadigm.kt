@@ -154,20 +154,20 @@ data class WordChangeParadigm(
     // Includes compulsory analytically expressed categories, but minimizes them
     private fun getAllSyntheticCategoryValueCombinations(word: Word): List<SourcedCategoryValues> =
         getSpeechPartParadigm(word.semanticsCore.speechPart)
-            .applicators.filter { (cluster, valueMap) -> cluster.isCompulsory || !valueMap.isAnalytical }
-            .map { (_, valueMap) ->
-                val analyticClusterValues: List<List<SourcedCategoryValue>> = valueMap.entries
+            .applicators.filter { (cluster, source) -> cluster.isCompulsory || !source.map.isAnalytical }
+            .map { (_, source) ->
+                val analyticClusterValues: List<List<SourcedCategoryValue>> = source.map.entries
                     .filter { it.value.type !in analyticalRealizations }
                     .map { it.key.categoryValues } +
                         // Add one of the passing matchers if exists
                         listOfNotNull(
-                            valueMap.entries
+                            source.map.entries
                                 .firstOrNull { it.value == PassingCategoryApplicator }
                                 ?.key
                                 ?.categoryValues
                         )
                 val chosenClusterValues = analyticClusterValues.takeIf { it.isNotEmpty() }
-                    ?: listOf(valueMap.keys.first().categoryValues)
+                    ?: listOf(source.map.keys.first().categoryValues)
 
                 // Filter out values which can't be applied to the word's static categories
                 val wordStaticCategories = word.semanticsCore.staticCategories.map { it.parentClassName }
@@ -233,8 +233,8 @@ data class WordChangeParadigm(
             }
         val functionWords = speechPartChangeParadigms.values
             .flatMap { p ->
-                p.applicatorMaps
-                    .flatMap { it.values }
+                p.sources
+                    .flatMap { it.map.values }
             }
             .filterIsInstance<WordCategoryApplicator>()
             .map {
@@ -254,12 +254,10 @@ data class WordChangeParadigm(
         categories,
         speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
-                .map { (exponenceCluster, exponenceToApplicator) ->
-                    exponenceCluster to ApplicatorMap(
-                        exponenceToApplicator.mapValues { (_, applicator) ->
-                            mapper(applicator)
-                        }
-                    )
+                .map { (exponenceCluster, source) ->
+                    exponenceCluster to source.mapApplicators { _, applicator ->
+                        mapper(applicator)
+                    }
                 }
 
             speechPartChangeParadigm.copy(applicators = mappedApplicators)

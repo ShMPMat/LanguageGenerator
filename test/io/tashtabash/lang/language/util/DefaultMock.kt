@@ -1,6 +1,5 @@
 package io.tashtabash.lang.language.util
 
-import io.tashtabash.lang.language.category.paradigm.ApplicatorMap
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.NumeralSystemBase
 import io.tashtabash.lang.language.category.CategorySource
@@ -61,7 +60,7 @@ fun makeDefExponenceCluster(isCompulsory: Boolean) = ExponenceCluster(
 fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulsory: Boolean = false) =
     SpeechPartChangeParadigm(
         defSpeechPart,
-        listOf(makeDefExponenceCluster(isCompulsory) to ApplicatorMap(
+        listOf(makeDefExponenceCluster(isCompulsory) to MapApplicatorSource(
             makeDefExponenceCluster(isCompulsory).possibleValues,
             applicators.toList()
         )
