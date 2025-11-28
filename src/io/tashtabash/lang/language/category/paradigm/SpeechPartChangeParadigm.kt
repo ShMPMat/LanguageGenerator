@@ -75,12 +75,10 @@ data class SpeechPartChangeParadigm(
         exponenceCluster: ExponenceCluster,
         applicator: ApplicatorMap
     ): WordClauseResult {
-        val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { v ->
-            val parent = exponenceCluster.categories
-                .firstOrNull { it.category.outType == v.parentClassName }
-                ?: return@mapNotNull null
-
-            parent[v]
+        val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { staticValue ->
+            exponenceCluster.categories
+                .firstOrNull { it.category.outType == staticValue.parentClassName }
+                ?.get(staticValue)
         }
         val allCategoryValues = categoryValues + staticCategoryValues
         val allUnsourcedCategoryValues = allCategoryValues.map { it.categoryValue }
