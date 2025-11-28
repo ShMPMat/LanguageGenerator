@@ -379,7 +379,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription(
             "sleep",
-            mapOf(MainObjectType.Argument to dogDescription, IndirectObjectType.Benefactor to dogDescription)
+            mapOf(MainObjectType.Argument to dogDescription, AdjunctType.Benefactor to dogDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
@@ -554,7 +554,7 @@ internal class SentenceDescriptionTest {
             "sleep",
             mapOf(
                 MainObjectType.Argument to dogDescription,
-                IndirectObjectType.Benefactor to dogDescription
+                AdjunctType.Benefactor to dogDescription
             )
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)

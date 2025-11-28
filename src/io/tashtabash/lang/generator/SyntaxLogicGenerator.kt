@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
-import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType
+import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.ActorType.Agent
 import io.tashtabash.lang.language.syntax.context.ActorType.Patient
@@ -100,7 +100,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                 ?: findCaseWrapped(caseValues, CaseValue.Nominative)
                 ?: emptyList()
 
-            for ((case, syntaxRelation) in IndirectObjectType.entries.map { it.caseValue to it.relation }) {
+            for ((case, syntaxRelation) in AdjunctType.entries.map { it.caseValue to it.relation }) {
                 syntaxRelationSolver[syntaxRelation to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, case)
                     ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, case))
 

@@ -3,7 +3,7 @@ package io.tashtabash.lang.generator
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
-import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType
+import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.translation.*
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.MapWithDefault
@@ -184,7 +184,7 @@ class WordOrderGenerator {
         val withQa = injectQuestionMarker(references, syntaxParadigm)
 
         val position = RandomSingleton.random.nextInt(withQa.size + 1)
-        val orderedObjects = IndirectObjectType.entries.shuffled(RandomSingleton.random)
+        val orderedObjects = AdjunctType.entries.shuffled(RandomSingleton.random)
 
         return withQa.map {
             (it.value.take(position) + orderedObjects.map { io -> io.relation } + it.value.drop(position))

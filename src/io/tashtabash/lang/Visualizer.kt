@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.diachronicity.TendencyBasedPhonologicalRuleAp
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.syntax.clause.description.*
-import io.tashtabash.lang.language.syntax.clause.description.IndirectObjectType.*
+import io.tashtabash.lang.language.syntax.clause.description.AdjunctType.*
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType.*
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
