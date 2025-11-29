@@ -189,7 +189,7 @@ class LexisGenerator(
         for (category in categoryPool.getStaticFor(core.speechPart)) {
             val values = core.tagClusters
                 .firstOrNull { it.type == category.outType }
-                ?.semanticsTags
+                ?.tags
                 ?.map { n ->
                     category.allPossibleValues.first { it.toString() == n.name }.toSampleSpaceObject(n.probability)
                 }
@@ -197,10 +197,9 @@ class LexisGenerator(
                 ?.toMutableList()
                 ?: mutableListOf()
 
-            category.actualValues.forEach { v ->
-                if (values.none { it.value == v })
-                    values += v.toSampleSpaceObject(10.0)
-            }
+            for (value in category.actualValues)
+                if (values.none { it.value == value })
+                    values += value.toSampleSpaceObject(10.0)
 
             resultCategories += values.randomUnwrappedElement()
         }

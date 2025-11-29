@@ -22,20 +22,31 @@ data class SemanticsCoreTemplate(
 ) : SampleSpaceObject
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>): SemanticsCore {
-    val tags = tagClusters
-        .filter { it.shouldBeInstantiated }
-        .map { SemanticsTag(it.semanticsTags.randomUnwrappedElement()) }
+    val tags = tagClusters.filter { it.shouldInstantiate }
+        .map { SemanticsTag(it.tags.randomUnwrappedElement()) }
         .toSet()
 
     return SemanticsCore(
         MeaningCluster(word),
-        if (tags.any { it.name == "intrans" }) speechPart.toIntransitive() else speechPart.toDefault(),
+        typeSpeechPart(tags),
         probability,
         connotations,
         tags,
         DerivationCluster(derivationClusterTemplate.typeToCore),
         staticCategories
     )
+}
+
+private fun SemanticsCoreTemplate.typeSpeechPart(tags: Set<SemanticsTag>): TypedSpeechPart {
+    if (speechPart == SpeechPart.Verb)
+        return if (tags.any { it.name == "intrans" })
+            speechPart.toIntransitive()
+        else if (tags.any { it.name == "trans" })
+            speechPart.toDefault()
+        else
+            throw GeneratorException("Verb template has no transitivity tag, can't instantiate")
+
+    return speechPart.toDefault()
 }
 
 fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsCore {
@@ -47,10 +58,9 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
         core.speechPart,
         (probability + core.commonness) / 2,
         connotations + core.connotations,
-        tagClusters
-            .filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
+        tagClusters.filter { it.type.isNotBlank() && it.type[0].isLowerCase() }
             .map {
-                SemanticsTag(randomUnwrappedElement(it.semanticsTags, random))
+                SemanticsTag(randomUnwrappedElement(it.tags, random))
             }
             .toSet() + core.tags,
         core.derivationCluster.merge(derivationClusterTemplate.typeToCore),
@@ -60,8 +70,8 @@ fun SemanticsCoreTemplate.merge(core: SemanticsCore, random: Random): SemanticsC
 
 fun DerivationCluster.merge(newEntries: Map<DerivationType, List<DerivationLink>>): DerivationCluster {
     val newMap = typeToCore.toMutableMap()
-    newEntries.entries.forEach { (t, ls) ->
-        val old = newMap[t] ?: listOf()
+    newEntries.forEach { (t, ls) ->
+        val old = newMap.getOrDefault(t, listOf())
         newMap[t] = old + ls
     }
     return DerivationCluster(newMap)
@@ -73,10 +83,6 @@ data class DerivationClusterTemplate(
     val appliedDerivations: Set<DerivationType> = setOf()
 )
 
-data class SemanticsTagCluster(
-    val semanticsTags: List<SemanticsTagTemplate>,
-    val type: String,
-    val shouldBeInstantiated: Boolean
-)
+data class SemanticsTagCluster(val tags: List<SemanticsTagTemplate>, val type: String, val shouldInstantiate: Boolean)
 
 data class SemanticsTagTemplate(val name: String, override val probability: Double = 1.0) : UnwrappableSSO<String>(name)
