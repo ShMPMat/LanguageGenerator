@@ -19,7 +19,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
     private fun hasPhonemeTypeClash(previousSyllable: Syllable?, nextSyllable: Syllable?): Boolean =
         previousSyllable != null
                 && nextSyllable != null
-                && previousSyllable.phonemes.last().type == nextSyllable.phonemes[0].type
+                && previousSyllable.last().type == nextSyllable[0].type
 
     fun generateSyllable(restrictions: SyllableRestrictions): Syllable {
         for (i in 1..ADD_TESTS) {
