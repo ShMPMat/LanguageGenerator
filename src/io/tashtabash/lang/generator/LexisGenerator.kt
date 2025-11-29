@@ -41,23 +41,25 @@ class LexisGenerator(
     private val wordBase = WordBase(supplementPath)
 
     init {
-        val allConnotations = parseConnotations("$supplementPath/Connotations")
-
-        for (template in wordBase.allWords)
-            template.connotations.values
-                .forEach {
-                    if (it.name[0] == 'T') {
-                        it.name = it.name.drop(1)
-
-                        allConnotations[it.name]
-                            ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
-                    } else
-                        it.isGlobal = allConnotations[it.name]
-                            ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
-                }
+        validateConnotations(supplementPath)
 
         val newWords = derivationGenerator.injectDerivationOptions(wordBase.baseWords)
         wordBase.allWords += newWords
+    }
+
+    private fun validateConnotations(supplementPath: String) {
+        val allConnotations = parseConnotations("$supplementPath/Connotations")
+
+        for (template in wordBase.allWords)
+            for (it in template.connotations.values)
+                if (it.name[0] == 'T') {
+                    it.name = it.name.drop(1)
+
+                    allConnotations[it.name]
+                        ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
+                } else
+                    it.isGlobal = allConnotations[it.name]
+                        ?: throw DataConsistencyException("Unknown connotation '$it' in word - ${template.word}")
     }
 
     private val wordClusters = readWordClusters(supplementPath)
@@ -207,8 +209,12 @@ class LexisGenerator(
 
     internal fun generateWord(core: SemanticsCore): Word {
         val syllables = mutableListOf<Syllable>()
-        val avgWordLength = restrictionsParadigm.restrictionsMapper.getValue(core.speechPart).avgWordLength.toDouble()
-        val length = (1..10).toList().randomElement { 1 / (1 + abs(it - avgWordLength).pow(4)) }
+        val avgWordLength = restrictionsParadigm.restrictionsMapper
+            .getValue(core.speechPart)
+            .avgWordLength
+            .toDouble()
+        val length = (1..10).toList()
+            .randomElement { 1 / (1 + abs(it - avgWordLength).pow(4)) }
 
         fun makeSyllable(syllablePosition: SyllablePosition): Syllable {
             var syllable = Syllable(listOf(), 0)
@@ -227,27 +233,26 @@ class LexisGenerator(
             return syllable
         }
 
-        for (j in 0..length) {
-            if (syllables.flatMap { it.phonemes.phonemes }.size >= length)
+        syllables += makeSyllable(SyllablePosition.Start)
+        for (i in 1..length) {
+            if (syllables.sumOf { it.size } >= length)
                 break
 
-            val syllablePosition = when (j) {
-                0 -> SyllablePosition.Start
-                else -> SyllablePosition.Middle
-            }
-            val syllable = makeSyllable(syllablePosition)
-            syllables += syllable
+            syllables += makeSyllable(SyllablePosition.Middle)
         }
-        syllables.removeAt(syllables.lastIndex)
+        syllables.removeLast()
         syllables += makeSyllable(SyllablePosition.End)
 
         return generateStress(stressType, Word(syllables, syllableGenerator.template, core), random)
     }
 
-    fun checkSyllable(syllable: Syllable, prefix: Syllables) = checkBorderCoherency(syllable, prefix)
+    private fun checkSyllable(syllable: Syllable, prefix: Syllables) =
+        checkBorderCoherency(syllable, prefix)
 
     private fun checkBorderCoherency(syllable: Syllable, prefix: Syllables): Boolean {
-        if (prefix.isEmpty()) return true
+        if (prefix.isEmpty())
+            return true
+
         val leftBorder = prefix.last().phonemes.last()
         val rightBorder = syllable[0]
         return leftBorder != rightBorder

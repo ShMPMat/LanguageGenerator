@@ -35,7 +35,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         var syllable = Syllable(listOf(), 0)
 
         for (i in 1..ADD_TESTS) {
-            val actualSyllable = chooseSyllableStructure(restrictions)
+            val syllableValencies = chooseSyllableStructure(restrictions)
 
             val onset = makeSyllablePart(
                 restrictions,
@@ -43,12 +43,12 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                     testPhoneme(lst, p) && (lst.isEmpty()
                             || lst.last().articulationManner.sonorityLevel >= p.articulationManner.sonorityLevel)
                 },
-                actualSyllable.takeWhile { it.phonemeType != PhonemeType.Vowel }
+                syllableValencies.takeWhile { it.phonemeType != PhonemeType.Vowel }
             )
             val nucleus = makeSyllablePart(
                 restrictions,
                 this::testPhoneme,
-                listOf(actualSyllable.first { it.phonemeType == PhonemeType.Vowel })
+                listOf(syllableValencies.first { it.phonemeType == PhonemeType.Vowel })
             )
             val coda = makeSyllablePart(
                 restrictions,
@@ -56,7 +56,7 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
                     testPhoneme(lst, p) && (lst.isEmpty()
                             || lst.last().articulationManner.sonorityLevel <= p.articulationManner.sonorityLevel)
                 },
-                actualSyllable.takeLastWhile { it.phonemeType != PhonemeType.Vowel }
+                syllableValencies.takeLastWhile { it.phonemeType != PhonemeType.Vowel }
             )
 
             syllable = Syllable(onset + nucleus + coda, onset.size)
@@ -74,18 +74,16 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         sequence: List<ValencyPlace>
     ): List<Phoneme> {
         val phonemes = ArrayList<Phoneme>()
-        for (valency in sequence) {
+        for (valency in sequence)
             for (i in 1..ADD_TESTS) {
                 val phoneme = restrictions.phonemeContainer.getPhonemes(valency.phonemeType)
                     .randomElement()
-                if (i == ADD_TESTS)
-                    phonemes += phoneme
-                else if (checker(phonemes, phoneme)) {
+                if (i == ADD_TESTS || checker(phonemes, phoneme)) {
                     phonemes += phoneme
                     break
                 }
             }
-        }
+
         return phonemes
     }
 
@@ -131,40 +129,6 @@ class SyllableValenceGenerator(val template: SyllableValenceTemplate) {
         return syllable
     }
 
-    private fun testPhoneme(phonemes: List<Phoneme>, phoneme: Phoneme): Boolean {
-        if (phonemes.isNotEmpty() && phonemes.last() == phoneme)
-            return false
-        return true
-    }
-
-//    private fun fillSyllables(phonemeContainer: PhonemeContainer) {
-//        val allSyllables = mutableListOf<Syllable>()
-//        val nuclei = phonemeContainer.getPhonemesByType(PhonemeType.Vowel)
-//            .map { listOf(it) }
-//
-//        val maxOnsetSize = template.valencies
-//            .takeWhile { it.phonemeType != PhonemeType.Vowel }
-//            .size
-//        val maxOffsetSize = template.valencies
-//            .takeLastWhile { it.phonemeType != PhonemeType.Vowel }
-//            .size
-//
-//        val maxOnsets = makeAllSequences(phonemeContainer, maxOnsetSize)
-//            .filter {
-//                for (i in it.indices.drop(1)) {
-//                    val c = it[i]
-//                    val p = it[i - 1]
-//                    if (c == p || c.articulationManner.sonorityLevel < p.articulationManner.sonorityLevel)
-//                }
-//                return@filter true
-//            }
-//
-//
-//        syllableMapper[phonemeContainer] = allSyllables
-//    }
-//
-//    private fun makeAllSequences(phonemeContainer: PhonemeContainer, size: Int): List<List<Phoneme>> =
-//        (1..size)
-//            .map { phonemeContainer.getPhonemesByType(PhonemeType.Consonant) }
-//            .cartesianProduct()
+    private fun testPhoneme(phonemes: List<Phoneme>, phoneme: Phoneme): Boolean =
+        phonemes.isEmpty() || phonemes.last() != phoneme
 }
