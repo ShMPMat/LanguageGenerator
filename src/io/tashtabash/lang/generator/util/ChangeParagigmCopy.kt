@@ -59,7 +59,7 @@ fun copyApplicators(
 fun SpeechPartChangeParadigm.copyForNewSpeechPart(
     speechPart: TypedSpeechPart = this.speechPart,
     sourceMap: Map<SyntaxRelation, SyntaxRelation> = mapOf(),
-    clusterPredicate: (ExponenceCluster) -> Boolean
+    clusterPredicate: (ExponenceCluster) -> Boolean = { true }
 ): SpeechPartChangeParadigm {
     val newApplicators = applicators
         .mapIndexedNotNull { i, (cluster, applicator) ->
