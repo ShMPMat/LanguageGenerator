@@ -12,21 +12,8 @@ import io.tashtabash.random.singleton.testProbability
 
 class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm): SyntaxParadigm {
-        val mainCopulaType = CopulaType.entries.randomElement()
-        val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
-            .let {
-                if (it <= mainCopulaType.probability / 5) 0.0
-                else it
-            }
-        val copulaPresence = CopulaPresence(
-            listOf(mainCopulaType.toSso(mainCopulaType.probability)) +
-                    if (noneProbability != 0.0)
-                        listOf(CopulaType.None.toSso(noneProbability))
-                    else listOf()
-        )
-
+        val copulaPresence = generateCopula()
         val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
-
         val possiblePossessionType = PredicatePossessionType.entries.toMutableList()
 
         if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic)) {
@@ -41,6 +28,21 @@ class SyntaxParadigmGenerator {
             copulaPresence,
             questionMarkerPresence,
             possessionConstructionPresence
+        )
+    }
+
+    private fun generateCopula(): CopulaPresence {
+        val mainCopulaType = CopulaType.entries.randomElement()
+        val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
+            .let {
+                if (it <= mainCopulaType.probability / 5) 0.0
+                else it
+            }
+        return CopulaPresence(
+            listOf(mainCopulaType.toSso(mainCopulaType.probability)) +
+                    if (noneProbability != 0.0)
+                        listOf(CopulaType.None.toSso(noneProbability))
+                    else listOf()
         )
     }
 }
