@@ -143,11 +143,26 @@ data class SpeechPartChangeParadigm(
 
     fun hasChanges() = applicators.any { it.second.map.isNotEmpty() }
 
-    override fun toString() = "$speechPart changes on: \n" +
-            applicators.joinToString("\n\n") { (c, a) ->
-                "$c:$a\n" + a.map.entries
-                    .map { it.key.toString() + ": " + it.value }
-                    .sortedWith(naturalOrder())
-                    .joinToString("\n")
-            }
+    private fun isLinkOnly(): Boolean =
+        applicators.map { it.second }
+            .filterIsInstance<LinkApplicatorSource>()
+            .count() == applicators.size
+
+    private fun listAllLinkSources(): List<TypedSpeechPart> =
+        applicators.map { it.second }
+            .filterIsInstance<LinkApplicatorSource>()
+            .map { it.source.speechPart }
+            .distinct()
+
+    override fun toString() =
+        if (isLinkOnly() && listAllLinkSources().size == 1)
+            "$speechPart has the same paradigm as ${listAllLinkSources()[0]}"
+        else
+            "$speechPart changes on: \n" +
+                applicators.joinToString("\n\n") { (c, a) ->
+                    "$c:$a\n" + a.map.entries
+                        .map { it.key.toString() + ": " + it.value }
+                        .sortedWith(naturalOrder())
+                        .joinToString("\n")
+                }
 }
