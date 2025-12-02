@@ -61,7 +61,7 @@ class WordBase(private val supplementPath: String) {
                     getType(name),
                     getInstantiationType(name)
                 )
-            }.toSet(),
+            }.toMutableSet(),
             DerivationClusterTemplate(),
             realizationProbability
         )

@@ -16,7 +16,7 @@ data class SemanticsCoreTemplate(
     val word: Meaning,
     val speechPart: SpeechPart,
     val connotations: Connotations = Connotations(),
-    val tagClusters: Set<SemanticsTagCluster> = setOf(),
+    val tagClusters: MutableSet<SemanticsTagCluster> = mutableSetOf(),
     val derivationClusterTemplate: DerivationClusterTemplate = DerivationClusterTemplate(),
     override val probability: Double = 1.0
 ) : SampleSpaceObject
@@ -83,6 +83,9 @@ data class DerivationClusterTemplate(
     val appliedDerivations: Set<DerivationType> = setOf()
 )
 
-data class SemanticsTagCluster(val tags: List<SemanticsTagTemplate>, val type: String, val shouldInstantiate: Boolean)
+data class SemanticsTagCluster(val tags: List<SemanticsTagTemplate>, val type: String, val shouldInstantiate: Boolean) {
+    fun hasTag(tagName: String): Boolean =
+        tags.any { it.name == tagName }
+}
 
 data class SemanticsTagTemplate(val name: String, override val probability: Double = 1.0) : UnwrappableSSO<String>(name)

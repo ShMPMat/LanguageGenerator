@@ -81,11 +81,7 @@ class ChangeParadigmGenerator(
             newSpeechParts.clear()
         }
 
-        val transVerbParadigm = speechPartChangesMap.getValue(Verb.toDefault())
-        val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
-        speechPartChangesMap[Verb.toIntransitive()] = generateIntransitiveVerbs(transVerbParadigm)
-        restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions.copy()
-
+        generateAdditionalVerbParadigms(speechPartChangesMap)
         simplifyParadigm(speechPartChangesMap)
 
         if (!articlePresent(categories, speechPartChangesMap))
@@ -98,6 +94,22 @@ class ChangeParadigmGenerator(
         val numeralParadigm = numeralParadigmGenerator.generateNumeralParadigm()
 
         return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, numeralParadigm, syntaxLogic)
+    }
+
+    private fun generateAdditionalVerbParadigms(changesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
+        val transVerbParadigm = changesMap.getValue(Verb.toDefault())
+        val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
+
+        // Intransitive verbs
+        val intransVerbParadigm = generateIntransitiveVerbs(transVerbParadigm)
+        changesMap[Verb.toIntransitive()] = intransVerbParadigm
+        restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions
+
+        // Special class for perception verbs based on intransitive verbs
+        0.05.chanceOf {
+            changesMap[Verb.toPerception()] = intransVerbParadigm.copyForNewSpeechPart(Verb.toPerception())
+            restrictionsParadigm.restrictionsMapper[Verb.toPerception()] = verbRestrictions
+        }
     }
 
     private fun generateCategoryData(

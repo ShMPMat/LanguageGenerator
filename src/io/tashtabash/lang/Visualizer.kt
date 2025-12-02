@@ -86,11 +86,11 @@ class Visualizer(val language: Language) {
             "home",
             ActorComplimentValue(AmountValue(1), null),
         )
-        val firstSeeVerb = VerbDescription("see", mapOf(Agent to mothers, Patient to time))
-        val secondSeeVerb = VerbDescription("see", mapOf(Agent to fathers, Patient to time))
-        val thirdSeeVerb = VerbDescription("see", mapOf(Agent to i, Patient to time))
-        val fourthSeeVerb = VerbDescription("see", mapOf(Agent to i, Patient to these, Location to home))
-        val firstHearVerb = VerbDescription("hear", mapOf(Agent to i, Patient to youDu))
+        val firstSeeVerb = VerbDescription("see", mapOf(Experiencer to mothers, Stimulus to time))
+        val secondSeeVerb = VerbDescription("see", mapOf(Experiencer to fathers, Stimulus to time))
+        val thirdSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to time))
+        val fourthSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to these, Location to home))
+        val firstHearVerb = VerbDescription("hear", mapOf(Experiencer to i, Stimulus to youDu))
         val existVerb = VerbDescription("exist", mapOf(Argument to i))
         val firstBuildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
         val secondBuildVerb = VerbDescription(

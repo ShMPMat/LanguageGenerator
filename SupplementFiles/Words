@@ -178,11 +178,11 @@ build              Verb        1.0    T|trans T|instrument
 work               Verb        1.0    T|trans:100,intrans:1 T|instrument
                                       VNAbstract@activity:0.7
                                       *work:1.0*help:0.01*action:0.95
-see                Verb        1.0    T|trans verbType|perception
+see                Verb        1.0    verbType|perception
                                       VNPlace@scene:0.03,beautiful_place:0.05
                                       VNPerson@owner:0.04,master:0.02,ruler:0.005  VNAbstract@life:0.05
                                       *see:1.0*understand:0.05*learn:0.05*light:0.05*action:0.8
-hear               Verb        1.0    T|trans:100,intrans:1 verbType|perception
+hear               Verb        1.0    verbType|perception
                                       VNPlace@scene:0.01    VNPerson@master:0.01,ruler:0.001
                                       *hear:1.0*understand:0.05*learn:0.05*air:0.05*action:0.8
 part               Verb        0.9    T|trans:100,intrans:1 T|instrument

@@ -8,3 +8,4 @@ work of some wonderful people. In no particular order and without much structure
 - [Leipzig Glossing Rules](https://www.eva.mpg.de/lingua/resources/glossing-rules.php)
 - [Overview of some vowel systems](https://web.archive.org/web/20160507235834/http://gesc19764.pwp.blueyonder.co.uk:80/vowels/vowel_systems.html)
 - [Conlangery Podcast](https://conlangery.com)
+- [Summary of Semantic Roles and Grammatical Relations](https://pages.uoregon.edu/tpayne/EG595/HO-Srs-and-GRs.pdf)

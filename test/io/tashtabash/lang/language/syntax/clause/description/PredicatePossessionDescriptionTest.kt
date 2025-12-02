@@ -65,7 +65,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
-                mapOf(
+                verbCasesSolver = mapOf(
                     SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Agent to listOf(),
                     SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Patient to listOf()
                 ),
@@ -158,7 +158,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
-                mapOf(
+                verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Location to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
@@ -257,7 +257,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
-                mapOf(
+                verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
@@ -356,7 +356,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
-                mapOf(
+                verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
@@ -455,7 +455,7 @@ internal class PredicatePossessionDescriptionTest {
                 mapOf(
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
-                mapOf(
+                verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))

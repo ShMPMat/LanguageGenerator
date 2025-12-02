@@ -6,6 +6,7 @@ import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
 import io.tashtabash.lang.generator.util.readWordClusters
 import io.tashtabash.lang.language.category.CategoryPool
+import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.phonology.PhonemeType
@@ -14,6 +15,7 @@ import io.tashtabash.lang.language.phonology.Syllable
 import io.tashtabash.lang.language.phonology.Syllables
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.phonology.prosody.generateStress
+import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
@@ -97,36 +99,65 @@ class LexisGenerator(
     internal fun generateLexis(
         wordAmount: Int,
         categoryPool: CategoryPool,
-        syntaxParadigm: SyntaxParadigm,
+        changeParadigm: ChangeParadigm,
         additionalWords: List<SemanticsCoreTemplate>
     ): Lexis {
+        injectTagsFromChangeParadigm(changeParadigm)
         wordBase.addWords(additionalWords)
 
-        val cores = randomSublist(
-            wordBase.baseWords,
-            random,
-            wordAmount,
-            wordAmount + 1
-        ).toMutableList()
-
-        for (core in cores) {
-            if (!isWordNeeded(core))
+        for (coreTemplate in randomSublist(wordBase.baseWords, random, wordAmount, wordAmount + 1)) {
+            if (!isWordNeeded(coreTemplate))
                 continue
 
-            val staticCategories = makeStaticCategories(core, categoryPool)
-            val mainCore = core.toSemanticsCore(staticCategories)
-            val extendedCore = extendCore(mainCore)
-            words += generateWord(extendedCore)
+            val staticCategories = makeStaticCategories(coreTemplate, categoryPool)
+            var core = coreTemplate.toSemanticsCore(staticCategories)
+            core = extendCore(core)
+            core = injectCustomVerbSubtypes(core, changeParadigm.wordChangeParadigm)
+            words += generateWord(core)
 
             derivationGenerator.makeDerivations(words.words.last(), words, wordBase)
         }
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
 
-        return wrapWithWords(syntaxParadigm)
+        return generateFunctionWords(changeParadigm.syntaxParadigm)
     }
 
-    private fun wrapWithWords(syntaxParadigm: SyntaxParadigm): Lexis {
+    private fun injectCustomVerbSubtypes(core: SemanticsCore, wordChangeParadigm: WordChangeParadigm): SemanticsCore {
+        val conditions = listOf(
+            SpeechPart.Verb.toPerception() to SemanticsTag("perception")
+        )
+
+        for ((speechPart, tag) in conditions) {
+            if (wordChangeParadigm.speechPartChangeParadigms.containsKey(speechPart) && core.tags.contains(tag))
+                return core.copy(speechPart = speechPart)
+        }
+
+        return core
+    }
+
+    private fun injectTagsFromChangeParadigm(changeParadigm: ChangeParadigm) {
+        val perceptionVerbs = wordBase.allWords
+            .filter { w ->
+                w.tagClusters.any { c -> c.type == "verbType" && c.hasTag("perception")  }
+            }
+        val perceptionVerbClassPresent = changeParadigm.wordChangeParadigm
+            .speechPartChangeParadigms
+            .containsKey(SpeechPart.Verb.toPerception())
+        val tagName = if (perceptionVerbClassPresent) "intrans" else "trans" // Assume the paradigm is intransitive
+        for (template in perceptionVerbs)
+            tagTemplate(template, tagName, "transitivity")
+    }
+
+    private fun tagTemplate(template: SemanticsCoreTemplate, type: String, tagName: String) {
+        template.tagClusters += SemanticsTagCluster(
+            listOf(SemanticsTagTemplate(type)),
+            tagName,
+            true
+        )
+    }
+
+    private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm): Lexis {
         val copula = mutableMapOf<CopulaType, WordPointer>()
 
         if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
@@ -135,7 +166,6 @@ class LexisGenerator(
             )
 
             words += particle
-
             copula[CopulaType.Particle] = SimpleWordPointer(particle)
         }
 
@@ -146,7 +176,6 @@ class LexisGenerator(
             )
 
             words += particle
-
             questionMarker[QuestionMarker] = SimpleWordPointer(particle)
         }
 

@@ -11,9 +11,12 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.lexis.perceptionSubtype
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
+import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
+import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.ActorType.Agent
 import io.tashtabash.lang.language.syntax.context.ActorType.Patient
@@ -23,6 +26,7 @@ import io.tashtabash.lang.utils.listCartesianProduct
 import io.tashtabash.lang.utils.values
 import io.tashtabash.random.singleton.*
 import io.tashtabash.random.toSampleSpaceObject
+import io.tashtabash.random.withProb
 
 
 class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxParadigm: SyntaxParadigm) {
@@ -32,6 +36,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
     fun generateSyntaxLogic() = SyntaxLogic(
         generateVerbFormSolver(),
+        generateVerbArgumentSolver(),
         generateVerbCaseSolver(),
         generateCopulaCaseSolver(),
         generateSyntaxRelationSolver(),
@@ -146,7 +151,6 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         val verbParadigms = changeParadigm.getSpeechPartParadigms(Verb)
         val cases = changeParadigm.categories.first { it.outType == caseName }.actualValues
 
-
         for (verbTypeParadigm in verbParadigms) {
             val verbType = verbTypeParadigm.speechPart
             val times = verbTypeParadigm.categories
@@ -172,6 +176,25 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         }
 
         return result
+    }
+
+    private fun generateVerbArgumentSolver(): Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> {
+        val solver = mutableMapOf<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation>()
+        val possibleObliqueExperiencer = listOf(
+            SyntaxRelation.Addressee.withProb(1.0),
+            SyntaxRelation.Location.withProb(0.1)
+        )
+
+        for (verbType in changeParadigm.getSpeechParts(Verb)) {
+            when (verbType.subtype) {
+                perceptionSubtype -> {
+                    solver[verbType to MainObjectType.Experiencer] = possibleObliqueExperiencer.randomUnwrappedElement()
+                    solver[verbType to MainObjectType.Stimulus] = SyntaxRelation.Argument
+                }
+            }
+        }
+
+        return solver
     }
 
     private fun generateNumberCategorySolver() = changeParadigm.categories
@@ -219,10 +242,10 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         .firstOrNull()
         ?.takeIf { it.actualValues.isNotEmpty() }
         ?.let { genderCategory ->
-            val genderCategorySolver = genderCategory.actualValues.map {
+            val genderCategorySolver = genderCategory.actualValues.associate {
                 it as NounClassValue
                 it to it
-            }.toMap().toMutableMap()
+            }.toMutableMap()
 
             val absentGenders = genderCategory.allPossibleValues
                 .filter { it !in genderCategory.actualValues }

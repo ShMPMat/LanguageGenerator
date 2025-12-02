@@ -8,10 +8,17 @@ interface ObjectType {
     val relation: SyntaxRelation
 }
 
+// Relation represents the default option (a bit eurocentric), which can be remapped by verb governance
 enum class MainObjectType(override val relation: SyntaxRelation): ObjectType {
     Argument(SyntaxRelation.Argument),
     Agent(SyntaxRelation.Agent),
-    Patient(SyntaxRelation.Patient);
+    Patient(SyntaxRelation.Patient),
+    Experiencer(SyntaxRelation.Agent),
+    Stimulus(SyntaxRelation.Patient);
+
+    companion object {
+        val syntaxRelations = entries.map { it.relation }
+    }
 }
 
 enum class AdjunctType(val caseValue: CaseValue, override val relation: SyntaxRelation): ObjectType {

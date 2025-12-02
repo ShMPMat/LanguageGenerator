@@ -7,7 +7,6 @@ import io.tashtabash.lang.containers.SemanticsTagTemplate
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.derivation.DerivationType.*
 import io.tashtabash.lang.language.lexis.DerivationLink
-import io.tashtabash.lang.language.lexis.SemanticsTag
 
 
 data class DerivationInjector(
@@ -39,8 +38,9 @@ data class DerivationInjector(
             descriptionCreator(core.word),
             newSpeechPart,
             core.connotations + type.connotations,
-            tagCreator(core.tagClusters) + setOf(injectionType),
-            DerivationClusterTemplate(appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
+            (tagCreator(core.tagClusters) + setOf(injectionType)).toMutableSet(),
+            DerivationClusterTemplate(
+                appliedDerivations = core.derivationClusterTemplate.appliedDerivations + setOf(type)
             ),
             coreRealizationProbability
         )

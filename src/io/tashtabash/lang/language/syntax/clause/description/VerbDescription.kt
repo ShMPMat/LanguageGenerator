@@ -2,8 +2,7 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.lexis.Meaning
-import io.tashtabash.lang.language.lexis.SpeechPart
-import io.tashtabash.lang.language.lexis.toIntransitive
+import io.tashtabash.lang.language.lexis.SemanticsTag
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
@@ -26,41 +25,43 @@ class VerbDescription(
                 context
             )
 
-            if (verb.semanticsCore.speechPart == SpeechPart.Verb.toIntransitive())
+            val arguments = argDescriptions.mapKeys {
+                language.changeParadigm
+                    .syntaxLogic
+                    .resolveArgumentTypes(verb.semanticsCore.speechPart, it.key)
+            }
+
+            if (verb.semanticsCore.tags.contains(SemanticsTag("intrans")))
                 IntransitiveVerbClause(
                     verb,
                     categoryValues,
-                    argDescriptions.getValue(MainObjectType.Argument)
+                    arguments.getValue(SyntaxRelation.Argument)
                         .toClause(language, context, random)
                         .copy(actorType = ActorType.Agent),
-                    constructCaseAdjunctClauses(language, context, random, false)
+                    constructCaseAdjunctClauses(arguments, language, context, random)
                 )
-            else {
+            else
                 TransitiveVerbClause(
-                        verb,
+                    verb,
                     categoryValues,
-                    argDescriptions.getValue(MainObjectType.Agent)
+                    arguments.getValue(SyntaxRelation.Agent)
                         .toClause(language, context, random)
                         .copy(actorType = ActorType.Agent),
-                    argDescriptions.getValue(MainObjectType.Patient)
+                    arguments.getValue(SyntaxRelation.Patient)
                         .toClause(language, context, random)
-                        .copy(actorType = ActorType.Agent),
-                    constructCaseAdjunctClauses(language, context, random, true)
+                        .copy(actorType = ActorType.Patient),
+                    constructCaseAdjunctClauses(arguments, language, context, random)
                 )
-            }
         }
             ?: throw SyntaxException("No verb '$verb' in Language")
 
     private fun constructCaseAdjunctClauses(
+        arguments: Map<SyntaxRelation, NominalDescription>,
         language: Language,
         context: Context,
-        random: Random,
-        isTransitive: Boolean
-    ) = argDescriptions
-        .filterNot { (objectType) ->
-            objectType.relation in listOf(SyntaxRelation.Argument, SyntaxRelation.Agent)
-                || isTransitive && objectType.relation == SyntaxRelation.Patient
-        }.map { (objectType, description) ->
-            CaseAdjunctClause(description.toClause(language, context, random), objectType.relation)
+        random: Random
+    ) = arguments.filterNot { (objectType) -> objectType in MainObjectType.syntaxRelations }
+        .map { (syntaxRelation, description) ->
+            CaseAdjunctClause(description.toClause(language, context, random), syntaxRelation)
         }
 }

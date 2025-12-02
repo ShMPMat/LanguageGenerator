@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
@@ -18,6 +19,9 @@ import kotlin.math.abs
 
 class SyntaxLogic(
     private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
+    // Maps Description-level semantic roles to Clause-level syntactic relations
+    private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
+    // Maps Clause-level syntactic relations to specific category values (cases/adpositions)
     private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mapOf(),
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val syntaxRelationSolver: Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mapOf(),
@@ -25,7 +29,7 @@ class SyntaxLogic(
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
-    private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive
+    private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive){}
 ) {
     val defaultInclusivity = if (personalPronounInclusivity != null) InclusivityValue.Exclusive else null
 
@@ -121,6 +125,9 @@ class SyntaxLogic(
             return chooseClosestTense(language, speechPart, timeValue)
     }
 
+    fun resolveArgumentTypes(speechPart: TypedSpeechPart, objectType: ObjectType): SyntaxRelation =
+        verbArgumentSolver.getOrDefault(speechPart to objectType, objectType.relation)
+
     private fun chooseClosestTense(
         language: Language,
         verbType: TypedSpeechPart,
@@ -147,7 +154,7 @@ class SyntaxLogic(
         |Syntax:
         |
         |${
-        timeFormSolver.entries.map { (context, categories) ->
+        timeFormSolver.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
@@ -160,7 +167,7 @@ class SyntaxLogic(
     }
         |
         |${
-        verbCasesSolver.entries.map { (context, categories) ->
+        verbCasesSolver.map { (context, categories) ->
             listOf(
                 "For ${context.first.first}, ",
                 "${context.first.second}, ",
@@ -173,8 +180,22 @@ class SyntaxLogic(
             .joinToString("\n")
     }
         |
+        |Verb governance:
         |${
-        numberCategorySolver?.amountMap?.entries?.map { (number, range) ->
+        verbArgumentSolver.map { (context, objectType) ->
+            listOf(
+                "${context.first} ",
+                "governs ${context.second} ",
+                "as ",
+                objectType.toString()
+            )
+        }
+            .lineUpAll()
+            .joinToString("\n")
+    }
+        |
+        |${
+        numberCategorySolver?.amountMap?.map { (number, range) ->
             listOf("$number ", "is used for amounts $range")
         }
             ?.lineUpAll()
@@ -184,7 +205,7 @@ class SyntaxLogic(
         |All instances - ${numberCategorySolver?.allForm}
         |
         |${
-        nounClassCategorySolver?.entries?.map { (g1, g2) ->
+        nounClassCategorySolver?.map { (g1, g2) ->
             listOf("$g1", " is seen as $g2")
         }
             ?.lineUpAll()
@@ -193,7 +214,7 @@ class SyntaxLogic(
     }
         | 
         |${
-        deixisDefinitenessCategorySolver.entries.map { (g1, g2) ->
+        deixisDefinitenessCategorySolver.map { (g1, g2) ->
             listOf("${g1.first}, ", "${g1.second} ", " is expressed as $g2")
         }
             .lineUpAll()
@@ -211,7 +232,7 @@ class SyntaxLogic(
     }
         |
         |${
-        copulaCaseSolver.entries.map { (context, categories) ->
+        copulaCaseSolver.map { (context, categories) ->
             listOf(
                 "For ${context.first.first}, ",
                 "${context.first.second}, ",
@@ -224,7 +245,7 @@ class SyntaxLogic(
     }
         |
         |${
-        syntaxRelationSolver.entries.map { (context, categories) ->
+        syntaxRelationSolver.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
