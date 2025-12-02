@@ -203,9 +203,7 @@ internal class SentenceDescriptionTest {
             Noun.toDefault(),
             listOf(caseExponenceCluster to MapApplicatorSource(caseExponenceCluster.possibleValues, caseApplicators))
         )
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            Verb.toIntransitive()
-        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toIntransitive())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(caseCategory),
             mapOf(
@@ -360,9 +358,7 @@ internal class SentenceDescriptionTest {
             PersonalPronoun.toDefault(),
             listOf(nounClassExponenceCluster to MapApplicatorSource(nounClassExponenceCluster.possibleValues, nounClassApplicators))
         )
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            Verb.toIntransitive()
-        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toIntransitive())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory),
             mapOf(
@@ -432,9 +428,7 @@ internal class SentenceDescriptionTest {
             Noun.toDefault(),
             listOf(caseExponenceCluster to MapApplicatorSource(caseExponenceCluster.possibleValues, caseApplicators))
         )
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            Verb.toIntransitive()
-        )
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toIntransitive())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(caseCategory),
             mapOf(
@@ -676,15 +670,11 @@ internal class SentenceDescriptionTest {
     fun `Personal pronouns can be dropped`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
-        val personalPronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
         val verb = createIntransVerb("do") withMeaning "sleep"
         // Set up WordChangeParadigm
-        val personalPronounChangeParadigm = SpeechPartChangeParadigm(
-            PersonalPronoun.toDefault(),
-        )
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(
-            Verb.toIntransitive()
-        )
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toIntransitive())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
@@ -693,7 +683,7 @@ internal class SentenceDescriptionTest {
             )
         )
         val language = makeDefLang(
-            listOf(personalPronoun, verb),
+            listOf(pronoun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -703,11 +693,11 @@ internal class SentenceDescriptionTest {
             )
         )
         // Set up descriptions
-        val personalPronounDescription = PronounDescription(
+        val pronounDescription = PronounDescription(
             "_personal_pronoun",
             ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
-        val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to personalPronounDescription))
+        val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to pronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
         val context = Context(
             LongGonePast to Implicit,
@@ -717,6 +707,59 @@ internal class SentenceDescriptionTest {
         assertEquals(
             listOf(
                 createIntransVerb("do") withMeaning "sleep"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Patient isn't dropped`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createTransVerb("do") withMeaning "build"
+        // Set up WordChangeParadigm
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                Verb.toDefault() to intransitiveVerbChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            listOf(pronoun, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
+                ),
+                personalPronounDropSolver = listOf(ActorType.Agent to listOf(Second))
+            )
+        )
+        // Set up descriptions
+        val pronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val verbDescription = VerbDescription(
+            "build",
+            mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
+        )
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = Context(
+            LongGonePast to Implicit,
+            Indicative to Explicit
+        )
+
+        assertEquals(
+            listOf(
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
+                createTransVerb("do") withMeaning "build"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
