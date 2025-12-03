@@ -689,7 +689,7 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
                 ),
-                personalPronounDropSolver = listOf(ActorType.Agent to listOf(Second))
+                personalPronounDropSolver = listOf(SyntaxRelation.Argument to listOf(Second))
             )
         )
         // Set up descriptions
@@ -738,7 +738,7 @@ internal class SentenceDescriptionTest {
                     Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Agent to listOf(),
                     Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
                 ),
-                personalPronounDropSolver = listOf(ActorType.Agent to listOf(Second))
+                personalPronounDropSolver = listOf(SyntaxRelation.Agent to listOf(Second))
             )
         )
         // Set up descriptions

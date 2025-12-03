@@ -8,7 +8,6 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
-import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
@@ -17,7 +16,7 @@ data class NominalClause(
     val nominal: Word,
     val definitions: List<NounDefinerClause>,
     val additionalCategories: CategoryValues = listOf(),
-    private val actorType: ActorType? = null
+    private val actorType: SyntaxRelation? = null
 ) : SyntaxClause {
     init {
         val validNominals = listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun, SpeechPart.DeixisPronoun)

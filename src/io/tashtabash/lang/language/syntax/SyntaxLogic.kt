@@ -8,7 +8,6 @@ import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
-import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.Priority
@@ -80,7 +79,7 @@ class SyntaxLogic(
         }
     }
 
-    fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: ActorType?): Boolean =
+    fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: SyntaxRelation?): Boolean =
         personalPronounDropSolver
             .any { (a, cs) ->
                 a == actorType && categories.equalsByElement(cs)
@@ -286,6 +285,6 @@ private fun TimeContext.toNumber() = when (this) {
 
 data class NumberCategorySolver(val amountMap: Map<NumberValue, IntRange>, val allForm: NumberValue)
 
-typealias PersonalPronounDropSolver = List<Pair<ActorType, CategoryValues>>
+typealias PersonalPronounDropSolver = List<Pair<SyntaxRelation, CategoryValues>>
 
 typealias VerbContextInfo = Pair<TypedSpeechPart, TimeContext>

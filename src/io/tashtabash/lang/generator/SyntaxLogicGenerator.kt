@@ -17,9 +17,6 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
-import io.tashtabash.lang.language.syntax.context.ActorType
-import io.tashtabash.lang.language.syntax.context.ActorType.Agent
-import io.tashtabash.lang.language.syntax.context.ActorType.Patient
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.listCartesianProduct
@@ -346,16 +343,11 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         val pronounCategories =
             changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).categories
 
-        val personalPronounDropSolver = mutableListOf<Pair<ActorType, CategoryValues>>()
+        val personalPronounDropSolver = mutableListOf<Pair<SyntaxRelation, CategoryValues>>()
 
-        for (actor in ActorType.entries) {
-            val source = when (actor) {
-                Agent -> SyntaxRelation.Agent
-                Patient -> SyntaxRelation.Patient
-            }
-
+        for (actor in listOf(SyntaxRelation.Agent, SyntaxRelation.Argument, SyntaxRelation.Patient)) {
             val relevantCategories = verbalCategories
-                .filter { it.source is CategorySource.Agreement && it.source.relation == source }
+                .filter { it.source is CategorySource.Agreement && it.source.relation == actor }
 
             if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
                 listCartesianProduct(pronounCategories.map { it.category.actualValues })

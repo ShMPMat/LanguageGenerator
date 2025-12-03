@@ -8,7 +8,6 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.IntransitiveVerbClause
 import io.tashtabash.lang.language.syntax.clause.realization.TransitiveVerbClause
-import io.tashtabash.lang.language.syntax.context.ActorType
 import io.tashtabash.lang.language.syntax.context.Context
 import kotlin.random.Random
 
@@ -37,7 +36,7 @@ class VerbDescription(
                     categoryValues,
                     arguments.getValue(SyntaxRelation.Argument)
                         .toClause(language, context, random)
-                        .copy(actorType = ActorType.Agent),
+                        .copy(actorType = SyntaxRelation.Argument),
                     constructCaseAdjunctClauses(arguments, language, context, random)
                 )
             else
@@ -46,10 +45,10 @@ class VerbDescription(
                     categoryValues,
                     arguments.getValue(SyntaxRelation.Agent)
                         .toClause(language, context, random)
-                        .copy(actorType = ActorType.Agent),
+                        .copy(actorType = SyntaxRelation.Agent),
                     arguments.getValue(SyntaxRelation.Patient)
                         .toClause(language, context, random)
-                        .copy(actorType = ActorType.Patient),
+                        .copy(actorType = SyntaxRelation.Patient),
                     constructCaseAdjunctClauses(arguments, language, context, random)
                 )
         }
