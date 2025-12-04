@@ -60,12 +60,8 @@ data class SpeechPartChangeParadigm(
         for ((exponenceCluster, applicator) in applicators)
             wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicator.map)
 
-        val currentClause = wordClauseResult.words.swapWord(wordClauseResult.mainWordIdx) {
-            it.copy(syntaxRole = word.syntaxRole)
-        }
-
         return wordClauseResult.copy(
-            words = applyProsodyParadigm(currentClause, wordClauseResult.mainWordIdx, word)
+            words = applyProsodyParadigm(wordClauseResult.words, wordClauseResult.mainWordIdx, word)
         )
     }
 

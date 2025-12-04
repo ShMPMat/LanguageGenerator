@@ -9,7 +9,6 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
 import io.tashtabash.lang.language.syntax.features.CopulaType
-import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
@@ -29,8 +28,7 @@ class VerbalCopulaClause(
     }
 
     override fun toNode(language: Language, random: Random): SentenceNode {
-        val node = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .toNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
+        val node = copula.toNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
@@ -87,8 +85,7 @@ class ParticleCopulaClause(
                 )
             )
         }
-        val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula)
-            .toNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
+        val particle = copula.toNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
 
         particle.setRelationChild(SyntaxRelation.Agent, subj)
         particle.setRelationChild(SyntaxRelation.SubjectCompliment, obj)

@@ -10,7 +10,6 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
-import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
@@ -26,7 +25,6 @@ fun SentenceNode.addQuestionMarker(language: Language) {
         setRelationChild(
             SyntaxRelation.QuestionMarker,
             language.lexis.getQuestionMarkerWord(QuestionMarker)
-                .copy(syntaxRole = WordSyntaxRole.QuestionMarker)
                 .toNode(SyntaxRelation.QuestionMarker)
         )
 }

@@ -14,6 +14,11 @@ import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTrans
 import kotlin.random.Random
 
 
+val shortSemanticsMap = mapOf(
+    "_personal_pronoun" to "PP",
+    "_deixis_pronoun" to "DEM"
+)
+
 fun Language.getNumeralsPrinted() = when (changeParadigm.numeralParadigm.base) {
     NumeralSystemBase.Decimal -> printNumerals(
         (1..121).toList() + listOf(200, 300, 400, 500, 600, 700, 800, 900, 1000, 10000)
@@ -135,18 +140,6 @@ fun WordSequence.printClauseMorphemes(printDerivation: Boolean) = words.joinToSt
     printWordMorphemes(it, printDerivation)
 }
 
-fun printWordInfo(word: Word): String {
-    val semantics = getSemanticsPrinted(word)
-    val categories = word.categoryValues
-        .joinToString("") { "-" + it.smartPrint(word.categoryValues) }
-        .replace(" ", ".")
-
-    return if (semantics.isBlank())
-        categories.drop(1)
-    else
-        semantics + categories
-}
-
 fun printWordMorphemes(word: Word, printDerivation: Boolean = false): String {
     val morphemes =
         if (printDerivation)
@@ -201,6 +194,7 @@ fun printMorphemeInfo(word: Word, printDerivation: Boolean): String {
             }
 
             val printedSemantics = getSemanticsPrinted(word)
+                .let { shortSemanticsMap.getOrDefault(it, it) }
 
             val printedRootData = if (printedMorphemeData.isEmpty())
                 ""
@@ -241,8 +235,7 @@ private fun isMorphemeMergeable(morpheme: MorphemeData): Boolean =
             || morpheme.isRoot
 
 private fun getSemanticsPrinted(word: Word) =
-    word.syntaxRole?.short
-        ?: if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts)
+        if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts)
             word.semanticsCore.toString()
         else ""
 

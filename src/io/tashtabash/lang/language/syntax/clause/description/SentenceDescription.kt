@@ -13,9 +13,7 @@ import kotlin.random.Random
 abstract class SentenceDescription : UnfoldableClauseDescription
 
 
-class VerbMainClauseDescription(
-    private val verbClause: VerbDescription
-) : SentenceDescription() {
+class VerbMainClauseDescription(private val verbClause: VerbDescription) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         verbClause.toClause(language, context, random).let {
             val type = when (context.type.first) {
@@ -33,9 +31,7 @@ class VerbMainClauseDescription(
 }
 
 
-class CopulaMainClauseDescription(
-    private val copulaClause: CopulaDescription
-) : SentenceDescription() {
+class CopulaMainClauseDescription(private val copulaClause: CopulaDescription) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         CopulaSentenceClause(
             copulaClause.toClause(language, context, random),

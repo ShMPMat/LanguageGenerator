@@ -8,7 +8,6 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
-import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 import kotlin.random.Random
 
 
@@ -28,15 +27,6 @@ data class NominalClause(
         val changeParadigm = language.changeParadigm
 
         val node = nominal
-            .let {
-                when {
-                    nominal.semanticsCore.hasMeaning("_personal_pronoun") ->
-                        it.copy(syntaxRole = WordSyntaxRole.PersonalPronoun)
-                    nominal.semanticsCore.hasMeaning("_deixis_pronoun") ->
-                        it.copy(syntaxRole = WordSyntaxRole.Demonstrative)
-                    else -> it
-                }
-            }
             .toNode(
                 SyntaxRelation.Nominal,
                 additionalCategories,

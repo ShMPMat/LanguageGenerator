@@ -6,7 +6,6 @@ import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.SyllableTemplate
 import io.tashtabash.lang.language.phonology.Syllables
-import io.tashtabash.lang.language.syntax.features.WordSyntaxRole
 
 
 data class Word(
@@ -14,8 +13,7 @@ data class Word(
     val syllableTemplate: SyllableTemplate,
     val semanticsCore: SemanticsCore,
     val categoryValues: SourcedCategoryValues = listOf(), // Exclude static categories //TODO make it true?
-    val morphemes: List<MorphemeData> = listOf(MorphemeData(syllables.flatMap { it.phonemes.phonemes }.size, listOf(), true)),
-    val syntaxRole: WordSyntaxRole? = null
+    val morphemes: List<MorphemeData> = listOf(MorphemeData(syllables.flatMap { it.phonemes.phonemes }.size, listOf(), true))
 ) {
     val size: Int by lazy {
         phonemes.size
