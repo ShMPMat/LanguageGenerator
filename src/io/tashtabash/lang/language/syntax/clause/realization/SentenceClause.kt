@@ -61,21 +61,13 @@ class IntransitiveVerbSentenceClause(
                 categoryValues += NegationValue.Negative
 
             arranger = RelationArranger(SubstitutingOrder(
-                language.changeParadigm.wordOrder.sovOrder.getValue(type)
-            ) { lst ->
-                lst.map { r ->
-                    if (r == SyntaxRelation.Agent)
-                        SyntaxRelation.Argument
-                    else r
-                }
-            })
+                language.changeParadigm.wordOrder.sovOrder.getValue(type),
+                mapOf(SyntaxRelation.Agent to SyntaxRelation.Argument)
+            ))
         }
 }
 
-class CopulaSentenceClause(
-    private val copulaClause: CopulaClause,
-    val type: CopulaSentenceType
-) : SentenceClause() {
+class CopulaSentenceClause(private val copulaClause: CopulaClause, val type: CopulaSentenceType) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SentenceNode =
         copulaClause.toNode(language, random).apply {
             if (type == CopulaSentenceType.QuestionCopulaClause)

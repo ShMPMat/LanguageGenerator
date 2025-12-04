@@ -18,15 +18,9 @@ class ObliquePredicatePossessionClause(
                 addQuestionMarker(language)
             arranger = RelationArranger(
                 SubstitutingOrder(
-                    language.changeParadigm.wordOrder.sovOrder.getValue(type)
-                ) { lst ->
-                    lst.map { r ->
-                        when (r) {
-                            Patient -> Argument
-                            else -> r
-                        }
-                    }
-                }
+                    language.changeParadigm.wordOrder.sovOrder.getValue(type),
+                    mapOf(Patient to Argument)
+                )
             )
         }
 }

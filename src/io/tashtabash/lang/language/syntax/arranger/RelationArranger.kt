@@ -9,7 +9,7 @@ import kotlin.random.Random
 
 class RelationArranger(val relationOrder: RelationOrder) : Arranger {
     override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
-        val relation = relationOrder.chooseReferenceOrder
+        val relation = relationOrder.chooseReferenceOrder()
 
         return order(pairs, relation)
     }
@@ -21,7 +21,7 @@ class RelationArranger(val relationOrder: RelationOrder) : Arranger {
 class RelationsArranger(val relationOrders: List<Pair<RelationOrder, SyntaxRelation>>) : Arranger {
     override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
         val relations = relationOrders
-            .map { (o, r) -> o.chooseReferenceOrder to r }
+            .map { (o, r) -> o.chooseReferenceOrder() to r }
 
         var relation = relations[0].first
 

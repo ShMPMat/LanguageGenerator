@@ -1,6 +1,7 @@
 package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
@@ -38,40 +39,34 @@ class WordOrderGenerator {
         for (copulaType in syntaxParadigm.copulaPresence.copulaType.map { it.feature })
             when (copulaType) {
                 CopulaType.Verb -> {
-                    result[CopulaType.Verb] = MapWithDefault(createDefaultCopulaOrder(sovOrder, false))
+                    result[CopulaType.Verb] = MapWithDefault(createDefaultCopulaOrder(sovOrder))
 
                     for (type in CopulaSentenceType.entries)
-                        generateCopulaVerbOrderer(type, syntaxParadigm, false)?.let {
+                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
                             result.getValue(CopulaType.Verb)[type] = it
                         }
                 }
                 CopulaType.Particle -> {
-                    result[CopulaType.Particle] = createDefaultOrder    (sovOrder, nominalGroupOrder)
+                    result[CopulaType.Particle] = MapWithDefault(
+                        createParticleCopulaOrder(createDefaultCopulaOrder(sovOrder))
+                    )
 
                     for (type in CopulaSentenceType.entries)
-                        generateCopulaVerbOrderer(type, syntaxParadigm)
-                            ?.relationOrder
-                            ?.chooseReferenceOrder
-                            ?.map {
-                                when (it) {
-                                    SyntaxRelation.Verb -> SyntaxRelation.CopulaParticle
-                                    SyntaxRelation.Patient -> SyntaxRelation.SubjectCompliment
-                                    else -> it
-                                }
-                            }?.let {
-                                result.getValue(CopulaType.Particle)[type] = wrapInNested(it, nominalGroupOrder)
-                            }
+                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
+                            result.getValue(CopulaType.Particle)[type] = createParticleCopulaOrder(it)
+                        }
                 }
                 CopulaType.None -> {
-                    result[CopulaType.None] = createDefaultOrder(sovOrder, nominalGroupOrder)
+                    result[CopulaType.None] = MapWithDefault(
+                        swapCopulaObject(createNoCopulaOrder(createDefaultCopulaOrder(sovOrder), nominalGroupOrder))
+                    )
 
                     for (type in CopulaSentenceType.entries)
-                        generateCopulaVerbOrderer(type, syntaxParadigm)
-                            ?.relationOrder
-                            ?.chooseReferenceOrder
-                            ?.filter { it != SyntaxRelation.Verb }
+                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)
                             ?.let {
-                                result.getValue(CopulaType.None)[type] = wrapInNested(it, nominalGroupOrder)
+                                result.getValue(CopulaType.None)[type] = swapCopulaObject(
+                                    createNoCopulaOrder(it, nominalGroupOrder)
+                                )
                             }
                 }
             }
@@ -79,59 +74,39 @@ class WordOrderGenerator {
         return result
     }
 
-    private fun createDefaultOrder(
-        sovOrder: Map<VerbSentenceType, SovOrder>,
+    private fun createParticleCopulaOrder(it: RelationArranger) = RelationArranger(
+        SubstitutingOrder(it.relationOrder, mapOf(Verb to CopulaParticle, Patient to SubjectCompliment))
+    )
+
+    private fun createNoCopulaOrder(
+        arranger: RelationArranger,
         nominalGroupOrder: NominalGroupOrder
-    ): MapWithDefault<CopulaSentenceType, Arranger> =
-        MapWithDefault(
-            wrapInNested(
-                createDefaultCopulaOrder(sovOrder).relationOrder.chooseReferenceOrder,
-                nominalGroupOrder
-            )
+    ) = RelationArranger(
+        NestedOrder(
+            StaticOrder(
+                arranger.relationOrder
+                    .chooseReferenceOrder()
+                    .filter { it != Verb }
+            ),
+            nominalGroupOrder,// nominalGroupOrder is needed because the head of the sentence is a noun phrase
+            Agent
         )
+    )
 
-    private fun wrapInNested(syntaxRelations: SyntaxRelations, nominalGroupOrder: NominalGroupOrder) =
-        RelationArranger(NestedOrder(
-            StaticOrder(syntaxRelations),
-            nominalGroupOrder,
-            SyntaxRelation.Agent
-        ))
-
-    private fun generateCopulaVerbOrderer(
+    private fun createDivergingCopulaVerbOrderer(
         type: CopulaSentenceType,
-        syntaxParadigm: SyntaxParadigm,
-        swapObject: Boolean = true
-    ): RelationArranger? {
-        val newArranger = differentCopulaWordOrderProbability(type).chanceOf<RelationArranger> {
+        syntaxParadigm: SyntaxParadigm
+    ): RelationArranger? =
+        differentCopulaWordOrderProbability(type).chanceOf<RelationArranger> {
             RelationArranger(generateSimpleSovOrder(syntaxParadigm))
-        } ?: return null
+        }
 
-        if (!swapObject)
-            return newArranger
+    private fun createDefaultCopulaOrder(sovOrder: Map<VerbSentenceType, SovOrder>): RelationArranger =
+        RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
 
-        return swapObject(newArranger)
-    }
-
-    private fun createDefaultCopulaOrder(
-        sovOrder: Map<VerbSentenceType, SovOrder>,
-        swapObject: Boolean = true
-    ): RelationArranger {
-        val arranger = RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
-
-        if (!swapObject)
-            return arranger
-
-        return swapObject(arranger)
-    }
-
-    private fun swapObject(arranger: RelationArranger): RelationArranger =
-        RelationArranger(SubstitutingOrder(arranger.relationOrder) { lst ->
-            lst.map { r ->
-                if (r == SyntaxRelation.Patient)
-                    SyntaxRelation.SubjectCompliment
-                else r
-            }
-        })
+    private fun swapCopulaObject(arranger: RelationArranger) = RelationArranger(
+        SubstitutingOrder(arranger.relationOrder, mapOf(Patient to SubjectCompliment))
+    )
 
     private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): MapWithDefault<VerbSentenceType, SovOrder> {
         val mainOrder = generateSimpleSovOrder(syntaxParadigm)
@@ -202,7 +177,7 @@ class WordOrderGenerator {
         val position = RandomSingleton.random.nextInt(references.size + 1)
 
         return references.map {
-            (it.value.take(position) + SyntaxRelation.QuestionMarker + it.value.drop(position))
+            (it.value.take(position) + QuestionMarker + it.value.drop(position))
                 .toSampleSpaceObject(it.probability)
         }
     }

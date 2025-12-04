@@ -14,7 +14,7 @@ import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
 
-abstract class CopulaClause(val topType: SyntaxRelation, val copulaType: CopulaType) : SyntaxClause
+abstract class CopulaClause(val copulaType: CopulaType) : SyntaxClause
 
 
 class VerbalCopulaClause(
@@ -22,7 +22,7 @@ class VerbalCopulaClause(
     val additionalCategories: SourcedCategoryValues,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(SyntaxRelation.Verb, CopulaType.Verb) {
+) : CopulaClause(CopulaType.Verb) {
     init {
         if (copula.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$copula is not a verb")
@@ -62,7 +62,7 @@ class ParticleCopulaClause(
     val copula: Word,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(SyntaxRelation.Agent, CopulaType.Particle) {
+) : CopulaClause(CopulaType.Particle) {
     init {
         if (copula.semanticsCore.speechPart.type != SpeechPart.Particle)
             throw SyntaxException("$copula is not a particle")
@@ -90,10 +90,10 @@ class ParticleCopulaClause(
         val particle = copula.copy(syntaxRole = WordSyntaxRole.Copula)
             .toNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
 
-        subj.setRelationChild(SyntaxRelation.CopulaParticle, particle)
-        subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
+        particle.setRelationChild(SyntaxRelation.Agent, subj)
+        particle.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
 
-        return subj
+        return particle
     }
 }
 
@@ -101,7 +101,7 @@ class ParticleCopulaClause(
 class NullCopulaClause(
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(SyntaxRelation.Agent, CopulaType.None) {
+) : CopulaClause(CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
