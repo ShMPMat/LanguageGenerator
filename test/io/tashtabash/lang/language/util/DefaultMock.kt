@@ -17,6 +17,8 @@ import io.tashtabash.lang.language.phonology.RestrictionsParadigm
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.arranger.Arranger
+import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
@@ -95,7 +97,8 @@ fun makeDefLang(
     wordChangeParadigm: WordChangeParadigm,
     derivations: List<Derivation> = listOf(),
     syntaxLogic: SyntaxLogic = SyntaxLogic(),
-    predicatePossessionType: PredicatePossessionType = HaveVerb
+    predicatePossessionType: PredicatePossessionType = HaveVerb,
+    copulaOrder: Map<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
 ) = Language(
     Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
@@ -103,11 +106,7 @@ fun makeDefLang(
     RestrictionsParadigm(mutableMapOf()),
     DerivationParadigm(derivations, listOf()),
     ChangeParadigm(
-        WordOrder(
-            MapWithDefault(defOrder),
-            mapOf(),
-            NominalGroupOrder.DNP
-        ),
+        WordOrder(MapWithDefault(defOrder), copulaOrder, NominalGroupOrder.DNP),
         wordChangeParadigm,
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaType.None.toSso(1.0))),

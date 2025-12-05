@@ -9,10 +9,7 @@ import io.tashtabash.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
 
-class CopulaDescription(
-    val subject: NominalDescription,
-    val complement: NominalDescription
-) : ClauseDescription {
+class CopulaDescription(val subject: NominalDescription, val complement: NominalDescription) : ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random): CopulaClause {
         val subjectClause = subject.toClause(language, context, random)
             .copy(actorType = SyntaxRelation.Agent)
@@ -42,10 +39,7 @@ class CopulaDescription(
                         subjectClause,
                         complementClause
                     )
-                    CopulaType.None -> NullCopulaClause(
-                        subjectClause,
-                        complementClause
-                    )
+                    CopulaType.None -> NullCopulaClause(subjectClause, complementClause)
                 }
             }
     }

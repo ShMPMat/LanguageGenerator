@@ -95,10 +95,7 @@ class ParticleCopulaClause(
 }
 
 
-class NullCopulaClause(
-    val subject: NominalClause,
-    val complement: NominalClause
-) : CopulaClause(CopulaType.None) {
+class NullCopulaClause(val subject: NominalClause, val complement: NominalClause) : CopulaClause(CopulaType.None) {
     override fun toNode(language: Language, random: Random): SentenceNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
