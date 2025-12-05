@@ -73,14 +73,8 @@ internal class PredicatePossessionDescriptionTest {
             predicatePossessionType = PredicatePossessionType.HaveVerb
         )
         val sentenceDescription = PredicatePossessionDescription(
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(1)),
-            ),
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(3)),
-            )
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(1))),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(3)))
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
@@ -166,14 +160,8 @@ internal class PredicatePossessionDescriptionTest {
             predicatePossessionType = PredicatePossessionType.LocativeOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(1)),
-            ),
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(3)),
-            )
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(1))),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(3)))
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
@@ -265,14 +253,8 @@ internal class PredicatePossessionDescriptionTest {
             predicatePossessionType = PredicatePossessionType.DativeOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(1)),
-            ),
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(3)),
-            )
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(1))),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(3)))
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
@@ -364,14 +346,8 @@ internal class PredicatePossessionDescriptionTest {
             predicatePossessionType = PredicatePossessionType.GenitiveOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(1)),
-            ),
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(3)),
-            )
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(1))),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(3)))
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),
@@ -463,14 +439,8 @@ internal class PredicatePossessionDescriptionTest {
             predicatePossessionType = PredicatePossessionType.Topic
         )
         val sentenceDescription = PredicatePossessionDescription(
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(1)),
-            ),
-            NominalDescription(
-                "dog",
-                ContextValue.ActorComplimentValue(AmountValue(3)),
-            )
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(1))),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(AmountValue(3)))
         )
         val context = Context(
             PrioritizedValue(Past, Implicit),

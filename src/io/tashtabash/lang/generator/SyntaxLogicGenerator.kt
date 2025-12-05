@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.category.DeixisValue.*
 import io.tashtabash.lang.language.category.NounClassValue.*
 import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.NumberValue.*
+import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.lexis.SpeechPart.*
@@ -82,14 +83,17 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return copulaCaseSolver
     }
 
-    private fun findCaseWrapped(caseValues: List<CategoryValue>, caseValue: CaseValue) = caseValues
-        .firstOrNull { it == caseValue }
+    private fun findCaseWrapped(caseValues: List<CategoryValue>, caseValue: CaseValue): List<CategoryValue>? =
+        caseValues.firstOrNull { it == caseValue }
         ?.let { listOf(it) }
 
-    private fun findAdpositionForCase(adpositionValues: List<CategoryValue>, caseValue: CaseValue) = adpositionValues
-        .firstOrNull { it.semanticsCore.meaningCluster == caseValue.semanticsCore.meaningCluster }
-        ?.let { listOf(it) }
-        ?: emptyList()
+    private fun findAdpositionForCase(adpositionValues: List<CategoryValue>, caseValue: CaseValue): List<CategoryValue> {
+
+
+        return adpositionValues.firstOrNull { it.semanticsCore.meaningCluster == caseValue.semanticsCore.meaningCluster }
+            ?.let { listOf(it) }
+            ?: emptyList()
+    }
 
     private fun generateSyntaxRelationSolver(): Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> {
         val syntaxRelationSolver: MutableMap<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mutableMapOf()
@@ -98,29 +102,37 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             val caseValues = speechPartParadigm.getCategoryValues(caseName)
             val adpositionValues = speechPartParadigm.getCategoryValues(adpositionName)
 
-            val obliqueCaseWrapped = findCaseWrapped(caseValues, CaseValue.Oblique)
-                ?: findCaseWrapped(caseValues, CaseValue.Nominative)
-                ?: emptyList()
+            val governedCase = generateAdpositionGovernanceCase(speechPartParadigm.getCategoryOrNull(caseName))
 
             for ((case, syntaxRelation) in AdjunctType.entries.map { it.caseValue to it.relation }) {
                 syntaxRelationSolver[syntaxRelation to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, case)
-                    ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, case))
+                    ?: (governedCase + findAdpositionForCase(adpositionValues, case))
 
                 // Equate Ben with Dat
                 if (syntaxRelation == SyntaxRelation.Benefactor) 0.5.chanceOf {
                     syntaxRelationSolver[SyntaxRelation.Benefactor to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Dative)
-                        ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, CaseValue.Dative))
+                        ?: (governedCase + findAdpositionForCase(adpositionValues, CaseValue.Dative))
                 }
-
-//                if (nonCoreCaseSolver.getValue(caseValue to speechPartParadigm.speechPart).isEmpty())
-//                    throw GeneratorException("${caseValue to speechPartParadigm.speechPart} has no case marker")
             }
 
             syntaxRelationSolver[SyntaxRelation.Possessor to speechPartParadigm.speechPart] = findCaseWrapped(caseValues, CaseValue.Genitive)
-                ?: (obliqueCaseWrapped + findAdpositionForCase(adpositionValues, CaseValue.Genitive))
+                ?: (governedCase + findAdpositionForCase(adpositionValues, CaseValue.Genitive))
         }
 
         return syntaxRelationSolver
+    }
+
+    private fun generateAdpositionGovernanceCase(caseCategory: SourcedCategory?): List<CategoryValue> {
+        // Adposition governs no case when it isn't compulsory
+        if (caseCategory?.compulsoryData?.isCompulsory != true) 0.5.chanceOf {
+            return listOf()
+        }
+        val caseValues = caseCategory?.category?.actualValues ?: emptyList()
+
+        return findCaseWrapped(caseValues, CaseValue.Oblique)
+            ?: findCaseWrapped(caseValues, CaseValue.Absolutive)
+            ?: findCaseWrapped(caseValues, CaseValue.Nominative)
+            ?: emptyList()
     }
 
     private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {
