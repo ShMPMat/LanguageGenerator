@@ -33,8 +33,8 @@ data class WordChangeParadigm(
 
     fun apply(
         word: Word,
-        latchType: LatchType = LatchType.Center,
-        categoryValues: List<SourcedCategoryValue> = getDefaultState(word)
+        categoryValues: List<SourcedCategoryValue> = getDefaultState(word),
+        latchType: LatchType = LatchType.Center
     ): WordClauseResult {
         val simpleCategoryValues = categoryValues.map { it.categoryValue }
         val applicableValues = categoryValues
@@ -63,7 +63,7 @@ data class WordChangeParadigm(
                     values,
                     wordClause.mainWord.semanticsCore.speechPart.type
                 )
-                apply(w, l, convertedValues)
+                apply(w, convertedValues, l)
                     .words
                     .words
             }
@@ -196,7 +196,7 @@ data class WordChangeParadigm(
         getAllCategoryValueCombinations(word.semanticsCore.speechPart, includeOptionalCategories)
             .map {
                 async {
-                    apply(word, categoryValues = it).unfold() to it
+                    apply(word, it).unfold() to it
                 }
             }.awaitAll()
     }
@@ -218,7 +218,7 @@ data class WordChangeParadigm(
         getAllSyntheticCategoryValueCombinations(word)
             .map {
                 async {
-                    apply(word, categoryValues = it).mainWord
+                    apply(word, it).mainWord
                 }
             }
     }

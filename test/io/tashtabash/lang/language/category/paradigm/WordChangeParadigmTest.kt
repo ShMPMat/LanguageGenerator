@@ -87,7 +87,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             noun,
-            LatchType.Center,
             listOf(definitenessSourcedCategory.actualSourcedValues[0])
         )
 
@@ -134,7 +133,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             createWord("a", SpeechPart.Adjective),
-            LatchType.Center,
             listOf(tenseSourcedCategory.actualSourcedValues[0])
         )
 
@@ -179,7 +177,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             createNoun("daba").withProsodyOn(1, Prosody.Stress),
-            LatchType.Center,
             listOf(definitenessSourcedCategory.actualSourcedValues[0])
         )
 
@@ -209,7 +206,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             createNoun("dab"),
-            LatchType.Center,
             listOf()
         )
 
@@ -248,7 +244,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             createNoun("dab"),
-            LatchType.Center,
             listOf(definitenessSourcedCategory.actualSourcedValues[0])
         )
 
@@ -294,7 +289,6 @@ internal class WordChangeParadigmTest {
 
         val result = wordChangeParadigm.apply(
             createNoun("dab"),
-            LatchType.Center,
             listOf(definitenessSourcedCategory.actualSourcedValues[0])
         )
 
