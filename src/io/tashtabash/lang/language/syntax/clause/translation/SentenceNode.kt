@@ -18,19 +18,17 @@ data class SentenceNode(
     private val _categoryValues: MutableList<CategoryValue>,
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
-    private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(),
+    private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(), // Inc. non-children relations
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false,
-    var parentPropagation: Boolean = false,
-    var nodesOrder: List<SyntaxRelation> = listOf()
+    var parentPropagation: Boolean = false
 ) {
-    val categoryValues: MutableList<CategoryValue>
-        get() = _categoryValues
+    val categoryValues: MutableList<CategoryValue> = _categoryValues
 
-    val children: List<SentenceNodeChild>
-        get() = _children
+    val children: List<SentenceNodeChild> = _children
 
-    val allRelations: List<SyntaxRelation>
+    // Used to order the node and its children
+    val allTreeRelations: List<SyntaxRelation>
         get() = listOf(typeForChildren) + children.map { it.first }
 
     fun addCategoryValue(value: CategoryValue) {
@@ -56,10 +54,11 @@ data class SentenceNode(
     private fun setBackLink(sentenceNode: SentenceNode, propagate: Boolean = parentPropagation) {
         _relation[sentenceNode.typeForChildren] = sentenceNode
 
-        if (propagate)
-            _children.forEach {
-                it.second.setBackLink(sentenceNode, true)
-            }
+        if (!propagate)
+            return
+
+        for (it in _children)
+            it.second.setBackLink(sentenceNode, true)
     }
 
     /**

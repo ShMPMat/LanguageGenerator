@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
     internal fun applyNode(node: SentenceNode, random: Random): WordSequence {
-        node.nodesOrder = node.arranger.order(node.allRelations.map { it to it }, random)
+        val nodesOrder = node.arranger.order(node.allTreeRelations.map { it to it }, random)
 
         val categoryValues = computeValues(node)
         val currentClause = node.typeForChildren to paradigm.wordChangeParadigm.apply(
@@ -24,7 +24,7 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
             .map { it.first.first to it.second.setInPlace() }
 
         return (childrenClauses + currentClause)
-            .sortedBy { node.nodesOrder.indexOf(it.first) }
+            .sortedBy { nodesOrder.indexOf(it.first) }
             .map { it.second }
             .reduceRight(FoldedWordSequence::plus)
             .unfold()
