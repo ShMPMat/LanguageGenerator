@@ -1,4 +1,4 @@
-package io.tashtabash.lang.language.syntax.clause.translation
+package io.tashtabash.lang.language.syntax.clause.syntax
 
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
@@ -9,16 +9,16 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.Arranger
-import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType.*
-import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType.*
+import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType.*
+import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType.*
 
 
-data class SentenceNode(
+data class SyntaxNode(
     val word: Word,
     private val _categoryValues: MutableList<CategoryValue>,
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
-    private val _relation: MutableMap<SyntaxRelation, SentenceNode> = mutableMapOf(), // Inc. non-children relations
+    private val _relation: MutableMap<SyntaxRelation, SyntaxNode> = mutableMapOf(), // Inc. non-children relations
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false,
     var parentPropagation: Boolean = false
@@ -39,26 +39,26 @@ data class SentenceNode(
         _categoryValues += values
     }
 
-    fun setRelationChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
+    fun setRelationChild(syntaxRelation: SyntaxRelation, child: SyntaxNode) {
         _relation[syntaxRelation] = child
 
         addStrayChild(syntaxRelation, child)
     }
 
-    fun addStrayChild(syntaxRelation: SyntaxRelation, child: SentenceNode) {
+    fun addStrayChild(syntaxRelation: SyntaxRelation, child: SyntaxNode) {
         _children += syntaxRelation to child
 
         child.setBackLink(this)
     }
 
-    private fun setBackLink(sentenceNode: SentenceNode, propagate: Boolean = parentPropagation) {
-        _relation[sentenceNode.typeForChildren] = sentenceNode
+    private fun setBackLink(syntaxNode: SyntaxNode, propagate: Boolean = parentPropagation) {
+        _relation[syntaxNode.typeForChildren] = syntaxNode
 
         if (!propagate)
             return
 
         for (it in _children)
-            it.second.setBackLink(sentenceNode, true)
+            it.second.setBackLink(syntaxNode, true)
     }
 
     /**
@@ -120,4 +120,4 @@ fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when
 }
 
 
-typealias SentenceNodeChild = Pair<SyntaxRelation, SentenceNode>
+typealias SentenceNodeChild = Pair<SyntaxRelation, SyntaxNode>

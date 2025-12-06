@@ -7,19 +7,19 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.numeral.NumeralConstructionType.*
 import io.tashtabash.lang.language.syntax.clause.realization.toNode
-import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.random.singleton.testProbability
 
 
 data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRanges) {
-    fun constructNumeral(n: Int, lexis: Lexis): SentenceNode {
+    fun constructNumeral(n: Int, lexis: Lexis): SyntaxNode {
         if (n < 1)
             throw SyntaxException("No numeral for $n")
 
         return extract(n, lexis).apply { parentPropagation = true }
     }
 
-    private fun extract(n: Int, lexis: Lexis): SentenceNode =
+    private fun extract(n: Int, lexis: Lexis): SyntaxNode =
         when (val type = getType(n)) {
             SingleWord -> lexis.getWord(n.toString()).toNode(SyntaxRelation.AdNumeral)
             is SpecialWord -> lexis.getWord(type.meaning).toNode(SyntaxRelation.AdNumeral)
@@ -38,7 +38,7 @@ data class NumeralParadigm(val base: NumeralSystemBase, val ranges: NumeralRange
             }
         }
 
-    private fun constructBaseNode(mulNumber: Int, baseNumber: Int, oneProb: Double, lexis: Lexis): SentenceNode {
+    private fun constructBaseNode(mulNumber: Int, baseNumber: Int, oneProb: Double, lexis: Lexis): SyntaxNode {
         val type = getType(mulNumber * baseNumber)
         if (type == SingleWord || type is SpecialWord)
             return extract(mulNumber * baseNumber, lexis)

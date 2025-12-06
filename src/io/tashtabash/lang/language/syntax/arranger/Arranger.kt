@@ -1,7 +1,7 @@
 package io.tashtabash.lang.language.syntax.arranger
 
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.translation.NonJoinedClause
+import io.tashtabash.lang.language.syntax.clause.syntax.NonJoinedClause
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import kotlin.random.Random
 

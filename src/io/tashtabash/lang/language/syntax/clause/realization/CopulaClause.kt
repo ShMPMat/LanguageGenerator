@@ -7,7 +7,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
-import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
@@ -27,7 +27,7 @@ class VerbalCopulaClause(
             throw SyntaxException("$copula is not a verb")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SyntaxNode {
         val node = copula.toNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
@@ -66,7 +66,7 @@ class ParticleCopulaClause(
             throw SyntaxException("$copula is not a particle")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(
@@ -96,7 +96,7 @@ class ParticleCopulaClause(
 
 
 class NullCopulaClause(val subject: NominalClause, val complement: NominalClause) : CopulaClause(CopulaType.None) {
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             addCategoryValues(
                 language.changeParadigm.syntaxLogic.resolveCopulaCase(

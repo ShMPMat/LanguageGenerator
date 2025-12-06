@@ -10,7 +10,7 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.arranger.PassingArranger
 import io.tashtabash.lang.language.syntax.clause.realization.toNode
-import io.tashtabash.lang.language.syntax.clause.translation.SentenceClauseTranslator
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTranslator
 import kotlin.random.Random
 
 
@@ -58,7 +58,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                     }
                 }
             }
-        num to SentenceClauseTranslator(changeParadigm).applyNode(node, Random(0))
+        num to SyntaxNodeTranslator(changeParadigm).applyNode(node, Random(0))
     }
     .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.printClauseInfo(true)) }
     .lineUpAll()

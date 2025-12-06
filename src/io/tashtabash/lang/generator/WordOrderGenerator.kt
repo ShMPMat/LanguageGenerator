@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
-import io.tashtabash.lang.language.syntax.clause.translation.*
+import io.tashtabash.lang.language.syntax.clause.syntax.*
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.GenericSSO

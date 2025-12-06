@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.IntransitiveVerbClause
 import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePossessionClause
-import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
+import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.features.PredicatePossessionType.*

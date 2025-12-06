@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
-import io.tashtabash.lang.language.syntax.clause.translation.VerbSentenceType
+import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import kotlin.random.Random
 
 

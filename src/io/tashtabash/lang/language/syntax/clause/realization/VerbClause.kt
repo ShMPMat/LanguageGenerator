@@ -8,7 +8,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.translation.SentenceNode
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
@@ -27,7 +27,7 @@ class TransitiveVerbClause(
             throw SyntaxException("$verb in the transitive clause is intransitive")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SyntaxNode {
         val node = verb.toNode(
             SyntaxRelation.Verb,
             additionalCategories.map { it.categoryValue },
@@ -62,7 +62,7 @@ class IntransitiveVerbClause(
             throw SyntaxException("$verb in the intransitive clause is transitive")
     }
 
-    override fun toNode(language: Language, random: Random): SentenceNode {
+    override fun toNode(language: Language, random: Random): SyntaxNode {
         val node = verb.toNode(
             SyntaxRelation.Verb,
             additionalCategories.map { it.categoryValue },
@@ -81,7 +81,7 @@ class IntransitiveVerbClause(
     }
 }
 
-internal fun SentenceNode.addThirdPerson(): SentenceNode {
+internal fun SyntaxNode.addThirdPerson(): SyntaxNode {
     if (categoryValues.none { it.parentClassName == personName })
         apply { addCategoryValue(PersonValue.Third) }
     if (categoryValues.none { it.parentClassName == inclusivityName })
@@ -91,7 +91,7 @@ internal fun SentenceNode.addThirdPerson(): SentenceNode {
 }
 
 
-private fun SentenceNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: SentenceNode, relation: SyntaxRelation) {
+private fun SyntaxNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: SyntaxNode, relation: SyntaxRelation) {
     val caseRelevantCategories = verb.categoryValues
         .filterIsInstance<TenseValue>()
         .toSet()

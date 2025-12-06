@@ -18,7 +18,7 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
-import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
+import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm

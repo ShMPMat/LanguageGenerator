@@ -1,7 +1,7 @@
 package io.tashtabash.lang.language.syntax
 
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
-import io.tashtabash.lang.language.syntax.clause.translation.CopulaSentenceType
+import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.random.GenericSSO
 import io.tashtabash.random.SampleSpaceObject

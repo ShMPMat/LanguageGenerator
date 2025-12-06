@@ -1,4 +1,4 @@
-package io.tashtabash.lang.language.syntax.clause.translation
+package io.tashtabash.lang.language.syntax.clause.syntax
 
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.syntax.*
@@ -9,8 +9,8 @@ import io.tashtabash.lang.language.syntax.sequence.unfold
 import kotlin.random.Random
 
 
-class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
-    internal fun applyNode(node: SentenceNode, random: Random): WordSequence {
+class SyntaxNodeTranslator(private val paradigm: ChangeParadigm) {
+    internal fun applyNode(node: SyntaxNode, random: Random): WordSequence {
         val nodesOrder = node.arranger.order(node.allTreeRelations.map { it to it }, random)
 
         val categoryValues = computeValues(node)
@@ -30,11 +30,11 @@ class SentenceClauseTranslator(private val paradigm: ChangeParadigm) {
             .unfold()
     }
 
-    private fun computeValues(sentenceNode: SentenceNode): List<SourcedCategoryValue> {
-        val speechPart = sentenceNode.word.semanticsCore.speechPart
+    private fun computeValues(syntaxNode: SyntaxNode): List<SourcedCategoryValue> {
+        val speechPart = syntaxNode.word.semanticsCore.speechPart
         val references = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart).categories
 
-        return sentenceNode.extractValues(references)
+        return syntaxNode.extractValues(references)
     }
 }
 
