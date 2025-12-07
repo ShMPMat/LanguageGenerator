@@ -25,6 +25,7 @@ enum class AdjunctType(val caseValue: CaseValue, override val relation: SyntaxRe
     Instrument(CaseValue.Instrumental, SyntaxRelation.Instrument),
     Addressee(CaseValue.Dative, SyntaxRelation.Addressee),
     Location(CaseValue.Locative, SyntaxRelation.Location),
+    Topic(CaseValue.Topic, SyntaxRelation.Topic),// Is an adjunct in order to allow putting it in inside the verb clause
     Benefactor(CaseValue.Benefactive, SyntaxRelation.Benefactor);
 
     override fun toString() = name
