@@ -30,21 +30,17 @@ class VerbalCopulaClause(
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val node = copula.toNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.Verb,
-                    SyntaxRelation.Agent,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.Verb,
+                SyntaxRelation.Agent,
+                word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.Verb,
-                    SyntaxRelation.SubjectCompliment,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.Verb,
+                SyntaxRelation.SubjectCompliment,
+                word.semanticsCore.speechPart
             )
         }
 
@@ -68,21 +64,17 @@ class ParticleCopulaClause(
 
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.Particle,
-                    SyntaxRelation.Agent,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.Particle,
+                SyntaxRelation.Agent,
+                word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.Particle,
-                    SyntaxRelation.SubjectCompliment,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.Particle,
+                SyntaxRelation.SubjectCompliment,
+                word.semanticsCore.speechPart
             )
         }
         val particle = copula.toNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
@@ -98,21 +90,17 @@ class ParticleCopulaClause(
 class NullCopulaClause(val subject: NominalClause, val complement: NominalClause) : CopulaClause(CopulaType.None) {
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.None,
-                    SyntaxRelation.SubjectCompliment,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.None,
+                SyntaxRelation.SubjectCompliment,
+                word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
-            addCategoryValues(
-                language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                    CopulaType.None,
-                    SyntaxRelation.Agent,
-                    word.semanticsCore.speechPart
-                )
+            categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
+                CopulaType.None,
+                SyntaxRelation.Agent,
+                word.semanticsCore.speechPart
             )
         }
 

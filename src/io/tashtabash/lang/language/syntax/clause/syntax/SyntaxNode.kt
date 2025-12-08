@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.syntax
 
 import io.tashtabash.lang.language.category.value.CategoryValue
-import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
@@ -15,7 +14,7 @@ import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType.*
 
 data class SyntaxNode(
     val word: Word,
-    private val _categoryValues: MutableList<CategoryValue>,
+    val categoryValues: MutableList<CategoryValue>,
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SyntaxNode> = mutableMapOf(), // Inc. non-children relations
@@ -23,21 +22,11 @@ data class SyntaxNode(
     var isDropped: Boolean = false,
     var parentPropagation: Boolean = false
 ) {
-    val categoryValues: MutableList<CategoryValue> = _categoryValues
-
     val children: List<SentenceNodeChild> = _children
 
     // Used to order the node and its children
     val allTreeRelations: List<SyntaxRelation>
         get() = listOf(typeForChildren) + children.map { it.first }
-
-    fun addCategoryValue(value: CategoryValue) {
-        _categoryValues += value
-    }
-
-    fun addCategoryValues(values: CategoryValues) {
-        _categoryValues += values
-    }
 
     fun setRelationChild(syntaxRelation: SyntaxRelation, child: SyntaxNode) {
         _relation[syntaxRelation] = child

@@ -10,11 +10,12 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
+import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import kotlin.random.Random
 
 
 abstract class SentenceClause : UnfoldableClause {
-    final override fun unfold(language: Language, random: Random) =
+    final override fun unfold(language: Language, random: Random): WordSequence =
         SyntaxNodeTranslator(language.changeParadigm)
             .applyNode(toNode(language, random), random)
 }
