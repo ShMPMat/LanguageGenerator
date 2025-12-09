@@ -30,8 +30,6 @@ class SyntaxLogic(
     private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
     private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive){}
 ) {
-    val defaultInclusivity = if (personalPronounInclusivity != null) InclusivityValue.Exclusive else null
-
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
         val (person, gender, amount, deixis, inclusivity) =
@@ -89,21 +87,18 @@ class SyntaxLogic(
         verbType: TypedSpeechPart,
         syntaxRelation: SyntaxRelation,
         categories: Set<CategoryValue>
-    ): CategoryValues {
-        return verbCasesSolver.getValue(verbType to categories to syntaxRelation)
-    }
+    ): CategoryValues =
+        verbCasesSolver.getValue(verbType to categories to syntaxRelation)
 
     fun resolveCopulaCase(
         copulaType: CopulaType,
         syntaxRelation: SyntaxRelation,
         speechPart: TypedSpeechPart
-    ): CategoryValues {
-        return copulaCaseSolver.getValue(copulaType to syntaxRelation to speechPart)
-    }
+    ): CategoryValues =
+        copulaCaseSolver.getValue(copulaType to syntaxRelation to speechPart)
 
-    fun resolveSyntaxRelationToCase(syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart): CategoryValues {
-        return syntaxRelationSolver.getValue(syntaxRelation to speechPart)
-    }
+    fun resolveSyntaxRelationToCase(syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart): CategoryValues =
+        syntaxRelationSolver.getValue(syntaxRelation to speechPart)
 
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
         resolveTime(language, verbType, context)
