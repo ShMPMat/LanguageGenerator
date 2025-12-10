@@ -23,7 +23,7 @@ data class SemanticsCoreTemplate(
 
 fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>): SemanticsCore {
     val tags = tagClusters.filter { it.shouldInstantiate }
-        .map { SemanticsTag(it.tags.randomUnwrappedElement()) }
+        .mapNotNull { it.getTag() }
         .toSet()
 
     return SemanticsCore(
@@ -86,6 +86,10 @@ data class DerivationClusterTemplate(
 data class SemanticsTagCluster(val tags: List<SemanticsTagTemplate>, val type: String, val shouldInstantiate: Boolean) {
     fun hasTag(tagName: String): Boolean =
         tags.any { it.name == tagName }
+
+    fun getTag(): SemanticsTag? =
+        SemanticsTag(tags.randomUnwrappedElement())
+            .takeIf { it.name != "None" }
 }
 
 data class SemanticsTagTemplate(val name: String, override val probability: Double = 1.0) : UnwrappableSSO<String>(name)

@@ -25,6 +25,9 @@ data class Language(
      |words:
      |${lexis.words.joinToString { "${changeParadigm.wordChangeParadigm.apply(it).unfold()} - ${it.semanticsCore}" }}
      |
+     |Speech parts:
+     |${lexis.printSpeechParts()}
+     |
      |$changeParadigm
      |
      |

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language
 import io.tashtabash.lang.generator.util.GeneratorException
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
+import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.MorphemeData
@@ -86,6 +87,13 @@ fun Language.printParadigm(word: Word, printOptionalCategories: Boolean = true):
                 .distinct()
                 .joinToString("\n")
 }
+
+fun Lexis.printSpeechParts(): String =
+    words.groupBy { it.semanticsCore.speechPart }
+        .map { (speechPart, words) ->
+            "$speechPart: " +
+                    words.take(10).joinToString { "${it.getPhoneticRepresentation()} - ${it.semanticsCore}" }
+        }.joinToString("\n")
 
 fun getClauseAndInfoStr(wordSequence: WordSequence, printDerivation: Boolean = true): String {
     val glosses = wordSequence.printClauseInfo(printDerivation)

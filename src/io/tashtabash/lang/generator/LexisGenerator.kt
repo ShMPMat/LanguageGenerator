@@ -1,6 +1,7 @@
 package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.containers.*
+import io.tashtabash.lang.generator.supplement.additionalVerbTypes
 import io.tashtabash.lang.generator.util.DataConsistencyException
 import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
@@ -124,35 +125,48 @@ class LexisGenerator(
     }
 
     private fun injectCustomVerbSubtypes(core: SemanticsCore, wordChangeParadigm: WordChangeParadigm): SemanticsCore {
-        val conditions = listOf(
-            SpeechPart.Verb.toPerception() to SemanticsTag("perception")
-        )
-
-        for ((speechPart, tag) in conditions) {
+        for ((speechPart, tag) in additionalVerbTypes)
             if (wordChangeParadigm.speechPartChangeParadigms.containsKey(speechPart) && core.tags.contains(tag))
                 return core.copy(speechPart = speechPart)
-        }
 
         return core
     }
 
     private fun injectTagsFromChangeParadigm(changeParadigm: ChangeParadigm) {
-        val perceptionVerbs = wordBase.allWords
-            .filter { w ->
-                w.tagClusters.any { c -> c.type == "verbType" && c.hasTag("perception")  }
-            }
-        val perceptionVerbClassPresent = changeParadigm.wordChangeParadigm
-            .speechPartChangeParadigms
-            .containsKey(SpeechPart.Verb.toPerception())
-        val tagName = if (perceptionVerbClassPresent) "intrans" else "trans" // Assume the paradigm is intransitive
-        for (template in perceptionVerbs)
-            tagTemplate(template, tagName, "transitivity")
+        resolveVerbTypeTags()
+
+        for ((speechPart, tag) in additionalVerbTypes) {
+            val perceptionVerbs = wordBase.allWords
+                .filter { w ->
+                    w.tagClusters.any { c -> c.type == "verbType" && c.hasTag(tag.name) }
+                }
+            val perceptionVerbClassPresent = changeParadigm.wordChangeParadigm
+                .speechPartChangeParadigms
+                .containsKey(speechPart)
+            val tagName = if (perceptionVerbClassPresent) "intrans" else "trans" // Assume the paradigm is intransitive
+            for (template in perceptionVerbs)
+                tagTemplate(template, tagName, "transitivity")
+        }
     }
 
-    private fun tagTemplate(template: SemanticsCoreTemplate, type: String, tagName: String) {
+    // Determine verbType tags in advance to make them available when verb subtypes injection is happening
+    private fun resolveVerbTypeTags() {
+        val typedVerbs = wordBase.allWords
+            .filter { t -> t.tagClusters.any { it.type == "verbType" } }
+
+        for (coreTemplate in typedVerbs)
+            coreTemplate.tagClusters
+                .first { it.type == "verbType" }
+                .getTag()
+                ?.let { tagTemplate(coreTemplate, it.name, "verbType") }
+                ?: run { coreTemplate.tagClusters.removeIf { it.type == "verbType" } } // No type generated, remove
+    }
+
+    private fun tagTemplate(template: SemanticsCoreTemplate, tagName: String, type: String) {
+        template.tagClusters.removeIf { it.type == type }
         template.tagClusters += SemanticsTagCluster(
-            listOf(SemanticsTagTemplate(type)),
-            tagName,
+            listOf(SemanticsTagTemplate(tagName)),
+            type,
             true
         )
     }

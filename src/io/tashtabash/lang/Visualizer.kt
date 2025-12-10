@@ -37,16 +37,13 @@ class Visualizer(val language: Language) {
     }
 
     private fun printTestSentences() {
-        val lightPossessor = NominalDescription(
-            "light",
-            ActorComplimentValue(AmountValue(1), null),
-        )
+        val light = NominalDescription("light", ActorComplimentValue(AmountValue(1), null))
         val mothers = NominalDescription(
             "mother",
             ActorComplimentValue(AmountValue(4), DeixisValue.Proximal),
             listOf(
                 AdjectiveDescription("new"),
-                PossessorDescription(lightPossessor)
+                PossessorDescription(light)
             )
         )
         val fathers = NominalDescription(
@@ -91,6 +88,8 @@ class Visualizer(val language: Language) {
         val thirdSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to time))
         val fourthSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to these, Location to home))
         val firstHearVerb = VerbDescription("hear", mapOf(Experiencer to i, Stimulus to youDu))
+        val knowVerb = VerbDescription("know", mapOf(Experiencer to fathers, Stimulus to i))
+        val feelVerb = VerbDescription("feel", mapOf(Experiencer to youDu, Stimulus to light))
         val existVerb = VerbDescription("exist", mapOf(Argument to i))
         val firstBuildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
         val secondBuildVerb = VerbDescription(
@@ -108,6 +107,8 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(thirdSeeVerb),
             VerbMainClauseDescription(fourthSeeVerb),
             VerbMainClauseDescription(firstHearVerb),
+            VerbMainClauseDescription(knowVerb),
+            VerbMainClauseDescription(feelVerb),
             VerbMainClauseDescription(existVerb),
             VerbMainClauseDescription(firstBuildVerb),
             VerbMainClauseDescription(secondBuildVerb),

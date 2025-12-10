@@ -15,9 +15,6 @@ data class Lexis(
     val size: Int
         get() = words.size
 
-    fun getBySpeechPart(speechPart: TypedSpeechPart) = words
-        .filter { it.semanticsCore.speechPart == speechPart }
-
     fun getCopulaWord(type: CopulaType): Word = copula[type]
         ?.resolve(this)
         ?: throw LanguageException("No copula in Language for type $type")

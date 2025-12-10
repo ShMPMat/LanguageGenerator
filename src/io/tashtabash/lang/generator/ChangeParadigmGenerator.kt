@@ -1,5 +1,6 @@
 package io.tashtabash.lang.generator
 
+import io.tashtabash.lang.generator.supplement.additionalVerbTypes
 import io.tashtabash.lang.generator.util.copyForNewSpeechPart
 import io.tashtabash.lang.generator.util.substituteWith
 import io.tashtabash.lang.language.category.*
@@ -105,11 +106,12 @@ class ChangeParadigmGenerator(
         changesMap[Verb.toIntransitive()] = intransVerbParadigm
         restrictionsParadigm.restrictionsMapper[Verb.toIntransitive()] = verbRestrictions
 
-        // Special class for perception verbs based on intransitive verbs
-        0.05.chanceOf {
-            changesMap[Verb.toPerception()] = intransVerbParadigm.copyForNewSpeechPart(Verb.toPerception())
-            restrictionsParadigm.restrictionsMapper[Verb.toPerception()] = verbRestrictions
-        }
+        // Special verb classes based on intransitive verbs
+        for ((speechPart, _, prob) in additionalVerbTypes)
+            prob.chanceOf {
+                changesMap[speechPart] = intransVerbParadigm.copyForNewSpeechPart(speechPart)
+                restrictionsParadigm.restrictionsMapper[speechPart] = verbRestrictions
+            }
     }
 
     private fun generateCategoryData(
