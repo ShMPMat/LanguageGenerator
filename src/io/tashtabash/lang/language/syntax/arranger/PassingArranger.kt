@@ -13,7 +13,7 @@ object PassingArranger: Arranger {
 object PassingSingletonArranger: Arranger {
     override fun <E> order(pairs: List<Pair<SyntaxRelation, E>>, random: Random): List<E> {
         if (pairs.size != 1)
-            throw SyntaxException("PassingSingletonOrderer got a non-singleton list of size ${pairs.size}")
+            throw SyntaxException("PassingSingletonArranger got a non-singleton list of size ${pairs.size}")
 
         return listOf(pairs[0].second)
     }
