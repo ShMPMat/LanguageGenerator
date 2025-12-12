@@ -28,7 +28,9 @@ sealed class ContextValue {
         object Negative: TypeContext()
     }
 
-    data class ActorComplimentValue(val number: Amount, val deixis: DeixisValue? = null)
+    data class ActorComplimentValue(val number: Amount, val deixis: DeixisValue? = null) {
+        constructor(number: Int, deixis: DeixisValue? = null) : this(Amount.AmountValue(number), deixis)
+    }
 
     data class ActorValue(
         val person: PersonValue,

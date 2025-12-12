@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.context.*
-import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
@@ -74,10 +74,7 @@ internal class SentenceDescriptionTest {
             VerbDescription(
                 "sleep",
                 mapOf(
-                    MainObjectType.Argument to NominalDescription(
-                        "dog",
-                        ContextValue.ActorComplimentValue(AmountValue(3)),
-                    )
+                    MainObjectType.Argument to NominalDescription("dog", ActorComplimentValue(3))
                 )
             )
         )
@@ -147,14 +144,8 @@ internal class SentenceDescriptionTest {
             VerbDescription(
                 "see",
                 mapOf(
-                    MainObjectType.Agent to NominalDescription(
-                        "dog",
-                        ContextValue.ActorComplimentValue(AmountValue(3)),
-                    ),
-                    MainObjectType.Patient to NominalDescription(
-                        "dog",
-                        ContextValue.ActorComplimentValue(AmountValue(3)),
-                    )
+                    MainObjectType.Agent to NominalDescription("dog", ActorComplimentValue(3)),
+                    MainObjectType.Patient to NominalDescription("dog", ActorComplimentValue(3))
                 )
             )
         )
@@ -227,7 +218,7 @@ internal class SentenceDescriptionTest {
         // Set up descriptions
         val dogDescription = NominalDescription(
             "dog",
-            ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
+            ActorComplimentValue(2, DeixisValue.ProximalAddressee),
         )
         val verbDescription = VerbDescription(
             "sleep",
@@ -308,7 +299,7 @@ internal class SentenceDescriptionTest {
                 mapOf(
                     MainObjectType.Argument to NominalDescription(
                         "dog",
-                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                        ActorComplimentValue(3),
                         listOf(AdjectiveDescription("new"))
                     )
                 )
@@ -411,7 +402,7 @@ internal class SentenceDescriptionTest {
         val dog = createNoun("o") withMeaning "dog"
         val verb = createIntransVerb("do")
             .withTags("benefactor", "intrans") withMeaning "sleep"
-        // Set up noun class
+        // Set up case
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Benefactive),
             setOf(Noun sourcedFrom CategorySource.Self),
@@ -450,7 +441,7 @@ internal class SentenceDescriptionTest {
         // Set up descriptions
         val dogDescription = NominalDescription(
             "dog",
-            ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
+            ActorComplimentValue(2, DeixisValue.ProximalAddressee),
         )
         val verbDescription = VerbDescription(
             "sleep",
@@ -533,7 +524,7 @@ internal class SentenceDescriptionTest {
                 mapOf(
                     MainObjectType.Argument to NominalDescription(
                         "dog",
-                        ContextValue.ActorComplimentValue(AmountValue(3)),
+                        ActorComplimentValue(3),
                     )
                 )
             )
@@ -623,7 +614,7 @@ internal class SentenceDescriptionTest {
         )
         val dogDescription = NominalDescription(
             "dog",
-            ContextValue.ActorComplimentValue(AmountValue(2), DeixisValue.ProximalAddressee),
+            ActorComplimentValue(2, DeixisValue.ProximalAddressee),
         )
         val verbDescription = VerbDescription(
             "sleep",
@@ -803,10 +794,7 @@ internal class SentenceDescriptionTest {
             "_personal_pronoun",
             ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
         )
-        val nounDescription = NominalDescription(
-            "cat",
-            ContextValue.ActorComplimentValue(AmountValue(1)),
-        )
+        val nounDescription = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription(
             "build",
             mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)

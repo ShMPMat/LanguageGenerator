@@ -37,9 +37,6 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause(Synt
         nominalClause.toNode(language, random).apply {
             typeForChildren = SyntaxRelation.Possessor
 
-            if (word.semanticsCore.speechPart.type == SpeechPart.PersonalPronoun)
-                isDropped = true
-
             categoryValues.removeIf { it is CaseValue }
             val newCaseMarkers = language.changeParadigm.syntaxLogic.resolveSyntaxRelationToCase(
                 SyntaxRelation.Possessor,

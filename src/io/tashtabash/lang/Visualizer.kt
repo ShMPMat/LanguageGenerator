@@ -40,7 +40,7 @@ class Visualizer(val language: Language) {
         val light = NominalDescription("light", ActorComplimentValue(AmountValue(1), null))
         val mothers = NominalDescription(
             "mother",
-            ActorComplimentValue(AmountValue(4), DeixisValue.Proximal),
+            ActorComplimentValue(4, DeixisValue.Proximal),
             listOf(
                 AdjectiveDescription("new"),
                 PossessorDescription(light)
@@ -48,7 +48,7 @@ class Visualizer(val language: Language) {
         )
         val fathers = NominalDescription(
             "father",
-            ActorComplimentValue(AmountValue(2), DeixisValue.Undefined),
+            ActorComplimentValue(2, DeixisValue.Undefined),
             listOf(
                 AdjectiveDescription("new"),
                 AdjectiveDescription("high")
@@ -64,7 +64,7 @@ class Visualizer(val language: Language) {
         )
         val time = NominalDescription(
             "time",
-            ActorComplimentValue(AmountValue(1), DeixisValue.Medial),
+            ActorComplimentValue(1, DeixisValue.Medial),
             listOf(AdjectiveDescription("small"))
         )
         val youDu = PronounDescription(
@@ -75,14 +75,12 @@ class Visualizer(val language: Language) {
             "_deixis_pronoun",
             ActorValue(Third, Neutral, AmountValue(10), DeixisValue.ProximalAddressee, null),
         )
-        val handsObj = NominalDescription(
+        val hands = NominalDescription(
             "hand",
-            ActorComplimentValue(AmountValue(2), DeixisValue.Proximal),
+            ActorComplimentValue(2, DeixisValue.Proximal),
+            listOf(PossessorDescription(i))
         )
-        val home = NominalDescription(
-            "home",
-            ActorComplimentValue(AmountValue(1), null),
-        )
+        val home = NominalDescription("home", ActorComplimentValue(1, null))
         val firstSeeVerb = VerbDescription("see", mapOf(Experiencer to mothers, Stimulus to time))
         val secondSeeVerb = VerbDescription("see", mapOf(Experiencer to fathers, Stimulus to time))
         val thirdSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to time))
@@ -91,7 +89,7 @@ class Visualizer(val language: Language) {
         val knowVerb = VerbDescription("know", mapOf(Experiencer to fathers, Stimulus to i))
         val feelVerb = VerbDescription("feel", mapOf(Experiencer to youDu, Stimulus to light))
         val existVerb = VerbDescription("exist", mapOf(Argument to i))
-        val buildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
+        val buildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to hands))
         val benBuildVerb = VerbDescription(
             "build",
             mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to youDu)

@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue
-import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
 import io.tashtabash.lang.language.syntax.context.PrioritizedValue
@@ -56,14 +55,8 @@ internal class CopulaDescriptionTest {
         )
         val sentenceDescription = CopulaMainClauseDescription(
             CopulaDescription(
-                NominalDescription(
-                    "dog",
-                    ContextValue.ActorComplimentValue(AmountValue(1)),
-                ),
-                NominalDescription(
-                    "cat",
-                    ContextValue.ActorComplimentValue(AmountValue(1)),
-                )
+                NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
+                NominalDescription("cat", ContextValue.ActorComplimentValue(1))
             )
         )
         val context = Context(
