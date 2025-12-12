@@ -8,10 +8,13 @@ import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.Priority
 import io.tashtabash.lang.language.syntax.features.CopulaType
+import io.tashtabash.lang.language.syntax.transformer.SyntaxNodeMatcher
+import io.tashtabash.lang.language.syntax.transformer.Transformer
 import io.tashtabash.lang.utils.equalsByElement
 import kotlin.math.abs
 
@@ -28,7 +31,8 @@ class SyntaxLogic(
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
-    private val personalPronounInclusivity: SourcedCategory? = null // WALS only knows about separate inclusive){}
+    private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
+    private val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf()
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -105,6 +109,12 @@ class SyntaxLogic(
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
         resolveTime(language, adjectiveType, context)
+
+    fun applyTransformers(node: SyntaxNode) {
+        for ((condition, transformer) in transformers)
+            if (condition.match(node))
+                transformer.apply(node)
+    }
 
     private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: Context): SourcedCategoryValues {
         val (timeValue, priority) = context.time
@@ -216,7 +226,6 @@ class SyntaxLogic(
     }
         |
         |Dropped pronouns:
-        |
         |${
         personalPronounDropSolver.map { (g1, g2) ->
             listOf("$g1", " with categories ${g2.joinToString(".") { it.alias }}")
@@ -248,6 +257,13 @@ class SyntaxLogic(
         }
             .lineUpAll()
             .joinToString("\n")
+    }
+        |
+        |Additional rules:
+        |${
+            transformers.joinToString("\n") { (condition, change) ->
+                "If a node $condition, then $change"
+            }
     }
     """.trimMargin()
 }

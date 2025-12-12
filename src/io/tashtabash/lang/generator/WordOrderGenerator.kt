@@ -13,7 +13,7 @@ import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
-import io.tashtabash.random.toSampleSpaceObject
+import io.tashtabash.random.withProb
 
 
 class WordOrderGenerator {
@@ -157,14 +157,9 @@ class WordOrderGenerator {
         syntaxParadigm: SyntaxParadigm
     ): List<GenericSSO<SyntaxRelations>> {
         val withQa = injectQuestionMarker(references, syntaxParadigm)
-
-        val position = RandomSingleton.random.nextInt(withQa.size + 1)
         val orderedObjects = AdjunctType.entries.shuffled(RandomSingleton.random)
 
-        return withQa.map {
-            (it.value.take(position) + orderedObjects.map { io -> io.relation } + it.value.drop(position))
-                .toSampleSpaceObject(it.probability)
-        }
+        return insertAtRandom(withQa, orderedObjects.map { it.relation })
     }
 
     private fun injectQuestionMarker(
@@ -174,11 +169,18 @@ class WordOrderGenerator {
         syntaxParadigm.questionMarkerPresence.questionMarker
             ?: return references
 
+        return insertAtRandom(references, listOf(QuestionMarker))
+    }
+
+    private fun insertAtRandom(
+        references: List<GenericSSO<SyntaxRelations>>,
+        elements: SyntaxRelations
+    ): List<GenericSSO<SyntaxRelations>> {
         val position = RandomSingleton.random.nextInt(references.size + 1)
 
         return references.map {
-            (it.value.take(position) + QuestionMarker + it.value.drop(position))
-                .toSampleSpaceObject(it.probability)
+            (it.value.take(position) + elements + it.value.drop(position))
+                .withProb(it.probability)
         }
     }
 }

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.syntax.clause.realization
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
 import io.tashtabash.lang.language.syntax.SubstitutingOrder
+import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTranslator
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
@@ -15,9 +16,17 @@ import kotlin.random.Random
 
 
 abstract class SentenceClause : UnfoldableClause {
-    final override fun unfold(language: Language, random: Random): WordSequence =
-        SyntaxNodeTranslator(language.changeParadigm)
-            .applyNode(toNode(language, random), random)
+    final override fun unfold(language: Language, random: Random): WordSequence {
+        val node = toNode(language, random)
+            .also { applyTransformers(it, language.changeParadigm.syntaxLogic) }
+
+        return SyntaxNodeTranslator(language.changeParadigm)
+            .applyNode(node, random)
+    }
+
+    // The only existing transformers for now expect a verb node, so they are applied here only
+    private fun applyTransformers(node: SyntaxNode, syntaxLogic: SyntaxLogic) =
+        syntaxLogic.applyTransformers(node)
 }
 
 

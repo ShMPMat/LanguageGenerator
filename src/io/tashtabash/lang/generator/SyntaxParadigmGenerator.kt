@@ -14,11 +14,10 @@ class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm): SyntaxParadigm {
         val copulaPresence = generateCopula()
         val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
-        val possiblePossessionType = PredicatePossessionType.entries.toMutableList()
 
-        if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic)) {
+        val possiblePossessionType = PredicatePossessionType.entries.toMutableList()
+        if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic))
             possiblePossessionType.remove(PredicatePossessionType.Topic)
-        }
 
         val possessionConstructionPresence = PredicatePossessionPresence(
             listOf(possiblePossessionType.randomElement().toSso(1.0))

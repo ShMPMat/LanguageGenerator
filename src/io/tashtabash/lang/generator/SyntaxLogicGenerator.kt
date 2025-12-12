@@ -11,10 +11,8 @@ import io.tashtabash.lang.language.category.NumberValue.*
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
-import io.tashtabash.lang.language.lexis.TypedSpeechPart
-import io.tashtabash.lang.language.lexis.defaultSubtype
-import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
@@ -43,7 +41,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         generatePersonalPronounDropSolver(),
-        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName)
+        changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName),
+        TransformerGenerator().generateTransformers()
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {

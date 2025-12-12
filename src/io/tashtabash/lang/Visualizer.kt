@@ -87,16 +87,16 @@ class Visualizer(val language: Language) {
         val secondSeeVerb = VerbDescription("see", mapOf(Experiencer to fathers, Stimulus to time))
         val thirdSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to time))
         val fourthSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to these, Location to home))
-        val firstHearVerb = VerbDescription("hear", mapOf(Experiencer to i, Stimulus to youDu))
+        val hearVerb = VerbDescription("hear", mapOf(Experiencer to i, Stimulus to youDu))
         val knowVerb = VerbDescription("know", mapOf(Experiencer to fathers, Stimulus to i))
         val feelVerb = VerbDescription("feel", mapOf(Experiencer to youDu, Stimulus to light))
         val existVerb = VerbDescription("exist", mapOf(Argument to i))
-        val firstBuildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
-        val secondBuildVerb = VerbDescription(
+        val buildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to handsObj))
+        val benBuildVerb = VerbDescription(
             "build",
             mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to youDu)
         )
-        val nounBeneficiaryBuildVerb = VerbDescription(
+        val nounBenBuildVerb = VerbDescription(
             "build",
             mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to fathers)
         )
@@ -106,13 +106,13 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(secondSeeVerb),
             VerbMainClauseDescription(thirdSeeVerb),
             VerbMainClauseDescription(fourthSeeVerb),
-            VerbMainClauseDescription(firstHearVerb),
+            VerbMainClauseDescription(hearVerb),
             VerbMainClauseDescription(knowVerb),
             VerbMainClauseDescription(feelVerb),
             VerbMainClauseDescription(existVerb),
-            VerbMainClauseDescription(firstBuildVerb),
-            VerbMainClauseDescription(secondBuildVerb),
-            VerbMainClauseDescription(nounBeneficiaryBuildVerb),
+            VerbMainClauseDescription(buildVerb),
+            VerbMainClauseDescription(benBuildVerb),
+            VerbMainClauseDescription(nounBenBuildVerb),
         )
         val testSentencesCopula = listOf(
             CopulaMainClauseDescription(CopulaDescription(mothers, time)),
@@ -122,25 +122,25 @@ class Visualizer(val language: Language) {
             PredicatePossessionDescription(mothers, time)
         )
 
-        val firstContext = Context(
+        val indicativeContext = Context(
             LongGonePast to Implicit,
             Indicative to Explicit
         )
-        val secondContext = Context(
+        val questionContext = Context(
             FarFuture to Implicit,
             GeneralQuestion to Explicit
         )
-        val thirdContext = Context(
+        val negationContext = Context(
             Regular to Implicit,
             Negative to Explicit
         )
 
-        printSampleClause(testSentencesMain, firstContext, "Main")
-        printSampleClause(testSentencesMain, secondContext, "General question")
-        printSampleClause(testSentencesMain, thirdContext, "Negative")
-        printSampleClause(testSentencesCopula, firstContext, "Copula")
-        printSampleClause(testSentencesCopula, secondContext, "Copula question")
-        printSampleClause(testSentencesCopula, thirdContext, "Copula negation")
+        printSampleClause(testSentencesMain, indicativeContext, "Main")
+        printSampleClause(testSentencesMain, questionContext, "General question")
+        printSampleClause(testSentencesMain, negationContext, "Negative")
+        printSampleClause(testSentencesCopula, indicativeContext, "Copula")
+        printSampleClause(testSentencesCopula, questionContext, "Copula question")
+        printSampleClause(testSentencesCopula, negationContext, "Copula negation")
     }
 
     private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {

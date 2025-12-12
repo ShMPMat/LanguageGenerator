@@ -94,18 +94,18 @@ enum class CopulaSentenceType : SentenceType {
 
 
 fun differentWordOrderProbability(sentenceType: VerbSentenceType) = when (sentenceType) {
-    MainVerbClause -> 0.0
-    SubordinateVerbClause -> 0.03
-    QuestionVerbClause -> 0.1
-    NegatedVerbClause -> 0.01
+    MainVerbClause -> .0
+    SubordinateVerbClause -> .03
+    QuestionVerbClause -> .1
+    NegatedVerbClause -> .01
 }
 
 fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when (sentenceType) {
-    //TODO no idea about these probabilities here
-    MainCopulaClause -> 0.02
-    SubordinateCopulaClause -> 0.02
-    QuestionCopulaClause -> 0.02
-    NegatedCopulaClause -> 0.01
+    // I haven't found any info about the probabilities
+    MainCopulaClause -> .02
+    SubordinateCopulaClause -> .02
+    QuestionCopulaClause -> .02
+    NegatedCopulaClause -> .01
 }
 
 

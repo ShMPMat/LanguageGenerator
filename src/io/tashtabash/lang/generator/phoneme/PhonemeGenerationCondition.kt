@@ -13,11 +13,10 @@ open class SimplePhonemeGenerationCondition(
     private val applicator: GenerationApplicator,
     private val condition: (ImmutablePhonemeContainer) -> Boolean
 ): PhonemeGenerationCondition {
-    override fun run(immutablePhonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer? {
+    override fun run(immutablePhonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer? =
         if (condition(immutablePhonemeContainer))
-            return applicator.apply(immutablePhonemeContainer)
-        return null
-    }
+            applicator.apply(immutablePhonemeContainer)
+        else null
 }
 
 class LoopPhonemeGenerationCondition(
@@ -27,10 +26,9 @@ class LoopPhonemeGenerationCondition(
     override fun run(immutablePhonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
         var resultPhonemeContainer = immutablePhonemeContainer
 
-        while (stopCondition?.invoke(resultPhonemeContainer) != false) {
+        while (stopCondition?.invoke(resultPhonemeContainer) != false)
             resultPhonemeContainer = phonemeGenerationCondition.run(resultPhonemeContainer)
                 ?: break
-        }
 
         return resultPhonemeContainer
     }
@@ -48,5 +46,3 @@ fun GenerationApplicator.always() =
 
 fun PhonemeGenerationCondition.repeat(stopCondition: ((ImmutablePhonemeContainer) -> Boolean)?) =
     LoopPhonemeGenerationCondition(this, stopCondition)
-
-

@@ -19,13 +19,13 @@ interface RelationOrder {
 
 class SubstitutingOrder(
     val relationOrder: RelationOrder,
-    val substitute: Map<SyntaxRelation, SyntaxRelation>
+    val substitutions: Map<SyntaxRelation, SyntaxRelation>
 ): RelationOrder {
     override val references: List<GenericSSO<List<SyntaxRelation>>>
         get() = relationOrder.references
             .map {
                 it.value
-                    .map { r -> substitute.getOrDefault(r, r) }
+                    .map { r -> substitutions.getOrDefault(r, r) }
                     .withProb(it.probability)
             }
 
@@ -82,8 +82,7 @@ enum class BasicSovOrder(
 enum class NominalGroupOrder(
     override val references: List<GenericSSO<SyntaxRelations>>,
     override val probability: Double
-) : SampleSpaceObject, RelationOrder {
-    //TODO no data on that
+) : SampleSpaceObject, RelationOrder { // I haven't found any info about the probabilities
     DNP(listOf(listOf(Definition, Nominal, Possessor).withProb(1.0)), 10.0),
     NDP(listOf(listOf(Nominal, Definition, Possessor).withProb(1.0)), 100.0),
     DPN(listOf(listOf(Definition, Possessor, Nominal).withProb(1.0)), 100.0),
