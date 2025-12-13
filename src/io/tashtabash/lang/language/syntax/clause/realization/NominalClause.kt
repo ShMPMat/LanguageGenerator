@@ -39,10 +39,6 @@ data class NominalClause(
                 node.addStrayChild(it.first, it.second)
             }
 
-        if (nominal.semanticsCore.hasMeaning("_personal_pronoun"))
-            node.isDropped =
-                language.changeParadigm.syntaxLogic.resolvePersonalPronounDrop(additionalCategories, actorType)
-
         return node
     }
 }

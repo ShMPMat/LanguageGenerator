@@ -19,7 +19,6 @@ import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.features.CopulaType
-import io.tashtabash.lang.utils.listCartesianProduct
 import io.tashtabash.lang.utils.values
 import io.tashtabash.random.singleton.*
 import io.tashtabash.random.toSampleSpaceObject
@@ -40,9 +39,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateNumberCategorySolver(),
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
-        generatePersonalPronounDropSolver(),
         changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName),
-        TransformerGenerator().generateTransformers()
+        TransformerGenerator(changeParadigm).generateTransformers()
     )
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -351,31 +349,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
     }
 
     private fun CategoryValues.randomPresent(vararg values: CategoryValue) = values.toList()
-        .filter { it in this }.randomElementOrNull()
+        .filter { it in this }
+        .randomElementOrNull()
         ?.let { setOf(it) }
-
-    private fun generatePersonalPronounDropSolver(): PersonalPronounDropSolver {
-        val verbalCategories =
-            changeParadigm.getSpeechPartParadigms(Verb).first().categories//TODO bullshit decision
-        val pronounCategories =
-            changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).categories
-
-        val personalPronounDropSolver = mutableListOf<Pair<SyntaxRelation, CategoryValues>>()
-
-        for (actor in listOf(SyntaxRelation.Agent, SyntaxRelation.Argument, SyntaxRelation.Patient)) {
-            val relevantCategories = verbalCategories
-                .filter { it.source is CategorySource.Agreement && it.source.relation == actor }
-
-            if (relevantCategories.size == pronounCategories.size) 0.5.chanceOf {
-                listCartesianProduct(pronounCategories.map { it.category.actualValues })
-                    .forEach { personalPronounDropSolver += actor to it }
-            } else if (relevantCategories.isNotEmpty()) 0.5.chanceOf {
-                listCartesianProduct(pronounCategories.map { it.category.actualValues })
-                    .randomElement()
-                    .let { personalPronounDropSolver += actor to it }
-            }
-        }
-
-        return personalPronounDropSolver
-    }
 }

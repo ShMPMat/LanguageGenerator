@@ -18,6 +18,7 @@ enum class MainObjectType(override val relation: SyntaxRelation): ObjectType {
 
     companion object {
         val syntaxRelations = entries.map { it.relation }
+            .distinct()
     }
 }
 

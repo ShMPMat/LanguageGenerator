@@ -26,4 +26,22 @@ data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, 
         substitutions.entries.joinToString { (o, n) -> "$n receives the place of $o" }
 }
 
+data class ChildTransformer(private val relation: SyntaxRelation, private val transformer: Transformer): Transformer {
+    override fun apply(node: SyntaxNode) {
+        node.children
+            .firstOrNull { it.first == relation }
+            ?.let { transformer.apply(it.second) }
+    }
 
+    override fun toString(): String =
+        "the child $relation $transformer"
+}
+
+data object DropTransformer: Transformer {
+    override fun apply(node: SyntaxNode) {
+        node.isDropped = true
+    }
+
+    override fun toString(): String =
+        "is dropped"
+}

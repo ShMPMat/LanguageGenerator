@@ -2,6 +2,7 @@ package io.tashtabash.lang.language.syntax.transformer
 
 import io.tashtabash.lang.language.lexis.SemanticsTag
 import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 
@@ -40,6 +41,16 @@ data class WordSpeechPartMatcher(val speechPart: SpeechPart) : SyntaxNodeMatcher
         "is $speechPart"
 }
 
+data class TypedWordSpeechPartMatcher(val speechPart: TypedSpeechPart) : SyntaxNodeMatcher {
+    override fun match(node: SyntaxNode): Boolean =
+        node.word
+            .semanticsCore
+            .speechPart == speechPart
+
+    override fun toString(): String =
+        "is $speechPart"
+}
+
 data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
     constructor(tagName: String) : this(SemanticsTag(tagName))
 
@@ -69,5 +80,7 @@ infix fun SyntaxRelation.matches(matcher: SyntaxNodeMatcher) =
     ChildMatcher(this, matcher)
 
 fun of(speechPart: SpeechPart) = WordSpeechPartMatcher(speechPart)
+
+fun of(speechPart: TypedSpeechPart) = TypedWordSpeechPartMatcher(speechPart)
 
 fun has(tagName: String) = WordTagMatcher(tagName)

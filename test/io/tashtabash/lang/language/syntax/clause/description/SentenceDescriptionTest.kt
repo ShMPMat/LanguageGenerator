@@ -78,10 +78,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = Context(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = Context(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
 
         assertEquals(
             listOf(
@@ -149,10 +146,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = Context(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = Context(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
 
         assertEquals(
             listOf(
@@ -225,10 +219,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to dogDescription, MainObjectType.Patient to dogDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -305,10 +296,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = Context(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = Context(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
 
         assertEquals(
             listOf(
@@ -375,10 +363,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to personalPronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -448,10 +433,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Argument to dogDescription, AdjunctType.Benefactor to dogDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -529,10 +511,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = Context(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = Context(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
 
         assertEquals(
             listOf(
@@ -624,10 +603,7 @@ internal class SentenceDescriptionTest {
             )
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -681,7 +657,7 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
                 ),
-                personalPronounDropSolver = listOf(SyntaxRelation.Argument to listOf(Second))
+                transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Argument, DropTransformer))
             )
         )
         // Set up descriptions
@@ -691,10 +667,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to pronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -730,7 +703,7 @@ internal class SentenceDescriptionTest {
                     Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Agent to listOf(),
                     Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
                 ),
-                personalPronounDropSolver = listOf(SyntaxRelation.Agent to listOf(Second))
+                transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Agent, DropTransformer))
             )
         )
         // Set up descriptions
@@ -743,10 +716,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -800,10 +770,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(
-            LongGonePast to Implicit,
-            Indicative to Explicit
-        )
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(

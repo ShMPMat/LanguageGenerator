@@ -15,7 +15,6 @@ import io.tashtabash.lang.language.syntax.context.Priority
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.transformer.SyntaxNodeMatcher
 import io.tashtabash.lang.language.syntax.transformer.Transformer
-import io.tashtabash.lang.utils.equalsByElement
 import kotlin.math.abs
 
 
@@ -30,7 +29,6 @@ class SyntaxLogic(
     private val numberCategorySolver: NumberCategorySolver? = null,
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
-    private val personalPronounDropSolver: PersonalPronounDropSolver = listOf(),
     private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
     private val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf()
 ) {
@@ -80,12 +78,6 @@ class SyntaxLogic(
             add(number)
         }
     }
-
-    fun resolvePersonalPronounDrop(categories: CategoryValues, actorType: SyntaxRelation?): Boolean =
-        personalPronounDropSolver
-            .any { (a, cs) ->
-                a == actorType && categories.equalsByElement(cs)
-            }
 
     fun resolveVerbCase(
         verbType: TypedSpeechPart,
@@ -225,15 +217,6 @@ class SyntaxLogic(
             .joinToString("\n")
     }
         |
-        |Dropped pronouns:
-        |${
-        personalPronounDropSolver.map { (g1, g2) ->
-            listOf("$g1", " with categories ${g2.joinToString(".") { it.alias }}")
-        }
-            .lineUpAll()
-            .joinToString("\n") + if (personalPronounDropSolver.isEmpty()) "none" else ""
-    }
-        |
         |${
         copulaCaseSolver.map { (context, categories) ->
             listOf(
@@ -295,7 +278,5 @@ private fun TimeContext.toNumber() = when (this) {
 }
 
 data class NumberCategorySolver(val amountMap: Map<NumberValue, IntRange>, val allForm: NumberValue)
-
-typealias PersonalPronounDropSolver = List<Pair<SyntaxRelation, CategoryValues>>
 
 typealias VerbContextInfo = Pair<TypedSpeechPart, TimeContext>
