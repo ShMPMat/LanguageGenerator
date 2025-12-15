@@ -754,7 +754,7 @@ internal class SentenceDescriptionTest {
                     Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
                 ),
                 transformers = listOf(
-                    has("trans") + SyntaxRelation.Agent.matches(of(Noun)) + SyntaxRelation.Patient.matches(of(PersonalPronoun))
+                    has(SemanticsTag("trans")) + SyntaxRelation.Agent.matches(of(Noun)) + SyntaxRelation.Patient.matches(of(PersonalPronoun))
                             to RemapOrderTransformer(mapOf(SyntaxRelation.Agent to SyntaxRelation.Patient, SyntaxRelation.Patient to SyntaxRelation.Agent))
                 )
             )

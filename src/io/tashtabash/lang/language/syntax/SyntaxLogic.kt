@@ -18,7 +18,7 @@ import io.tashtabash.lang.language.syntax.transformer.Transformer
 import kotlin.math.abs
 
 
-class SyntaxLogic(
+data class SyntaxLogic(
     private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
     // Maps Description-level semantic roles to Clause-level syntactic relations
     private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
@@ -106,6 +106,9 @@ class SyntaxLogic(
         for ((condition, transformer) in transformers)
             if (condition.match(node))
                 transformer.apply(node)
+
+        for ((_, child) in node.children)
+            applyTransformers(child)
     }
 
     private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: Context): SourcedCategoryValues {
@@ -123,6 +126,10 @@ class SyntaxLogic(
 
     fun resolveArgumentTypes(speechPart: TypedSpeechPart, objectType: ObjectType): SyntaxRelation =
         verbArgumentSolver.getOrDefault(speechPart to objectType, objectType.relation)
+
+    fun resolvePossibleArguments(speechPart: TypedSpeechPart): List<SyntaxRelation> =
+        verbArgumentSolver.filter { (k) -> k.first == speechPart }
+            .map { it.value }
 
     private fun chooseClosestTense(
         language: Language,
@@ -263,7 +270,7 @@ private fun TenseValue.toNumber() = when (this) {
 }
 
 private fun TimeContext.toNumber() = when (this) {
-    TimeContext.Present -> 0.0
+    TimeContext.Present -> .0
     TimeContext.ImmediateFuture -> 7.0
     TimeContext.ImmediatePast -> -97.0
     TimeContext.Future -> 10.0

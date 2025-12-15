@@ -1,36 +1,67 @@
 package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.language.category.CategorySource
+import io.tashtabash.lang.language.category.definitenessName
+import io.tashtabash.lang.language.category.deixisName
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
-import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.Noun
 import io.tashtabash.lang.language.lexis.SpeechPart.PersonalPronoun
-import io.tashtabash.lang.language.lexis.toDefault
+import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
-import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.transformer.*
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.testProbability
 
 
-class TransformerGenerator(val changeParadigm: WordChangeParadigm) {
+class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLogic: SyntaxLogic) {
     fun generateTransformers(): List<Pair<SyntaxNodeMatcher, Transformer>> = listOfNotNull(
         // Word order
-        (has("trans") + Agent.matches(of(Noun)) + Patient.matches(of(PersonalPronoun))
+        (has(SemanticsTag("trans")) + Agent.matches(of(Noun)) + Patient.matches(of(PersonalPronoun))
                 to RemapOrderTransformer(mapOf(Agent to Patient, Patient to Agent)))
-            .takeIf { 0.05.testProbability() }
+            .takeIf { .05.testProbability() }
         ) +
-            generateDropTransformers()
+            generateDeixisSimplifier() +
+            generateDefinitivenessSimplifier() +
+            generateDrop()
 
-    private fun generateDropTransformers(): List<Pair<SyntaxNodeMatcher, Transformer>> {
+    private fun generateDeixisSimplifier() =
+        changeParadigm.speechParts
+            .filter(::isNominal)
+            .filter {
+                changeParadigm.getSpeechPartParadigm(it)
+                    .getCategoryOrNull(deixisName)
+                    ?.compulsoryData
+                    ?.isCompulsory == false
+            }
+            .map {
+                of(it) + has(deixisName) + has(Possessor) to RemoveCategoryTransformer(deixisName)
+            }
+            .filter { .5.testProbability() }
+
+    private fun generateDefinitivenessSimplifier() =
+        changeParadigm.speechParts
+            .filter(::isNominal)
+            .filter {
+                changeParadigm.getSpeechPartParadigm(it)
+                    .getCategoryOrNull(definitenessName)
+                    ?.compulsoryData
+                    ?.isCompulsory == false
+            }
+            .map {
+                of(it) + has(definitenessName) + has(Possessor) to RemoveCategoryTransformer(definitenessName)
+            }
+            .filter { .5.testProbability() }
+
+    private fun generateDrop(): List<Pair<SyntaxNodeMatcher, Transformer>> {
+        val transformers = mutableListOf<Pair<SyntaxNodeMatcher, Transformer>>()
         val pronounCategories = changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault())
             .categories
-        val transformers = mutableListOf<Pair<SyntaxNodeMatcher, Transformer>>()
 
         for (verbParadigm in changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)) {
             val verbalCategories = verbParadigm.categories
 
-            for (relation in MainObjectType.syntaxRelations) {
+            for (relation in resolvePossibleArguments(verbParadigm.speechPart)) {
                 val roleAgreementCategories = verbalCategories
                     .filter { it.source is CategorySource.Agreement && it.source.relation == relation }
                 val unrepresentedCategoriesNumber = pronounCategories.size - roleAgreementCategories.size
@@ -46,4 +77,11 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm) {
 
         return transformers
     }
+
+    private fun resolvePossibleArguments(speechPart: TypedSpeechPart) =
+        when (speechPart.subtype) {
+            defaultSubtype -> listOf(Agent, Patient)
+            intransitiveSubtype -> listOf(Argument)
+            else -> syntaxLogic.resolvePossibleArguments(speechPart)
+        }
 }

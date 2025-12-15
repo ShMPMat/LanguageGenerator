@@ -18,13 +18,16 @@ import kotlin.random.Random
 abstract class SentenceClause : UnfoldableClause {
     final override fun unfold(language: Language, random: Random): WordSequence {
         val node = toNode(language, random)
-            .also { applyTransformers(it, language.changeParadigm.syntaxLogic) }
+            .also {
+                SyntaxNodeTranslator(language.changeParadigm).injectCategories(it)
+                applyTransformers(it, language.changeParadigm.syntaxLogic)
+            }
 
         return SyntaxNodeTranslator(language.changeParadigm)
             .applyNode(node, random)
     }
 
-    // The only existing transformers for now expect a verb node, so they are applied here only
+    // The transformers are supposed to be applied to sentence heads and then recursively to it's children
     private fun applyTransformers(node: SyntaxNode, syntaxLogic: SyntaxLogic) =
         syntaxLogic.applyTransformers(node)
 }

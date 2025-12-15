@@ -20,14 +20,18 @@ data class MulMatcher(val matchers: List<SyntaxNodeMatcher>) : SyntaxNodeMatcher
         matchers.joinToString(", and ")
 }
 
-data class ChildMatcher(val relation: SyntaxRelation, val matcher: SyntaxNodeMatcher) : SyntaxNodeMatcher {
+// A child exists and matches the predicate if it's specified
+data class ChildMatcher(val relation: SyntaxRelation, val matcher: SyntaxNodeMatcher? = null) : SyntaxNodeMatcher {
     override fun match(node: SyntaxNode): Boolean =
         node.children
             .firstOrNull { it.first == relation }
-            ?.let { matcher.match(it.second) } == true
+            ?.let { matcher?.match(it.second) ?: true } == true
 
     override fun toString(): String =
-        "has a child $relation (which $matcher)"
+        if (matcher != null)
+            "has a child $relation (which $matcher)"
+        else
+            "has a child $relation"
 }
 
 data class WordSpeechPartMatcher(val speechPart: SpeechPart) : SyntaxNodeMatcher {
@@ -52,8 +56,6 @@ data class TypedWordSpeechPartMatcher(val speechPart: TypedSpeechPart) : SyntaxN
 }
 
 data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
-    constructor(tagName: String) : this(SemanticsTag(tagName))
-
     override fun match(node: SyntaxNode): Boolean =
         node.word
             .semanticsCore
@@ -62,6 +64,16 @@ data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
 
     override fun toString(): String =
         "is ${tag.name}"
+}
+
+data class CategoryMatcher(val categoryName: String) : SyntaxNodeMatcher {
+    override fun match(node: SyntaxNode): Boolean =
+        node.word
+            .categoryValues
+            .any { it.parent.category.outType == categoryName }
+
+    override fun toString(): String =
+        "has a category value for $categoryName"
 }
 
 
@@ -80,7 +92,8 @@ infix fun SyntaxRelation.matches(matcher: SyntaxNodeMatcher) =
     ChildMatcher(this, matcher)
 
 fun of(speechPart: SpeechPart) = WordSpeechPartMatcher(speechPart)
-
 fun of(speechPart: TypedSpeechPart) = TypedWordSpeechPartMatcher(speechPart)
 
-fun has(tagName: String) = WordTagMatcher(tagName)
+fun has(tag: SemanticsTag) = WordTagMatcher(tag)
+fun has(categoryName: String) = CategoryMatcher(categoryName)
+fun has(relation: SyntaxRelation) = ChildMatcher(relation)

@@ -13,8 +13,8 @@ import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType.*
 
 
 data class SyntaxNode(
-    val word: Word,
-    val categoryValues: MutableList<CategoryValue>,
+    var word: Word,
+    val categoryValues: MutableList<CategoryValue>, // Only its own values, excluding the values from the agreement
     var arranger: Arranger,
     var typeForChildren: SyntaxRelation,
     private val _relation: MutableMap<SyntaxRelation, SyntaxNode> = mutableMapOf(), // Inc. non-children relations
@@ -53,8 +53,8 @@ data class SyntaxNode(
     /**
      * Extract CategoryValues using syntax relations (Agreement etc.)
      */
-    fun extractValues(references: List<SourcedCategory>): List<SourcedCategoryValue> =
-        references.mapNotNull { sourcedCategory ->
+    fun extractValues(categories: List<SourcedCategory>): List<SourcedCategoryValue> =
+        categories.mapNotNull { sourcedCategory ->
             val (category, source, compulsoryData) = sourcedCategory
 
             val res = when (source) {

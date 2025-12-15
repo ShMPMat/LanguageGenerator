@@ -40,8 +40,9 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName),
-        TransformerGenerator(changeParadigm).generateTransformers()
-    )
+    ).let {
+        it.copy(transformers = TransformerGenerator(changeParadigm, it).generateTransformers())
+    }
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
         val copulaCaseSolver: MutableMap<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
@@ -197,14 +198,13 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             SyntaxRelation.Location.withProb(0.1)
         )
 
-        for (verbType in changeParadigm.getSpeechParts(Verb)) {
+        for (verbType in changeParadigm.getSpeechParts(Verb))
             when (verbType.subtype) {
                 in additionalVerbTypes.map { it.speechPart.subtype } -> {
                     solver[verbType to MainObjectType.Experiencer] = possibleObliqueExperiencer.randomUnwrappedElement()
                     solver[verbType to MainObjectType.Stimulus] = SyntaxRelation.Argument
                 }
             }
-        }
 
         return solver
     }

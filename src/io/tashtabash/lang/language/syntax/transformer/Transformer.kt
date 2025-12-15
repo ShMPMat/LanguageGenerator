@@ -11,6 +11,28 @@ interface Transformer {
     fun apply(node: SyntaxNode)
 }
 
+data class ChildTransformer(private val relation: SyntaxRelation, private val transformer: Transformer): Transformer {
+    override fun apply(node: SyntaxNode) {
+        node.children
+            .firstOrNull { it.first == relation }
+            ?.let { transformer.apply(it.second) }
+    }
+
+    override fun toString(): String =
+        "the child $relation $transformer"
+}
+
+data class RemoveCategoryTransformer(private val categoryName: String): Transformer {
+    override fun apply(node: SyntaxNode) {
+        node.word = node.word.copy(
+            categoryValues = node.word.categoryValues.filterNot { it.categoryValue.parentClassName == categoryName }
+        )
+    }
+
+    override fun toString(): String =
+        "remove category values for $categoryName"
+}
+
 data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, SyntaxRelation>): Transformer {
     override fun apply(node: SyntaxNode) {
         val arranger = node.arranger
@@ -24,17 +46,6 @@ data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, 
 
     override fun toString(): String =
         substitutions.entries.joinToString { (o, n) -> "$n receives the place of $o" }
-}
-
-data class ChildTransformer(private val relation: SyntaxRelation, private val transformer: Transformer): Transformer {
-    override fun apply(node: SyntaxNode) {
-        node.children
-            .firstOrNull { it.first == relation }
-            ?.let { transformer.apply(it.second) }
-    }
-
-    override fun toString(): String =
-        "the child $relation $transformer"
 }
 
 data object DropTransformer: Transformer {

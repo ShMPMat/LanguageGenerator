@@ -59,7 +59,7 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                     }
                 }
             }
-        num to SyntaxNodeTranslator(changeParadigm).applyNode(node, Random(0))
+        num to SyntaxNodeTranslator(changeParadigm).applyNodeFully(node, Random(0))
     }
     .map { (n, c) -> listOf("$n  ", c.toString(), " - " + c.printClauseInfo(true)) }
     .lineUpAll()
