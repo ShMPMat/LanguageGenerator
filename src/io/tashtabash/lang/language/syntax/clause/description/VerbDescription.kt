@@ -35,8 +35,7 @@ class VerbDescription(
                     verb,
                     categoryValues,
                     arguments.getValue(SyntaxRelation.Argument)
-                        .toClause(language, context, random)
-                        .copy(actorType = SyntaxRelation.Argument),
+                        .toClause(language, context, random),
                     constructCaseAdjunctClauses(arguments, language, context, random)
                 )
             else
@@ -44,11 +43,9 @@ class VerbDescription(
                     verb,
                     categoryValues,
                     arguments.getValue(SyntaxRelation.Agent)
-                        .toClause(language, context, random)
-                        .copy(actorType = SyntaxRelation.Agent),
+                        .toClause(language, context, random),
                     arguments.getValue(SyntaxRelation.Patient)
-                        .toClause(language, context, random)
-                        .copy(actorType = SyntaxRelation.Patient),
+                        .toClause(language, context, random),
                     constructCaseAdjunctClauses(arguments, language, context, random)
                 )
         }

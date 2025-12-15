@@ -14,8 +14,7 @@ import kotlin.random.Random
 data class NominalClause(
     val nominal: Word,
     val definitions: List<NounDefinerClause>,
-    val additionalCategories: CategoryValues = listOf(),
-    private val actorType: SyntaxRelation? = null
+    val additionalCategories: CategoryValues = listOf()
 ) : SyntaxClause {
     init {
         val validNominals = listOf(SpeechPart.Noun, SpeechPart.PersonalPronoun, SpeechPart.DeixisPronoun)
