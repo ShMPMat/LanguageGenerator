@@ -37,7 +37,7 @@ class Visualizer(val language: Language) {
     }
 
     private fun printTestSentences() {
-        val light = NominalDescription("light", ActorComplimentValue(AmountValue(1), null))
+        val light = NominalDescription("light", ActorComplimentValue(1, null))
         val mothers = NominalDescription(
             "mother",
             ActorComplimentValue(4, DeixisValue.Proximal),
