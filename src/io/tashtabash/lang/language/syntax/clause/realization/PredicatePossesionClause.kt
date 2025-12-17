@@ -8,10 +8,7 @@ import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import kotlin.random.Random
 
 
-class ObliquePredicatePossessionClause(
-    val verbClause: IntransitiveVerbClause,
-    val type: VerbSentenceType
-) : SentenceClause() {
+class ObliquePredicatePossessionClause(val verbClause: VerbClause, val type: VerbSentenceType) : SentenceClause() {
     override fun toNode(language: Language, random: Random) =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)

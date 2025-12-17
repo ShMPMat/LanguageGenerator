@@ -4,8 +4,8 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
-import io.tashtabash.lang.language.syntax.clause.realization.IntransitiveVerbClause
 import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePossessionClause
+import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue
@@ -64,14 +64,14 @@ class ObliquePredicatePossessionDescription(
     override fun toClause(language: Language, context: Context, random: Random) =
         ObliquePredicatePossessionClause(
             language.lexis.getWordOrNull("exist")?.let { word ->
-                IntransitiveVerbClause(
+                VerbClause(
                     word,
                     language.changeParadigm.syntaxLogic.resolveVerbForm(
                         language,
                         word.semanticsCore.speechPart,
                         context
                     ),
-                    ownedDescription.toClause(language, context, random),
+                    mapOf(SyntaxRelation.Argument to ownedDescription.toClause(language, context, random)),
                     listOf(
                         CaseAdjunctClause(
                             ownerDescription.toClause(language, context, random),

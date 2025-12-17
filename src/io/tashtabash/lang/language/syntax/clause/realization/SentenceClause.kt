@@ -42,11 +42,7 @@ fun SyntaxNode.addQuestionMarker(language: Language) {
         )
 }
 
-
-class TransitiveVerbSentenceClause(
-    private val verbClause: TransitiveVerbClause,
-    val type: VerbSentenceType
-) : SentenceClause() {
+class VerbSentenceClause(private val verbClause: VerbClause, val type: VerbSentenceType) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
         verbClause.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
@@ -55,26 +51,14 @@ class TransitiveVerbSentenceClause(
             if (type == VerbSentenceType.NegatedVerbClause)
                 categoryValues += NegationValue.Negative
 
-            arranger = RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
-        }
-}
-
-class IntransitiveVerbSentenceClause(
-    private val verbClause: IntransitiveVerbClause,
-    val type: VerbSentenceType
-) : SentenceClause() {
-    override fun toNode(language: Language, random: Random): SyntaxNode =
-        verbClause.toNode(language, random).apply {
-            if (type == VerbSentenceType.QuestionVerbClause)
-                addQuestionMarker(language)
-
-            if (type == VerbSentenceType.NegatedVerbClause)
-                categoryValues += NegationValue.Negative
-
-            arranger = RelationArranger(SubstitutingOrder(
-                language.changeParadigm.wordOrder.sovOrder.getValue(type),
-                mapOf(SyntaxRelation.Agent to SyntaxRelation.Argument)
-            ))
+            arranger =
+                if (verbClause.arguments.containsKey(SyntaxRelation.Argument))
+                    RelationArranger(SubstitutingOrder(
+                        language.changeParadigm.wordOrder.sovOrder.getValue(type),
+                        mapOf(SyntaxRelation.Agent to SyntaxRelation.Argument)
+                    ))
+                else
+                    RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
         }
 }
 

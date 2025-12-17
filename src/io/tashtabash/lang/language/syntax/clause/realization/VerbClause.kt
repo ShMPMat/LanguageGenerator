@@ -13,18 +13,15 @@ import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
 
-class TransitiveVerbClause(
+class VerbClause(
     val verb: Word,
     val additionalCategories: SourcedCategoryValues,
-    val subjectClause: NominalClause,
-    val objectClause: NominalClause,
+    val arguments: Map<SyntaxRelation, NominalClause>,
     val adjuncts: List<AdjunctClause> = listOf()
 ) : SyntaxClause {
     init {
         if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$verb is not a verb")
-        if (verb.semanticsCore.tags.any { it.name == "intrans" })
-            throw SyntaxException("$verb in the transitive clause is intransitive")
     }
 
     override fun toNode(language: Language, random: Random): SyntaxNode {
@@ -33,46 +30,14 @@ class TransitiveVerbClause(
             additionalCategories.map { it.categoryValue },
             UndefinedArranger
         )
-        val agent = subjectClause.toNode(language, random).addThirdPerson()
-        val patient = objectClause.toNode(language, random).addThirdPerson()
 
-        agent.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Agent)
-        patient.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Patient)
+        for ((relation, clause) in arguments) {
+            val argumentNode = clause.toNode(language, random)
+                .addThirdPerson()
 
-        node.setRelationChild(SyntaxRelation.Agent, agent)
-        node.setRelationChild(SyntaxRelation.Patient, patient)
-
-        for (adjunct in adjuncts)
-            node.setRelationChild(adjunct.relation, adjunct.toNode(language, random))
-
-        return node
-    }
-}
-
-class IntransitiveVerbClause(
-    val verb: Word,
-    val additionalCategories: SourcedCategoryValues,
-    val argumentClause: NominalClause,
-    val adjuncts: List<AdjunctClause> = listOf()
-) : SyntaxClause {
-    init {
-        if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
-            throw SyntaxException("$verb is not a verb")
-        if (verb.semanticsCore.tags.any { it.name == "trans" })
-            throw SyntaxException("$verb in the intransitive clause is transitive")
-    }
-
-    override fun toNode(language: Language, random: Random): SyntaxNode {
-        val node = verb.toNode(
-            SyntaxRelation.Verb,
-            additionalCategories.map { it.categoryValue },
-            UndefinedArranger
-        )
-        val argument = argumentClause.toNode(language, random).addThirdPerson()
-
-        argument.addRelevantCases(language.changeParadigm.syntaxLogic, node, SyntaxRelation.Argument)
-
-        node.setRelationChild(SyntaxRelation.Argument, argument)
+            argumentNode.addRelevantCases(language.changeParadigm.syntaxLogic, node, relation)
+            node.setRelationChild(relation, argumentNode)
+        }
 
         for (adjunct in adjuncts)
             node.setRelationChild(adjunct.relation, adjunct.toNode(language, random))

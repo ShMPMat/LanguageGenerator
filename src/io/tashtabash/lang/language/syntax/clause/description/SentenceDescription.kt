@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.clause.realization.*
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
@@ -22,11 +21,7 @@ class VerbMainClauseDescription(private val verbClause: VerbDescription) : Sente
                 Negative -> VerbSentenceType.NegatedVerbClause
             }
 
-            when (it) {
-                is TransitiveVerbClause -> TransitiveVerbSentenceClause(it, type)
-                is IntransitiveVerbClause -> IntransitiveVerbSentenceClause(it, type)
-                else -> throw SyntaxException("Can't handle a clause of type '${it.javaClass}'")
-            }
+            VerbSentenceClause(it, type)
         }
 }
 
