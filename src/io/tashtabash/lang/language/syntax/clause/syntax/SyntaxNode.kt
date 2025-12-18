@@ -73,6 +73,8 @@ data class SyntaxNode(
                 }
             sourcedCategory[res]
         }
+
+    override fun toString() = "$word, $typeForChildren, $categoryValues"
 }
 
 
