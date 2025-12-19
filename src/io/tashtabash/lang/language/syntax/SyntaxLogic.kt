@@ -105,7 +105,7 @@ data class SyntaxLogic(
     fun applyTransformers(node: SyntaxNode) {
         for ((condition, transformer) in transformers)
             if (condition.match(node))
-                transformer.apply(node)
+                transformer.apply(node, this)
 
         for ((_, child) in node.children)
             applyTransformers(child)

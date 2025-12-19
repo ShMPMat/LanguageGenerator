@@ -10,25 +10,12 @@ import kotlin.random.Random
 
 
 class SyntaxNodeTranslator(private val paradigm: ChangeParadigm) {
-    internal fun applyNodeFully(node: SyntaxNode, random: Random): WordSequence {
-        injectCategories(node)
-        return applyNode(node, random)
-    }
-
-    internal fun injectCategories(node: SyntaxNode) {
-        val categoryValues = computeValues(node)
-        node.word = node.word.copy(categoryValues = categoryValues)
-
-        for (child in node.children)
-            injectCategories(child.second)
-    }
-
     internal fun applyNode(node: SyntaxNode, random: Random): WordSequence {
         val nodesOrder = node.arranger.order(node.allTreeRelations.map { it to it }, random)
 
         val currentClause = node.typeForChildren to paradigm.wordChangeParadigm.apply(
             node.word.copy(categoryValues = listOf()),
-            node.word.categoryValues
+            computeValues(node)
         ).words
         val childrenClauses = node.children
             .map { it to applyNode(it.second, random) }

@@ -1,13 +1,13 @@
 package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.category.CaseValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
+import io.tashtabash.lang.language.syntax.transformer.AddCategoryTransformer
 import kotlin.random.Random
 
 
@@ -16,7 +16,7 @@ abstract class NounDefinerClause(val relationFromNoun: SyntaxRelation) : SyntaxC
 
 class AdjectiveClause(
     val adjective: Word,
-    val additionalCategories: SourcedCategoryValues = listOf()
+    val categories: SourcedCategoryValues = listOf()
 ) : NounDefinerClause(SyntaxRelation.Definition) {
     init {
         if (adjective.semanticsCore.speechPart.type != SpeechPart.Adjective)
@@ -26,7 +26,7 @@ class AdjectiveClause(
     override fun toNode(language: Language, random: Random) =
         adjective.toNode(
             SyntaxRelation.Definition,
-            additionalCategories.map { it.categoryValue },
+            categories.map { it.categoryValue },
             PassingSingletonArranger
         )
 }
@@ -36,12 +36,6 @@ class PossessorClause(val nominalClause: NominalClause) : NounDefinerClause(Synt
     override fun toNode(language: Language, random: Random) =
         nominalClause.toNode(language, random).apply {
             typeForChildren = SyntaxRelation.Possessor
-
-            categoryValues.removeIf { it is CaseValue }
-            val newCaseMarkers = language.changeParadigm.syntaxLogic.resolveSyntaxRelationToCase(
-                SyntaxRelation.Possessor,
-                word.semanticsCore.speechPart
-            )
-            categoryValues += newCaseMarkers
+            AddCategoryTransformer(SyntaxRelation.Possessor).apply(this, language.changeParadigm.syntaxLogic)
         }
 }

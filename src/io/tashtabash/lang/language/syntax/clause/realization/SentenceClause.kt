@@ -18,10 +18,7 @@ import kotlin.random.Random
 abstract class SentenceClause : UnfoldableClause {
     final override fun unfold(language: Language, random: Random): WordSequence {
         val node = toNode(language, random)
-            .also {
-                SyntaxNodeTranslator(language.changeParadigm).injectCategories(it)
-                applyTransformers(it, language.changeParadigm.syntaxLogic)
-            }
+        applyTransformers(node, language.changeParadigm.syntaxLogic)
 
         return SyntaxNodeTranslator(language.changeParadigm)
             .applyNode(node, random)
