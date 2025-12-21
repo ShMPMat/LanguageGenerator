@@ -68,9 +68,8 @@ data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
 
 data class CategoryMatcher(val categoryName: String) : SyntaxNodeMatcher {
     override fun match(node: SyntaxNode): Boolean =
-        node.word
-            .categoryValues
-            .any { it.parent.category.outType == categoryName }
+        node.categoryValues
+            .any { it.parentClassName == categoryName }
 
     override fun toString(): String =
         "has a category value for $categoryName"
