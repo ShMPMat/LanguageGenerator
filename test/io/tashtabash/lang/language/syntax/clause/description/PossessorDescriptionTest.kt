@@ -3,7 +3,6 @@ package io.tashtabash.lang.language.syntax.clause.description
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
-import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.SpeechPart.Verb
@@ -45,9 +44,7 @@ internal class PossessorDescriptionTest {
             listOf(pronoun, noun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to Argument to listOf(),
-                ),
+                verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
                 syntaxRelationSolver = mapOf(Possessor to PersonalPronoun.toDefault() to listOf())
             )
         )
@@ -110,9 +107,7 @@ internal class PossessorDescriptionTest {
             listOf(pronoun, noun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to Argument to listOf(),
-                ),
+                verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
                 syntaxRelationSolver = mapOf(Possessor to PersonalPronoun.toDefault() to listOf(CaseValue.Genitive))
             )
         )

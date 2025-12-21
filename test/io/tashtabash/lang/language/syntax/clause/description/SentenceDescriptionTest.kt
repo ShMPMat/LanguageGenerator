@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordReduplicationCategoryApplicator
-import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.morphem.MorphemeData
@@ -66,7 +65,7 @@ internal class SentenceDescriptionTest {
             syntaxLogic = SyntaxLogic(
                 mapOf(Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 ),
             )
         )
@@ -132,8 +131,8 @@ internal class SentenceDescriptionTest {
             syntaxLogic = SyntaxLogic(
                 mapOf(Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
             )
         )
@@ -201,7 +200,7 @@ internal class SentenceDescriptionTest {
             listOf(dog, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                verbCasesSolver = mapOf(Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)),
+                verbCasesSolver = mapOf(Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)),
                 verbArgumentSolver = mapOf(// Check if this mapping is used
                     Verb.toIntransitive() to MainObjectType.Agent to SyntaxRelation.Argument,
                     Verb.toIntransitive() to MainObjectType.Patient to SyntaxRelation.Benefactor
@@ -280,7 +279,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 )
             )
         )
@@ -351,7 +350,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 ),
                 nounClassCategorySolver = mapOf(NounClassValue.Female to NounClassValue.Female)
             )
@@ -418,7 +417,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive))
             )
@@ -492,7 +491,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 ),
                 numberCategorySolver = NumberCategorySolver(
                     mapOf(NumberValue.Singular to 1..1, NumberValue.Plural to 2..Int.MAX_VALUE),
@@ -582,7 +581,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive)),
                 numberCategorySolver = NumberCategorySolver(
@@ -655,7 +654,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to setOf<CategoryValue>() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 ),
                 transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Argument, DropTransformer))
             )
@@ -700,8 +699,8 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
                 transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Agent, DropTransformer))
             )
@@ -750,8 +749,8 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to setOf<CategoryValue>() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
                 transformers = listOf(
                     has(SemanticsTag("trans")) + SyntaxRelation.Agent.matches(of(Noun)) + SyntaxRelation.Patient.matches(of(PersonalPronoun))

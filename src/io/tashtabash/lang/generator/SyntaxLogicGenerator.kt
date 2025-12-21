@@ -151,9 +151,8 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         return verbFormSolver
     }
 
-    private fun generateVerbCaseSolver(): Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation/*TODO depend on speech part too*/>, CategoryValues> {
-        val result: MutableMap<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> =
-            mutableMapOf()
+    private fun generateVerbCaseSolver(): Map<Pair<TypedSpeechPart, SyntaxRelation/*TODO depend on speech part too*/>, CategoryValues> {
+        val result: MutableMap<Pair<TypedSpeechPart, SyntaxRelation>, CategoryValues> = mutableMapOf()
         //TODO handle split
         val verbParadigms = changeParadigm.getSpeechPartParadigms(Verb)
         val cases = changeParadigm.categories.first { it.outType == caseName }.actualValues
@@ -161,31 +160,25 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         for (verbTypeParadigm in verbParadigms) {
             val verbType = verbTypeParadigm.speechPart
             val isTransitive = verbType.subtype == defaultSubtype
-            val times = verbTypeParadigm.categories
-                .firstOrNull { it.category is Tense }
-                ?.category?.actualValues
-                ?.map { setOf(it) }
-                ?: listOf(setOf())
 
-            for (time in times)
-                if (CaseValue.Nominative in cases && CaseValue.Accusative in cases)
-                    if (isTransitive) {
-                        result[verbType to time to SyntaxRelation.Agent] = listOf(CaseValue.Nominative)
-                        result[verbType to time to SyntaxRelation.Patient] = listOf(CaseValue.Accusative)
-                    } else
-                        result[verbType to time to SyntaxRelation.Argument] = listOf(CaseValue.Nominative)
-                else if (CaseValue.Ergative in cases && CaseValue.Absolutive in cases)
-                    if (isTransitive) {
-                        result[verbType to time to SyntaxRelation.Agent] = listOf(CaseValue.Ergative)
-                        result[verbType to time to SyntaxRelation.Patient] = listOf(CaseValue.Absolutive)
-                    } else
-                        result[verbType to time to SyntaxRelation.Argument] = listOf(CaseValue.Absolutive)
-                else
-                    if (isTransitive) {
-                        result[verbType to time to SyntaxRelation.Agent] = listOf()
-                        result[verbType to time to SyntaxRelation.Patient] = listOf()
-                    } else
-                        result[verbType to time to SyntaxRelation.Argument] = listOf()
+            if (CaseValue.Nominative in cases && CaseValue.Accusative in cases)
+                if (isTransitive) {
+                    result[verbType to SyntaxRelation.Agent] = listOf(CaseValue.Nominative)
+                    result[verbType to SyntaxRelation.Patient] = listOf(CaseValue.Accusative)
+                } else
+                    result[verbType to SyntaxRelation.Argument] = listOf(CaseValue.Nominative)
+            else if (CaseValue.Ergative in cases && CaseValue.Absolutive in cases)
+                if (isTransitive) {
+                    result[verbType to SyntaxRelation.Agent] = listOf(CaseValue.Ergative)
+                    result[verbType to SyntaxRelation.Patient] = listOf(CaseValue.Absolutive)
+                } else
+                    result[verbType to SyntaxRelation.Argument] = listOf(CaseValue.Absolutive)
+            else
+                if (isTransitive) {
+                    result[verbType to SyntaxRelation.Agent] = listOf()
+                    result[verbType to SyntaxRelation.Patient] = listOf()
+                } else
+                    result[verbType to SyntaxRelation.Argument] = listOf()
         }
 
         return result

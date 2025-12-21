@@ -45,14 +45,14 @@ data class WordSpeechPartMatcher(val speechPart: SpeechPart) : SyntaxNodeMatcher
         "is $speechPart"
 }
 
-data class TypedWordSpeechPartMatcher(val speechPart: TypedSpeechPart) : SyntaxNodeMatcher {
+data class TypedWordSpeechPartMatcher(val speechParts: List<TypedSpeechPart>) : SyntaxNodeMatcher {
     override fun match(node: SyntaxNode): Boolean =
         node.word
             .semanticsCore
-            .speechPart == speechPart
+            .speechPart in speechParts
 
     override fun toString(): String =
-        "is $speechPart"
+        "is ${speechParts.joinToString(", or ")}"
 }
 
 data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
@@ -91,7 +91,8 @@ infix fun SyntaxRelation.matches(matcher: SyntaxNodeMatcher) =
     ChildMatcher(this, matcher)
 
 fun of(speechPart: SpeechPart) = WordSpeechPartMatcher(speechPart)
-fun of(speechPart: TypedSpeechPart) = TypedWordSpeechPartMatcher(speechPart)
+fun of(vararg speechPart: TypedSpeechPart) = TypedWordSpeechPartMatcher(speechPart.toList())
+fun of(speechParts: List<TypedSpeechPart>) = TypedWordSpeechPartMatcher(speechParts)
 
 fun has(tag: SemanticsTag) = WordTagMatcher(tag)
 fun has(categoryName: String) = CategoryMatcher(categoryName)

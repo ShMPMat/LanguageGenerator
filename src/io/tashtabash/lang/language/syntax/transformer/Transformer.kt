@@ -31,13 +31,15 @@ data class ChildTransformer(private val relation: SyntaxRelation, private val tr
         "the child $relation $transformer"
 }
 
-data class RemoveCategoryTransformer(private val categoryName: String): Transformer {
+data class RemoveCategoryTransformer(private val categoryNames: List<String>): Transformer {
+    constructor(vararg categoryNames: String) : this(categoryNames.toList())
+
     override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
-        node.categoryValues.removeIf { it.parentClassName == categoryName }
+        node.categoryValues.removeIf { it.parentClassName in categoryNames }
     }
 
     override fun toString(): String =
-        "remove category values for $categoryName"
+        "remove category values for ${categoryNames.joinToString()}"
 }
 
 data class AddCategoryTransformer(private val relation: SyntaxRelation): Transformer {
@@ -46,7 +48,7 @@ data class AddCategoryTransformer(private val relation: SyntaxRelation): Transfo
     }
 
     override fun toString(): String =
-        "remove add category values for $relation"
+        "add category values for $relation"
 }
 
 data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, SyntaxRelation>): Transformer {
@@ -84,3 +86,6 @@ operator fun Transformer.plus(other: Transformer) = MulTransformer(
     else
         listOf(this, other)
 )
+
+fun transform(relation: SyntaxRelation, expr: () -> Transformer) =
+    ChildTransformer(relation, expr())

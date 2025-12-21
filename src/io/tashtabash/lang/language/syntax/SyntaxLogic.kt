@@ -23,7 +23,7 @@ data class SyntaxLogic(
     // Maps Description-level semantic roles to Clause-level syntactic relations
     private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
     // Maps Clause-level syntactic relations to specific category values (cases/adpositions)
-    private val verbCasesSolver: Map<Pair<Pair<TypedSpeechPart, Set<CategoryValue>>, SyntaxRelation>, CategoryValues> = mapOf(),
+    private val verbCasesSolver: Map<Pair<TypedSpeechPart, SyntaxRelation>, CategoryValues> = mapOf(),
     private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val syntaxRelationSolver: Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val numberCategorySolver: NumberCategorySolver? = null,
@@ -79,12 +79,8 @@ data class SyntaxLogic(
         }
     }
 
-    fun resolveVerbCase(
-        verbType: TypedSpeechPart,
-        syntaxRelation: SyntaxRelation,
-        categories: Set<CategoryValue>
-    ): CategoryValues =
-        verbCasesSolver.getValue(verbType to categories to syntaxRelation)
+    fun resolveVerbCase(verbType: TypedSpeechPart, syntaxRelation: SyntaxRelation): CategoryValues =
+        verbCasesSolver.getValue(verbType to syntaxRelation)
 
     fun resolveCopulaCase(
         copulaType: CopulaType,
@@ -172,8 +168,7 @@ data class SyntaxLogic(
         |${
         verbCasesSolver.map { (context, categories) ->
             listOf(
-                "For ${context.first.first}, ",
-                "${context.first.second}, ",
+                "${context.first}, ",
                 "${context.second} ",
                 " the following cases are used: ",
                 categories.joinToString(", ")

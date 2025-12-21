@@ -57,11 +57,7 @@ internal fun SyntaxNode.addThirdPerson(): SyntaxNode {
 
 
 private fun SyntaxNode.addRelevantCases(syntaxLogic: SyntaxLogic, verb: SyntaxNode, relation: SyntaxRelation) {
-    val caseRelevantCategories = verb.categoryValues
-        .filterIsInstance<TenseValue>()
-        .toSet()
     val verbSpeechPart = verb.word.semanticsCore.speechPart
 
-    categoryValues.removeIf { it is CaseValue }
-    categoryValues += syntaxLogic.resolveVerbCase(verbSpeechPart, relation, caseRelevantCategories)
+    categoryValues += syntaxLogic.resolveVerbCase(verbSpeechPart, relation)
 }

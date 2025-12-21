@@ -3,7 +3,6 @@ package io.tashtabash.lang.language.syntax.clause.description
 import io.tashtabash.lang.language.category.paradigm.MapApplicatorSource
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.*
-import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.lexis.toIntransitive
@@ -65,8 +64,8 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Agent to listOf(),
-                    SpeechPart.Verb.toDefault() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Patient to listOf()
+                    SpeechPart.Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    SpeechPart.Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
             ),
             predicatePossessionType = PredicatePossessionType.HaveVerb
@@ -152,7 +151,7 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Location to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
             ),
@@ -245,7 +244,7 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
             ),
@@ -338,7 +337,7 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
             ),
@@ -431,7 +430,7 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to setOf<CategoryValue>(TenseValue.Past) to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))
             ),

@@ -42,14 +42,14 @@ class Case(
 
 class CaseRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not actual data
+        when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 20.0
             CategoryRealization.SuffixWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 100.0
-            CategoryRealization.Reduplication -> 0.0
-            CategoryRealization.Passing -> 0.0
-            CategoryRealization.Suppletion -> 0.0
+            CategoryRealization.Reduplication -> .0
+            CategoryRealization.Passing -> .0
+            CategoryRealization.Suppletion -> .0
         }
 
     private val nounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
@@ -80,15 +80,15 @@ class CaseRandomSupplements : CategoryRandomSupplements {
             RealizationBox(CategoryRealization.Prefix, 1.5)
         ) else setOf(
             noValue(1.0),
-            RealizationBox(CategoryRealization.Passing, 0.25)
+            RealizationBox(CategoryRealization.Passing, .25)
         )
 
         return when (speechPart) {
-            PersonalPronoun -> setOf(//TODO no actual data
+            PersonalPronoun -> setOf(// I wasn't able to find the data on the distribution
                 noValue(1.0),
                 RealizationBox(CategoryRealization.Suppletion, 2.0)
             )
-            DeixisPronoun -> setOf(//TODO no actual data
+            DeixisPronoun -> setOf(// I wasn't able to find the data on the distribution
                 RealizationBox(CategoryRealization.Suffix, 1.5),
                 RealizationBox(CategoryRealization.Prefix, 1.5)
             )
@@ -100,10 +100,10 @@ class CaseRandomSupplements : CategoryRandomSupplements {
         val coreCases = CoreCasePresence.entries.randomElement().possibilities.toMutableList()
 
         if (coreCases.isNotEmpty())
-            0.3.chanceOf { coreCases += Topic }
+            .3.chanceOf { coreCases += Topic }
 
         val nonCoreCases = if (coreCases.isEmpty())
-            0.25.chanceOf<List<CaseValue>> {
+            .25.chanceOf<List<CaseValue>> {
                 NonCoreCasePresence.ObliqueOnly.possibilities
             } ?: listOf()
         else
@@ -114,25 +114,25 @@ class CaseRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> true
-        Adjective -> 0.95.testProbability()
-        Article -> 0.9.testProbability()
-        Numeral -> 0.9.testProbability()
-        PersonalPronoun -> 0.8.testProbability()
-        DeixisPronoun -> 0.8.testProbability()
+        Adjective -> .95.testProbability()
+        Article -> .9.testProbability()
+        Numeral -> .9.testProbability()
+        PersonalPronoun -> .8.testProbability()
+        DeixisPronoun -> .8.testProbability()
         else -> true
     } withCoCategories listOf()
 }
 
 object AdpositionRandomSupplements : CategoryRandomSupplements {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not actual data
+        when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 20.0
             CategoryRealization.SuffixWord -> 20.0
-            CategoryRealization.Prefix -> 0.0
-            CategoryRealization.Suffix -> 0.0
-            CategoryRealization.Reduplication -> 0.0
-            CategoryRealization.Passing -> 0.0
-            CategoryRealization.Suppletion -> 0.0
+            CategoryRealization.Prefix -> .0
+            CategoryRealization.Suffix -> .0
+            CategoryRealization.Reduplication -> .0
+            CategoryRealization.Passing -> .0
+            CategoryRealization.Suppletion -> .0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) =
