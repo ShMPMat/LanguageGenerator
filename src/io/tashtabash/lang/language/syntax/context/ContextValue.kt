@@ -47,11 +47,3 @@ sealed class ContextValue {
 
     override fun toString() = this::class.simpleName ?: ""
 }
-
-
-enum class ActorType {
-    Agent,
-    Patient
-}
-
-typealias ContextValues = Set<ContextValue>
