@@ -37,7 +37,7 @@ class ChangeParadigmGenerator(
 
     private val emptyArticleParadigm = SpeechPartChangeParadigm(Article.toDefault())
 
-    internal fun generateChangeParadigm(categoriesWithMappers: List<SupplementedCategory>): ChangeParadigm {
+    internal fun generateChangeParadigm(categoriesWithMappers: List<SupplementedCategory<*>>): ChangeParadigm {
         val categories = categoriesWithMappers.map { it.first }
 
         val oldCategoryData = mutableListOf<SpeechPartCategoryData>()
@@ -116,7 +116,7 @@ class ChangeParadigmGenerator(
 
     private fun generateCategoryData(
         speechParts: List<TypedSpeechPart>,
-        categoriesWithMappers: List<SupplementedCategory>
+        categoriesWithMappers: List<SupplementedCategory<*>>
     ) = speechParts.map { speechPart ->
         val restrictions = restrictionsParadigm.restrictionsMapper.getValue(speechPart)
         val categoriesAndSupply = generateSpeechPartCategories(
@@ -129,8 +129,8 @@ class ChangeParadigmGenerator(
 
     private fun generateSpeechPartCategories(
         speechPart: TypedSpeechPart,
-        categoriesWithMappers: List<SupplementedCategory>
-    ): List<Pair<SourcedCategory, CategoryRandomSupplements>> {
+        categoriesWithMappers: List<SupplementedCategory<*>>
+    ): List<SupplementedSourcedCategory<*>> {
         val presentCategories = categoriesWithMappers
             .filter { it.first.speechParts.contains(speechPart.type) }
             .filter { it.first.actualValues.isNotEmpty() }
@@ -231,7 +231,7 @@ class ChangeParadigmGenerator(
 private data class SpeechPartCategoryData(
     val speechPart: TypedSpeechPart,
     val restrictionsParadigm: PhoneticRestrictions,
-    val categoriesAndSupply: List<Pair<SourcedCategory, CategoryRandomSupplements>>
+    val categoriesAndSupply: List<SupplementedSourcedCategory<*>>
 ) {
     val categories = categoriesAndSupply.map { it.first }
 }

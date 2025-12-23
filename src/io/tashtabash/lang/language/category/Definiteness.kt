@@ -35,16 +35,16 @@ class Definiteness(
     definitenessName
 )
 
-object DefinitenessRandomSupplements : CategoryRandomSupplements {
+object DefinitenessRandomSupplements : CategoryRandomSupplements<DefinitenessValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not an actual data
+        when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 400.0
             CategoryRealization.SuffixWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 30.0
-            CategoryRealization.Reduplication -> 0.0
-            CategoryRealization.Passing -> 0.0
-            CategoryRealization.Suppletion -> 0.0
+            CategoryRealization.Reduplication -> .0
+            CategoryRealization.Passing -> .0
+            CategoryRealization.Suppletion -> .0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -82,8 +82,8 @@ object DefinitenessRandomSupplements : CategoryRandomSupplements {
     override fun randomRealization() = DefinitenessPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> 0.8.testProbability()
-        Adjective -> 0.7.testProbability()
+        Noun -> .8.testProbability()
+        Adjective -> .7.testProbability()
         else -> true
     } withCoCategories listOf()
 }

@@ -29,22 +29,22 @@ class Negation(
     negationName
 )
 
-object NegationRandomSupplements : CategoryRandomSupplements {
+object NegationRandomSupplements : CategoryRandomSupplements<NegationValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
-        //TODO not actual data
+        // I wasn't able to find the data on the distribution
         CategoryRealization.PrefixWord -> 502.0
         CategoryRealization.SuffixWord -> 502.0
         CategoryRealization.Prefix -> 395.0
         CategoryRealization.Suffix -> 395.0
-        CategoryRealization.Reduplication -> 0.0
-        CategoryRealization.Passing -> 0.0
-        CategoryRealization.Suppletion -> 0.0
+        CategoryRealization.Reduplication -> .0
+        CategoryRealization.Passing -> .0
+        CategoryRealization.Suppletion -> .0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
         Noun -> listOf()
         Verb -> listOf(SourceTemplate(Self, 100.0))
-        Adjective -> listOf()//TODO not an actual data
+        Adjective -> listOf()// I wasn't able to find the data on the distribution
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()

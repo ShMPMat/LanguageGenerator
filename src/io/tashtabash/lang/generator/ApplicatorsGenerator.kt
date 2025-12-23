@@ -25,7 +25,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
     internal fun randomApplicatorsForSpeechPart(
         speechPart: TypedSpeechPart,
         phoneticRestrictions: PhoneticRestrictions,
-        categoriesAndSupply: List<SupplementedSourcedCategory>
+        categoriesAndSupply: List<SupplementedSourcedCategory<*>>
     ): Result {
         words.clear()
 

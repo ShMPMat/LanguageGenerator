@@ -32,16 +32,16 @@ class Deixis(
     deixisName
 )
 
-object DeixisRandomSupplements : CategoryRandomSupplements {
+object DeixisRandomSupplements : CategoryRandomSupplements<DeixisValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
-        //TODO not actual data
+        // I wasn't able to find the data on the distribution
         PrefixWord -> 542.0
         SuffixWord -> 562.0
         Prefix -> 9.0
         Suffix -> 28.0
-        Reduplication -> 0.0
-        Passing -> 0.0
-        Suppletion -> 0.0
+        Reduplication -> .0
+        Passing -> .0
+        Suppletion -> .0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -66,7 +66,7 @@ object DeixisRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1) return emptyRealization
         return when (acceptableValues.first()) {
             else -> when (speechPart) {
-                DeixisPronoun -> setOf(//TODO no actual data
+                DeixisPronoun -> setOf(// I wasn't able to find the data on the distribution
                     RealizationBox(Suppletion, 100.0),
                     RealizationBox(Suffix, 50.0),
                     RealizationBox(Prefix, 50.0)

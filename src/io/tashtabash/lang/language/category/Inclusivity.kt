@@ -38,16 +38,16 @@ class Inclusivity(
     inclusivityName
 )
 
-object InclusivityRandomSupplements : CategoryRandomSupplements {
+object InclusivityRandomSupplements : CategoryRandomSupplements<InclusivityValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
-        //TODO not actual data
+        // I wasn't able to find the data on the distribution
         PrefixWord -> 10.0
         SuffixWord -> 10.0
         Prefix -> 100.0
         Suffix -> 100.0
-        Reduplication -> 0.0
-        Passing -> 0.0
-        Suppletion -> 0.0
+        Reduplication -> .0
+        Passing -> .0
+        Suppletion -> .0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -67,7 +67,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
         values: CategoryValues,
         speechPart: SpeechPart,
         categories: List<SourcedCategory>
-    ) = if (speechPart == PersonalPronoun) setOf(//TODO no actual data
+    ) = if (speechPart == PersonalPronoun) setOf(// I wasn't able to find the data on the distribution
         noValue(1.0),
         RealizationBox(Suppletion, 3.0)
     ) else emptyRealization
@@ -76,7 +76,7 @@ object InclusivityRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         PersonalPronoun -> true withCoCategories listOf(nonSingularNumbers, listOf(First))
-        Verb -> 0.99.testProbability() withCoCategories listOf(PersonValue::class.values())
+        Verb -> .99.testProbability() withCoCategories listOf(PersonValue::class.values())
         else -> false withCoCategories listOf()
     }
 }

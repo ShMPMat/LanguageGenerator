@@ -20,11 +20,11 @@ interface Category {
     val outType: String
 }
 
-interface CategoryRandomSupplements {
+interface CategoryRandomSupplements<E : CategoryValue> {
     fun realizationTypeProbability(categoryRealization: CategoryRealization): Double
     fun speechPartProbabilities(speechPart: SpeechPart): List<SourceTemplate>
     fun specialRealization(values: CategoryValues, speechPart: SpeechPart, categories: List<SourcedCategory>): Set<RealizationBox>
-    fun randomRealization(): CategoryValues
+    fun randomRealization(): List<E>
     fun randomStaticSpeechParts(): Set<SpeechPart> = emptySet()
     fun randomIsCompulsory(speechPart: SpeechPart): CompulsoryData
     fun getCollapseCoefficient(previousCategoryValues: CategoryValues): Double = 1.0

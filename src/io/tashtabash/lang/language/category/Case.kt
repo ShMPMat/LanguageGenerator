@@ -40,7 +40,7 @@ class Case(
     outType
 )
 
-class CaseRandomSupplements : CategoryRandomSupplements {
+class CaseRandomSupplements : CategoryRandomSupplements<CaseValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 20.0
@@ -123,7 +123,7 @@ class CaseRandomSupplements : CategoryRandomSupplements {
     } withCoCategories listOf()
 }
 
-object AdpositionRandomSupplements : CategoryRandomSupplements {
+object AdpositionRandomSupplements : CategoryRandomSupplements<CaseValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
         when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 20.0

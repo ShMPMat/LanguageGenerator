@@ -34,7 +34,7 @@ class ExponenceGenerator {
             ?: realization
 
     internal fun splitCategoriesOnClusters(
-        categories: List<SupplementedSourcedCategory>,
+        categories: List<SupplementedSourcedCategory<*>>,
         speechPart: TypedSpeechPart
     ): List<ExponenceTemplate> {
         val shuffledCategories = categories.shuffled(RandomSingleton.random)
@@ -82,7 +82,7 @@ class ExponenceGenerator {
     }
 
     internal fun generateRealizationTemplate(
-        currentCategoriesWithSupplement: List<SupplementedSourcedCategory>,
+        currentCategoriesWithSupplement: List<SupplementedSourcedCategory<*>>,
         cluster: ExponenceCluster,
         speechPart: TypedSpeechPart,
         order: Int
@@ -110,7 +110,7 @@ class ExponenceGenerator {
 
     private fun getRealizationTypes(
         value: ExponenceValue,
-        supplements: List<CategoryRandomSupplements>,
+        supplements: List<CategoryRandomSupplements<*>>,
         speechPart: TypedSpeechPart,
         categories: List<SourcedCategory>,
         position: Int
@@ -125,7 +125,7 @@ class ExponenceGenerator {
     }
 
     private fun makeMapper(
-        currentCategoriesWithSupplement: List<SupplementedSourcedCategory>,
+        currentCategoriesWithSupplement: List<SupplementedSourcedCategory<*>>,
         i: Int
     ) : (CategoryRealization) -> Double {
         return { c: CategoryRealization ->
@@ -137,7 +137,7 @@ class ExponenceGenerator {
 
 
     private fun constructExponenceUnionSets(
-        categories: List<SupplementedSourcedCategory>,
+        categories: List<SupplementedSourcedCategory<*>>,
         previousCategoryValues: CategoryValues = listOf(),
         neighbourCategories: BoxedInt = BoxedInt(1)
     ): Set<List<SourcedCategoryValue>> = if (categories.size == 1)
@@ -146,7 +146,7 @@ class ExponenceGenerator {
         makeRecursiveExponenceUnionSets(categories, neighbourCategories, previousCategoryValues)
 
     private fun makeTrivialExponenceUnionSets(
-        category: SupplementedSourcedCategory,
+        category: SupplementedSourcedCategory<*>,
         neighbourCategories: BoxedInt,
         previousCategoryValues: CategoryValues
     ) =
@@ -157,7 +157,7 @@ class ExponenceGenerator {
             category.first.actualSourcedValues.map { listOf(it) }.toSet()
 
     private fun makeRecursiveExponenceUnionSets(
-        categories: List<SupplementedSourcedCategory>,
+        categories: List<SupplementedSourcedCategory<*>>,
         neighbourCategories: BoxedInt,
         previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
@@ -182,7 +182,7 @@ class ExponenceGenerator {
 
     private fun makeCollapsedExponenceUnionSets(
         currentCategory: SourcedCategory,
-        categories: List<SupplementedSourcedCategory>,
+        categories: List<SupplementedSourcedCategory<*>>,
         neighbourCategories: BoxedInt,
         previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
@@ -199,7 +199,7 @@ class ExponenceGenerator {
 
     private fun makeNonCollapsedExponenceUnionSets(
         currentCategory: SourcedCategory,
-        categories: List<SupplementedSourcedCategory>,
+        categories: List<SupplementedSourcedCategory<*>>,
         neighbourCategories: BoxedInt,
         previousCategoryValues: CategoryValues
     ): Set<List<SourcedCategoryValue>> {
@@ -217,7 +217,7 @@ class ExponenceGenerator {
         return lists
     }
 
-    private fun testCollapse(supplements: CategoryRandomSupplements, otherCategories: CategoryValues): Boolean {
+    private fun testCollapse(supplements: CategoryRandomSupplements<*>, otherCategories: CategoryValues): Boolean {
         val collapseProbability = categoryCollapseProbability /
                 supplements.getCollapseCoefficient(otherCategories)
 
@@ -230,7 +230,7 @@ internal data class BoxedInt(var value: Int)
 data class ExponenceTemplate(
     val cluster: ExponenceCluster,
     val realizations: RealizationTemplate,
-    val supplements: List<CategoryRandomSupplements>
+    val supplements: List<CategoryRandomSupplements<*>>
 )
 
 data class Realizations(val chosen: CategoryRealization, val possible: List<RealizationBox>)

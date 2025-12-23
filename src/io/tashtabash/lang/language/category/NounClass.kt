@@ -37,16 +37,16 @@ class NounClass(
     nounClassName
 )
 
-class NounClassRandomSupplements : CategoryRandomSupplements {
+object NounClassRandomSupplements : CategoryRandomSupplements<NounClassValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not actual data
+        when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 10.0
             CategoryRealization.SuffixWord -> 10.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 100.0
-            CategoryRealization.Reduplication -> 0.0
-            CategoryRealization.Passing -> 0.0
-            CategoryRealization.Suppletion -> 0.0
+            CategoryRealization.Reduplication -> .0
+            CategoryRealization.Passing -> .0
+            CategoryRealization.Suppletion -> .0
         }
 
     private val nounProbability = RandomSingleton.random.nextDouble(90.0, 100.0)
@@ -77,12 +77,12 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
         if (acceptableValues.size != 1)
             return emptyRealization
 
-        return when (speechPart) {
-            PersonalPronoun -> setOf(//TODO no actual data
+        return when (speechPart) {// I wasn't able to find the data on the distribution
+            PersonalPronoun -> setOf(
                 noValue(1.0),
                 RealizationBox(CategoryRealization.Suppletion, 3.0)
             )
-            DeixisPronoun -> setOf(//TODO no actual data
+            DeixisPronoun -> setOf(
                 RealizationBox(CategoryRealization.Suffix, 1.5),
                 RealizationBox(CategoryRealization.Prefix, 1.5)
             )
@@ -103,13 +103,13 @@ class NounClassRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> true
-        Verb -> 0.95.testProbability()
-        Adjective -> 0.9.testProbability()
-        Numeral -> 0.9.testProbability()
-        Article -> 0.9.testProbability()
-        PersonalPronoun -> 0.8.testProbability()
-        DeixisPronoun -> 0.8.testProbability()
-        Adposition -> 0.6.testProbability()
+        Verb -> .95.testProbability()
+        Adjective -> .9.testProbability()
+        Numeral -> .9.testProbability()
+        Article -> .9.testProbability()
+        PersonalPronoun -> .8.testProbability()
+        DeixisPronoun -> .8.testProbability()
+        Adposition -> .6.testProbability()
         else -> true
     } withCoCategories listOf()
 

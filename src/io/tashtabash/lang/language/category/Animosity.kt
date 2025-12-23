@@ -34,20 +34,20 @@ class Animosity(
     animosityName
 )
 
-object AnimosityRandomSupplements : CategoryRandomSupplements {
+object AnimosityRandomSupplements : CategoryRandomSupplements<AnimosityValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization): Double =
-        when (categoryRealization) {//TODO not an actual data
+        when (categoryRealization) {// I wasn't able to find the data on the distribution
             CategoryRealization.PrefixWord -> 20.0
             CategoryRealization.SuffixWord -> 20.0
             CategoryRealization.Prefix -> 100.0
             CategoryRealization.Suffix -> 100.0
-            CategoryRealization.Reduplication -> 0.0
-            CategoryRealization.Passing -> 0.0
-            CategoryRealization.Suppletion -> 0.0
+            CategoryRealization.Reduplication -> .0
+            CategoryRealization.Passing -> .0
+            CategoryRealization.Suppletion -> .0
         }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
-        Noun -> listOf(SourceTemplate(Self, 200.0))//TODO no data at all
+        Noun -> listOf(SourceTemplate(Self, 200.0))// I wasn't able to find the data on the distribution
         Verb -> listOf(
             SourceTemplate(Agreement(Agent, nominals), 20.0),
             SourceTemplate(Agreement(Patient, nominals), 1.0)
@@ -74,12 +74,12 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
                 RealizationBox(CategoryRealization.Passing, 1.0),
                 noValue(1.0)
             )
-            else -> return when(speechPart) {
-                PersonalPronoun -> setOf(//TODO no actual data
+            else -> return when(speechPart) {// I wasn't able to find the data on the distribution
+                PersonalPronoun -> setOf(
                     noValue(1.0),
                     RealizationBox(CategoryRealization.Suppletion, 2.0)
                 )
-                DeixisPronoun -> setOf(//TODO no actual data
+                DeixisPronoun -> setOf(
                     RealizationBox(CategoryRealization.Suffix, 1.5),
                     RealizationBox(CategoryRealization.Prefix, 1.5)
                 )
@@ -94,12 +94,12 @@ object AnimosityRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Noun -> true
-        Verb -> 0.8.testProbability()
-        Adjective -> 0.8.testProbability()
-        Numeral -> 0.8.testProbability()
-        Article -> 0.7.testProbability()
-        PersonalPronoun -> 0.4.testProbability()
-        DeixisPronoun -> 0.4.testProbability()
+        Verb -> .8.testProbability()
+        Adjective -> .8.testProbability()
+        Numeral -> .8.testProbability()
+        Article -> .7.testProbability()
+        PersonalPronoun -> .4.testProbability()
+        DeixisPronoun -> .4.testProbability()
         else -> true
     } withCoCategories listOf()
 }

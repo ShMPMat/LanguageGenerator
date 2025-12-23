@@ -10,55 +10,61 @@ import io.tashtabash.random.singleton.chanceOf
 
 
 class CategoryGenerator {
-    internal fun randomCategories(): List<SupplementedCategory> {
+    internal fun randomCategories(): List<SupplementedCategory<*>> {
         val defaults = mutableListOf(
-            randomCategory({ l: List<PersonValue>, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
-            randomCategory({ l: List<InclusivityValue>, s, ss -> Inclusivity(l, s, ss) }, InclusivityRandomSupplements),
-            randomCategory({ l: List<DefinitenessValue>, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
-            randomCategory({ l: List<NounClassValue>, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements()),
-            randomCategory({ l: List<AnimosityValue>, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
-            randomCategory({ l: List<NumberValue>, s, ss -> Number(l, s, ss) }, NumberRandomSupplements),
-            randomCategory({ l: List<TenseValue>, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
-            randomCategory({ l: List<NegationValue>, s, ss -> Negation(l, s, ss) }, NegationRandomSupplements),
-            randomCategory({ l: List<DeixisValue>, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)
+            randomCategory({ l, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
+            randomCategory({ l, s, ss -> Inclusivity(l, s, ss) }, InclusivityRandomSupplements),
+            randomCategory({ l, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
+            randomCategory({ l, s, ss -> NounClass(l, s, ss) }, NounClassRandomSupplements),
+            randomCategory({ l, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
+            randomCategory({ l, s, ss -> Number(l, s, ss) }, NumberRandomSupplements),
+            randomCategory({ l, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
+            randomCategory({ l, s, ss -> Negation(l, s, ss) }, NegationRandomSupplements),
+            randomCategory({ l, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)
         )
 
-        val caseCategory = randomCategory(
-            { l: List<CaseValue>, s, ss -> Case(l, s, ss) },
-            CaseRandomSupplements()
-        )
+        val caseCategory = randomCategory({ l, s, ss -> Case(l, s, ss) }, CaseRandomSupplements())
         defaults += caseCategory
 
-        val absentScenarios = caseCategory.first.allPossibleValues
-            .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
-
-        if (absentScenarios.isNotEmpty()) {
-            val values = absentScenarios
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
-            val allPossibleValues = caseCategory.first.allPossibleValues
-                .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
-                .toSet()
-
-            val affectedSpeechPartsAndSources = randomAffectedSpeechParts(AdpositionRandomSupplements)
-
-            val adpositionCategory = AbstractChangeCategory(
-                values,
-                allPossibleValues,
-                affectedSpeechPartsAndSources,
-                setOf(),
-                adpositionName
-            )
-
-            defaults += adpositionCategory to AdpositionRandomSupplements
+        generateAdpositions(caseCategory)?.let {
+            defaults += it
         }
 
         return defaults
     }
 
+    private fun generateAdpositions(
+        caseCategory: SupplementedCategory<CaseValue>,
+    ): Pair<AbstractChangeCategory, AdpositionRandomSupplements>? {
+        val absentScenarios = caseCategory.first.allPossibleValues
+            .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
+
+        if (absentScenarios.isEmpty())
+            return null
+
+        val values = absentScenarios.map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
+        val allPossibleValues = caseCategory.first
+            .allPossibleValues
+            .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
+            .toSet()
+
+        val affectedSpeechPartsAndSources = randomAffectedSpeechParts(AdpositionRandomSupplements)
+
+        val adpositionCategory = AbstractChangeCategory(
+            values,
+            allPossibleValues,
+            affectedSpeechPartsAndSources,
+            setOf(),
+            adpositionName
+        )
+
+        return adpositionCategory to AdpositionRandomSupplements
+    }
+
     private fun <E: CategoryValue> randomCategory(
         constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,
-        supplements: CategoryRandomSupplements
-    ): SupplementedCategory {
+        supplements: CategoryRandomSupplements<E>
+    ): SupplementedCategory<E> {
         val presentElements = supplements.randomRealization()
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(supplements)
         val affectedSpeechParts = affectedSpeechPartsAndSources.map { it.speechPart }
@@ -66,14 +72,10 @@ class CategoryGenerator {
             .filter { it in affectedSpeechParts }
             .toSet()
 
-        try {
-            return constructor(presentElements as List<E>, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
-        } catch (e: Exception) {
-            throw DataConsistencyException("Wrong supplements with name ${supplements.javaClass.name}")
-        }
+        return constructor(presentElements, affectedSpeechPartsAndSources, staticSpeechParts) to supplements
     }
 
-    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements): Set<PSpeechPart> {
+    private fun randomAffectedSpeechParts(supplements: CategoryRandomSupplements<*>): Set<PSpeechPart> {
         val max = SpeechPart.entries
             .flatMap { supplements.speechPartProbabilities(it) }
             .maxOfOrNull { it.probability }
@@ -89,5 +91,5 @@ class CategoryGenerator {
     }
 }
 
-typealias SupplementedCategory = Pair<Category, CategoryRandomSupplements>
-typealias SupplementedSourcedCategory = Pair<SourcedCategory, CategoryRandomSupplements>
+typealias SupplementedCategory<E> = Pair<Category, CategoryRandomSupplements<E>>
+typealias SupplementedSourcedCategory<E> = Pair<SourcedCategory, CategoryRandomSupplements<E>>

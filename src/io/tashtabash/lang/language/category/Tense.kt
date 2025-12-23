@@ -25,16 +25,16 @@ class Tense(
     staticSpeechParts: Set<SpeechPart>
 ) : AbstractChangeCategory(categories, TenseValue::class.valuesSet(), affected, staticSpeechParts, tenseName)
 
-object TenseRandomSupplements : CategoryRandomSupplements {
+object TenseRandomSupplements : CategoryRandomSupplements<TenseValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
-        //TODO not actual data
+        // I wasn't able to find the data on the distribution
         CategoryRealization.PrefixWord -> 10.0
         CategoryRealization.SuffixWord -> 10.0
         CategoryRealization.Prefix -> 100.0
         CategoryRealization.Suffix -> 100.0
-        CategoryRealization.Reduplication -> 0.0
-        CategoryRealization.Passing -> 0.0
-        CategoryRealization.Suppletion -> 0.0
+        CategoryRealization.Reduplication -> .0
+        CategoryRealization.Passing -> .0
+        CategoryRealization.Suppletion -> .0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -70,7 +70,7 @@ object TenseRandomSupplements : CategoryRandomSupplements {
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
         Verb -> true
-        Adjective -> 0.5.testProbability()
+        Adjective -> .5.testProbability()
         else -> true
     } withCoCategories listOf()
 }

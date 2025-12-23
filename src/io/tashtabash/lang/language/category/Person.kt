@@ -36,16 +36,16 @@ class Person(
     personName
 )
 
-object PersonRandomSupplements : CategoryRandomSupplements {
+object PersonRandomSupplements : CategoryRandomSupplements<PersonValue> {
     override fun realizationTypeProbability(categoryRealization: CategoryRealization) = when (categoryRealization) {
-        //TODO not actual data
+        // I wasn't able to find the data on the distribution
         PrefixWord -> 0.0
         SuffixWord -> 0.0
         Prefix -> 1.0
         Suffix -> 1.0
-        Reduplication -> 0.0
-        Passing -> 0.0
-        Suppletion -> 0.0
+        Reduplication -> .0
+        Passing -> .0
+        Suppletion -> .0
     }
 
     override fun speechPartProbabilities(speechPart: SpeechPart) = when (speechPart) {
@@ -53,7 +53,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
         Verb -> listOf(
             SourceTemplate(Agreement(Agent, nominals), 20.0),
             SourceTemplate(Agreement(Patient, nominals), 1.0)
-        )//TODO not an actual data
+        )// I wasn't able to find the data on the distribution
         Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 20.0))//TODO not an actual data
         Adverb -> listOf()
         Numeral -> listOf()
@@ -74,7 +74,7 @@ object PersonRandomSupplements : CategoryRandomSupplements {
             return emptyRealization
 
         return when(speechPart) {
-            PersonalPronoun -> setOf(//TODO no actual data
+            PersonalPronoun -> setOf(
                 noValue(1.0),
                 RealizationBox(Suppletion, 200.0)
             )
@@ -90,10 +90,10 @@ object PersonRandomSupplements : CategoryRandomSupplements {
     override fun randomRealization() = PersonPresence.entries.randomElement().possibilities
 
     override fun randomIsCompulsory(speechPart: SpeechPart) = when (speechPart) {
-        Verb -> 0.95.testProbability()
-        Adjective -> 0.9.testProbability()
+        Verb -> .95.testProbability()
+        Adjective -> .9.testProbability()
         PersonalPronoun -> true
-        Adposition -> 0.7.testProbability()
+        Adposition -> .7.testProbability()
         else -> true
     } withCoCategories listOf()
 }
