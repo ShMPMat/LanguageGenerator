@@ -27,7 +27,7 @@ class Definiteness(
     categories: List<DefinitenessValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart> = setOf()
-) : AbstractChangeCategory(
+) : AbstractChangeCategory<DefinitenessValue>(
     categories,
     DefinitenessValue::class.valuesSet(),
     affected,

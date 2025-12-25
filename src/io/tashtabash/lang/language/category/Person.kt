@@ -28,7 +28,7 @@ class Person(
     categories: List<PersonValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory(
+) : AbstractChangeCategory<PersonValue>(
     categories,
     PersonValue::class.valuesSet(),
     affected,

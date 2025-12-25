@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.random.singleton.chanceOf
+import io.tashtabash.random.singleton.testProbability
 
 
 class CategoryGenerator {
@@ -35,14 +36,15 @@ class CategoryGenerator {
 
     private fun generateAdpositions(
         caseCategory: SupplementedCategory<CaseValue>,
-    ): Pair<AbstractChangeCategory, AdpositionRandomSupplements>? {
+    ): Pair<AbstractChangeCategory<AbstractCategoryValue>, AdpositionRandomSupplements>? {
         val absentScenarios = caseCategory.first.allPossibleValues
             .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
+        val chosenAdposition = absentScenarios.filter { shouldTakeAdposition(it) }
 
-        if (absentScenarios.isEmpty())
+        if (chosenAdposition.isEmpty())
             return null
 
-        val values = absentScenarios.map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
+        val values = chosenAdposition.map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
         val allPossibleValues = caseCategory.first
             .allPossibleValues
             .map { AbstractCategoryValue(it.semanticsCore, adpositionName, it.alias) }
@@ -61,8 +63,13 @@ class CategoryGenerator {
         return adpositionCategory to AdpositionRandomSupplements
     }
 
+    private fun shouldTakeAdposition(value: CaseValue): Boolean = when (value) {
+        CaseValue.Topic -> .5
+        else -> 1.0
+    }.testProbability()
+
     private fun <E: CategoryValue> randomCategory(
-        constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category,
+        constructor: (List<E>, Set<PSpeechPart>, Set<SpeechPart>) -> Category<E>,
         supplements: CategoryRandomSupplements<E>
     ): SupplementedCategory<E> {
         val presentElements = supplements.randomRealization()
@@ -91,5 +98,5 @@ class CategoryGenerator {
     }
 }
 
-typealias SupplementedCategory<E> = Pair<Category, CategoryRandomSupplements<E>>
+typealias SupplementedCategory<E> = Pair<Category<E>, CategoryRandomSupplements<E>>
 typealias SupplementedSourcedCategory<E> = Pair<SourcedCategory, CategoryRandomSupplements<E>>

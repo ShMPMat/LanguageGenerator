@@ -21,7 +21,7 @@ class Negation(
     categories: List<NegationValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory(
+) : AbstractChangeCategory<NegationValue>(
     categories,
     NegationValue::class.valuesSet(),
     affected,

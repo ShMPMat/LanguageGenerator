@@ -26,7 +26,7 @@ class Animosity(
     categories: List<AnimosityValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory(
+) : AbstractChangeCategory<AnimosityValue>(
     categories,
     AnimosityValue::class.valuesSet(),
     affected,

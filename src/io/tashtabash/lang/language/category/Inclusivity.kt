@@ -30,7 +30,7 @@ class Inclusivity(
     categories: List<InclusivityValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory(
+) : AbstractChangeCategory<InclusivityValue>(
     categories,
     InclusivityValue::class.valuesSet(),
     affected,

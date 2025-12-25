@@ -214,7 +214,7 @@ class ChangeParadigmGenerator(
     }
 
     private fun articlePresent(
-        categories: List<Category>,
+        categories: List<Category<*>>,
         speechPartChangesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>
     ) = if (categories.first { it.outType == definitenessName }.actualValues.isNotEmpty())
         speechPartChangesMap.any { (_, u) ->

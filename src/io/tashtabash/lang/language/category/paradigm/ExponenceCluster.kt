@@ -122,7 +122,7 @@ data class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val pa
     }
 }
 
-data class SourcedCategory(val category: Category, val source: CategorySource, var compulsoryData: CompulsoryData) {
+data class SourcedCategory(val category: Category<*>, val source: CategorySource, var compulsoryData: CompulsoryData) {
     val allPossibleSourcedValues = category.allPossibleValues.map { SourcedCategoryValue(it, source, this) }
     val actualSourcedValues = category.actualValues.map { SourcedCategoryValue(it, source, this) }
 

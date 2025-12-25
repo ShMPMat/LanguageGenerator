@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 
 
 data class WordChangeParadigm(
-    val categories: List<Category>,
+    val categories: List<Category<*>>,
     val speechPartChangeParadigms: Map<TypedSpeechPart, SpeechPartChangeParadigm>,
     val sandhiRules: List<PhonologicalRule> = listOf()
 ) {

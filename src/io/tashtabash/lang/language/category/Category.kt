@@ -11,9 +11,9 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.random.SampleSpaceObject
 
 
-interface Category {
-    val actualValues: CategoryValues
-    val allPossibleValues: Set<CategoryValue>
+interface Category<E: CategoryValue> {
+    val actualValues: List<E>
+    val allPossibleValues: Set<E>
     val affected: Set<PSpeechPart>
     val speechParts: Set<SpeechPart>
     val staticSpeechParts: Set<SpeechPart>
