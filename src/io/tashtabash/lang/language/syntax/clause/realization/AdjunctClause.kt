@@ -15,10 +15,7 @@ class CaseAdjunctClause(
     val nominal: NominalClause,
     override val relation: SyntaxRelation
 ) : AdjunctClause {
-    override fun toNode(language: Language, random: Random): SyntaxNode {
-        val node = nominal.toNode(language, random)
-        AddCategoryTransformer(relation).apply(node, language.changeParadigm.syntaxLogic)
-
-        return node
-    }
+    override fun toNode(language: Language, random: Random): SyntaxNode =
+        nominal.toNode(language, random)
+            .also { AddCategoryTransformer(relation).apply(it, language.changeParadigm.syntaxLogic) }
 }
