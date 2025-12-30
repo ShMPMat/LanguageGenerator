@@ -6,7 +6,7 @@ enum class SyntaxRelation(val shortName: String) {
     Patient("PAT"),
     Argument("ARG"), // Of intrans verb
     SubjectCompliment("SC"),
-    Verb("VRB"),
+    Predicate("PRED"),
 
     PossessorAdjunct("POS_ADJ"),
     Instrument("INSTR"),

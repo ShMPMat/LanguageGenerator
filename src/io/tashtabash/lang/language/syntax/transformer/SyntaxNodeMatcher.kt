@@ -5,6 +5,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 
 
 interface SyntaxNodeMatcher {
@@ -55,6 +56,14 @@ data class TypedWordSpeechPartMatcher(val speechParts: List<TypedSpeechPart>) : 
         "is ${speechParts.joinToString(", or ")}"
 }
 
+data class TagMatcher(val tag: SyntaxNodeTag) : SyntaxNodeMatcher {
+    override fun match(node: SyntaxNode): Boolean =
+        node.tags.contains(tag)
+
+    override fun toString(): String =
+        "is $tag"
+}
+
 data class WordTagMatcher(val tag: SemanticsTag) : SyntaxNodeMatcher {
     override fun match(node: SyntaxNode): Boolean =
         node.word
@@ -97,3 +106,4 @@ fun of(speechParts: List<TypedSpeechPart>) = TypedWordSpeechPartMatcher(speechPa
 fun has(tag: SemanticsTag) = WordTagMatcher(tag)
 fun has(categoryName: String) = CategoryMatcher(categoryName)
 fun has(relation: SyntaxRelation) = ChildMatcher(relation)
+fun has(tag: SyntaxNodeTag) = TagMatcher(tag)

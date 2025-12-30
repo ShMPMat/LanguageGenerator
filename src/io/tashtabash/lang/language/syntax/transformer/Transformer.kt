@@ -1,11 +1,10 @@
 package io.tashtabash.lang.language.syntax.transformer
 
-import io.tashtabash.lang.language.syntax.SubstitutingOrder
-import io.tashtabash.lang.language.syntax.SyntaxException
-import io.tashtabash.lang.language.syntax.SyntaxLogic
-import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
+import io.tashtabash.random.withProb
 
 
 interface Transformer {
@@ -20,15 +19,14 @@ data class MulTransformer(val transformers: List<Transformer>) : Transformer {
         transformers.joinToString(", and ")
 }
 
-data class ChildTransformer(private val relation: SyntaxRelation, private val transformer: Transformer): Transformer {
+data class RelationTransformer(private val relation: SyntaxRelation, private val transformer: Transformer): Transformer {
     override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
-        node.children
-            .firstOrNull { it.first == relation }
-            ?.let { transformer.apply(it.second, syntaxLogic) }
+        node.relations[relation]
+            ?.let { transformer.apply(it, syntaxLogic) }
     }
 
     override fun toString(): String =
-        "the child $relation $transformer"
+        "for $relation $transformer"
 }
 
 data class RemoveCategoryTransformer(private val categoryNames: List<String>): Transformer {
@@ -51,6 +49,15 @@ data class AddCategoryTransformer(private val relation: SyntaxRelation): Transfo
         "add category values for $relation"
 }
 
+data class AddTagTransformer(private val tag: SyntaxNodeTag): Transformer {
+    override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
+        node.tags += tag
+    }
+
+    override fun toString(): String =
+        "add tag $tag"
+}
+
 data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, SyntaxRelation>): Transformer {
     override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
         val arranger = node.arranger
@@ -64,6 +71,30 @@ data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, 
 
     override fun toString(): String =
         substitutions.entries.joinToString { (o, n) -> "$n receives the place of $o" }
+}
+
+// Order the node to be the first in the parent's Arranger
+data class PutFirstTransformer(private val parentRelation: SyntaxRelation): Transformer {
+    override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
+        val parent = node.relations[parentRelation]
+            ?: return
+        val arranger = parent.arranger
+        if (arranger !is RelationArranger)
+            throw SyntaxException("RelationArranger was expected")
+        val childRelation = parent.children.first { it.second == node }
+            .first
+
+        parent.arranger = RelationArranger(
+           RandomOrder(
+               arranger.relationOrder
+                   .references
+                   .map { (listOf(childRelation) + it.value).withProb(it.probability) }
+           )
+        )
+    }
+
+    override fun toString(): String =
+        "put it first for parent $parentRelation"
 }
 
 data object DropTransformer: Transformer {
@@ -87,5 +118,9 @@ operator fun Transformer.plus(other: Transformer) = MulTransformer(
         listOf(this, other)
 )
 
+fun add(tag: SyntaxNodeTag) = AddTagTransformer(tag)
+fun add(relation: SyntaxRelation) = AddCategoryTransformer(relation)
+fun remove(vararg categoryNames: String) = RemoveCategoryTransformer(categoryNames.toList())
+
 fun transform(relation: SyntaxRelation, expr: () -> Transformer) =
-    ChildTransformer(relation, expr())
+    RelationTransformer(relation, expr())

@@ -291,7 +291,7 @@ class DerivationGenerator(
         speechPart: TypedSpeechPart
     ): CategoryChanger {
         val possibleCategoryMakers = mutableListOf<CategoryChanger>(ConstantCategoryChanger(
-            categoryPool.getStaticFor(derivationClass.toSpeechPart)
+            categoryPool.getStatic(derivationClass.toSpeechPart)
                 .map { it.actualValues.randomElement() }
                 .toSet(),
             speechPart

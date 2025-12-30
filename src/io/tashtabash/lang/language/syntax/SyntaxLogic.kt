@@ -157,7 +157,7 @@ data class SyntaxLogic(
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
-                " the following form is used: ",
+                " used cases are: ",
                 categories.joinToString(", ")
             )
         }
@@ -170,7 +170,7 @@ data class SyntaxLogic(
             listOf(
                 "${context.first}, ",
                 "${context.second} ",
-                " the following cases are used: ",
+                " used cases are: ",
                 categories.joinToString(", ")
             )
         }
@@ -237,7 +237,7 @@ data class SyntaxLogic(
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
-                " the following cases are used: " + categories.joinToString(", ")
+                " used cases are: " + categories.joinToString(", ")
             )
         }
             .lineUpAll()

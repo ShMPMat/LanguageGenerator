@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
@@ -26,7 +27,7 @@ class VerbClause(
 
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val node = verb.toNode(
-            SyntaxRelation.Verb,
+            Predicate,
             additionalCategories.map { it.categoryValue },
             UndefinedArranger
         )

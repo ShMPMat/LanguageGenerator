@@ -31,7 +31,7 @@ class WordOrderGenerator {
 
     private fun generateCopulaOrder(
         syntaxParadigm: SyntaxParadigm,
-        sovOrder: Map<VerbSentenceType, SovOrder>,
+        sovOrder: Map<VerbSentenceType, RandomOrder>,
         nominalGroupOrder: NominalGroupOrder
     ): Map<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>> {
         val result = mutableMapOf<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>>()
@@ -75,7 +75,7 @@ class WordOrderGenerator {
     }
 
     private fun createParticleCopulaOrder(it: RelationArranger) = RelationArranger(
-        SubstitutingOrder(it.relationOrder, mapOf(Verb to CopulaParticle, Patient to SubjectCompliment))
+        SubstitutingOrder(it.relationOrder, mapOf(Predicate to CopulaParticle, Patient to SubjectCompliment))
     )
 
     private fun createNoCopulaOrder(
@@ -86,7 +86,7 @@ class WordOrderGenerator {
             StaticOrder(
                 arranger.relationOrder
                     .chooseReferenceOrder()
-                    .filter { it != Verb }
+                    .filter { it != Predicate }
             ),
             nominalGroupOrder,// nominalGroupOrder is needed because the head of the sentence is a noun phrase
             Agent
@@ -101,18 +101,18 @@ class WordOrderGenerator {
             RelationArranger(generateSimpleSovOrder(syntaxParadigm))
         }
 
-    private fun createDefaultCopulaOrder(sovOrder: Map<VerbSentenceType, SovOrder>): RelationArranger =
+    private fun createDefaultCopulaOrder(sovOrder: Map<VerbSentenceType, RandomOrder>): RelationArranger =
         RelationArranger(sovOrder.getValue(VerbSentenceType.MainVerbClause))
 
     private fun swapCopulaObject(arranger: RelationArranger) = RelationArranger(
         SubstitutingOrder(arranger.relationOrder, mapOf(Patient to SubjectCompliment))
     )
 
-    private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): MapWithDefault<VerbSentenceType, SovOrder> {
+    private fun generateSovOrder(syntaxParadigm: SyntaxParadigm): MapWithDefault<VerbSentenceType, RandomOrder> {
         val mainOrder = generateSimpleSovOrder(syntaxParadigm)
-        val exceptions = mutableMapOf<VerbSentenceType, SovOrder>()
+        val exceptions = mutableMapOf<VerbSentenceType, RandomOrder>()
 
-        fun writeSentenceType(sentenceType: VerbSentenceType, order: SovOrder) {
+        fun writeSentenceType(sentenceType: VerbSentenceType, order: RandomOrder) {
             exceptions[sentenceType] = order
 
             sentenceOrderPropagation[sentenceType]
@@ -131,7 +131,7 @@ class WordOrderGenerator {
         return MapWithDefault(mainOrder, exceptions)
     }
 
-    private fun generateSimpleSovOrder(syntaxParadigm: SyntaxParadigm): SovOrder {
+    private fun generateSimpleSovOrder(syntaxParadigm: SyntaxParadigm): RandomOrder {
         val basicTemplate = BasicSovOrder.entries.randomElement()
 
         val (references, name) = when (basicTemplate) {
@@ -149,7 +149,7 @@ class WordOrderGenerator {
             else -> basicTemplate.references to basicTemplate.name
         }
 
-        return SovOrder(injectAdditionalRelations(references, syntaxParadigm), name)
+        return RandomOrder(injectAdditionalRelations(references, syntaxParadigm), name)
     }
 
     private fun injectAdditionalRelations(

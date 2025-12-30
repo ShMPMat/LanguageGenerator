@@ -1,8 +1,6 @@
 package io.tashtabash.lang.language.syntax
 
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
-import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.random.GenericSSO
 import io.tashtabash.random.SampleSpaceObject
 import io.tashtabash.random.singleton.randomUnwrappedElement
@@ -56,12 +54,8 @@ class StaticOrder(val order: List<SyntaxRelation>): RelationOrder {
     override fun toString() = "Order of " + order.joinToString(", ")
 }
 
-class SovOrder(override val references: List<GenericSSO<SyntaxRelations>>, val name: String) : RelationOrder {
+class RandomOrder(override val references: List<GenericSSO<SyntaxRelations>>, val name: String = "?") : RelationOrder {
     override fun toString() = name
-}
-
-data class CopulaWordOrder(val copulaSentenceType: CopulaSentenceType, val copulaType: CopulaType) {
-    override fun toString() = "$copulaSentenceType, $copulaType"
 }
 
 
@@ -69,12 +63,12 @@ enum class BasicSovOrder(
     override val references: List<GenericSSO<SyntaxRelations>>,
     override val probability: Double
 ) : SampleSpaceObject, RelationOrder {
-    SOV(listOf(listOf(Agent, Patient, Verb).withProb(1.0)), 565.0),
-    SVO(listOf(listOf(Agent, Verb, Patient).withProb(1.0)), 488.0),
-    VSO(listOf(listOf(Verb, Agent, Patient).withProb(1.0)), 95.0),
-    VOS(listOf(listOf(Verb, Patient, Agent).withProb(1.0)), 25.0),
-    OVS(listOf(listOf(Patient, Verb, Agent).withProb(1.0)), 11.0),
-    OSV(listOf(listOf(Patient, Agent, Verb).withProb(1.0)), 4.0),
+    SOV(listOf(listOf(Agent, Patient, Predicate).withProb(1.0)), 565.0),
+    SVO(listOf(listOf(Agent, Predicate, Patient).withProb(1.0)), 488.0),
+    VSO(listOf(listOf(Predicate, Agent, Patient).withProb(1.0)), 95.0),
+    VOS(listOf(listOf(Predicate, Patient, Agent).withProb(1.0)), 25.0),
+    OVS(listOf(listOf(Patient, Predicate, Agent).withProb(1.0)), 11.0),
+    OSV(listOf(listOf(Patient, Agent, Predicate).withProb(1.0)), 4.0),
     Two(listOf(), 67.0),
     None(listOf(SOV, SVO, VSO, VOS, OVS, OSV).flatMap { it.references }, 122.0)
 }

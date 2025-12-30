@@ -8,7 +8,7 @@ import io.tashtabash.lang.utils.MapWithDefault
 
 
 data class WordOrder(
-    val sovOrder: MapWithDefault<VerbSentenceType, SovOrder>,
+    val sovOrder: MapWithDefault<VerbSentenceType, RandomOrder>,
     val copulaOrder: Map<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>>,
     val nominalGroupOrder: NominalGroupOrder
 ) {

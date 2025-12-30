@@ -4,6 +4,6 @@ import io.tashtabash.lang.language.lexis.SpeechPart
 
 
 data class CategoryPool(val categories: List<Category<*>>) {
-    fun getStaticFor(speechPart: SpeechPart) = categories
-        .filter { it.actualValues.isNotEmpty() && speechPart in it.staticSpeechParts }
+    fun getStatic(speechPart: SpeechPart): List<Category<*>> =
+        categories.filter { it.actualValues.isNotEmpty() && speechPart in it.staticSpeechParts }
 }

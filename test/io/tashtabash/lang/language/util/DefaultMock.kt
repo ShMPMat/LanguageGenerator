@@ -32,7 +32,7 @@ val defNumberCategory = Number(
     listOf(NumberValue.Singular, NumberValue.Dual, NumberValue.Paucal, NumberValue.Plural),
     setOf(PSpeechPart(SpeechPart.Noun, CategorySource.Self))
 )
-val defOrder = SovOrder(
+val defOrder = RandomOrder(
     // This word order is kinda weird to be applicable to transitive and intransitive clauses
     listOf(
         listOf(
@@ -41,7 +41,7 @@ val defOrder = SovOrder(
             SyntaxRelation.Agent,
             SyntaxRelation.Argument,
             SyntaxRelation.Patient,
-            SyntaxRelation.Verb,
+            SyntaxRelation.Predicate,
             SyntaxRelation.Benefactor,
             SyntaxRelation.Location
         ).toSampleSpaceObject(1.0)

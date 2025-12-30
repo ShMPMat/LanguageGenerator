@@ -656,7 +656,7 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
                 ),
-                transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Argument, DropTransformer))
+                transformers = listOf(of(Verb) to RelationTransformer(SyntaxRelation.Argument, DropTransformer))
             )
         )
         // Set up descriptions
@@ -702,7 +702,7 @@ internal class SentenceDescriptionTest {
                     Verb.toDefault() to SyntaxRelation.Agent to listOf(),
                     Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
-                transformers = listOf(of(Verb) to ChildTransformer(SyntaxRelation.Agent, DropTransformer))
+                transformers = listOf(of(Verb) to RelationTransformer(SyntaxRelation.Agent, DropTransformer))
             )
         )
         // Set up descriptions
@@ -755,6 +755,60 @@ internal class SentenceDescriptionTest {
                 transformers = listOf(
                     has(SemanticsTag("trans")) + SyntaxRelation.Agent.matches(of(Noun)) + SyntaxRelation.Patient.matches(of(PersonalPronoun))
                             to RemapOrderTransformer(mapOf(SyntaxRelation.Agent to SyntaxRelation.Patient, SyntaxRelation.Patient to SyntaxRelation.Agent))
+                )
+            )
+        )
+        // Set up descriptions
+        val pronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val nounDescription = NominalDescription("cat", ActorComplimentValue(1))
+        val verbDescription = VerbDescription(
+            "build",
+            mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)
+        )
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+
+        assertEquals(
+            listOf(
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
+                createNoun("a") withMeaning "cat",
+                createTransVerb("do") withMeaning "build"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `PutFirstTransformer changes the order`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val noun = createNoun("a") withMeaning "cat"
+        val verb = createTransVerb("do") withMeaning "build"
+        // Set up WordChangeParadigm
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
+                Noun.toDefault() to SpeechPartChangeParadigm(Noun.toDefault()),
+                Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault()),
+            )
+        )
+        val language = makeDefLang(
+            listOf(pronoun, noun, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                ),
+                transformers = listOf(
+                    of(PersonalPronoun) to PutFirstTransformer(SyntaxRelation.Predicate)
                 )
             )
         )

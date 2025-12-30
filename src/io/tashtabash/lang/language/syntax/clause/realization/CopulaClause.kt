@@ -5,7 +5,7 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.syntax.SyntaxException
-import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.features.CopulaType
@@ -28,24 +28,24 @@ class VerbalCopulaClause(
     }
 
     override fun toNode(language: Language, random: Random): SyntaxNode {
-        val node = copula.toNode(SyntaxRelation.Verb, additionalCategories.map { it.categoryValue }, UndefinedArranger)
+        val node = copula.toNode(Predicate, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.Verb,
-                SyntaxRelation.Agent,
+                Agent,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.Verb,
-                SyntaxRelation.SubjectCompliment,
+                SubjectCompliment,
                 word.semanticsCore.speechPart
             )
         }
 
-        node.setRelationChild(SyntaxRelation.Agent, subj)
-        node.setRelationChild(SyntaxRelation.Patient, obj)
+        node.setRelationChild(Agent, subj)
+        node.setRelationChild(Patient, obj)
 
         return node
     }
@@ -66,21 +66,21 @@ class ParticleCopulaClause(
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.Particle,
-                SyntaxRelation.Agent,
+                Agent,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.Particle,
-                SyntaxRelation.SubjectCompliment,
+                SubjectCompliment,
                 word.semanticsCore.speechPart
             )
         }
-        val particle = copula.toNode(SyntaxRelation.CopulaParticle, listOf(), PassingSingletonArranger)
+        val particle = copula.toNode(CopulaParticle, listOf(), PassingSingletonArranger)
 
-        particle.setRelationChild(SyntaxRelation.Agent, subj)
-        particle.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
+        particle.setRelationChild(Agent, subj)
+        particle.setRelationChild(SubjectCompliment, obj)
 
         return particle
     }
@@ -92,19 +92,19 @@ class NullCopulaClause(val subject: NominalClause, val complement: NominalClause
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.None,
-                SyntaxRelation.SubjectCompliment,
+                SubjectCompliment,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
                 CopulaType.None,
-                SyntaxRelation.Agent,
+                Agent,
                 word.semanticsCore.speechPart
             )
         }
 
-        subj.setRelationChild(SyntaxRelation.SubjectCompliment, obj)
+        subj.setRelationChild(SubjectCompliment, obj)
 
         return subj
     }

@@ -229,7 +229,7 @@ class LexisGenerator(
     private fun makeStaticCategories(core: SemanticsCoreTemplate, categoryPool: CategoryPool): Set<CategoryValue> {
         val resultCategories = mutableSetOf<CategoryValue>()
 
-        for (category in categoryPool.getStaticFor(core.speechPart)) {
+        for (category in categoryPool.getStatic(core.speechPart)) {
             val values = core.tagClusters
                 .firstOrNull { it.type == category.outType }
                 ?.tags

@@ -20,9 +20,11 @@ data class SyntaxNode(
     private val _relation: MutableMap<SyntaxRelation, SyntaxNode> = mutableMapOf(), // Inc. non-children relations
     private val _children: MutableList<SentenceNodeChild> = mutableListOf(),
     var isDropped: Boolean = false,
-    var parentPropagation: Boolean = false
+    var parentPropagation: Boolean = false,
+    val tags: MutableList<SyntaxNodeTag> = mutableListOf()
 ) {
     val children: List<SentenceNodeChild> = _children
+    val relations: Map<SyntaxRelation, SyntaxNode> = _relation
 
     // Used to order the node and its children
     val allTreeRelations: List<SyntaxRelation>
@@ -112,3 +114,7 @@ fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when
 
 
 typealias SentenceNodeChild = Pair<SyntaxRelation, SyntaxNode>
+
+enum class SyntaxNodeTag {
+    Topic
+}

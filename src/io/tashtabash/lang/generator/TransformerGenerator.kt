@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.SpeechPart.PersonalPronoun
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.transformer.*
 import io.tashtabash.lang.utils.thenTake
 import io.tashtabash.random.singleton.chanceOf
@@ -25,7 +26,16 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
             generateTopicMarking() +
             generateDeixisSimplifier() +
             generateDefinitivenessSimplifier() +
-            generateDrop()
+            generateDrop() +
+            generateTopicMovement()
+
+    private fun generateTopicMovement() = listOfNotNull(
+        .9.testProbability() thenTake {
+            has(SyntaxNodeTag.Topic) then {
+                PutFirstTransformer(Predicate) // Assume all topics are children of Predicates
+            }
+        }
+    )
 
     // The "subject is marked as a topic" rule is generated for all speech parts if at all
     // Since there are no relative clauses now, the rule doesn't check if the verb is of the main clause
@@ -36,23 +46,23 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
 
         return listOfNotNull(
             // Create a rule only for simple governance systems where all nominals get the same case
-            syntaxLogic.resolveVerbCase(SpeechPart.Verb.toDefault(), Agent).contains(CaseValue.Nominative) thenTake {
-                of(SpeechPart.Verb) + Agent.matches(of(affectedNominals)) then {
+            syntaxLogic.resolveVerbCase(Verb.toDefault(), Agent).contains(CaseValue.Nominative) thenTake {
+                of(Verb) + Agent.matches(of(affectedNominals)) then {
                     transform(Agent) {
-                        RemoveCategoryTransformer(caseName, adpositionName) + AddCategoryTransformer(Topic)
+                        remove(caseName, adpositionName) + add(Topic) + add(SyntaxNodeTag.Topic)
                     }
                 }
             },
-            syntaxLogic.resolveVerbCase(SpeechPart.Verb.toDefault(), Patient).contains(CaseValue.Absolutive) thenTake {
-                of(SpeechPart.Verb) + Patient.matches(of(affectedNominals)) then {
+            syntaxLogic.resolveVerbCase(Verb.toDefault(), Patient).contains(CaseValue.Absolutive) thenTake {
+                of(Verb) + Patient.matches(of(affectedNominals)) then {
                     transform(Patient) {
-                        RemoveCategoryTransformer(caseName, adpositionName) + AddCategoryTransformer(Topic)
+                        remove(caseName, adpositionName) + add(Topic) + add(SyntaxNodeTag.Topic)
                     }
                 }
             },
-            of(SpeechPart.Verb) + Argument.matches(of(affectedNominals)) then {
+            of(Verb) + Argument.matches(of(affectedNominals)) then {
                 transform(Argument) {
-                    RemoveCategoryTransformer(caseName, adpositionName) + AddCategoryTransformer(Topic)
+                    remove(caseName, adpositionName) + add(Topic) + add(SyntaxNodeTag.Topic)
                 }
             }
         )
@@ -97,7 +107,7 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
         val pronounCategories = changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault())
             .categories
 
-        for (verbParadigm in changeParadigm.getSpeechPartParadigms(SpeechPart.Verb)) {
+        for (verbParadigm in changeParadigm.getSpeechPartParadigms(Verb)) {
             val verbalCategories = verbParadigm.categories
 
             for (relation in resolvePossibleArguments(verbParadigm.speechPart)) {
@@ -109,7 +119,7 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
 
                 dropProb.chanceOf {
                     transformers += of(verbParadigm.speechPart) + relation.matches(of(PersonalPronoun)) then {
-                        ChildTransformer(relation, DropTransformer)
+                        RelationTransformer(relation, DropTransformer)
                     }
                 }
             }
