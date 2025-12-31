@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.syntax.clause.description
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.clause.description.MainObjectType.*
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePossessionClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
@@ -15,50 +16,32 @@ import kotlin.random.Random
 
 
 class PredicatePossessionDescription(
-    val ownerDescription: NominalDescription,
-    val ownedDescription: NominalDescription
+    val owner: NominalDescription,
+    val owned: NominalDescription
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         when (language.changeParadigm.syntaxParadigm.predicatePossessionPresence.predicatePossessionType.randomUnwrappedElement()) {
-            HaveVerb ->
-                VerbMainClauseDescription(
-                    VerbDescription(
-                        "have",
-                        mapOf(
-                            MainObjectType.Agent to ownerDescription,
-                            MainObjectType.Patient to ownedDescription
-                        )
-                    )
+            HaveVerb -> VerbMainClauseDescription(
+                VerbDescription(
+                    "have",
+                    mapOf(Agent to owner, Patient to owned)
                 )
-            LocativeOblique -> ObliquePredicatePossessionDescription(
-                ownerDescription,
-                ownedDescription,
-                SyntaxRelation.Location
-            )
-            DativeOblique -> ObliquePredicatePossessionDescription(
-                ownerDescription,
-                ownedDescription,
-                SyntaxRelation.Addressee
             )
             GenitiveOblique -> VerbMainClauseDescription(
                 VerbDescription(
                     "exist",
-                    mapOf(
-                        MainObjectType.Argument to ownedDescription.copyAndAddDefinitions(PossessorDescription(ownerDescription))
-                    )
+                    mapOf(Argument to owned.copyAndAddDefinitions(PossessorDescription(owner)))
                 )
             )
-            Topic -> ObliquePredicatePossessionDescription(
-                ownerDescription,
-                ownedDescription,
-                SyntaxRelation.Topic
-            )
+            LocativeOblique -> ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Location)
+            DativeOblique -> ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Addressee)
+            Topic -> ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Topic)
         }.toClause(language, context, random)
 }
 
 class ObliquePredicatePossessionDescription(
-    val ownerDescription: NominalDescription,
-    val ownedDescription: NominalDescription,
+    val owner: NominalDescription,
+    val owned: NominalDescription,
     val possessorSyntaxRelation: SyntaxRelation
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
@@ -71,10 +54,10 @@ class ObliquePredicatePossessionDescription(
                         word.semanticsCore.speechPart,
                         context
                     ),
-                    mapOf(SyntaxRelation.Argument to ownedDescription.toClause(language, context, random)),
+                    mapOf(SyntaxRelation.Argument to owned.toClause(language, context, random)),
                     listOf(
                         CaseAdjunctClause(
-                            ownerDescription.toClause(language, context, random),
+                            owner.toClause(language, context, random),
                             possessorSyntaxRelation
                         )
                     )

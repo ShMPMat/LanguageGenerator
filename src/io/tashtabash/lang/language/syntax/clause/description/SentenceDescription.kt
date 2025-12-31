@@ -12,16 +12,21 @@ import kotlin.random.Random
 abstract class SentenceDescription : UnfoldableClauseDescription
 
 
-class VerbMainClauseDescription(private val verbClause: VerbDescription) : SentenceDescription() {
+class VerbMainClauseDescription(private val verb: VerbDescription) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
-        verbClause.toClause(language, context, random).let {
+        verb.toClause(language, context, random).let {
             val type = when (context.type.first) {
                 Indicative -> VerbSentenceType.MainVerbClause
                 GeneralQuestion -> VerbSentenceType.QuestionVerbClause
                 Negative -> VerbSentenceType.NegatedVerbClause
             }
 
-            VerbSentenceClause(it, type)
+            val topic = context.topic?.let { objectType ->
+                language.changeParadigm
+                    .syntaxLogic
+                    .resolveArgumentTypes(it.verb.semanticsCore.speechPart, objectType)
+            }
+            VerbSentenceClause(it, type, topic)
         }
 }
 

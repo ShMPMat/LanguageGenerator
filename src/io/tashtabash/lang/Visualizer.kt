@@ -122,7 +122,8 @@ class Visualizer(val language: Language) {
 
         val indicativeContext = Context(
             LongGonePast to Implicit,
-            Indicative to Explicit
+            Indicative to Explicit,
+            Instrument // Topicalize the Instrument if present
         )
         val questionContext = Context(
             FarFuture to Implicit,

@@ -114,7 +114,7 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
                 val roleAgreementCategories = verbalCategories
                     .filter { it.source is CategorySource.Agreement && it.source.relation == relation }
                 val unrepresentedCategoriesNumber = pronounCategories.size - roleAgreementCategories.size
-                // .1 at 0, .9 at +Inf; the more categories are lost with the drop, the less is the probability of it
+                // .1 at 0, .9 at +Inf; the more categories are lost with the drop, the less is the probability
                 val dropProb = .1 + .8 / (1.0 + unrepresentedCategoriesNumber)
 
                 dropProb.chanceOf {

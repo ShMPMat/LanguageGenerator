@@ -6,8 +6,6 @@ data class QuestionMarkerPresence(val questionMarker: QuestionMarker?) {
 }
 
 
-object QuestionMarker: SyntaxFeature {
+data object QuestionMarker: SyntaxFeature {
     override val probability = 1.0
-
-    override fun toString() = "QuestionMarker"
 }

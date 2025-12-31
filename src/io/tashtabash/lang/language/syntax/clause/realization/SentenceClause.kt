@@ -4,12 +4,9 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
 import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
-import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTranslator
-import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
-import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.syntax.*
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import kotlin.random.Random
@@ -24,7 +21,7 @@ abstract class SentenceClause : UnfoldableClause {
             .applyNode(node, random)
     }
 
-    // The transformers are supposed to be applied to sentence heads and then recursively to it's children
+    // The transformers are applied to sentence heads and then recursively to it's children
     private fun applyTransformers(node: SyntaxNode, syntaxLogic: SyntaxLogic) =
         syntaxLogic.applyTransformers(node)
 }
@@ -39,23 +36,29 @@ fun SyntaxNode.addQuestionMarker(language: Language) {
         )
 }
 
-class VerbSentenceClause(private val verbClause: VerbClause, val type: VerbSentenceType) : SentenceClause() {
+class VerbSentenceClause(
+    val verb: VerbClause,
+    val type: VerbSentenceType,
+    val topic: SyntaxRelation? // Any of the verb's children
+) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
-        verbClause.toNode(language, random).apply {
+        verb.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
                 addQuestionMarker(language)
-
             if (type == VerbSentenceType.NegatedVerbClause)
                 categoryValues += NegationValue.Negative
+            relations[topic]
+                ?.let { it.tags += SyntaxNodeTag.Topic }
 
+            val defaultArranger = language.changeParadigm.wordOrder.sovOrder.getValue(type)
             arranger =
-                if (verbClause.arguments.containsKey(SyntaxRelation.Argument))
+                if (verb.arguments.containsKey(SyntaxRelation.Argument))
                     RelationArranger(SubstitutingOrder(
-                        language.changeParadigm.wordOrder.sovOrder.getValue(type),
+                        defaultArranger,
                         mapOf(SyntaxRelation.Agent to SyntaxRelation.Argument)
                     ))
                 else
-                    RelationArranger(language.changeParadigm.wordOrder.sovOrder.getValue(type))
+                    RelationArranger(defaultArranger)
         }
 }
 
@@ -64,7 +67,6 @@ class CopulaSentenceClause(private val copulaClause: CopulaClause, val type: Cop
         copulaClause.toNode(language, random).apply {
             if (type == CopulaSentenceType.QuestionCopulaClause)
                 addQuestionMarker(language)
-
             if (type == CopulaSentenceType.NegatedCopulaClause)
                 categoryValues += NegationValue.Negative
 

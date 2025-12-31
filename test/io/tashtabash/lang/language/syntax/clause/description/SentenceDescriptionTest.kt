@@ -11,6 +11,7 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.context.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
@@ -808,7 +809,7 @@ internal class SentenceDescriptionTest {
                     Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
                 transformers = listOf(
-                    of(PersonalPronoun) to PutFirstTransformer(SyntaxRelation.Predicate)
+                    has(SyntaxNodeTag.Topic) to PutFirstTransformer(SyntaxRelation.Predicate)
                 )
             )
         )
@@ -823,7 +824,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit, MainObjectType.Patient)
 
         assertEquals(
             listOf(
