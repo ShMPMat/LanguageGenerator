@@ -13,10 +13,12 @@ data class WordOrder(
     val nominalGroupOrder: NominalGroupOrder
 ) {
     override fun toString() = """
+        |Verb:
         |$sovOrder
         |
-        |$copulaOrder
+        |Copula:
+        |${copulaOrder.entries.joinToString("\n")}
         |
-        |$nominalGroupOrder
+        |Noun Group: $nominalGroupOrder
     """.trimMargin()
 }

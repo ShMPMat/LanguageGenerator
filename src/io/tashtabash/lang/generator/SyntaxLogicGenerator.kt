@@ -21,7 +21,6 @@ import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.values
 import io.tashtabash.random.singleton.*
-import io.tashtabash.random.toSampleSpaceObject
 import io.tashtabash.random.withProb
 
 
@@ -53,28 +52,24 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         for (speechPartParadigm in nominalParadigms)
             for (copula in copulas) {
                 copulaCaseSolver[copula to SyntaxRelation.Agent to speechPartParadigm.speechPart] = listOf(
-                    CaseValue.Nominative.toSampleSpaceObject(0.9),
-                    CaseValue.Absolutive.toSampleSpaceObject(0.9),
-                    CaseValue.Ergative.toSampleSpaceObject(0.1),
-                    CaseValue.Accusative.toSampleSpaceObject(0.1)
+                    CaseValue.Nominative.withProb(0.9),
+                    CaseValue.Absolutive.withProb(0.9),
+                    CaseValue.Ergative.withProb(0.1),
+                    CaseValue.Accusative.withProb(0.1)
                 )
                     .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
-                    .randomElementOrNull()
-                    ?.value
-//                    .randomUnwrappedElementOrNull() //TODO out T in the generic
+                    .randomUnwrappedElementOrNull()
                     ?.let { listOf(it) }
                     ?: emptyList()
 
                 copulaCaseSolver[copula to SyntaxRelation.SubjectCompliment to speechPartParadigm.speechPart] = listOf(
-                    CaseValue.Nominative.toSampleSpaceObject(0.5),
-                    CaseValue.Absolutive.toSampleSpaceObject(0.5),
-                    CaseValue.Ergative.toSampleSpaceObject(0.5),
-                    CaseValue.Accusative.toSampleSpaceObject(0.5)
+                    CaseValue.Nominative.withProb(0.5),
+                    CaseValue.Absolutive.withProb(0.5),
+                    CaseValue.Ergative.withProb(0.5),
+                    CaseValue.Accusative.withProb(0.5)
                 )
                     .filter { it.value in speechPartParadigm.getCategoryValues(caseName) }
-                    .randomElementOrNull()
-                    ?.value
-//                    .randomUnwrappedElementOrNull() //TODO out T in the generic
+                    .randomUnwrappedElementOrNull()
                     ?.let { listOf(it) }
                     ?: emptyList()
             }
@@ -213,15 +208,14 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             val paucalUpperBound = RandomSingleton.random.nextInt(paucalLowerBound + 1, paucalLowerBound + 9)
             val paucalBound = paucalLowerBound..paucalUpperBound
 
-            val numberCategorySolver = values.map {
-                it as NumberValue
-                it to when (it) {
+            val numberCategorySolver = values.associateWith {
+                when (it) {
                     Singular -> 1..1
                     Dual -> 2..2
                     Paucal -> paucalBound
                     Plural -> 2..Int.MAX_VALUE
                 }
-            }.toMap().toMutableMap()
+            }.toMutableMap()
 
             if (Dual in values)
                 numberCategorySolver[Plural] = 3..Int.MAX_VALUE
@@ -247,14 +241,12 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         .firstOrNull()
         ?.takeIf { it.actualValues.isNotEmpty() }
         ?.let { genderCategory ->
-            val genderCategorySolver = genderCategory.actualValues.associate {
-                it as NounClassValue
-                it to it
-            }.toMutableMap()
+            val genderCategorySolver = genderCategory.actualValues
+                .associateWith { it }
+                .toMutableMap()
 
             val absentGenders = genderCategory.allPossibleValues
                 .filter { it !in genderCategory.actualValues }
-                .map { it as NounClassValue }
 
             for (gender in absentGenders) genderCategorySolver[gender] = when (gender) {
                 Female -> listOf(NounClassValue.Person, Common, Neutral).first { it in genderCategory.actualValues }

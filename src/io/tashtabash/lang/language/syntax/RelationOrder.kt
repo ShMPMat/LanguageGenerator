@@ -54,7 +54,10 @@ class StaticOrder(val order: List<SyntaxRelation>): RelationOrder {
     override fun toString() = "Order of " + order.joinToString(", ")
 }
 
-class RandomOrder(override val references: List<GenericSSO<SyntaxRelations>>, val name: String = "?") : RelationOrder {
+data class RandomOrder(
+    override val references: List<GenericSSO<SyntaxRelations>>,
+    val name: String = "?"
+) : RelationOrder {
     override fun toString() = name
 }
 
