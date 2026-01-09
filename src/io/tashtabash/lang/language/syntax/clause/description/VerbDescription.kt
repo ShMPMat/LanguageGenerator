@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.lexis.Meaning
-import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
@@ -12,7 +11,7 @@ import kotlin.random.Random
 
 class VerbDescription(val verb: Meaning, val args: Map<ObjectType, NominalDescription>): ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random) =
-        language.lexis.getWordOrNull(verb)?.let { verb ->
+        language.lexis.getWord(verb).let { verb ->
             val categoryValues = language.changeParadigm.syntaxLogic.resolveVerbForm(
                 language,
                 verb.semanticsCore.speechPart,
@@ -33,7 +32,6 @@ class VerbDescription(val verb: Meaning, val args: Map<ObjectType, NominalDescri
                 constructCaseAdjunctClauses(resolvedArgs, language, context, random)
             )
         }
-            ?: throw SyntaxException("No verb '$verb' in Language")
 
     private fun constructCaseAdjunctClauses(
         arguments: Map<SyntaxRelation, NominalDescription>,

@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.lexis.Meaning
-import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.clause.realization.NominalClause
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
@@ -15,14 +14,13 @@ open class NominalDescription(
     val definitions: List<NounDefinerDescription> = listOf()
 ) : ClauseDescription {
     override fun toClause(language: Language, context: Context, random: Random): NominalClause =
-        language.lexis.getWordOrNull(noun)?.let { word ->
+        language.lexis.getWord(noun).let { word ->
             NominalClause(
                 word,
                 definitions.map { it.toClause(language, context, random) },
                 language.changeParadigm.syntaxLogic.resolveComplimentCategories(actorCompliment, word.semanticsCore.speechPart),
             )
         }
-            ?: throw SyntaxException("No noun or pronoun '$noun' in Language")
 
     open fun copyAndAddDefinitions(newDefinitions: List<NounDefinerDescription>) = NominalDescription(
         noun,

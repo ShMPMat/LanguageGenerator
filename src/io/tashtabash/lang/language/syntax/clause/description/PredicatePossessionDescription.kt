@@ -1,7 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType.*
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
@@ -20,7 +19,7 @@ class PredicatePossessionDescription(
     val owned: NominalDescription
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
-        when (language.changeParadigm.syntaxParadigm.predicatePossessionPresence.predicatePossessionType.randomUnwrappedElement()) {
+        when (language.changeParadigm.syntaxParadigm.predicatePossessionPresence.predicatePossession.randomUnwrappedElement()) {
             HaveVerb -> VerbMainClauseDescription(
                 VerbDescription(
                     "have",
@@ -46,7 +45,7 @@ class ObliquePredicatePossessionDescription(
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: Context, random: Random) =
         ObliquePredicatePossessionClause(
-            language.lexis.getWordOrNull("exist")?.let { word ->
+            language.lexis.getWord("exist").let { word ->
                 VerbClause(
                     word,
                     language.changeParadigm.syntaxLogic.resolveVerbForm(
@@ -62,8 +61,7 @@ class ObliquePredicatePossessionDescription(
                         )
                     )
                 )
-            }
-                ?: throw SyntaxException("No verb 'exist' in Language"),
+            },
             when (context.type.first) {
                 ContextValue.TypeContext.Indicative -> VerbSentenceType.MainVerbClause
                 ContextValue.TypeContext.GeneralQuestion -> VerbSentenceType.QuestionVerbClause
