@@ -18,12 +18,14 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.*
-import io.tashtabash.lang.language.syntax.features.PredicatePossessionType.HaveVerb
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.toSampleSpaceObject
+import io.tashtabash.random.withProb
 
 
 val defSpeechPart = TypedSpeechPart(SpeechPart.Noun)
@@ -97,8 +99,8 @@ fun makeDefLang(
     wordChangeParadigm: WordChangeParadigm,
     derivations: List<Derivation> = listOf(),
     syntaxLogic: SyntaxLogic = SyntaxLogic(),
-    predicatePossessionType: PredicatePossessionType = HaveVerb,
-    copulaOrder: Map<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
+    predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
+    copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
 ) = Language(
     Lexis(words, mapOf(), mapOf()).reifyPointers(),
     testPhonemeContainer,
@@ -109,9 +111,9 @@ fun makeDefLang(
         WordOrder(MapWithDefault(defOrder), copulaOrder, NominalGroupOrder.DNP),
         wordChangeParadigm,
         SyntaxParadigm(
-            CopulaPresence(listOf(CopulaType.None.toSso(1.0))),
+            CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
             QuestionMarkerPresence(null),
-            PredicatePossessionPresence(listOf(predicatePossessionType.toSso(1.0)))
+            PredicatePossessionPresence(listOf(predicatePossessionConstruction.withProb(1.0)))
         ),
         NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
         syntaxLogic

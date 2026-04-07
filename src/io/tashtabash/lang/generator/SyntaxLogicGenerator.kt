@@ -14,11 +14,11 @@ import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ContextValue
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.values
 import io.tashtabash.random.singleton.*
 import io.tashtabash.random.withProb
@@ -43,11 +43,11 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         it.copy(transformers = TransformerGenerator(changeParadigm, it).generateTransformers())
     }
 
-    private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
-        val copulaCaseSolver: MutableMap<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
+    private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaConstruction, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
+        val copulaCaseSolver: MutableMap<Pair<Pair<CopulaConstruction, SyntaxRelation>, TypedSpeechPart>, CategoryValues> =
             mutableMapOf()
 
-        val copulas = syntaxParadigm.copulaPresence.copulaType.map { it.feature }
+        val copulas = syntaxParadigm.copula.copula.map { it.value }
 
         for (speechPartParadigm in nominalParadigms)
             for (copula in copulas) {

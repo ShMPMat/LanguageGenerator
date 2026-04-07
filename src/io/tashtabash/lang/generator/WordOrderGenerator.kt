@@ -4,9 +4,9 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.syntax.*
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.GenericSSO
 import io.tashtabash.random.randomSublist
@@ -33,38 +33,38 @@ class WordOrderGenerator {
         syntaxParadigm: SyntaxParadigm,
         sovOrder: Map<VerbSentenceType, RandomOrder>,
         nominalGroupOrder: NominalGroupOrder
-    ): Map<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>> {
-        val result = mutableMapOf<CopulaType, MapWithDefault<CopulaSentenceType, Arranger>>()
+    ): Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> {
+        val result = mutableMapOf<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>>()
 
-        for (copulaType in syntaxParadigm.copulaPresence.copulaType.map { it.feature })
+        for (copulaType in syntaxParadigm.copula.copula.map { it.value })
             when (copulaType) {
-                CopulaType.Verb -> {
-                    result[CopulaType.Verb] = MapWithDefault(createDefaultCopulaOrder(sovOrder))
+                CopulaConstruction.Verb -> {
+                    result[CopulaConstruction.Verb] = MapWithDefault(createDefaultCopulaOrder(sovOrder))
 
                     for (type in CopulaSentenceType.entries)
                         createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
-                            result.getValue(CopulaType.Verb)[type] = it
+                            result.getValue(CopulaConstruction.Verb)[type] = it
                         }
                 }
-                CopulaType.Particle -> {
-                    result[CopulaType.Particle] = MapWithDefault(
+                CopulaConstruction.Particle -> {
+                    result[CopulaConstruction.Particle] = MapWithDefault(
                         createParticleCopulaOrder(createDefaultCopulaOrder(sovOrder))
                     )
 
                     for (type in CopulaSentenceType.entries)
                         createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
-                            result.getValue(CopulaType.Particle)[type] = createParticleCopulaOrder(it)
+                            result.getValue(CopulaConstruction.Particle)[type] = createParticleCopulaOrder(it)
                         }
                 }
-                CopulaType.None -> {
-                    result[CopulaType.None] = MapWithDefault(
+                CopulaConstruction.None -> {
+                    result[CopulaConstruction.None] = MapWithDefault(
                         swapCopulaObject(createNoCopulaOrder(createDefaultCopulaOrder(sovOrder), nominalGroupOrder))
                     )
 
                     for (type in CopulaSentenceType.entries)
                         createDivergingCopulaVerbOrderer(type, syntaxParadigm)
                             ?.let {
-                                result.getValue(CopulaType.None)[type] = swapCopulaObject(
+                                result.getValue(CopulaConstruction.None)[type] = swapCopulaObject(
                                     createNoCopulaOrder(it, nominalGroupOrder)
                                 )
                             }
@@ -166,7 +166,7 @@ class WordOrderGenerator {
         references: List<GenericSSO<SyntaxRelations>>,
         syntaxParadigm: SyntaxParadigm
     ): List<GenericSSO<SyntaxRelations>> {
-        syntaxParadigm.questionMarkerPresence.questionMarker
+        syntaxParadigm.questionMarker.questionMarker
             ?: return references
 
         return insertAtRandom(references, listOf(QuestionMarker))

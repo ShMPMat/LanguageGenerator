@@ -8,12 +8,12 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import kotlin.random.Random
 
 
-abstract class CopulaClause(val copulaType: CopulaType) : SyntaxClause
+abstract class CopulaClause(val copulaType: CopulaConstruction) : SyntaxClause
 
 
 class VerbalCopulaClause(
@@ -21,7 +21,7 @@ class VerbalCopulaClause(
     val additionalCategories: SourcedCategoryValues,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(CopulaType.Verb) {
+) : CopulaClause(CopulaConstruction.Verb) {
     init {
         if (copula.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$copula is not a verb")
@@ -31,14 +31,14 @@ class VerbalCopulaClause(
         val node = copula.toNode(Predicate, additionalCategories.map { it.categoryValue }, UndefinedArranger)
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.Verb,
+                CopulaConstruction.Verb,
                 Agent,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.Verb,
+                CopulaConstruction.Verb,
                 SubjectCompliment,
                 word.semanticsCore.speechPart
             )
@@ -56,7 +56,7 @@ class ParticleCopulaClause(
     val copula: Word,
     val subject: NominalClause,
     val complement: NominalClause
-) : CopulaClause(CopulaType.Particle) {
+) : CopulaClause(CopulaConstruction.Particle) {
     init {
         if (copula.semanticsCore.speechPart.type != SpeechPart.Particle)
             throw SyntaxException("$copula is not a particle")
@@ -65,14 +65,14 @@ class ParticleCopulaClause(
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.Particle,
+                CopulaConstruction.Particle,
                 Agent,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.Particle,
+                CopulaConstruction.Particle,
                 SubjectCompliment,
                 word.semanticsCore.speechPart
             )
@@ -87,18 +87,18 @@ class ParticleCopulaClause(
 }
 
 
-class NullCopulaClause(val subject: NominalClause, val complement: NominalClause) : CopulaClause(CopulaType.None) {
+class NullCopulaClause(val subject: NominalClause, val complement: NominalClause) : CopulaClause(CopulaConstruction.None) {
     override fun toNode(language: Language, random: Random): SyntaxNode {
         val obj = complement.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.None,
+                CopulaConstruction.None,
                 SubjectCompliment,
                 word.semanticsCore.speechPart
             )
         }
         val subj = subject.toNode(language, random).addThirdPerson().apply {
             categoryValues += language.changeParadigm.syntaxLogic.resolveCopulaCase(
-                CopulaType.None,
+                CopulaConstruction.None,
                 Agent,
                 word.semanticsCore.speechPart
             )

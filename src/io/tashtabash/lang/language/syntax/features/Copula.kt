@@ -1,13 +1,10 @@
 package io.tashtabash.lang.language.syntax.features
 
-
-data class CopulaPresence(val copulaType: SsoSyntaxFeatures<CopulaType>) {
-    override fun toString() = copulaType.joinToString(", ")
-}
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.random.UnwrappableSSO
 
 
-enum class CopulaType(override val probability: Double): SyntaxFeature {
-    Verb(1.0),
-    Particle(0.25),
-    None(0.1)
+data class CopulaPresence(val copula: List<UnwrappableSSO<CopulaConstruction>>) {
+    override fun toString() =
+        copula.joinToString { it.value.javaClass.simpleName }
 }

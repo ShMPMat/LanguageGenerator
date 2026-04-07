@@ -7,12 +7,12 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.Priority
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.syntax.transformer.SyntaxNodeMatcher
 import io.tashtabash.lang.language.syntax.transformer.Transformer
 import kotlin.math.abs
@@ -24,7 +24,7 @@ data class SyntaxLogic(
     private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
     // Maps Clause-level syntactic relations to specific category values (cases/adpositions)
     private val verbCasesSolver: Map<Pair<TypedSpeechPart, SyntaxRelation>, CategoryValues> = mapOf(),
-    private val copulaCaseSolver: Map<Pair<Pair<CopulaType, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
+    private val copulaCaseSolver: Map<Pair<Pair<CopulaConstruction, SyntaxRelation>, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val syntaxRelationSolver: Map<Pair<SyntaxRelation, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val numberCategorySolver: NumberCategorySolver? = null,
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
@@ -83,7 +83,7 @@ data class SyntaxLogic(
         verbCasesSolver.getValue(verbType to syntaxRelation)
 
     fun resolveCopulaCase(
-        copulaType: CopulaType,
+        copulaType: CopulaConstruction,
         syntaxRelation: SyntaxRelation,
         speechPart: TypedSpeechPart
     ): CategoryValues =

@@ -3,19 +3,19 @@ package io.tashtabash.lang.language.lexis
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.derivation.CompoundHistory
 import io.tashtabash.lang.language.derivation.DerivationHistory
-import io.tashtabash.lang.language.syntax.features.CopulaType
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 
 
 data class Lexis(
     override val words: List<Word>,
-    val copula: WordMap<CopulaType>,
+    val copula: WordMap<CopulaConstruction>,
     val questionMarker: WordMap<QuestionMarker>
 ): AbstractLexis() {
     val size: Int
         get() = words.size
 
-    fun getCopulaWord(type: CopulaType): Word = copula[type]
+    fun getCopulaWord(type: CopulaConstruction): Word = copula[type]
         ?.resolve(this)
         ?: throw LanguageException("No copula in Language for type $type")
 

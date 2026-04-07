@@ -6,15 +6,15 @@ import io.tashtabash.lang.language.syntax.features.QuestionMarkerPresence
 
 
 data class SyntaxParadigm(
-    val copulaPresence: CopulaPresence,
-    val questionMarkerPresence: QuestionMarkerPresence,
-    val predicatePossessionPresence: PredicatePossessionPresence
+    val copula: CopulaPresence,
+    val questionMarker: QuestionMarkerPresence,
+    val predicatePossession: PredicatePossessionPresence
 ) {
     override fun toString() = """
-        |Copula: $copulaPresence
+        |Copula: $copula
         |
-        |Question marker: $questionMarkerPresence
+        |Question marker: $questionMarker
         |
-        |Predicate possession: $predicatePossessionPresence
+        |Predicate possession: $predicatePossession
         |""".trimMargin()
 }

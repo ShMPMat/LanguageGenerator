@@ -5,6 +5,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.Noun
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
@@ -12,7 +13,6 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indic
 import io.tashtabash.lang.language.syntax.context.PrioritizedValue
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
-import io.tashtabash.lang.language.syntax.features.CopulaType
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.singleton.RandomSingleton
@@ -38,12 +38,12 @@ internal class CopulaDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 copulaCaseSolver = mapOf(
-                    CopulaType.None to SyntaxRelation.Agent to Noun.toDefault() to listOf(),
-                    CopulaType.None to SyntaxRelation.SubjectCompliment to Noun.toDefault() to listOf()
+                    CopulaConstruction.None to SyntaxRelation.Agent to Noun.toDefault() to listOf(),
+                    CopulaConstruction.None to SyntaxRelation.SubjectCompliment to Noun.toDefault() to listOf()
                 )
             ),
             copulaOrder = mapOf(
-                CopulaType.None to MapWithDefault(
+                CopulaConstruction.None to MapWithDefault(
                     RelationArranger(
                         SubstitutingOrder(
                             NestedOrder(defOrder, NominalGroupOrder.DNP, SyntaxRelation.Agent),

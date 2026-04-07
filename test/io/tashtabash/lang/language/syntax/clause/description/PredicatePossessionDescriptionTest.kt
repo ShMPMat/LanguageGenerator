@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.lexis.toIntransitive
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
@@ -16,7 +17,6 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indic
 import io.tashtabash.lang.language.syntax.context.PrioritizedValue
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
-import io.tashtabash.lang.language.syntax.features.PredicatePossessionType
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -68,7 +68,7 @@ internal class PredicatePossessionDescriptionTest {
                     SpeechPart.Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
             ),
-            predicatePossessionType = PredicatePossessionType.HaveVerb
+            predicatePossessionConstruction = HaveVerb
         )
         val sentenceDescription = PredicatePossessionDescription(
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
@@ -155,7 +155,7 @@ internal class PredicatePossessionDescriptionTest {
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Location to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
             ),
-            predicatePossessionType = PredicatePossessionType.LocativeOblique
+            predicatePossessionConstruction = LocativeOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
@@ -248,7 +248,7 @@ internal class PredicatePossessionDescriptionTest {
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
             ),
-            predicatePossessionType = PredicatePossessionType.DativeOblique
+            predicatePossessionConstruction = DativeOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
@@ -341,7 +341,7 @@ internal class PredicatePossessionDescriptionTest {
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
             ),
-            predicatePossessionType = PredicatePossessionType.GenitiveOblique
+            predicatePossessionConstruction = GenitiveOblique
         )
         val sentenceDescription = PredicatePossessionDescription(
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
@@ -434,7 +434,7 @@ internal class PredicatePossessionDescriptionTest {
                 ),
                 syntaxRelationSolver = mapOf(SyntaxRelation.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))
             ),
-            predicatePossessionType = PredicatePossessionType.Topic
+            predicatePossessionConstruction = Topic
         )
         val sentenceDescription = PredicatePossessionDescription(
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),

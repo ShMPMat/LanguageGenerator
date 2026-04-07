@@ -18,7 +18,7 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.phonology.prosody.generateStress
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
-import io.tashtabash.lang.language.syntax.features.CopulaType
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
@@ -172,19 +172,19 @@ class LexisGenerator(
     }
 
     private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula = mutableMapOf<CopulaType, WordPointer>()
+        val copula = mutableMapOf<CopulaConstruction, WordPointer>()
 
-        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Particle }) {
+        if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Particle }) {
             val particle = generateWord(
                 SemanticsCore("copula_particle", SpeechPart.Particle.toDefault())
             )
 
             words += particle
-            copula[CopulaType.Particle] = SimpleWordPointer(particle)
+            copula[CopulaConstruction.Particle] = SimpleWordPointer(particle)
         }
 
         val questionMarker = mutableMapOf<QuestionMarker, WordPointer>()
-        if (syntaxParadigm.questionMarkerPresence.questionMarker != null) {
+        if (syntaxParadigm.questionMarker.questionMarker != null) {
             val particle = generateWord(
                 SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
             )
@@ -193,8 +193,8 @@ class LexisGenerator(
             questionMarker[QuestionMarker] = SimpleWordPointer(particle)
         }
 
-        if (syntaxParadigm.copulaPresence.copulaType.any { it.feature == CopulaType.Verb })
-            copula[CopulaType.Verb] = SimpleWordPointer(
+        if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Verb })
+            copula[CopulaConstruction.Verb] = SimpleWordPointer(
                 words.getWord("be")
             )
 

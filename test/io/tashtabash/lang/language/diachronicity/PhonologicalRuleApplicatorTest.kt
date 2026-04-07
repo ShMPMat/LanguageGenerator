@@ -22,12 +22,15 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.HaveVerb
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.lang.utils.equalsByElement
 import io.tashtabash.random.singleton.RandomSingleton
+import io.tashtabash.random.withProb
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.random.Random
@@ -1512,7 +1515,7 @@ internal class PhonologicalRuleApplicatorTest {
         )
         val lexis = Lexis(
             words,
-            mapOf(CopulaType.Particle to SimpleWordPointer(copulaWord)),
+            mapOf(CopulaConstruction.Particle to SimpleWordPointer(copulaWord)),
             mapOf(QuestionMarker to SimpleWordPointer(questionMarkerWord))
         ).reifyPointers()
         val language = Language(
@@ -1528,9 +1531,9 @@ internal class PhonologicalRuleApplicatorTest {
                     mapOf(defSpeechPart to nounChangeParadigm, SpeechPart.Particle.toDefault() to particleChangeParadigm)
                 ),
                 SyntaxParadigm(
-                    CopulaPresence(listOf(CopulaType.None.toSso(1.0))),
+                    CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
                     QuestionMarkerPresence(null),
-                    PredicatePossessionPresence(listOf(PredicatePossessionType.HaveVerb.toSso(1.0)))
+                    PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0)))
                 ),
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
                 SyntaxLogic()
@@ -1542,7 +1545,7 @@ internal class PhonologicalRuleApplicatorTest {
 
         assertEquals(
             createWord("bo", SpeechPart.Particle),
-            shiftedLanguage.lexis.copula[CopulaType.Particle]?.resolve(shiftedLanguage.lexis)
+            shiftedLanguage.lexis.copula[CopulaConstruction.Particle]?.resolve(shiftedLanguage.lexis)
         )
         assertEquals(
             createWord("po", SpeechPart.Particle),

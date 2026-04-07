@@ -1,16 +1,10 @@
 package io.tashtabash.lang.language.syntax.features
 
-
-data class PredicatePossessionPresence(val predicatePossessionType: SsoSyntaxFeatures<PredicatePossessionType>) {
-    override fun toString() = predicatePossessionType.joinToString(", ")
-}
+import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction
+import io.tashtabash.random.UnwrappableSSO
 
 
-enum class PredicatePossessionType(override val probability: Double): SyntaxFeature {
-    HaveVerb(63.0),
-    LocativeOblique(24.0),
-    DativeOblique(24.0),
-    GenitiveOblique(22.0),
-    Topic(100.0),
-//    Conjunctional(59.0)
+data class PredicatePossessionPresence(val predicatePossession: List<UnwrappableSSO<PredicatePossessionConstruction>>) {
+    override fun toString() =
+        predicatePossession.joinToString { it.value.javaClass.simpleName }
 }
