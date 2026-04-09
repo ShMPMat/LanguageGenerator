@@ -9,15 +9,17 @@ import io.tashtabash.lang.language.syntax.clause.realization.VerbalCopulaClause
 import io.tashtabash.lang.language.syntax.context.Context
 
 
-interface CopulaConstruction : Construction {
-    fun apply(
+abstract class CopulaConstruction : Construction {
+    abstract fun apply(
         subject: NominalClause,
         complement: NominalClause,
         language: Language,
         context: Context
     ): CopulaClause
 
-    object Verb : CopulaConstruction {
+    override fun toString(): String = this.javaClass.simpleName
+
+    object Verb : CopulaConstruction() {
         override fun apply(
             subject: NominalClause,
             complement: NominalClause,
@@ -39,7 +41,7 @@ interface CopulaConstruction : Construction {
         }
     }
 
-    object Particle : CopulaConstruction {
+    object Particle : CopulaConstruction() {
         override fun apply(
             subject: NominalClause,
             complement: NominalClause,
@@ -52,7 +54,7 @@ interface CopulaConstruction : Construction {
         )
     }
 
-    object None : CopulaConstruction {
+    object None : CopulaConstruction() {
         override fun apply(
             subject: NominalClause,
             complement: NominalClause,

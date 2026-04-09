@@ -10,10 +10,12 @@ import io.tashtabash.lang.language.syntax.clause.description.VerbDescription
 import io.tashtabash.lang.language.syntax.clause.description.VerbMainClauseDescription
 
 
-interface PredicatePossessionConstruction : Construction {
-    fun apply(owner: NominalDescription, owned: NominalDescription): UnfoldableClauseDescription
+abstract class PredicatePossessionConstruction : Construction {
+    abstract fun apply(owner: NominalDescription, owned: NominalDescription): UnfoldableClauseDescription
 
-    object HaveVerb : PredicatePossessionConstruction {
+    override fun toString(): String = this.javaClass.simpleName
+
+    object HaveVerb : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) = VerbMainClauseDescription(
             VerbDescription(
                 "have",
@@ -22,7 +24,7 @@ interface PredicatePossessionConstruction : Construction {
         )
     }
 
-    object GenitiveOblique : PredicatePossessionConstruction {
+    object GenitiveOblique : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) = VerbMainClauseDescription(
             VerbDescription(
                 "exist",
@@ -31,17 +33,17 @@ interface PredicatePossessionConstruction : Construction {
         )
     }
 
-    object LocativeOblique : PredicatePossessionConstruction {
+    object LocativeOblique : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
             ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Location)
     }
 
-    object DativeOblique : PredicatePossessionConstruction {
+    object DativeOblique : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
             ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Addressee)
     }
 
-    object Topic : PredicatePossessionConstruction {
+    object Topic : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
             ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Topic)
     }
