@@ -97,7 +97,7 @@ enum class TensePresence(override val probability: Double, val possibilities: Li
 }
 
 sealed class TenseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(tenseName, meaning, alias) {
-    object Present : TenseValue("(present tense indicator)", "PRES")
+    object Present : TenseValue("(present tense indicator)", "PRS")
     object Future : TenseValue("(future tense indicator)", "FUT")
     object Past : TenseValue("(past tense indicator)", "PST")
     object DayPast : TenseValue("(day past tense indicator)", "DAY.PST")
