@@ -140,9 +140,9 @@ enum class NounClassPresence(override val probability: Double, val possibilities
 
 sealed class NounClassValue(meaning: Meaning, alias: String) : AbstractCategoryValue(nounClassName, meaning, alias) {
     //TODO more classes (don't forget to add tags for words after it!)
-    object Female : NounClassValue("(female class ind)", "FEM")
-    object Male : NounClassValue("(male class ind)", "MALE")
-    object Neutral : NounClassValue("(neutral class ind)", "NEUT")
+    object Female : NounClassValue("(female class ind)", "F")
+    object Male : NounClassValue("(male class ind)", "M")
+    object Neutral : NounClassValue("(neutral class ind)", "N")
     object Common : NounClassValue("(common class ind)", "COMM")
     object Person : NounClassValue("(person class ind)", "PERS")
     object Plant : NounClassValue("(plant class ind)", "PLANT")
