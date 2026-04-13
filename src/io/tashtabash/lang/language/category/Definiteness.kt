@@ -105,5 +105,5 @@ sealed class DefinitenessValue(meaning: Meaning, alias: String) : AbstractCatego
     Article
 ) {
     object Definite : DefinitenessValue("the", "DEF")
-    object Indefinite : DefinitenessValue("a", "INDEF")
+    object Indefinite : DefinitenessValue("a", "INDF")
 }
