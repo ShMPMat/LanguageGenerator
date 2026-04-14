@@ -12,7 +12,7 @@ import io.tashtabash.random.singleton.testProbability
 
 class CategoryGenerator {
     internal fun randomCategories(): List<SupplementedCategory<*>> {
-        val defaults = mutableListOf(
+        val categories = mutableListOf(
             randomCategory({ l, s, ss -> Person(l, s, ss) }, PersonRandomSupplements),
             randomCategory({ l, s, ss -> Inclusivity(l, s, ss) }, InclusivityRandomSupplements),
             randomCategory({ l, s, ss -> Definiteness(l, s, ss) }, DefinitenessRandomSupplements),
@@ -25,13 +25,13 @@ class CategoryGenerator {
         )
 
         val caseCategory = randomCategory({ l, s, ss -> Case(l, s, ss) }, CaseRandomSupplements())
-        defaults += caseCategory
+        categories += caseCategory
 
         generateAdpositions(caseCategory)?.let {
-            defaults += it
+            categories += it
         }
 
-        return defaults
+        return categories
     }
 
     private fun generateAdpositions(
