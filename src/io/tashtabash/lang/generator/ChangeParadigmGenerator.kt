@@ -142,8 +142,8 @@ class ChangeParadigmGenerator(
                     if (c.actualValues.size <= 1)
                         compulsoryData = compulsoryData.copy(isCompulsory = false)
 
-                    val existingCoCategories = compulsoryData.compulsoryCoCategories.filter {
-                        presentCategories.any { sc -> sc.first.outType == it.first().parentClassName }
+                    val existingCoCategories = compulsoryData.compulsoryCoCategories.filter { categoryValues ->
+                        presentCategories.any { sc -> sc.first.outType == categoryValues.first().parentClassName }
                     }
                     compulsoryData = compulsoryData.copy(compulsoryCoCategories = existingCoCategories)
 
