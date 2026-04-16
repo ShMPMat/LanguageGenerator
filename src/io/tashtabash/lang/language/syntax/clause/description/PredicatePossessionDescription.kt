@@ -7,7 +7,7 @@ import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePos
 import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.Context
-import io.tashtabash.lang.language.syntax.context.ContextValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
@@ -48,9 +48,9 @@ class ObliquePredicatePossessionDescription(
                 )
             },
             when (context.type.first) {
-                ContextValue.TypeContext.Indicative -> VerbSentenceType.MainVerbClause
-                ContextValue.TypeContext.GeneralQuestion -> VerbSentenceType.QuestionVerbClause
-                ContextValue.TypeContext.Negative -> VerbSentenceType.NegatedVerbClause
+                Indicative -> VerbSentenceType.MainVerbClause
+                GeneralQuestion -> VerbSentenceType.QuestionVerbClause
+                Negative -> VerbSentenceType.NegatedVerbClause
             }
         )
 }
