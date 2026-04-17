@@ -36,7 +36,7 @@ fun SyntaxNode.addQuestionMarker(language: Language) {
         )
 }
 
-class VerbSentenceClause(
+data class VerbSentenceClause(
     val verb: VerbClause,
     val type: VerbSentenceType,
     val topic: SyntaxRelation? // Any of the verb's children

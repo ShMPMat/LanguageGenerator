@@ -14,7 +14,7 @@ import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
 import kotlin.random.Random
 
 
-class VerbClause(
+data class VerbClause(
     val verb: Word,
     val additionalCategories: SourcedCategoryValues,
     val arguments: Map<SyntaxRelation, NominalClause>,
