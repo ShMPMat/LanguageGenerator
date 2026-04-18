@@ -66,9 +66,7 @@ data class SyntaxNode(
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {
-                    val hasAllCategoryClusters = compulsoryData.isApplicable(categoryValues)
-
-                    if (compulsoryData.isCompulsory && hasAllCategoryClusters)
+                    if (compulsoryData.mustExist(categoryValues))
                         throw SyntaxException("No value for compulsory category ${category.outType} and source $source")
                     else
                         return@mapNotNull null
