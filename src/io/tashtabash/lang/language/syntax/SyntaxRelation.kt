@@ -13,6 +13,7 @@ enum class SyntaxRelation(val shortName: String) {
     Addressee("ADRSEE"),
     Location("LOCATION"),
     Benefactor("BENEFACTOR"),
+    Manner("MANNER"), // Used for Adverbs
 
     Topic("TOPIC"),
 
