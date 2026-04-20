@@ -20,6 +20,7 @@ class CategoryGenerator {
             randomCategory({ l, s, ss -> Animosity(l, s, ss) }, AnimosityRandomSupplements),
             randomCategory({ l, s, ss -> Number(l, s, ss) }, NumberRandomSupplements),
             randomCategory({ l, s, ss -> Tense(l, s, ss) }, TenseRandomSupplements),
+            randomCategory({ l, s, ss -> Mood(l, s, ss) }, MoodRandomSupplements),
             randomCategory({ l, s, ss -> Negation(l, s, ss) }, NegationRandomSupplements),
             randomCategory({ l, s, ss -> Deixis(l, s, ss) }, DeixisRandomSupplements)
         )

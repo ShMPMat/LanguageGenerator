@@ -157,9 +157,10 @@ class WordOrderGenerator {
         syntaxParadigm: SyntaxParadigm
     ): List<GenericSSO<SyntaxRelations>> {
         val withQa = injectQuestionMarker(references, syntaxParadigm)
-        val orderedObjects = AdjunctType.entries.shuffled(RandomSingleton.random)
+        // All cases + Manner
+        val orderedObjects = (AdjunctType.entries.map { it.relation } + Manner).shuffled(RandomSingleton.random)
 
-        return insertAtRandom(withQa, orderedObjects.map { it.relation })
+        return insertAtRandom(withQa, orderedObjects)
     }
 
     private fun injectQuestionMarker(

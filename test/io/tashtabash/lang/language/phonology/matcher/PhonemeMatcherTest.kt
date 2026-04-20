@@ -100,7 +100,7 @@ internal class PhonemeMatcherTest {
         val matcher = AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, Voiced)
 
         assertEquals(
-            listOf("p", "pp", "c", "cc").map { testPhonemeContainer.getPhoneme(it) },
+            listOf("p", "pp", "c", "cc", "h", "hh").map { testPhonemeContainer.getPhoneme(it) },
             testPhonemeContainer.phonemes.filter { matcher.match(it) }
         )
     }

@@ -1,11 +1,14 @@
 package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.language.category.CaseValue
+import io.tashtabash.lang.language.category.MoodValue
 import io.tashtabash.lang.language.category.caseName
+import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction.*
+import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.random.UnwrappableSSO
@@ -17,24 +20,12 @@ import io.tashtabash.random.withProb
 
 
 class SyntaxParadigmGenerator {
-    internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm): SyntaxParadigm {
-        val copulaPresence = generateCopula()
-        val questionMarkerPresence = QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() })
-
-        val possiblePossessionType = predicatePossessionProbabilities.toMutableList()
-        if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic))
-            possiblePossessionType.removeIf { it.value == Topic }
-
-        val possessionConstructionPresence = PredicatePossessionPresence(
-            listOf(possiblePossessionType.randomUnwrappedElement().withProb(1.0))
-        )
-
-        return SyntaxParadigm(
-            copulaPresence,
-            questionMarkerPresence,
-            possessionConstructionPresence
-        )
-    }
+    internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm) = SyntaxParadigm(
+        generateCopula(),
+        QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() }),
+        generatePossession(wordChangeParadigm),
+        generatePotential(wordChangeParadigm)
+    )
 
     private fun generateCopula(): CopulaPresence {
         val mainCopulaType = copulaProbabilities.randomElement()
@@ -49,6 +40,23 @@ class SyntaxParadigmGenerator {
                         listOf(None.withProb(noneProbability))
                     else listOf()
         )
+    }
+
+    private fun generatePossession(wordChangeParadigm: WordChangeParadigm): PredicatePossessionPresence {
+        val possiblePossessionType = predicatePossessionProbabilities.toMutableList()
+        if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic))
+            possiblePossessionType.removeIf { it.value == Topic }
+        val possessionConstructionPresence = PredicatePossessionPresence(
+            listOf(possiblePossessionType.randomUnwrappedElement().withProb(1.0))
+        )
+        return possessionConstructionPresence
+    }
+
+    private fun generatePotential(wordChangeParadigm: WordChangeParadigm): PotentialConstruction {
+        if (MoodValue.Potential in wordChangeParadigm.categories.first { it.outType == moodName }.actualValues)
+            return PotentialConstruction.Mood
+
+        return potentialProbabilities.randomUnwrappedElement()
     }
 }
 
@@ -66,4 +74,8 @@ val copulaProbabilities = listOf<UnwrappableSSO<CopulaConstruction>>(
     Verb.withProb(1.0),
     Particle.withProb(0.25),
     None.withProb(0.1)
+)
+
+val potentialProbabilities = listOf(
+    PotentialConstruction.Adverb.withProb(1.0),
 )

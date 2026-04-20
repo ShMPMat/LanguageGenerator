@@ -18,7 +18,9 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.phonology.prosody.generateStress
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
+import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
@@ -172,7 +174,7 @@ class LexisGenerator(
     }
 
     private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula = mutableMapOf<CopulaConstruction, WordPointer>()
+        val copula = mutableMapOf<Construction, WordPointer>()
 
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Particle }) {
             val particle = generateWord(
@@ -181,6 +183,15 @@ class LexisGenerator(
 
             words += particle
             copula[CopulaConstruction.Particle] = SimpleWordPointer(particle)
+        }
+
+        if (syntaxParadigm.potential == PotentialConstruction.Adverb) {
+            val adverb = generateWord(
+                SemanticsCore("is.able", SpeechPart.Adverb.toDefault())
+            )
+
+            words += adverb
+            copula[PotentialConstruction.Adverb] = SimpleWordPointer(adverb)
         }
 
         val questionMarker = mutableMapOf<QuestionMarker, WordPointer>()

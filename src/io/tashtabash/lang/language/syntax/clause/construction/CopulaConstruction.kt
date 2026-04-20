@@ -17,7 +17,7 @@ abstract class CopulaConstruction : Construction {
         context: Context
     ): CopulaClause
 
-    override fun toString(): String = this.javaClass.simpleName
+    override fun toString(): String = this.javaClass.simpleName + " copula"
 
     object Verb : CopulaConstruction() {
         override fun apply(
@@ -26,7 +26,7 @@ abstract class CopulaConstruction : Construction {
             language: Language,
             context: Context
         ): VerbalCopulaClause {
-            val verb = language.lexis.getCopulaWord(this)
+            val verb = language.lexis.getFunctionWord(this)
 
             return VerbalCopulaClause(
                 verb,
@@ -48,7 +48,7 @@ abstract class CopulaConstruction : Construction {
             language: Language,
             context: Context
         ) = ParticleCopulaClause(
-            language.lexis.getCopulaWord(this),
+            language.lexis.getFunctionWord(this),
             subject,
             complement
         )

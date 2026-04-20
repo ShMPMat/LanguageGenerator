@@ -112,12 +112,14 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(benBuildVerb),
             VerbMainClauseDescription(nounBenBuildVerb),
         )
-        val testSentencesCopula = listOf(
+        val testSentencesConstructions = listOf(
             CopulaMainClauseDescription(CopulaDescription(mothers, time)),
             CopulaMainClauseDescription(CopulaDescription(fathers, time)),
             CopulaMainClauseDescription(CopulaDescription(i, time)),
             PredicatePossessionDescription(i, these),
-            PredicatePossessionDescription(mothers, time)
+            PredicatePossessionDescription(mothers, time),
+            PotentialDescription(VerbMainClauseDescription(hearVerb)),
+            PotentialDescription(VerbMainClauseDescription(fourthSeeVerb))
         )
 
         val indicativeContext = Context(
@@ -137,9 +139,9 @@ class Visualizer(val language: Language) {
         printSampleClause(testSentencesMain, indicativeContext, "Main")
         printSampleClause(testSentencesMain, questionContext, "General question")
         printSampleClause(testSentencesMain, negationContext, "Negative")
-        printSampleClause(testSentencesCopula, indicativeContext, "Copula")
-        printSampleClause(testSentencesCopula, questionContext, "Copula question")
-        printSampleClause(testSentencesCopula, negationContext, "Copula negation")
+        printSampleClause(testSentencesConstructions, indicativeContext, "Constructions")
+        printSampleClause(testSentencesConstructions, questionContext, "Construction question")
+        printSampleClause(testSentencesConstructions, negationContext, "Construction negation")
     }
 
     private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {

@@ -23,6 +23,7 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.HaveVerb
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
@@ -1533,7 +1534,8 @@ internal class PhonologicalRuleApplicatorTest {
                 SyntaxParadigm(
                     CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
                     QuestionMarkerPresence(null),
-                    PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0)))
+                    PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0))),
+                    PotentialConstruction.Adverb
                 ),
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
                 SyntaxLogic()
@@ -1545,7 +1547,7 @@ internal class PhonologicalRuleApplicatorTest {
 
         assertEquals(
             createWord("bo", SpeechPart.Particle),
-            shiftedLanguage.lexis.copula[CopulaConstruction.Particle]?.resolve(shiftedLanguage.lexis)
+            shiftedLanguage.lexis.functionWords[CopulaConstruction.Particle]?.resolve(shiftedLanguage.lexis)
         )
         assertEquals(
             createWord("po", SpeechPart.Particle),

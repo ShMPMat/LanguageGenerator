@@ -156,9 +156,11 @@ val testPhonemeContainer = ImmutablePhonemeContainer(
         Phoneme("b", PhonemeType.Consonant, Bilabial, Stop, setOf(Voiced)),
         Phoneme("t", PhonemeType.Consonant, Alveolar, Stop, setOf()),
         Phoneme("d", PhonemeType.Consonant, Alveolar, Stop, setOf(Voiced)),
-        Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
         Phoneme("n", PhonemeType.Consonant, Alveolar, Nasal, setOf(Voiced)),
         Phoneme("r", PhonemeType.Consonant, Alveolar, Trill, setOf(Voiced)),
+        Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
+        Phoneme("l", PhonemeType.Consonant, Alveolar, LateralApproximant, setOf(Voiced)),
+        Phoneme("h", PhonemeType.Consonant, Glottal, NonSibilantFricative, setOf()),
     ).flatMap { listOf(it, it.copy(it.symbol + it.symbol, modifiers = it.modifiers + PhonemeModifier.Long)) }
 )
 

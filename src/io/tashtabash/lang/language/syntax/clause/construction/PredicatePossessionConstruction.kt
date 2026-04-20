@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.syntax.clause.description.VerbMainClauseDescr
 abstract class PredicatePossessionConstruction : Construction {
     abstract fun apply(owner: NominalDescription, owned: NominalDescription): UnfoldableClauseDescription
 
-    override fun toString(): String = this.javaClass.simpleName
+    override fun toString(): String = this.javaClass.simpleName + " possession construction"
 
     object HaveVerb : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) = VerbMainClauseDescription(

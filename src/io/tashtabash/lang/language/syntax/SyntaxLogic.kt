@@ -93,7 +93,10 @@ data class SyntaxLogic(
         syntaxRelationSolver.getValue(syntaxRelation to speechPart)
 
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
-        resolveTime(language, verbType, context)
+        resolveTime(language, verbType, context) +
+                language.changeParadigm.wordChangeParadigm
+                    .getSpeechPartParadigm(verbType)
+                    .getValueOrEmpty(moodName, MoodValue.Indicative)
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
         resolveTime(language, adjectiveType, context)

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.category.paradigm
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
+import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
@@ -36,6 +37,12 @@ data class SpeechPartChangeParadigm(
 
     fun getCategory(name: String) = categories
         .first { it.category.outType == name }
+
+    fun getValueOrEmpty(categoryName: String, value: CategoryValue): List<SourcedCategoryValue> =
+        getCategoryOrNull(categoryName)
+            ?.getOrNull(value)
+            ?.let { listOf(it) }
+            ?: listOf()
 
     fun getCategoryValues(name: String) = getCategoryOrNull(name)
         ?.category

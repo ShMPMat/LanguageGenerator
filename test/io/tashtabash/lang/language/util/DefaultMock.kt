@@ -19,6 +19,7 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.*
@@ -45,7 +46,8 @@ val defOrder = RandomOrder(
             SyntaxRelation.Patient,
             SyntaxRelation.Predicate,
             SyntaxRelation.Benefactor,
-            SyntaxRelation.Location
+            SyntaxRelation.Location,
+            SyntaxRelation.Manner
         ).toSampleSpaceObject(1.0)
     ),
     "Name"
@@ -100,9 +102,28 @@ fun makeDefLang(
     derivations: List<Derivation> = listOf(),
     syntaxLogic: SyntaxLogic = SyntaxLogic(),
     predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
+    potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
+    copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
+) = makeDefLang(
+    Lexis(words, mapOf(), mapOf()),
+    wordChangeParadigm,
+    derivations,
+    syntaxLogic,
+    predicatePossessionConstruction,
+    potentialConstruction,
+    copulaOrder
+)
+
+fun makeDefLang(
+    lexis: Lexis,
+    wordChangeParadigm: WordChangeParadigm,
+    derivations: List<Derivation> = listOf(),
+    syntaxLogic: SyntaxLogic = SyntaxLogic(),
+    predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
+    potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
     copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
 ) = Language(
-    Lexis(words, mapOf(), mapOf()).reifyPointers(),
+    lexis.reifyPointers(),
     testPhonemeContainer,
     StressType.NotFixed,
     RestrictionsParadigm(mutableMapOf()),
@@ -113,7 +134,8 @@ fun makeDefLang(
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
             QuestionMarkerPresence(null),
-            PredicatePossessionPresence(listOf(predicatePossessionConstruction.withProb(1.0)))
+            PredicatePossessionPresence(listOf(predicatePossessionConstruction.withProb(1.0))),
+            potentialConstruction
         ),
         NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
         syntaxLogic
