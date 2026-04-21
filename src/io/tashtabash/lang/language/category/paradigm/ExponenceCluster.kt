@@ -175,6 +175,9 @@ data class SourcedCategoryValue(
 }
 
 
+/**
+ * compulsoryCoCategories: which other categoryValues must be present for this category to be compulsory
+ */
 data class CompulsoryData(val isCompulsory: Boolean, val compulsoryCoCategories: List<CategoryCluster> = listOf()) {
     fun isApplicable(values: CategoryValues) = compulsoryCoCategories
         .all { it.any { cc -> values.contains(cc) } }
