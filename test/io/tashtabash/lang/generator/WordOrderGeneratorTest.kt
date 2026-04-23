@@ -26,7 +26,7 @@ class WordOrderGeneratorTest {
         assertTrue {
             (1..100).map {
                 WordOrderGenerator().generateWordOrder(syntaxParadigm)
-            }.any { it.sovOrder.map.isNotEmpty() }
+            }.any { it.sovOrder.isNotEmpty() }
         }
     }
 

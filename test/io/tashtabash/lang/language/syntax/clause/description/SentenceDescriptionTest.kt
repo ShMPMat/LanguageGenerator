@@ -12,6 +12,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
+import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
@@ -22,7 +23,9 @@ import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.syntax.transformer.*
 import io.tashtabash.lang.language.util.*
+import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.singleton.RandomSingleton
+import io.tashtabash.random.withProb
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
@@ -831,6 +834,61 @@ internal class SentenceDescriptionTest {
                 createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
                 createNoun("a") withMeaning "cat",
                 createTransVerb("do") withMeaning "build"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Non-default word orders are used`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createTransVerb("do") withMeaning "build"
+        // Set up WordChangeParadigm
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
+        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                Verb.toDefault() to intransitiveVerbChangeParadigm,
+            )
+        )
+        val questionOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
+        val language = makeDefLang(
+            Lexis(listOf(pronoun, verb), mapOf(), mapOf()),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                ),
+            ),
+            sovWordOrder = MapWithDefault(
+                defOrder,
+                mapOf(VerbSentenceType.QuestionVerbClause to RandomOrder(listOf(questionOrder)))
+            )
+        )
+        // Set up descriptions
+        val pronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val verbDescription = VerbDescription(
+            "build",
+            mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
+        )
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = Context(LongGonePast to Implicit, GeneralQuestion to Explicit)
+
+        assertEquals(
+            listOf(
+                createTransVerb("do") withMeaning "build",
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
