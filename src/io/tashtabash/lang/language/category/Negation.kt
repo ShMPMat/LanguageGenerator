@@ -15,7 +15,7 @@ import io.tashtabash.random.SampleSpaceObject
 import io.tashtabash.random.singleton.randomElement
 
 
-private const val negationName = "Negation"
+const val negationName = "Negation"
 
 class Negation(
     categories: List<NegationValue>,
