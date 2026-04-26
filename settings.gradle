@@ -1,0 +1,5 @@
+sourceControl {
+    gitRepository(uri("https://github.com/ShMPMat/Random.git")) {
+        producesModule("io.tashtabash:random")
+    }
+}

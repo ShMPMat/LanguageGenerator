@@ -8,7 +8,6 @@ apply plugin: 'java'
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 sourceSets {
@@ -19,7 +18,11 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.github.ShMPMat:Random:master-SNAPSHOT' changing true
+    implementation("io.tashtabash:random") {
+        version {
+            branch = "master"
+        }
+    }
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.4.31'
 
