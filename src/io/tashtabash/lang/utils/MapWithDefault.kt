@@ -7,6 +7,6 @@ class MapWithDefault<K, V>(val default: V, map: Map<K, V> = mapOf()): LinkedHash
 
     override fun toString() = "Default: $default" +
             if (isNotEmpty())
-                ", $this"
+                ", ${this.entries}"
             else ""
 }
