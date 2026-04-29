@@ -29,7 +29,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
             changeParadigm.getSpeechPartParadigms(PersonalPronoun) +
             changeParadigm.getSpeechPartParadigms(DeixisPronoun)
 
-    fun generateSyntaxLogic() = SyntaxLogic(
+    fun generateSyntaxLogic(wordOrder: WordOrder) = SyntaxLogic(
         generateVerbFormSolver(),
         generateVerbArgumentSolver(),
         generateVerbCaseSolver(),
@@ -40,7 +40,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateDeixisCategorySolver(),
         changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName),
     ).let {
-        it.copy(transformers = TransformerGenerator(changeParadigm, it).generateTransformers())
+        it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder, syntaxParadigm).generateTransformers())
     }
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaConstruction, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {

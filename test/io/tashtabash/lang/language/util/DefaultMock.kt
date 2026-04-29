@@ -22,7 +22,6 @@ import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
-import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.utils.MapWithDefault
@@ -123,7 +122,6 @@ fun makeDefLang(
     predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
     potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
     copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf(),
-    sovWordOrder: MapWithDefault<VerbSentenceType, RandomOrder> = MapWithDefault(defOrder)
 ) = Language(
     lexis.reifyPointers(),
     testPhonemeContainer,
@@ -131,7 +129,7 @@ fun makeDefLang(
     RestrictionsParadigm(mutableMapOf()),
     DerivationParadigm(derivations, listOf()),
     ChangeParadigm(
-        WordOrder(sovWordOrder, copulaOrder, NominalGroupOrder.DNP),
+        WordOrder(defOrder, copulaOrder, NominalGroupOrder.DNP),
         wordChangeParadigm,
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),

@@ -15,7 +15,7 @@ class ObliquePredicatePossessionClause(val verbClause: VerbClause, val type: Ver
                 addQuestionMarker(language)
             arranger = RelationArranger(
                 SubstitutingOrder(
-                    language.changeParadigm.wordOrder.sovOrder.getValue(type),
+                    language.changeParadigm.wordOrder.sovOrder,
                     mapOf(Patient to Argument)
                 )
             )

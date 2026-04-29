@@ -1,10 +1,18 @@
 package io.tashtabash.lang.generator
 
+import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
+import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
+import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.SpeechPart.Verb
+import io.tashtabash.lang.language.lexis.toDefault
+import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
+import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.features.*
+import io.tashtabash.lang.language.syntax.transformer.ChangeOrderTransformer
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.withProb
 import org.junit.jupiter.api.Assertions.*
@@ -25,8 +33,24 @@ class WordOrderGeneratorTest {
 
         assertTrue {
             (1..100).map {
-                WordOrderGenerator().generateWordOrder(syntaxParadigm)
-            }.any { it.sovOrder.isNotEmpty() }
+                TransformerGenerator(
+                    WordChangeParadigm(
+                        listOf(),
+                        mapOf(
+                            SpeechPart.PersonalPronoun.toDefault() to SpeechPartChangeParadigm(SpeechPart.PersonalPronoun.toDefault())
+                        ),
+                        listOf()
+                    ),
+                    SyntaxLogic(
+                        verbCasesSolver = mapOf(
+                            Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                            Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                        )
+                    ),
+                    WordOrderGenerator().generateWordOrder(syntaxParadigm),
+                    syntaxParadigm
+                ).generateTransformers()
+            }.any { result -> result.any { it.second is ChangeOrderTransformer } }
         }
     }
 

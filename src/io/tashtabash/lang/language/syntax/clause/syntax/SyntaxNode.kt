@@ -9,7 +9,6 @@ import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType.*
-import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType.*
 
 
 data class SyntaxNode(
@@ -94,14 +93,6 @@ enum class CopulaSentenceType : SentenceType {
     NegatedCopulaClause
 }
 
-
-fun differentWordOrderProbability(sentenceType: VerbSentenceType) = when (sentenceType) {
-    MainVerbClause -> .0
-    SubordinateVerbClause -> .03
-    QuestionVerbClause -> .1
-    NegatedVerbClause -> .01
-}
-
 fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when (sentenceType) {
     // I haven't found any info about the probabilities
     MainCopulaClause -> .02
@@ -114,5 +105,6 @@ fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when
 typealias SentenceNodeChild = Pair<SyntaxRelation, SyntaxNode>
 
 enum class SyntaxNodeTag {
-    Topic
+    Topic,
+    Question
 }

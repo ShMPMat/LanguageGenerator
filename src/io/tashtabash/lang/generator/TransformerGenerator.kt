@@ -5,16 +5,26 @@ import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.SpeechPart.PersonalPronoun
+import io.tashtabash.lang.language.syntax.RandomOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
+import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
+import io.tashtabash.lang.language.syntax.WordOrder
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.transformer.*
 import io.tashtabash.lang.utils.thenTake
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.testProbability
+import io.tashtabash.random.withProb
+import kotlin.collections.List
 
 
-class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLogic: SyntaxLogic) {
+class TransformerGenerator(
+    val changeParadigm: WordChangeParadigm,
+    val syntaxLogic: SyntaxLogic,
+    val wordOrder: WordOrder,
+    val syntaxParadigm: SyntaxParadigm
+) {
     fun generateTransformers(): List<Pair<SyntaxNodeMatcher, Transformer>> = listOfNotNull(
         // Word order
         .05.testProbability() thenTake {
@@ -23,11 +33,30 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
             }
         }
     ) +
+            generateSovMovement() +
             generateTopicMarking() +
             generateDeixisSimplifier() +
             generateDefinitivenessSimplifier() +
             generateDrop() +
             generateTopicMovement()
+
+    private fun generateSovMovement(): List<Pair<SyntaxNodeMatcher, Transformer>> {
+        val mainOrder = wordOrder.sovOrder
+        val exceptions = mutableMapOf<SyntaxNodeMatcher, RandomOrder>()
+
+        val types = listOf(
+            has(negationName).withProb(.1),
+            has(SyntaxNodeTag.Question).withProb(.01)
+        )
+
+        for (type in types)
+            type.probability.chanceOf {
+                exceptions[type.value] = WordOrderGenerator()
+                    .generateSimpleSovOrder(syntaxParadigm, mainOrder.name + " None Two") // I don't want them showing up
+            }
+
+        return exceptions.map { (type, order) -> of(Verb) + type then { ChangeOrderTransformer(order) } }
+    }
 
     private fun generateTopicMovement() = listOfNotNull(
         .9.testProbability() thenTake {
@@ -136,6 +165,5 @@ class TransformerGenerator(val changeParadigm: WordChangeParadigm, val syntaxLog
         }
 }
 
-
-private infix fun SyntaxNodeMatcher.then(expr: () -> Transformer): Pair<SyntaxNodeMatcher, Transformer> =
+infix fun SyntaxNodeMatcher.then(expr: () -> Transformer): Pair<SyntaxNodeMatcher, Transformer> =
     this to expr()

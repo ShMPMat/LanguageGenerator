@@ -73,6 +73,15 @@ data class RemapOrderTransformer(private val substitutions: Map<SyntaxRelation, 
         substitutions.entries.joinToString { (o, n) -> "$n receives the place of $o" }
 }
 
+data class ChangeOrderTransformer(private val order: RelationOrder): Transformer {
+    override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
+        node.arranger = RelationArranger(order)
+    }
+
+    override fun toString(): String =
+        "change order to $order"
+}
+
 // Order the node to be the first in the parent's Arranger
 data class PutFirstTransformer(private val parentRelation: SyntaxRelation): Transformer {
     override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {

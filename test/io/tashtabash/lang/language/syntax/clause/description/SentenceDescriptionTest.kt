@@ -1,32 +1,39 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
-import io.tashtabash.lang.language.category.paradigm.MapApplicatorSource
+import io.tashtabash.lang.generator.then
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.Number
 import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordReduplicationCategoryApplicator
-import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.lexis.SemanticsTag
 import io.tashtabash.lang.language.lexis.SpeechPart.*
+import io.tashtabash.lang.language.lexis.toDefault
+import io.tashtabash.lang.language.lexis.toIntransitive
 import io.tashtabash.lang.language.morphem.MorphemeData
-import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.NumberCategorySolver
+import io.tashtabash.lang.language.syntax.RandomOrder
+import io.tashtabash.lang.language.syntax.SyntaxLogic
+import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
-import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
-import io.tashtabash.lang.language.syntax.context.*
-import io.tashtabash.lang.language.syntax.context.ContextValue.*
+import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
+import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
-import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.*
+import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Negative
+import io.tashtabash.lang.language.syntax.context.PrioritizedValue
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.syntax.transformer.*
 import io.tashtabash.lang.language.util.*
-import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.withProb
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
@@ -842,34 +849,33 @@ internal class SentenceDescriptionTest {
     }
 
     @Test
-    fun `Non-default word orders are used`() {
+    fun `Non-default word orders for questions are used`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
         val verb = createTransVerb("do") withMeaning "build"
         // Set up WordChangeParadigm
         val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
+        val verbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
                 PersonalPronoun.toDefault() to personalPronounChangeParadigm,
-                Verb.toDefault() to intransitiveVerbChangeParadigm,
+                Verb.toDefault() to verbChangeParadigm,
             )
         )
         val questionOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
         val language = makeDefLang(
-            Lexis(listOf(pronoun, verb), mapOf(), mapOf()),
+            listOf(pronoun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
                     Verb.toDefault() to SyntaxRelation.Agent to listOf(),
                     Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
-            ),
-            sovWordOrder = MapWithDefault(
-                defOrder,
-                mapOf(VerbSentenceType.QuestionVerbClause to RandomOrder(listOf(questionOrder)))
+                transformers = listOf(
+                    of(Verb) + has(SyntaxNodeTag.Question) then { ChangeOrderTransformer(RandomOrder(listOf(questionOrder))) }
+                )
             )
         )
         // Set up descriptions
@@ -887,6 +893,75 @@ internal class SentenceDescriptionTest {
         assertEquals(
             listOf(
                 createTransVerb("do") withMeaning "build",
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Non-default word orders for negative sentences are used`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createTransVerb("do") withMeaning "build"
+        // Set up negation
+        val negationCategory = Negation(
+            listOf(NegationValue.Negative),
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
+        )
+        val negationSourcedCategory = SourcedCategory(negationCategory, CategorySource.Self, CompulsoryData(false))
+        val negationExponenceCluster = ExponenceCluster(negationSourcedCategory)
+        // Set up WordChangeParadigm
+        val negationApplicators = listOf(createAffixCategoryApplicator("-da"))
+        val verbChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toDefault(),
+            listOf(negationExponenceCluster to MapApplicatorSource(negationExponenceCluster.possibleValues, negationApplicators))
+        )
+        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                Verb.toDefault() to verbChangeParadigm,
+            )
+        )
+        val negationOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
+        val language = makeDefLang(
+            listOf(pronoun, verb),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                ),
+                transformers = listOf(
+                    of(Verb) + has(negationName) then { ChangeOrderTransformer(RandomOrder(listOf(negationOrder))) }
+                )
+            )
+        )
+        // Set up descriptions
+        val pronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val verbDescription = VerbDescription(
+            "build",
+            mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
+        )
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = Context(LongGonePast to Implicit, Negative to Explicit)
+
+        assertEquals(
+            listOf(
+                createTransVerb("doda").withMorphemes(
+                    MorphemeData(2, listOf(), true),
+                    MorphemeData(2, listOf(negationSourcedCategory[NegationValue.Negative]))
+                ) withMeaning "build",
                 createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
                 createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
             ),

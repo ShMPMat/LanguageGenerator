@@ -28,7 +28,6 @@ import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessio
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
-import io.tashtabash.lang.utils.MapWithDefault
 import io.tashtabash.lang.utils.equalsByElement
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.withProb
@@ -1526,7 +1525,7 @@ internal class PhonologicalRuleApplicatorTest {
             RestrictionsParadigm(mutableMapOf()),
             DerivationParadigm(listOf(), listOf()),
             ChangeParadigm(
-                WordOrder(MapWithDefault(defOrder), mapOf(), NominalGroupOrder.DNP),
+                WordOrder(defOrder, mapOf(), NominalGroupOrder.DNP),
                 WordChangeParadigm(
                     listOf(),
                     mapOf(defSpeechPart to nounChangeParadigm, SpeechPart.Particle.toDefault() to particleChangeParadigm)

@@ -28,6 +28,8 @@ abstract class SentenceClause : UnfoldableClause {
 
 
 fun SyntaxNode.addQuestionMarker(language: Language) {
+    tags += SyntaxNodeTag.Question
+
     if (language.changeParadigm.syntaxParadigm.questionMarker.questionMarker != null)
         setRelationChild(
             SyntaxRelation.QuestionMarker,
