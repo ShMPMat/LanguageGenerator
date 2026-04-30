@@ -80,7 +80,7 @@ object MoodRandomSupplements : CategoryRandomSupplements<MoodValue> {
 
 enum class MoodPresence(override val probability: Double, val possibilities: List<MoodValue>) : SampleSpaceObject {
     Default(1.0, listOf(Indicative)),
-    PotentialMood(11.2, listOf(Indicative, Potential)),
+    PotentialMood(.2, listOf(Indicative, Potential)),
 }
 
 sealed class MoodValue(meaning: Meaning, alias: String) : AbstractCategoryValue(moodName, meaning, alias) {
