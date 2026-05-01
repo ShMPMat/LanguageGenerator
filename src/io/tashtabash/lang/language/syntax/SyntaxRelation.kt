@@ -18,7 +18,7 @@ enum class SyntaxRelation(val shortName: String) {
     Topic("TOPIC"),
 
     CopulaParticle("COP"),
-    QuestionMarker("QM"),
+    QuestionMarker("Q"),
 
     Nominal("NOMINAL"),
     Definition("DEFINITION"),
