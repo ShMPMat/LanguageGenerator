@@ -89,7 +89,7 @@ data class PutFirstTransformer(private val parentRelation: SyntaxRelation): Tran
             ?: return
         val arranger = parent.arranger
         if (arranger !is RelationArranger)
-            throw SyntaxException("RelationArranger was expected")
+            throw SyntaxException("RelationArranger was expected, got $arranger")
         val childRelation = parent.children.first { it.second == node }
             .first
 
