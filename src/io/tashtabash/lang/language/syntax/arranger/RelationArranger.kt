@@ -14,7 +14,7 @@ class RelationArranger(val relationOrder: RelationOrder) : Arranger {
         return order(pairs, relation)
     }
 
-    override fun toString() = "In order of $relationOrder"
+    override fun toString() = "in order of $relationOrder"
 }
 
 // Relations are listed from the most to the least close
