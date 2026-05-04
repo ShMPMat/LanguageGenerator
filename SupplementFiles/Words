@@ -113,6 +113,7 @@ have               Verb        1.0    T|trans
 put                Verb        1.0    T|trans:100,intrans:1
                                       VNPlace@warehouse:0.1   VNPerson@owner:0.1,keeper:0.1
                                       VNAbstract@answer:0.1,control:0.05
+sleep              Verb        1.0    T|intrans
 land_on_earth      Verb        0.8    T|trans:100,intrans:1
                                       VNPlace@landing:0.05
 help               Verb        0.8    T|trans:100,intrans:1
@@ -800,7 +801,6 @@ one_being_born_soon           Noun      0.005  G|Person:1000,Female:1000,Common:
 /store
 /summer
 /train
-/sleep
 /prove
 /lone
 /leg

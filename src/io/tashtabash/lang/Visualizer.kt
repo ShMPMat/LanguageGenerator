@@ -88,7 +88,7 @@ class Visualizer(val language: Language) {
         val hearVerb = VerbDescription("hear", mapOf(Experiencer to i, Stimulus to youDu))
         val knowVerb = VerbDescription("know", mapOf(Experiencer to fathers, Stimulus to i))
         val feelVerb = VerbDescription("feel", mapOf(Experiencer to youDu, Stimulus to light))
-        val existVerb = VerbDescription("exist", mapOf(Argument to i))
+        val sleepVerb = VerbDescription("sleep", mapOf(Argument to i))
         val buildVerb = VerbDescription("build", mapOf(Agent to i, Patient to home, Instrument to hands))
         val benBuildVerb = VerbDescription(
             "build",
@@ -107,7 +107,7 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(hearVerb),
             VerbMainClauseDescription(knowVerb),
             VerbMainClauseDescription(feelVerb),
-            VerbMainClauseDescription(existVerb),
+            VerbMainClauseDescription(sleepVerb),
             VerbMainClauseDescription(buildVerb),
             VerbMainClauseDescription(benBuildVerb),
             VerbMainClauseDescription(nounBenBuildVerb),
