@@ -68,8 +68,8 @@ data class ExponenceValue(val categoryValues: List<SourcedCategoryValue>, val pa
 
         if (parentCluster.categories.size != valueTypesAmount)
             throw LanguageException(
-                "Tried to create Exponence Value of size ${categoryValues.size} " +
-                        "for Exponence Cluster of size ${parentCluster.categories.size}"
+                "Tried to create Exponence Value for $valueTypesAmount categories," +
+                        "but Exponence Cluster has ${parentCluster.categories.size} categories"
             )
 
         var currentCategoryIndex = 0
