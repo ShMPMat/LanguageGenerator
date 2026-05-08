@@ -17,7 +17,7 @@ fun copyApplicators(
 ): Pair<ExponenceCluster, ApplicatorSource> {
     var isSourceChanged = false
     val newCategories = cluster.categories.map {
-        it.copy(
+        it to it.copy(
             source = when (it.source) {
                 is CategorySource.Agreement -> {
                     isSourceChanged = isSourceChanged || sourceMap.containsKey(it.source.relation)
@@ -27,15 +27,17 @@ fun copyApplicators(
             }
         )
     }
+    // Create a look-up map for substituting old categories for new
+    val newCategoriesMap = newCategories.toMap()
+
     if (!isSourceChanged)
         return cluster to LinkApplicatorSource(speechPartChangeParadigm, applicatorIdx)
-
     val newClusterValues = cluster.possibleValues.map { v ->
         v.categoryValues.map { cv ->
-            newCategories.flatMap { it.actualSourcedValues }.first { cv.categoryValue == it.categoryValue }
+            newCategoriesMap.getValue(cv.parent).actualSourcedValues.first { cv.categoryValue == it.categoryValue }
         }
     }.toSet()
-    val newCluster = ExponenceCluster(newCategories, newClusterValues)
+    val newCluster = ExponenceCluster(newCategories.map { it.second }, newClusterValues)
     val newApplicator = when (applicator) {
         is MapApplicatorSource -> MapApplicatorSource(
             applicator.map
