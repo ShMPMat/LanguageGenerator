@@ -249,19 +249,27 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
                 .filter { it !in genderCategory.actualValues }
 
             for (gender in absentGenders) genderCategorySolver[gender] = when (gender) {
-                Female -> listOf(NounClassValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
-                Male -> listOf(NounClassValue.Person, Common, Neutral).first { it in genderCategory.actualValues }
-                Neutral -> listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
+                Female -> listOf(NounClassValue.Person, Common, Neutral)
+                    .firstOrNull { it in genderCategory.actualValues }
+                    ?: genderCategory.actualValues.randomElement()
+                Male -> listOf(NounClassValue.Person, Common, Neutral)
+                    .firstOrNull { it in genderCategory.actualValues }
+                    ?: genderCategory.actualValues.randomElement()
+                Neutral -> listOf(Female, Male, Common).filter { it in genderCategory.actualValues }.randomElement()
                 Common -> Neutral.takeIf { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
-                NounClassValue.Person -> listOf(Common, Neutral).firstOrNull() { it in genderCategory.actualValues }
+
+                NounClassValue.Person -> listOf(Common, Neutral).firstOrNull { it in genderCategory.actualValues }
                     ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
+
                 Plant -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
+                    ?: listOf(Female, Male, Common).filter { it in genderCategory.actualValues }.randomElement()
+
                 Fruit -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
+                    ?: listOf(Female, Male, Common).filter { it in genderCategory.actualValues }.randomElement()
+
                 LongObject -> Neutral.takeIf { it in genderCategory.actualValues }
-                    ?: listOf(Female, Male).filter { it in genderCategory.actualValues }.randomElement()
+                    ?: listOf(Female, Male, Common).filter { it in genderCategory.actualValues }.randomElement()
             }
 
             genderCategorySolver
