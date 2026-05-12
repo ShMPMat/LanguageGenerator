@@ -181,7 +181,7 @@ internal class SentenceDescriptionTest {
         val dog = createNoun("o") withMeaning "dog"
         val verb = createIntransVerb("do")
             .withTags("benefactor", "intrans") withMeaning "sleep"
-        // Set up noun class
+        // Set up noun case
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Benefactive),
             setOf(Noun sourcedFrom CategorySource.Self),
