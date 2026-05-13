@@ -18,7 +18,8 @@ class LanguageGeneratorTest {
                 val wordAmount = WordBase("SupplementFiles").baseWords.size
                 generator.generateLanguage(wordAmount)
             } catch (e: Exception) {
-                error("Error generating language with seed $seed: $e")
+                println("Error generating language with seed $seed: $e")
+                throw e
             }
         }
     }
