@@ -5,21 +5,35 @@ import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.Word
+import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.SyntaxException
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
+import io.tashtabash.lang.language.syntax.arranger.Arranger
+import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.arranger.UndefinedArranger
+import kotlin.collections.plus
 import kotlin.random.Random
 
 
+interface PredicateClause: SyntaxClause {
+    val head: Word
+    val additionalCategories: SourcedCategoryValues
+
+    fun withCategories(additionalCategories: SourcedCategoryValues): PredicateClause
+    fun addAdjunct(adjunct: AdjunctClause): PredicateClause
+}
+
 data class VerbClause(
     val verb: Word,
-    val additionalCategories: SourcedCategoryValues,
+    override val additionalCategories: SourcedCategoryValues,
     val arguments: Map<SyntaxRelation, NominalClause>,
     val adjuncts: List<AdjunctClause> = listOf()
-) : SyntaxClause {
+) : PredicateClause {
+    override val head = verb
+
     init {
         if (verb.semanticsCore.speechPart.type != SpeechPart.Verb)
             throw SyntaxException("$verb is not a verb")
@@ -43,8 +57,49 @@ data class VerbClause(
         for (adjunct in adjuncts)
             node.setRelationChild(adjunct.relation, adjunct.toNode(language, random))
 
+        val defaultArranger = language.changeParadigm.wordOrder.sovOrder
+        node.arranger =
+            if (arguments.containsKey(Argument))
+                RelationArranger(SubstitutingOrder(defaultArranger, mapOf(Agent to Argument)))
+            else
+                RelationArranger(defaultArranger)
+
         return node
     }
+
+    override fun withCategories(additionalCategories: SourcedCategoryValues): VerbClause =
+        copy(additionalCategories = additionalCategories)
+
+    override fun addAdjunct(adjunct: AdjunctClause): VerbClause =
+        copy(adjuncts = adjuncts + adjunct)
+}
+
+data class AuxVerbClause(
+    val aux: Word,
+    val governedClause: PredicateClause, // Contains the relevant categories
+    override val additionalCategories: SourcedCategoryValues,
+    val arranger: Arranger
+): PredicateClause {
+    override val head = aux
+
+    override fun toNode(
+        language: Language,
+        random: Random
+    ): SyntaxNode {
+        val node = aux.toNode(
+            Auxiliary,
+            additionalCategories.map { it.categoryValue },
+            arranger
+        )
+        node.setRelationChild(Predicate, governedClause.toNode(language, random))
+        return node
+    }
+
+    override fun withCategories(additionalCategories: SourcedCategoryValues): AuxVerbClause =
+        copy(additionalCategories = additionalCategories)
+
+    override fun addAdjunct(adjunct: AdjunctClause): AuxVerbClause =
+        copy(governedClause = governedClause.addAdjunct(adjunct))
 }
 
 internal fun SyntaxNode.addThirdPerson(): SyntaxNode {

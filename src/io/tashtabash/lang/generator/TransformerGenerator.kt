@@ -38,7 +38,24 @@ class TransformerGenerator(
             generateDeixisSimplifier() +
             generateDefinitivenessSimplifier() +
             generateDrop() +
-            generateTopicMovement()
+            generateTopicMovement() +
+            generateQuestionMarker()
+
+    private fun generateQuestionMarker(): List<Pair<SyntaxNodeMatcher, Transformer>> {
+        .4.chanceOf {
+            return listOf()
+        }
+
+        return if (0.5.testProbability()) {
+             listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
+                PutFirstTransformer(Predicate) + PutFirstTransformer(Auxiliary)
+            })
+        } else {
+            listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
+                PutLastTransformer(Predicate) + PutFirstTransformer(Auxiliary)
+            })
+        }
+    }
 
     private fun generateSovMovement(): List<Pair<SyntaxNodeMatcher, Transformer>> {
         val mainOrder = wordOrder.sovOrder
@@ -52,7 +69,7 @@ class TransformerGenerator(
         for (type in types)
             type.probability.chanceOf {
                 exceptions[type.value] = WordOrderGenerator()
-                    .generateSimpleSovOrder(syntaxParadigm, mainOrder.name + " None Two") // I don't want them showing up
+                    .generateSimpleSovOrder(mainOrder.name + " None Two") // I don't want them showing up
             }
 
         return exceptions.map { (type, order) -> of(Verb) + type then { ChangeOrderTransformer(order) } }
@@ -141,7 +158,7 @@ class TransformerGenerator(
 
             for (relation in resolvePossibleArguments(verbParadigm.speechPart)) {
                 val roleAgreementCategories = verbalCategories
-                    .filter { it.source is CategorySource.Agreement && it.source.relation == relation }
+                    .filter { it.source is CategorySource.Agreement && relation in it.source.relation }
                 val unrepresentedCategoriesNumber = pronounCategories.size - roleAgreementCategories.size
                 // .1 at 0, .9 at +Inf; the more categories are lost with the drop, the less is the probability
                 val dropProb = .1 + .8 / (1.0 + unrepresentedCategoriesNumber)

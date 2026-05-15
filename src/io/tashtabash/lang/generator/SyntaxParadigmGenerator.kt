@@ -5,7 +5,10 @@ import io.tashtabash.lang.language.category.MoodValue
 import io.tashtabash.lang.language.category.caseName
 import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
+import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
+import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction.*
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
@@ -15,14 +18,12 @@ import io.tashtabash.random.UnwrappableSSO
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
-import io.tashtabash.random.singleton.testProbability
 import io.tashtabash.random.withProb
 
 
 class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm) = SyntaxParadigm(
         generateCopula(),
-        QuestionMarkerPresence(QuestionMarker.takeIf { 0.6.testProbability() }),
         generatePossession(wordChangeParadigm),
         generatePotential(wordChangeParadigm)
     )
@@ -78,4 +79,8 @@ val copulaProbabilities = listOf<UnwrappableSSO<CopulaConstruction>>(
 
 val potentialProbabilities = listOf(
     PotentialConstruction.Adverb.withProb(1.0),
+    PotentialConstruction.Auxiliary(RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate)))
+        .withProb(1.0),
+    PotentialConstruction.Auxiliary(RelationArranger(StaticOrder(SyntaxRelation.Predicate, SyntaxRelation.Auxiliary)))
+        .withProb(1.0),
 )

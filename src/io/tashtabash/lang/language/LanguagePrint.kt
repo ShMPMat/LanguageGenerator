@@ -17,7 +17,8 @@ import kotlin.random.Random
 
 val shortSemanticsMap = mapOf(
     "_personal_pronoun" to "PP",
-    "_deixis_pronoun" to "DEM"
+    "_deixis_pronoun" to "DEM",
+    "question_marker" to "Q"
 )
 
 fun Language.getNumeralsPrinted() = when (changeParadigm.numeralParadigm.base) {
@@ -52,8 +53,8 @@ private fun Language.printNumerals(numbers: List<Int>) = numbers
                 when (s) {
                     CategorySource.Self -> node.categoryValues += pureVs
                     is CategorySource.Agreement -> {
-                        val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.possibleSpeechParts }
-                        val dummyNode = dummyWord.toNode(s.relation, pureVs, PassingArranger)
+                        val dummyWord = lexis.words.first { it.semanticsCore.speechPart.type in s.speechParts }
+                        val dummyNode = dummyWord.toNode(s.relation.first(), pureVs, PassingArranger)
 
                         dummyNode.setRelationChild(SyntaxRelation.AdNumeral, node)
                     }
@@ -201,7 +202,7 @@ fun printMorphemeInfo(word: Word, printDerivation: Boolean): String {
                     .joinToString { it.shortName }
             }
 
-            val printedSemantics = getSemanticsPrinted(word)
+            val printedSemantics = getSemanticsPrinted(word, printedMorphemeData)
                 .let { shortSemanticsMap.getOrDefault(it, it) }
 
             val printedRootData = if (printedMorphemeData.isEmpty())
@@ -242,8 +243,8 @@ private fun isMorphemeMergeable(morpheme: MorphemeData): Boolean =
     morpheme.categoryValues.isEmpty() && morpheme.derivationValues.isNotEmpty()
             || morpheme.isRoot
 
-private fun getSemanticsPrinted(word: Word) =
-        if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts)
+private fun getSemanticsPrinted(word: Word, printedMorphemeData: String) =
+        if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts || printedMorphemeData.isEmpty())
             word.semanticsCore.toString()
         else ""
 

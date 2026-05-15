@@ -11,7 +11,7 @@ import io.tashtabash.random.singleton.testProbability
 fun copyApplicators(
     cluster: ExponenceCluster,
     applicator: ApplicatorSource,
-    sourceMap: Map<SyntaxRelation, SyntaxRelation>,
+    sourceMap: Map<SyntaxRelation, List<SyntaxRelation>>,
     speechPartChangeParadigm: SpeechPartChangeParadigm,
     applicatorIdx: Int
 ): Pair<ExponenceCluster, ApplicatorSource> {
@@ -20,8 +20,8 @@ fun copyApplicators(
         it to it.copy(
             source = when (it.source) {
                 is CategorySource.Agreement -> {
-                    isSourceChanged = isSourceChanged || sourceMap.containsKey(it.source.relation)
-                    it.source.copy(relation = sourceMap.getOrDefault(it.source.relation, it.source.relation))
+                    isSourceChanged = isSourceChanged || it.source.relation.any { r -> sourceMap.containsKey(r) }
+                    it.source.copy(relation = it.source.relation.flatMap { r -> sourceMap.getOrDefault(r, listOf(r)) })
                 }
                 is CategorySource.Self -> CategorySource.Self
             }
@@ -60,7 +60,7 @@ fun copyApplicators(
 
 fun SpeechPartChangeParadigm.copyForNewSpeechPart(
     speechPart: TypedSpeechPart = this.speechPart,
-    sourceMap: Map<SyntaxRelation, SyntaxRelation> = mapOf(),
+    sourceMap: Map<SyntaxRelation, List<SyntaxRelation>> = mapOf(),
     clusterPredicate: (ExponenceCluster) -> Boolean = { true }
 ): SpeechPartChangeParadigm {
     val newApplicators = applicators

@@ -1532,7 +1532,6 @@ internal class PhonologicalRuleApplicatorTest {
                 ),
                 SyntaxParadigm(
                     CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
-                    QuestionMarkerPresence(null),
                     PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0))),
                     PotentialConstruction.Adverb
                 ),

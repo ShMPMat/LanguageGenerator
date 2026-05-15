@@ -133,7 +133,6 @@ fun makeDefLang(
         wordChangeParadigm,
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
-            QuestionMarkerPresence(null),
             PredicatePossessionPresence(listOf(predicatePossessionConstruction.withProb(1.0))),
             potentialConstruction
         ),

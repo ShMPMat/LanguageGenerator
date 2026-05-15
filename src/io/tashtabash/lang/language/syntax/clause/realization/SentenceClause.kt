@@ -2,13 +2,12 @@ package io.tashtabash.lang.language.syntax.clause.realization
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
-import io.tashtabash.lang.language.syntax.SubstitutingOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.*
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
+import io.tashtabash.lang.language.syntax.transformer.has
 import kotlin.random.Random
 
 
@@ -30,52 +29,52 @@ abstract class SentenceClause : UnfoldableClause {
 fun SyntaxNode.addQuestionMarker(language: Language) {
     tags += SyntaxNodeTag.Question
 
-    if (language.changeParadigm.syntaxParadigm.questionMarker.questionMarker != null)
+    if (language.changeParadigm.syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
         setRelationChild(
             SyntaxRelation.QuestionMarker,
             language.lexis.getQuestionMarkerWord(QuestionMarker)
-                .toNode(SyntaxRelation.QuestionMarker)
+                .toNode(SyntaxRelation.QuestionMarker),
+            SyntaxRelation.Predicate
         )
 }
 
+// This ad-hoc propagation is rickety, but I don't know how else to push topic info from the sentence level
+// to the right argument
+private fun SyntaxNode.addTopic(relation: SyntaxRelation) {
+    relations[relation]
+        ?.let { it.tags += SyntaxNodeTag.Topic }
+
+    // Propagate through Aux constructions
+    relations[SyntaxRelation.Predicate]
+        ?.addTopic(relation)
+}
+
 data class VerbSentenceClause(
-    val verb: VerbClause,
+    val predicate: PredicateClause,
     val type: VerbSentenceType,
     val topic: SyntaxRelation? // Any of the verb's children
 ) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
-        verb.toNode(language, random).apply {
+        predicate.toNode(language, random).apply {
             if (type == VerbSentenceType.QuestionVerbClause)
                 addQuestionMarker(language)
             if (type == VerbSentenceType.NegatedVerbClause)
                 categoryValues += NegationValue.Negative
-            relations[topic]
-                ?.let { it.tags += SyntaxNodeTag.Topic }
-
-            val defaultArranger = language.changeParadigm.wordOrder.sovOrder.getValue(type)
-            arranger =
-                if (verb.arguments.containsKey(SyntaxRelation.Argument))
-                    RelationArranger(SubstitutingOrder(
-                        defaultArranger,
-                        mapOf(SyntaxRelation.Agent to SyntaxRelation.Argument)
-                    ))
-                else
-                    RelationArranger(defaultArranger)
+            topic?.let { addTopic(it) }
         }
 }
 
 class CopulaSentenceClause(private val copulaClause: CopulaClause, val type: CopulaSentenceType) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
         copulaClause.toNode(language, random).apply {
-            if (type == CopulaSentenceType.QuestionCopulaClause)
-                addQuestionMarker(language)
-            if (type == CopulaSentenceType.NegatedCopulaClause)
-                categoryValues += NegationValue.Negative
-
             arranger = language.changeParadigm
                 .wordOrder
                 .copulaOrder
                 .getValue(copulaClause.copulaType)
                 .getValue(type)
+            if (type == CopulaSentenceType.QuestionCopulaClause)
+                addQuestionMarker(language)
+            if (type == CopulaSentenceType.NegatedCopulaClause)
+                categoryValues += NegationValue.Negative
         }
 }

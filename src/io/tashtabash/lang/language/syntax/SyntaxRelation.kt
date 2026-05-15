@@ -7,6 +7,7 @@ enum class SyntaxRelation(val shortName: String) {
     Argument("S"), // Of intrans verb
     SubjectCompliment("SC"),
     Predicate("PRED"),
+    Auxiliary("AUX"),
 
     PossessorAdjunct("POS_ADJ"),
     Instrument("INSTR"),

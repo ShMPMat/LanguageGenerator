@@ -18,7 +18,7 @@ import io.tashtabash.random.withProb
 
 class WordOrderGenerator {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
-        val sovOrder = generateSimpleSovOrder(syntaxParadigm)
+        val sovOrder = generateSimpleSovOrder()
         val nominalGroupOrder = NominalGroupOrder.entries.randomElement()
         val copulaOrder = generateCopulaOrder(
             syntaxParadigm,
@@ -42,7 +42,7 @@ class WordOrderGenerator {
                     result[CopulaConstruction.Verb] = MapWithDefault(createDefaultCopulaOrder(sovOrder))
 
                     for (type in CopulaSentenceType.entries)
-                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
+                        createDivergingCopulaVerbOrderer(type)?.let {
                             result.getValue(CopulaConstruction.Verb)[type] = it
                         }
                 }
@@ -52,7 +52,7 @@ class WordOrderGenerator {
                     )
 
                     for (type in CopulaSentenceType.entries)
-                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)?.let {
+                        createDivergingCopulaVerbOrderer(type)?.let {
                             result.getValue(CopulaConstruction.Particle)[type] = createParticleCopulaOrder(it)
                         }
                 }
@@ -62,7 +62,7 @@ class WordOrderGenerator {
                     )
 
                     for (type in CopulaSentenceType.entries)
-                        createDivergingCopulaVerbOrderer(type, syntaxParadigm)
+                        createDivergingCopulaVerbOrderer(type)
                             ?.let {
                                 result.getValue(CopulaConstruction.None)[type] = swapCopulaObject(
                                     createNoCopulaOrder(it, nominalGroupOrder)
@@ -93,12 +93,9 @@ class WordOrderGenerator {
         )
     )
 
-    private fun createDivergingCopulaVerbOrderer(
-        type: CopulaSentenceType,
-        syntaxParadigm: SyntaxParadigm
-    ): RelationArranger? =
+    private fun createDivergingCopulaVerbOrderer(type: CopulaSentenceType): RelationArranger? =
         differentCopulaWordOrderProbability(type).chanceOf<RelationArranger> {
-            RelationArranger(generateSimpleSovOrder(syntaxParadigm))
+            RelationArranger(generateSimpleSovOrder())
         }
 
     private fun createDefaultCopulaOrder(sovOrder: RandomOrder): RelationArranger =
@@ -112,7 +109,7 @@ class WordOrderGenerator {
      * excludeName is used because I filter only during the additional word order creation, and the main order
      * is expected to be created by this fun, meaning that it would contain the orders comprising it in its name.
      */
-    fun generateSimpleSovOrder(syntaxParadigm: SyntaxParadigm, excludeName: String = ""): RandomOrder {
+    fun generateSimpleSovOrder(excludeName: String = ""): RandomOrder {
         val basicTemplate = BasicSovOrder.entries.filter { it.name !in excludeName }.randomElement()
 
         val (references, name) = when (basicTemplate) {
@@ -130,28 +127,16 @@ class WordOrderGenerator {
             else -> basicTemplate.references to basicTemplate.name
         }
 
-        return RandomOrder(injectAdditionalRelations(references, syntaxParadigm), name)
+        return RandomOrder(injectAdditionalRelations(references), name)
     }
 
     private fun injectAdditionalRelations(
         references: List<GenericSSO<SyntaxRelations>>,
-        syntaxParadigm: SyntaxParadigm
     ): List<GenericSSO<SyntaxRelations>> {
-        val withQa = injectQuestionMarker(references, syntaxParadigm)
         // All cases + Manner
         val orderedObjects = (AdjunctType.entries.map { it.relation } + Manner).shuffled(RandomSingleton.random)
 
-        return insertAtRandom(withQa, orderedObjects)
-    }
-
-    private fun injectQuestionMarker(
-        references: List<GenericSSO<SyntaxRelations>>,
-        syntaxParadigm: SyntaxParadigm
-    ): List<GenericSSO<SyntaxRelations>> {
-        syntaxParadigm.questionMarker.questionMarker
-            ?: return references
-
-        return insertAtRandom(references, listOf(QuestionMarker))
+        return insertAtRandom(references, orderedObjects)
     }
 
     private fun insertAtRandom(

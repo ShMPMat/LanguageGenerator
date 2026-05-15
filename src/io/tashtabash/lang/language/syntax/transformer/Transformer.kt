@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.syntax.transformer
 
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.arranger.PassingSingletonArranger
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
@@ -88,22 +89,56 @@ data class PutFirstTransformer(private val parentRelation: SyntaxRelation): Tran
         val parent = node.relations[parentRelation]
             ?: return
         val arranger = parent.arranger
-        if (arranger !is RelationArranger)
-            throw SyntaxException("RelationArranger was expected, got $arranger")
         val childRelation = parent.children.first { it.second == node }
             .first
-
-        parent.arranger = RelationArranger(
-           RandomOrder(
-               arranger.relationOrder
-                   .references
-                   .map { (listOf(childRelation) + it.value).withProb(it.probability) }
-           )
-        )
+        parent.arranger = when (arranger) {
+            is RelationArranger ->
+                RelationArranger(
+                    RandomOrder(
+                        arranger.relationOrder
+                            .references
+                            .map { (listOf(childRelation) + it.value).withProb(it.probability) }
+                    )
+                )
+            is PassingSingletonArranger ->
+                RelationArranger(
+                    StaticOrder(childRelation, parent.typeForChildren)
+                )
+            else -> throw SyntaxException("RelationArranger/PassingSingletonArranger was expected, got ${arranger.javaClass}")
+        }
     }
 
     override fun toString(): String =
         "put it first for parent $parentRelation"
+}
+
+// Order the node to be the last in the parent's Arranger
+data class PutLastTransformer(private val parentRelation: SyntaxRelation): Transformer {
+    override fun apply(node: SyntaxNode, syntaxLogic: SyntaxLogic) {
+        val parent = node.relations[parentRelation]
+            ?: return
+        val arranger = parent.arranger
+        val childRelation = parent.children.first { it.second == node }
+            .first
+        parent.arranger = when (arranger) {
+            is RelationArranger ->
+                RelationArranger(
+                    RandomOrder(
+                        arranger.relationOrder
+                            .references
+                            .map { (it.value + listOf(childRelation)).withProb(it.probability) }
+                    )
+                )
+            is PassingSingletonArranger ->
+                RelationArranger(
+                    StaticOrder(parent.typeForChildren, childRelation)
+                )
+            else -> throw SyntaxException("RelationArranger/PassingSingletonArranger was expected, got ${arranger.javaClass}")
+        }
+    }
+
+    override fun toString(): String =
+        "put it last for parent $parentRelation"
 }
 
 data object DropTransformer: Transformer {

@@ -49,6 +49,8 @@ class NestedOrder(
 }
 
 class StaticOrder(val order: List<SyntaxRelation>): RelationOrder {
+    constructor(vararg order: SyntaxRelation): this(order.toList())
+
     override val references = listOf(order.withProb(1.0))
 
     override fun toString() = "Order of " + order.joinToString(", ")

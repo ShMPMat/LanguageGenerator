@@ -30,7 +30,7 @@ data class SyntaxLogic(
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
-    private val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf()
+    val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf()
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()

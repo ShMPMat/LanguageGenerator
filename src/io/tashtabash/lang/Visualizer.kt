@@ -119,7 +119,8 @@ class Visualizer(val language: Language) {
             PredicatePossessionDescription(i, these),
             PredicatePossessionDescription(mothers, time),
             PotentialDescription(VerbMainClauseDescription(hearVerb)),
-            PotentialDescription(VerbMainClauseDescription(fourthSeeVerb))
+            PotentialDescription(VerbMainClauseDescription(fourthSeeVerb)),
+            PotentialDescription(VerbMainClauseDescription(sleepVerb))
         )
 
         val indicativeContext = Context(

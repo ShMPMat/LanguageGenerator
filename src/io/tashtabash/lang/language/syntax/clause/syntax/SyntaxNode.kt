@@ -29,26 +29,26 @@ data class SyntaxNode(
     val allTreeRelations: List<SyntaxRelation>
         get() = listOf(typeForChildren) + children.map { it.first }
 
-    fun setRelationChild(syntaxRelation: SyntaxRelation, child: SyntaxNode) {
+    fun setRelationChild(syntaxRelation: SyntaxRelation, child: SyntaxNode, backType: SyntaxRelation = typeForChildren) {
         _relation[syntaxRelation] = child
 
-        addStrayChild(syntaxRelation, child)
+        addStrayChild(syntaxRelation, child, backType)
     }
 
-    fun addStrayChild(syntaxRelation: SyntaxRelation, child: SyntaxNode) {
+    fun addStrayChild(syntaxRelation: SyntaxRelation, child: SyntaxNode, backType: SyntaxRelation = typeForChildren) {
         _children += syntaxRelation to child
 
-        child.setBackLink(this)
+        child.setBackLink(this, backType)
     }
 
-    private fun setBackLink(syntaxNode: SyntaxNode, propagate: Boolean = parentPropagation) {
-        _relation[syntaxNode.typeForChildren] = syntaxNode
+    private fun setBackLink(syntaxNode: SyntaxNode, backType: SyntaxRelation, propagate: Boolean = parentPropagation) {
+        _relation[backType] = syntaxNode
 
         if (!propagate)
             return
 
         for (it in _children)
-            it.second.setBackLink(syntaxNode, true)
+            it.second.setBackLink(syntaxNode, backType, true)
     }
 
     /**
@@ -60,8 +60,7 @@ data class SyntaxNode(
 
             val res = when (source) {
                 is CategorySource.Self -> categoryValues + word.semanticsCore.staticCategories
-                is CategorySource.Agreement -> _relation[source.relation]
-                    ?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
+                is CategorySource.Agreement -> extractAgreementValues(source.relation)
             }
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {
@@ -73,6 +72,14 @@ data class SyntaxNode(
                         return@mapNotNull null
                 }
             sourcedCategory[res]
+        }
+
+    private fun extractAgreementValues(relations: List<SyntaxRelation>): List<CategoryValue>? =
+        relations.firstNotNullOfOrNull { relation ->
+            _relation[relation]
+                ?.let { it.categoryValues + it.word.semanticsCore.staticCategories }
+                // A work-around for Aux getting arguments from the governed verb
+                ?: _relation[SyntaxRelation.Predicate]?.extractAgreementValues(relations)
         }
 
     override fun toString() = "$word, $typeForChildren, $categoryValues"

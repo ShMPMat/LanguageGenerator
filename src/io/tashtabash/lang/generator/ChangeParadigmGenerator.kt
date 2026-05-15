@@ -55,7 +55,7 @@ class ChangeParadigmGenerator(
 
             checkCompulsoryConsistency(categoryData, oldCategoryData)
 
-            categoryData.map { (speechPart, restrictions, categoriesAndSupply) ->
+            for ((speechPart, restrictions, categoriesAndSupply) in categoryData) {
                 val (words, applicators) = applicatorsGenerator.randomApplicatorsForSpeechPart(
                     speechPart,
                     restrictions,
@@ -100,6 +100,10 @@ class ChangeParadigmGenerator(
     private fun generateAdditionalVerbParadigms(changesMap: MutableMap<TypedSpeechPart, SpeechPartChangeParadigm>) {
         val transVerbParadigm = changesMap.getValue(Verb.toDefault())
         val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
+
+        changesMap[Verb.toAux()] = transVerbParadigm
+            .copyForNewSpeechPart(Verb.toAux(), mapOf(Agent to listOf(Argument, Agent)))
+        restrictionsParadigm.restrictionsMapper[Verb.toAux()] = verbRestrictions
 
         // Intransitive verbs
         val intransVerbParadigm = generateIntransitiveVerbs(transVerbParadigm)
@@ -157,8 +161,8 @@ class ChangeParadigmGenerator(
     }
 
     private fun generateIntransitiveVerbs(verbParadigm: SpeechPartChangeParadigm) =
-        verbParadigm.copyForNewSpeechPart(Verb.toIntransitive(), mapOf(Agent to Argument)) { c ->
-            c.categories.none { it.source is Agreement && it.source.relation == Patient }
+        verbParadigm.copyForNewSpeechPart(Verb.toIntransitive(), mapOf(Agent to listOf(Argument))) { c ->
+            c.categories.none { it.source is Agreement && Patient in it.source.relation }
         }
 
     // Fixes edge cases when a speech part with a compulsory category agrees with a speech part in which
@@ -178,7 +182,7 @@ class ChangeParadigmGenerator(
                     if (sourcedCategory.source !is Agreement || !sourcedCategory.compulsoryData.isCompulsory)
                         continue
 
-                    val relevantCategories = sourcedCategory.source.possibleSpeechParts
+                    val relevantCategories = sourcedCategory.source.speechParts
                         .flatMap { sp -> allCategoryData.filter { it.speechPart.type == sp } }
                         .map { d -> d.categories.firstOrNull { it.category == sourcedCategory.category } }
                     val areAllRelationsCompulsory = relevantCategories.all { c ->

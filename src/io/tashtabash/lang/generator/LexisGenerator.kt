@@ -17,11 +17,14 @@ import io.tashtabash.lang.language.phonology.Syllables
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.phonology.prosody.generateStress
 import io.tashtabash.lang.language.syntax.ChangeParadigm
+import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
+import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.features.QuestionMarker
+import io.tashtabash.lang.language.syntax.transformer.has
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
@@ -123,7 +126,7 @@ class LexisGenerator(
 
         derivationGenerator.makeCompounds(wordBase.allWords, words)
 
-        return generateFunctionWords(changeParadigm.syntaxParadigm)
+        return generateFunctionWords(changeParadigm.syntaxParadigm, changeParadigm.syntaxLogic)
     }
 
     private fun injectCustomVerbSubtypes(core: SemanticsCore, wordChangeParadigm: WordChangeParadigm): SemanticsCore {
@@ -173,8 +176,8 @@ class LexisGenerator(
         )
     }
 
-    private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm): Lexis {
-        val copula = mutableMapOf<Construction, WordPointer>()
+    private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm, syntaxLogic: SyntaxLogic): Lexis {
+        val functionWords = mutableMapOf<Construction, WordPointer>()
 
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Particle }) {
             val particle = generateWord(
@@ -182,7 +185,7 @@ class LexisGenerator(
             )
 
             words += particle
-            copula[CopulaConstruction.Particle] = SimpleWordPointer(particle)
+            functionWords[CopulaConstruction.Particle] = SimpleWordPointer(particle)
         }
 
         if (syntaxParadigm.potential == PotentialConstruction.Adverb) {
@@ -191,11 +194,20 @@ class LexisGenerator(
             )
 
             words += adverb
-            copula[PotentialConstruction.Adverb] = SimpleWordPointer(adverb)
+            functionWords[PotentialConstruction.Adverb] = SimpleWordPointer(adverb)
+        }
+        if (syntaxParadigm.potential is PotentialConstruction.Auxiliary) {
+            val aux = generateWord(
+                SemanticsCore("can", SpeechPart.Verb.toAux())
+            )
+
+            words += aux
+            // The added word may have new tags, that's why `.last()` is added instead of `aux`
+            functionWords[syntaxParadigm.potential] = SimpleWordPointer(words.words.last())
         }
 
         val questionMarker = mutableMapOf<QuestionMarker, WordPointer>()
-        if (syntaxParadigm.questionMarker.questionMarker != null) {
+        if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) }) {
             val particle = generateWord(
                 SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
             )
@@ -205,11 +217,11 @@ class LexisGenerator(
         }
 
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Verb })
-            copula[CopulaConstruction.Verb] = SimpleWordPointer(
+            functionWords[CopulaConstruction.Verb] = SimpleWordPointer(
                 words.getWord("be")
             )
 
-        return Lexis(words.words, copula, questionMarker)
+        return Lexis(words.words, functionWords, questionMarker)
             .reifyPointers()
     }
 

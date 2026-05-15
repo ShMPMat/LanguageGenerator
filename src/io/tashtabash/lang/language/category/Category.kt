@@ -37,9 +37,11 @@ internal val emptyRealization = setOf(noValue(1.0))
 sealed class CategorySource {
     data object Self : CategorySource()
 
-    data class Agreement(val relation: SyntaxRelation, val possibleSpeechParts: List<SpeechPart>) : CategorySource() {
+    data class Agreement(val relation: List<SyntaxRelation>, val speechParts: List<SpeechPart>) : CategorySource() {
+        constructor(relation: SyntaxRelation, speechParts: List<SpeechPart>) : this(listOf(relation), speechParts)
+
         override fun toString() =
-            "Agree with $relation ($possibleSpeechParts)"
+            "Agree with $relation ($speechParts)"
     }
 }
 

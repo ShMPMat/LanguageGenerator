@@ -30,10 +30,12 @@ data class TypedSpeechPart(val type: SpeechPart, val subtype: String = defaultSu
 fun SpeechPart.toDefault() = TypedSpeechPart(this, defaultSubtype)
 fun SpeechPart.toAdnominal() = TypedSpeechPart(this, adnominalSubtype)
 fun SpeechPart.toIntransitive() = TypedSpeechPart(this, intransitiveSubtype)
+fun SpeechPart.toAux() = TypedSpeechPart(this, auxSubtype)
 
 const val defaultSubtype = "Unspecified"
 const val adnominalSubtype = "Adnominal"
 const val intransitiveSubtype = "Intransitive"
+const val auxSubtype = "Auxiliary"
 
 
 val sameParadigmList = listOf(
