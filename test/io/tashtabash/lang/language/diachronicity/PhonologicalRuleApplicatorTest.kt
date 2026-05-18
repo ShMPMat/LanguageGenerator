@@ -25,6 +25,7 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.HaveVerb
+import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
@@ -1454,7 +1455,6 @@ internal class PhonologicalRuleApplicatorTest {
                 createNoun("babo").withMeaning("left"),
                 createNoun("papo").withMeaning("right"),
             ),
-            mapOf(),
             mapOf()
         )
         val compound = Compound(
@@ -1515,8 +1515,10 @@ internal class PhonologicalRuleApplicatorTest {
         )
         val lexis = Lexis(
             words,
-            mapOf(CopulaConstruction.Particle to SimpleWordPointer(copulaWord)),
-            mapOf(QuestionMarker to SimpleWordPointer(questionMarkerWord))
+            mapOf(
+                CopulaConstruction.Particle to SimpleWordPointer(copulaWord),
+                QuestionMarker to SimpleWordPointer(questionMarkerWord)
+            ),
         ).reifyPointers()
         val language = Language(
             lexis,
@@ -1549,7 +1551,7 @@ internal class PhonologicalRuleApplicatorTest {
         )
         assertEquals(
             createWord("po", SpeechPart.Particle),
-            shiftedLanguage.lexis.questionMarker[QuestionMarker]?.resolve(shiftedLanguage.lexis)
+            shiftedLanguage.lexis.functionWords[QuestionMarker]?.resolve(shiftedLanguage.lexis)
         )
     }
 

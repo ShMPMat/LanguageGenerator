@@ -22,8 +22,8 @@ import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
-import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.lang.language.syntax.transformer.has
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
@@ -206,14 +206,13 @@ class LexisGenerator(
             functionWords[syntaxParadigm.potential] = SimpleWordPointer(words.words.last())
         }
 
-        val questionMarker = mutableMapOf<QuestionMarker, WordPointer>()
         if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) }) {
             val particle = generateWord(
                 SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
             )
 
             words += particle
-            questionMarker[QuestionMarker] = SimpleWordPointer(particle)
+            functionWords[QuestionMarker] = SimpleWordPointer(particle)
         }
 
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Verb })
@@ -221,7 +220,7 @@ class LexisGenerator(
                 words.getWord("be")
             )
 
-        return Lexis(words.words, functionWords, questionMarker)
+        return Lexis(words.words, functionWords)
             .reifyPointers()
     }
 

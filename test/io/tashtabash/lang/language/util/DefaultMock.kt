@@ -105,7 +105,7 @@ fun makeDefLang(
     potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
     copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
 ) = makeDefLang(
-    Lexis(words, mapOf(), mapOf()),
+    Lexis(words, mapOf()),
     wordChangeParadigm,
     derivations,
     syntaxLogic,

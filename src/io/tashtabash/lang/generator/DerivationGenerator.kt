@@ -323,7 +323,7 @@ class DerivationGenerator(
     internal fun makeCompounds(templates: List<SemanticsCoreTemplate>, availableWords: SimpleMutableLexis) {
         for (template in templates.shuffled(RandomSingleton.random))
             for (compound in derivationParadigm.compounds.shuffled(RandomSingleton.random)) {
-                val incompleteLexis = Lexis(availableWords.words, mapOf(), mapOf())
+                val incompleteLexis = Lexis(availableWords.words, mapOf())
                 val derivedWord = compound.compose(incompleteLexis, template, random)
                     ?: continue
 

@@ -4,13 +4,11 @@ import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.derivation.CompoundHistory
 import io.tashtabash.lang.language.derivation.DerivationHistory
 import io.tashtabash.lang.language.syntax.clause.construction.Construction
-import io.tashtabash.lang.language.syntax.features.QuestionMarker
 
 
 data class Lexis(
     override val words: List<Word>,
-    val functionWords: WordMap<Construction>,
-    val questionMarker: WordMap<QuestionMarker>
+    val functionWords: WordMap<Construction>
 ): AbstractLexis() {
     val size: Int
         get() = words.size
@@ -19,16 +17,12 @@ data class Lexis(
         ?.resolve(this)
         ?: throw LanguageException("No function word in Language for type $type")
 
-    fun getQuestionMarkerWord(type: QuestionMarker): Word = questionMarker[type]
-        ?.resolve(this)
-        ?: throw LanguageException("No question marker in Language for type $type")
-
     // Assumes that the word order is the same
     fun shift(newWords: List<Word>): Lexis {
         if (newWords.size != words.size)
             throw LanguageException("Can't shift words: the size has been changed: ${words.size} to ${newWords.size}")
 
-        return Lexis(newWords, functionWords, questionMarker)
+        return Lexis(newWords, functionWords)
     }
 
     // Turn all Word pointers into IndexWordPointer, allowing quick
@@ -36,7 +30,6 @@ data class Lexis(
     fun reifyPointers(): Lexis = copy(
         words = words.map { reifyPointers(it) },
         functionWords = functionWords.mapValues { (_, pointer) -> reifyPointer(pointer) },
-        questionMarker = questionMarker.mapValues { (_, pointer) -> reifyPointer(pointer) }
     )
 
     private fun reifyPointers(word: Word): Word {
@@ -69,7 +62,6 @@ data class Lexis(
 
     override fun toString() = """
         |Function words: ${functionWords.entries.joinToString { (t, v) -> "$t = ${v.resolve(this).getPhoneticRepresentation()}" }}
-        |question marker: ${questionMarker.entries.joinToString { (t, v) -> "$t = ${v.resolve(this).getPhoneticRepresentation()}" }}
         |word roots:
         |${words.joinToString { it.getPhoneticRepresentation() + " - " + it.semanticsCore }}
     """.trimMargin()

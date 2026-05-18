@@ -118,7 +118,7 @@ internal class PotentialDescriptionTest {
             )
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verb, adverb), mapOf(PotentialConstruction.Adverb to SimpleWordPointer(adverb)), mapOf()),
+            Lexis(listOf(noun, verb, adverb), mapOf(PotentialConstruction.Adverb to SimpleWordPointer(adverb))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
@@ -165,7 +165,7 @@ internal class PotentialDescriptionTest {
             RelationArranger(StaticOrder(Predicate, Auxiliary))
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux)), mapOf()),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -244,7 +244,7 @@ internal class PotentialDescriptionTest {
             RelationArranger(StaticOrder(Predicate, Auxiliary))
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux)), mapOf()),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -346,7 +346,7 @@ internal class PotentialDescriptionTest {
             RelationArranger(StaticOrder(Predicate, Auxiliary))
         )
         val language = makeDefLang(
-            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux)), mapOf()),
+            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(

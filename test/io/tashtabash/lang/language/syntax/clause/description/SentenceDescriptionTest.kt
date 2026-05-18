@@ -7,7 +7,9 @@ import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordReduplicationCategoryApplicator
+import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.SemanticsTag
+import io.tashtabash.lang.language.lexis.SimpleWordPointer
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.lexis.toIntransitive
@@ -16,6 +18,9 @@ import io.tashtabash.lang.language.syntax.NumberCategorySolver
 import io.tashtabash.lang.language.syntax.RandomOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.SyntaxRelation.Auxiliary
+import io.tashtabash.lang.language.syntax.SyntaxRelation.Predicate
+import io.tashtabash.lang.language.syntax.SyntaxRelation.QuestionMarker
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
@@ -651,13 +656,11 @@ internal class SentenceDescriptionTest {
         val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
         val verb = createIntransVerb("do") withMeaning "sleep"
         // Set up WordChangeParadigm
-        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toIntransitive())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
-                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
-                Verb.toIntransitive() to intransitiveVerbChangeParadigm,
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
+                Verb.toIntransitive() to SpeechPartChangeParadigm(Verb.toIntransitive()),
             )
         )
         val language = makeDefLang(
@@ -696,13 +699,11 @@ internal class SentenceDescriptionTest {
         val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
         val verb = createTransVerb("do") withMeaning "build"
         // Set up WordChangeParadigm
-        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
-        val intransitiveVerbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
-                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
-                Verb.toDefault() to intransitiveVerbChangeParadigm,
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
+                Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault()),
             )
         )
         val language = makeDefLang(
@@ -855,13 +856,11 @@ internal class SentenceDescriptionTest {
         val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
         val verb = createTransVerb("do") withMeaning "build"
         // Set up WordChangeParadigm
-        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
-        val verbChangeParadigm = SpeechPartChangeParadigm(Verb.toDefault())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
-                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
-                Verb.toDefault() to verbChangeParadigm,
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
+                Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault()),
             )
         )
         val questionOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
@@ -922,11 +921,10 @@ internal class SentenceDescriptionTest {
             Verb.toDefault(),
             listOf(negationExponenceCluster to MapApplicatorSource(negationExponenceCluster.possibleValues, negationApplicators))
         )
-        val personalPronounChangeParadigm = SpeechPartChangeParadigm(PersonalPronoun.toDefault())
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
             mapOf(
-                PersonalPronoun.toDefault() to personalPronounChangeParadigm,
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
                 Verb.toDefault() to verbChangeParadigm,
             )
         )
@@ -964,6 +962,59 @@ internal class SentenceDescriptionTest {
                 ) withMeaning "build",
                 createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
                 createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+
+    @Test
+    fun `Question markers are used`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
+        val verb = createIntransVerb("do") withMeaning "sleep"
+        val questionMarker = createWord("i", Particle) withMeaning "_question_marker"
+        // Set up WordChangeParadigm
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                PersonalPronoun.toDefault() to SpeechPartChangeParadigm(PersonalPronoun.toDefault()),
+                Particle.toDefault() to SpeechPartChangeParadigm(Particle.toDefault()),
+                Verb.toIntransitive() to SpeechPartChangeParadigm(Verb.toIntransitive()),
+            )
+        )
+        val language = makeDefLang(
+            Lexis(
+                listOf(pronoun, verb, questionMarker),
+                mapOf(io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker to SimpleWordPointer(questionMarker))
+            ),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                ),
+                transformers = listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
+                    PutFirstTransformer(Predicate) + PutFirstTransformer(Auxiliary)
+                })
+            )
+        )
+        // Set up descriptions
+        val pronounDescription = PronounDescription(
+            "_personal_pronoun",
+            ActorValue(Second, NounClassValue.Female, AmountValue(2), DeixisValue.ProximalAddressee, null),
+        )
+        val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to pronounDescription))
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = Context(LongGonePast to Implicit, GeneralQuestion to Explicit)
+
+        assertEquals(
+            listOf(
+                createWord("i", Particle) withMeaning "_question_marker",
+                createWord("o", PersonalPronoun) withMeaning "_personal_pronoun",
+                createIntransVerb("do") withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))

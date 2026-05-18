@@ -4,8 +4,8 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.clause.syntax.*
-import io.tashtabash.lang.language.syntax.features.QuestionMarker
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.transformer.has
 import kotlin.random.Random
@@ -32,7 +32,7 @@ fun SyntaxNode.addQuestionMarker(language: Language) {
     if (language.changeParadigm.syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
         setRelationChild(
             SyntaxRelation.QuestionMarker,
-            language.lexis.getQuestionMarkerWord(QuestionMarker)
+            language.lexis.getFunctionWord(QuestionMarker)
                 .toNode(SyntaxRelation.QuestionMarker),
             SyntaxRelation.Predicate
         )

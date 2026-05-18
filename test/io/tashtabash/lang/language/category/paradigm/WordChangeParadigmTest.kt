@@ -311,7 +311,7 @@ internal class WordChangeParadigmTest {
             .withStaticCategories(DefinitenessValue.Definite)
         val noun = createNoun("daba")
             .withStaticCategories(NounClassValue.Fruit)
-        val lexis = Lexis(listOf(article, noun), mapOf(), mapOf())
+        val lexis = Lexis(listOf(article, noun), mapOf())
             .reifyPointers()
         // Set up definiteness
         val definitenessCategory = Definiteness(
@@ -414,7 +414,7 @@ internal class WordChangeParadigmTest {
             .withStaticCategories(DefinitenessValue.Definite)
         val noun = createNoun("daba")
             .withStaticCategories(NounClassValue.Fruit)
-        val lexis = Lexis(listOf(article, noun), mapOf(), mapOf())
+        val lexis = Lexis(listOf(article, noun), mapOf())
             .reifyPointers()
         // Set up definiteness
         val definitenessCategory = Definiteness(
@@ -501,7 +501,7 @@ internal class WordChangeParadigmTest {
     fun `getUniqueWordForms works correctly with multiple exponence clusters`() {
         // Set up words
         val noun = createNoun("daba")
-        val lexis = Lexis(listOf(noun), mapOf(), mapOf())
+        val lexis = Lexis(listOf(noun), mapOf())
             .reifyPointers()
         // Set up definiteness
         val definitenessCategory = Definiteness(
