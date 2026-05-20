@@ -199,7 +199,7 @@ class DerivationGenerator(
     }
 
     private fun generateDerivations(changeGenerator: ChangeGenerator, categoryPool: CategoryPool) =
-        randomSublist(DerivationClass.entries, random, 2, DerivationClass.entries.size + 1)
+        randomSublist(generatedDerivationClasses, random, 2, generatedDerivationClasses.size + 1)
             .flatMap { derivationClass ->
                 val affectedSpeechParts = restrictionsParadigm.getSpeechParts(derivationClass.toSpeechPart)
 
@@ -332,3 +332,18 @@ class DerivationGenerator(
             }
     }
 }
+
+
+val generatedDerivationClasses = listOf(
+    DerivationClass.Diminutive,
+    DerivationClass.Augmentative,
+    DerivationClass.PlaceFromNoun,
+    DerivationClass.PersonFromNoun,
+    DerivationClass.AbstractNounFromNoun,
+    DerivationClass.AbstractNounFromAdjective,
+    DerivationClass.PlaceFromAdjective,
+    DerivationClass.BeingStateFromAdjective,
+    DerivationClass.PlaceFromVerb,
+    DerivationClass.PersonFromVerb,
+    DerivationClass.AbstractNounFromVerb,
+)
