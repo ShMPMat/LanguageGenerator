@@ -1,6 +1,7 @@
 package io.tashtabash.lang.language.diachronicity
 
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.category.paradigm.SyntheticCategoryHandler
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordCategoryApplicator
 import io.tashtabash.lang.language.lexis.Lexis
@@ -34,7 +35,8 @@ fun unifySyllableStructure(lexis: Lexis, changeParadigm: ChangeParadigm): Pair<L
     val changeParadigmWords = changeParadigm.wordChangeParadigm
         .speechPartChangeParadigms
         .flatMap { (_, paradigm) -> paradigm.sources }
-        .flatMap { it.originalMap.values.filterIsInstance<WordCategoryApplicator>() }
+        .filterIsInstance<SyntheticCategoryHandler>()
+        .flatMap { it.applicatorSource.originalMap.values.filterIsInstance<WordCategoryApplicator>() }
         .map { it.word }
 
     var resultTemplate = lexis.words[0].syllableTemplate

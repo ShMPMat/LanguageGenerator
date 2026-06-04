@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.category.paradigm
 
+import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.Category
 import io.tashtabash.lang.language.category.CategorySource.*
 import io.tashtabash.lang.language.category.realization.CategoryApplicator
@@ -61,7 +62,7 @@ data class WordChangeParadigm(
             else {
                 val convertedValues = convertValuesForDependentClause(
                     values,
-                    wordClause.mainWord.semanticsCore.speechPart.type
+                    wordClause.mainWord?.semanticsCore?.speechPart?.type
                 )
                 apply(w, convertedValues, l)
                     .words
@@ -73,7 +74,7 @@ data class WordChangeParadigm(
 
     private fun convertValuesForDependentClause(
         values: Set<SourcedCategoryValue>,
-        rootSpeechPart: SpeechPart
+        rootSpeechPart: SpeechPart?
     ): SourcedCategoryValues = when (rootSpeechPart) {
         SpeechPart.Noun -> values.map {
             it.copy(source = Agreement(SyntaxRelation.Agent, nominals))
@@ -81,10 +82,10 @@ data class WordChangeParadigm(
         else -> throw ChangeException("Can't convert category values for a dependent clause of $rootSpeechPart")
     }
 
-    private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int, mainWord: Word) =
+    private fun isAlreadyProcessed(word: Word, curIdx: Int, mainWordIdx: Int?, mainWord: Word?) =
         mainWordIdx == curIdx
                 || !isChangeable(word)
-                || word.semanticsCore == mainWord.semanticsCore
+                || word.semanticsCore == mainWord?.semanticsCore // Don't process reduplicated words
 
     fun isChangeable(word: Word): Boolean =
         word.semanticsCore.speechPart.type !in listOf(SpeechPart.Particle, SpeechPart.Adposition)
@@ -154,20 +155,31 @@ data class WordChangeParadigm(
     // Includes compulsory analytically expressed categories, but minimizes them
     private fun getAllSyntheticCategoryValueCombinations(word: Word): List<SourcedCategoryValues> =
         getSpeechPartParadigm(word.semanticsCore.speechPart)
-            .applicators.filter { (cluster, source) -> cluster.isCompulsory || !source.map.isAnalytical }
-            .map { (_, source) ->
-                val analyticClusterValues: List<List<SourcedCategoryValue>> = source.map.entries
+            .applicators.mapNotNull { (cluster, source) ->
+                val target =
+                    if (source is LinkCategoryHandler)
+                        source.target
+                    else source
+
+                if (target !is SyntheticCategoryHandler)
+                    return@mapNotNull null
+                else if (cluster.isCompulsory || !target.applicatorSource.map.isAnalytical)
+                    target.applicatorSource
+                else null
+            }
+            .map { applicatorSource ->
+                val analyticClusterValues: List<List<SourcedCategoryValue>> = applicatorSource.map.entries
                     .filter { it.value.type !in analyticalRealizations }
                     .map { it.key.categoryValues } +
                         // Add one of the passing matchers if exists
                         listOfNotNull(
-                            source.map.entries
+                            applicatorSource.map.entries
                                 .firstOrNull { it.value == PassingCategoryApplicator }
                                 ?.key
                                 ?.categoryValues
                         )
                 val chosenClusterValues = analyticClusterValues.takeIf { it.isNotEmpty() }
-                    ?: listOf(source.map.keys.first().categoryValues)
+                    ?: listOf(applicatorSource.map.keys.first().categoryValues)
 
                 // Filter out values which can't be applied to the word's static categories
                 val wordStaticCategories = word.semanticsCore.staticCategories.map { it.parentClassName }
@@ -214,17 +226,20 @@ data class WordChangeParadigm(
             .flatten()
     }
 
-    fun getUniqueWordForms(word: Word): List<Deferred<Word>> = runBlocking {
+    fun getUniqueWordForms(word: Word): List<Deferred<List<Word>>> = runBlocking {
         getAllSyntheticCategoryValueCombinations(word)
             .map {
                 async {
-                    apply(word, it).mainWord
+                    val result = apply(word, it)
+                    if (result.mainWord != null)
+                        listOf(result.mainWord)
+                    else result.words.words.map { w -> w.word }
                 }
             }
     }
 
     // May contain duplicates
-    fun getUniqueWordForms(lexis: Lexis): List<Word> = runBlocking {
+    fun getUniqueWordForms(lexis: Lexis): List<List<Word>> = runBlocking {
         val contentWords = lexis.words
             .map {
                 async {
@@ -234,7 +249,8 @@ data class WordChangeParadigm(
         val functionWords = speechPartChangeParadigms.values
             .flatMap { p ->
                 p.sources
-                    .flatMap { it.map.values }
+                    .filterIsInstance<SyntheticCategoryHandler>()
+                    .flatMap { it.applicatorSource.map.values }
             }
             .filterIsInstance<WordCategoryApplicator>()
             .map {
@@ -255,8 +271,15 @@ data class WordChangeParadigm(
         speechPartChangeParadigms.mapValues { (_, speechPartChangeParadigm) ->
             val mappedApplicators = speechPartChangeParadigm.applicators
                 .map { (exponenceCluster, source) ->
-                    exponenceCluster to source.mapApplicators { _, applicator ->
-                        mapper(applicator)
+                    exponenceCluster to when (source) {
+                        is SyntheticCategoryHandler -> SyntheticCategoryHandler(
+                            source.applicatorSource.mapApplicators { _, applicator ->
+                                mapper(applicator)
+                            }
+                        )
+                        // Don't map anything, if the change is global, the map will be mapped in the source
+                        is LinkCategoryHandler -> source
+                        else -> throw LanguageException("Unexpected source type ${source::class}")
                     }
                 }
 

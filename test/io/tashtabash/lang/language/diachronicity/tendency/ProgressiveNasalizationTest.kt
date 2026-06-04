@@ -120,13 +120,13 @@ class ProgressiveNasalizationTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to MapApplicatorSource(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
-                nounNumberExponenceCluster to MapApplicatorSource(nounNumberExponenceCluster.possibleValues, nounNumberApplicatiors)
+                definitenessExponenceCluster to toHandler(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                nounNumberExponenceCluster to toHandler(nounNumberExponenceCluster.possibleValues, nounNumberApplicatiors)
             )
         )
         val articleChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
-            listOf(articleNumberExponenceCluster to MapApplicatorSource(
+            listOf(articleNumberExponenceCluster to toHandler(
                 articleNumberExponenceCluster.possibleValues,
                 listOf(PassingCategoryApplicator, createAffixCategoryApplicator("-o"))
             )

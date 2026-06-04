@@ -7,6 +7,7 @@ import io.tashtabash.lang.language.category.sourcedFrom
 import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.util.createAffixCategoryApplicator
+import io.tashtabash.lang.language.util.toHandler
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -29,16 +30,15 @@ internal class LinkApplicatorSourceTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Verb.toDefault(),
-            listOf(tenseExponenceCluster to MapApplicatorSource(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
 
-        val intransVerbLink = LinkApplicatorSource(verbSpeechPartChangeParadigm, 0)
+        val intransVerbLink = LinkCategoryHandler(verbSpeechPartChangeParadigm, 0)
 
         assertEquals(
             verbSpeechPartChangeParadigm.applicators[0]
-                .second
-                .map,
-            intransVerbLink.map
+                .second,
+            intransVerbLink.target
         )
     }
 }

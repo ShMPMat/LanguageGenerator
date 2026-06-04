@@ -6,8 +6,9 @@ import io.tashtabash.lang.language.syntax.sequence.WordSequence
 import io.tashtabash.lang.language.syntax.sequence.unfold
 
 
-data class WordClauseResult(val words: FoldedWordSequence, val mainWordIdx: Int) {
-    val mainWord: Word = words[mainWordIdx].word
+// mainWordIdx is null when all words still have to be processed
+data class WordClauseResult(val words: FoldedWordSequence, val mainWordIdx: Int?) {
+    val mainWord: Word? = if (mainWordIdx != null) words[mainWordIdx].word else null
 
     fun unfold(): WordSequence =
         words.unfold()

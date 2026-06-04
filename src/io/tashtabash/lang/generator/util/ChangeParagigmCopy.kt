@@ -10,11 +10,11 @@ import io.tashtabash.random.singleton.testProbability
 
 fun copyApplicators(
     cluster: ExponenceCluster,
-    applicator: ApplicatorSource,
+    applicator: CategoryHandler,
     sourceMap: Map<SyntaxRelation, List<SyntaxRelation>>,
     speechPartChangeParadigm: SpeechPartChangeParadigm,
     applicatorIdx: Int
-): Pair<ExponenceCluster, ApplicatorSource> {
+): Pair<ExponenceCluster, CategoryHandler> {
     var isSourceChanged = false
     val newCategories = cluster.categories.map {
         it to it.copy(
@@ -31,7 +31,7 @@ fun copyApplicators(
     val newCategoriesMap = newCategories.toMap()
 
     if (!isSourceChanged)
-        return cluster to LinkApplicatorSource(speechPartChangeParadigm, applicatorIdx)
+        return cluster to LinkCategoryHandler(speechPartChangeParadigm, applicatorIdx)
     val newClusterValues = cluster.possibleValues.map { v ->
         v.categoryValues.map { cv ->
             newCategoriesMap.getValue(cv.parent).actualSourcedValues.first { cv.categoryValue == it.categoryValue }
@@ -39,19 +39,21 @@ fun copyApplicators(
     }.toSet()
     val newCluster = ExponenceCluster(newCategories.map { it.second }, newClusterValues)
     val newApplicator = when (applicator) {
-        is MapApplicatorSource -> MapApplicatorSource(
-            applicator.map
-                .map { (value, applicator) ->
-                    val newValue = newCluster.possibleValues.first { nv ->
-                        val newPlainCategoryValues = nv.categoryValues
-                            .map { it.categoryValue }
-                        value.categoryValues.all { c -> c.categoryValue in newPlainCategoryValues }
-                    }
+        is SyntheticCategoryHandler -> SyntheticCategoryHandler(
+            MapApplicatorSource(
+                applicator.applicatorSource.map
+                    .map { (value, applicator) ->
+                        val newValue = newCluster.possibleValues.first { nv ->
+                            val newPlainCategoryValues = nv.categoryValues
+                                .map { it.categoryValue }
+                            value.categoryValues.all { c -> c.categoryValue in newPlainCategoryValues }
+                        }
 
-                    newValue to applicator.copy()
-                }
+                        newValue to applicator.copy()
+                    }
+            )
         )
-        is LinkApplicatorSource -> applicator
+        is LinkCategoryHandler -> applicator
         else -> throw ChangeException("Unknown ApplicatorSource type ${applicator::class.simpleName}")
     }
 

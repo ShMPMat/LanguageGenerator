@@ -93,7 +93,7 @@ internal class PossessorDescriptionTest {
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val pronounChangeParadigm = SpeechPartChangeParadigm(
             PersonalPronoun.toDefault(),
-            listOf(caseExponenceCluster to MapApplicatorSource(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(caseCategory),

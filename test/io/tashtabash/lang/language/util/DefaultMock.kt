@@ -63,10 +63,18 @@ fun makeDefExponenceCluster(isCompulsory: Boolean) = ExponenceCluster(
     getDefNumberSourcedCategory(isCompulsory)
 )
 
+fun toHandler(values: List<ExponenceValue>, applicators: List<CategoryApplicator>): SyntheticCategoryHandler {
+    val source = MapApplicatorSource()
+    for (i in values.indices)
+        source.map[values[i]] = applicators[i]
+
+    return SyntheticCategoryHandler(source)
+}
+
 fun makeDefNounChangeParadigm(vararg applicators: CategoryApplicator, isCompulsory: Boolean = false) =
     SpeechPartChangeParadigm(
         defSpeechPart,
-        listOf(makeDefExponenceCluster(isCompulsory) to MapApplicatorSource(
+        listOf(makeDefExponenceCluster(isCompulsory) to toHandler(
             makeDefExponenceCluster(isCompulsory).possibleValues,
             applicators.toList()
         )

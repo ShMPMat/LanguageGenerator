@@ -64,7 +64,7 @@ internal class PotentialDescriptionTest {
         val moodApplicators = listOf(PassingCategoryApplicator, createAffixCategoryApplicator("-to"))
         val verbChangeParadigm = SpeechPartChangeParadigm(
             Verb.toIntransitive(),
-            listOf(moodExponenceCluster to MapApplicatorSource(moodExponenceCluster.possibleValues, moodApplicators))
+            listOf(moodExponenceCluster to toHandler(moodExponenceCluster.possibleValues, moodApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(moodCategory),
@@ -229,7 +229,7 @@ internal class PotentialDescriptionTest {
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
             Noun.toDefault(),
-            listOf(caseExponenceCluster to MapApplicatorSource(caseExponenceCluster.possibleValues, caseApplicators))
+            listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),
@@ -323,15 +323,15 @@ internal class PotentialDescriptionTest {
         val personApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"), createAffixCategoryApplicator("-ta"))
         val transVerbChangeParadigm = SpeechPartChangeParadigm(
             Verb.toDefault(),
-            listOf(personExponenceCluster to MapApplicatorSource(personExponenceCluster.possibleValues, personApplicators))
+            listOf(personExponenceCluster to toHandler(personExponenceCluster.possibleValues, personApplicators))
         )
         val intransVerbChangeParadigm = SpeechPartChangeParadigm(
             Verb.toIntransitive(),
-            listOf(personExponenceCluster to MapApplicatorSource(personExponenceCluster.possibleValues, personApplicators))
+            listOf(personExponenceCluster to toHandler(personExponenceCluster.possibleValues, personApplicators))
         )
         val auxVerbChangeParadigm = SpeechPartChangeParadigm(
             Verb.toAux(),
-            listOf(personExponenceCluster to MapApplicatorSource(personExponenceCluster.possibleValues, personApplicators))
+            listOf(personExponenceCluster to toHandler(personExponenceCluster.possibleValues, personApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(),

@@ -69,13 +69,13 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to MapApplicatorSource(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
-                nounNounClassExponenceCluster to MapApplicatorSource(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
+                definitenessExponenceCluster to toHandler(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                nounNounClassExponenceCluster to toHandler(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
             )
         )
         val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
-            listOf(articleNounClassExponenceCluster to MapApplicatorSource(articleNounClassExponenceCluster.possibleValues, articleApplicators))
+            listOf(articleNounClassExponenceCluster to toHandler(articleNounClassExponenceCluster.possibleValues, articleApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory, definitenessCategory),
@@ -122,7 +122,7 @@ internal class WordChangeParadigmTest {
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val adjectiveSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Adjective.toDefault(),
-            listOf(tenseExponenceCluster to MapApplicatorSource(tenseExponenceCluster.possibleValues, tenseApplicators))
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
@@ -166,7 +166,7 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to MapApplicatorSource(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                definitenessExponenceCluster to toHandler(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
             ),
             ProsodyChangeParadigm(StressType.Ultimate)
         )
@@ -233,7 +233,7 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to MapApplicatorSource(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                definitenessExponenceCluster to toHandler(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
             )
         )
         val wordChangeParadigm = WordChangeParadigm(
@@ -278,7 +278,7 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                definitenessExponenceCluster to MapApplicatorSource(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                definitenessExponenceCluster to toHandler(definitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
             )
         )
         val wordChangeParadigm = WordChangeParadigm(
@@ -356,13 +356,13 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                nounDefinitenessExponenceCluster to MapApplicatorSource(nounDefinitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
-                nounNounClassExponenceCluster to MapApplicatorSource(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
+                nounDefinitenessExponenceCluster to toHandler(nounDefinitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                nounNounClassExponenceCluster to toHandler(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
             )
         )
         val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
-            listOf(articleNounClassExponenceCluster to MapApplicatorSource(articleNounClassExponenceCluster.possibleValues, articleApplicators))
+            listOf(articleNounClassExponenceCluster to toHandler(articleNounClassExponenceCluster.possibleValues, articleApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory, definitenessCategory),
@@ -459,13 +459,13 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                nounDefinitenessExponenceCluster to MapApplicatorSource(nounDefinitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
-                nounNounClassExponenceCluster to MapApplicatorSource(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
+                nounDefinitenessExponenceCluster to toHandler(nounDefinitenessExponenceCluster.possibleValues, nounDefinitenessApplicators),
+                nounNounClassExponenceCluster to toHandler(nounNounClassExponenceCluster.possibleValues, nounClassApplicatiors)
             )
         )
         val articleSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Article.toDefault(),
-            listOf(articleNounClassExponenceCluster to MapApplicatorSource(articleNounClassExponenceCluster.possibleValues, articleApplicators))
+            listOf(articleNounClassExponenceCluster to toHandler(articleNounClassExponenceCluster.possibleValues, articleApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(nounClassCategory, definitenessCategory),
@@ -492,6 +492,7 @@ internal class WordChangeParadigmTest {
                 ).withStaticCategories(DefinitenessValue.Definite)
             ).sortedBy { it.toString() },
             wordChangeParadigm.getUniqueWordForms(lexis)
+                .map { it[0] } // Only 1 word is expected
                 .distinct()
                 .sortedBy { it.toString() }
         )
@@ -538,8 +539,8 @@ internal class WordChangeParadigmTest {
         val nounSpeechPartChangeParadigm = SpeechPartChangeParadigm(
             SpeechPart.Noun.toDefault(),
             listOf(
-                nounDefinitenessExponenceCluster to MapApplicatorSource(nounDefinitenessExponenceCluster.possibleValues, definitenessApplicators),
-                nounNumberExponenceCluster to MapApplicatorSource(nounNumberExponenceCluster.possibleValues, numberApplicatiors)
+                nounDefinitenessExponenceCluster to toHandler(nounDefinitenessExponenceCluster.possibleValues, definitenessApplicators),
+                nounNumberExponenceCluster to toHandler(nounNumberExponenceCluster.possibleValues, numberApplicatiors)
             )
         )
         val wordChangeParadigm = WordChangeParadigm(
@@ -571,6 +572,7 @@ internal class WordChangeParadigmTest {
                 )
             ).sortedBy { it.toString() },
             wordChangeParadigm.getUniqueWordForms(lexis)
+                .map { it[0] } // Only 1 word is expected
                 .distinct()
                 .sortedBy { it.toString() }
         )

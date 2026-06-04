@@ -12,12 +12,11 @@ import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.sequence.FoldedWordSequence
 import io.tashtabash.lang.language.syntax.sequence.LatchType
 import io.tashtabash.lang.language.syntax.sequence.LatchedWord
-import io.tashtabash.lang.language.syntax.sequence.toFoldedWordSequence
 
 
 data class SpeechPartChangeParadigm(
     val speechPart: TypedSpeechPart,
-    val applicators: List<Pair<ExponenceCluster, ApplicatorSource>> = listOf(),
+    val applicators: List<Pair<ExponenceCluster, CategoryHandler>> = listOf(),
     val prosodyChangeParadigm: ProsodyChangeParadigm = ProsodyChangeParadigm(StressType.None)
 ) {
     val sources by lazy {
@@ -50,7 +49,9 @@ data class SpeechPartChangeParadigm(
         ?: emptyList()
 
     private fun anyApplicator(predicate: (CategoryApplicator) -> Boolean): Boolean =
-        applicators.flatMap { it.second.map.values }
+        applicators.map { it.second }
+            .filterIsInstance<SyntheticCategoryHandler>()
+            .flatMap { it.applicatorSource.map.values }
             .any(predicate)
 
     fun hasPrefixes(): Boolean =
@@ -65,7 +66,10 @@ data class SpeechPartChangeParadigm(
 
         var wordClauseResult = WordClauseResult(FoldedWordSequence(LatchedWord(word, latchType)), 0)
         for ((exponenceCluster, applicator) in applicators)
-            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicator.map)
+            wordClauseResult = useExponenceCluster(wordClauseResult, categoryValues, exponenceCluster, applicator)
+
+        if (wordClauseResult.mainWordIdx == null)
+            return wordClauseResult
 
         return wordClauseResult.copy(
             words = applyProsodyParadigm(wordClauseResult.words, wordClauseResult.mainWordIdx, word)
@@ -76,8 +80,12 @@ data class SpeechPartChangeParadigm(
         wordClauseResult: WordClauseResult,
         categoryValues: Set<SourcedCategoryValue>,
         exponenceCluster: ExponenceCluster,
-        applicator: ApplicatorMap
+        applicator: CategoryHandler
     ): WordClauseResult {
+        // No main word to change, a construction has been applied
+        if (wordClauseResult.mainWord == null || wordClauseResult.mainWordIdx == null)
+            return wordClauseResult
+
         val staticCategoryValues = wordClauseResult.mainWord.semanticsCore.staticCategories.mapNotNull { staticValue ->
             exponenceCluster.categories
                 .firstOrNull { it.category.outType == staticValue.parentClassName }
@@ -91,39 +99,8 @@ data class SpeechPartChangeParadigm(
             else
                 return wordClauseResult
         val actualValues = allCategoryValues.filter { it in exponenceUnion.categoryValues }
-        val newClause = useCategoryApplicator(
-            wordClauseResult.words,
-            wordClauseResult.mainWordIdx,
-            applicator,
-            exponenceUnion,
-            actualValues
-        )
-
-        var newWordPosition = wordClauseResult.mainWordIdx
-        if (wordClauseResult.words.size != newClause.size)
-            for (i in wordClauseResult.mainWordIdx until newClause.size)
-                if (wordClauseResult.mainWord == newClause[i].word) {
-                    newWordPosition = i
-                    break
-                }
-
-        return WordClauseResult(newClause, newWordPosition)
+        return applicator.apply(wordClauseResult, exponenceUnion, actualValues)
     }
-
-    private fun useCategoryApplicator(
-        wordSequence: FoldedWordSequence,
-        wordPosition: Int,
-        applicator: ApplicatorMap,
-        exponenceValue: ExponenceValue,
-        actualValues: List<SourcedCategoryValue>
-    ) = if (applicator.containsKey(exponenceValue))
-        applicator[exponenceValue]
-            ?.apply(wordSequence, wordPosition, actualValues)
-            ?: throw ChangeException(
-                "Tried to change word \"${wordSequence[wordPosition].word}\" for categories $exponenceValue " +
-                        "but such Exponence Cluster isn't defined"
-            )
-    else wordSequence.words.map { (w, l) -> LatchedWord(w.copy(), l) }.toFoldedWordSequence()
 
     private fun getExponenceUnion(
         categoryValues: Set<SourcedCategoryValue>,
@@ -144,16 +121,18 @@ data class SpeechPartChangeParadigm(
         )
     }
 
-    fun hasChanges() = applicators.any { it.second.map.isNotEmpty() }
+    fun hasChanges() = applicators.any { (_, h) ->
+        h is SyntheticCategoryHandler && h.applicatorSource.map.isNotEmpty()
+    }
 
     private fun isLinkOnly(): Boolean =
         applicators.map { it.second }
-            .filterIsInstance<LinkApplicatorSource>()
+            .filterIsInstance<LinkCategoryHandler>()
             .count() == applicators.size
 
     private fun listAllLinkSources(): List<TypedSpeechPart> =
         applicators.map { it.second }
-            .filterIsInstance<LinkApplicatorSource>()
+            .filterIsInstance<LinkCategoryHandler>()
             .map { it.source.speechPart }
             .distinct()
 
@@ -162,10 +141,7 @@ data class SpeechPartChangeParadigm(
             "$speechPart has the same paradigm as ${listAllLinkSources()[0]}"
         else
             "$speechPart changes on: \n" +
-                applicators.joinToString("\n\n") { (c, a) ->
-                    "$c:$a\n" + a.map.entries
-                        .map { it.key.toString() + ": " + it.value }
-                        .sortedWith(naturalOrder())
-                        .joinToString("\n")
+                applicators.joinToString("\n\n") { (c, h) ->
+                    "$c:$h"
                 }
 }

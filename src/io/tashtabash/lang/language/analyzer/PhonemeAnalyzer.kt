@@ -4,6 +4,7 @@ import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.LanguageException
+import io.tashtabash.lang.language.category.paradigm.SyntheticCategoryHandler
 import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.diachronicity.PhonologicalRule
@@ -37,10 +38,13 @@ fun analyzePhonemes(
         .speechPartChangeParadigms
         .values
         .flatMap { speechPartChangeParadigm ->
-            speechPartChangeParadigm.applicators.flatMap { (_, applicators) ->
-                applicators.originalMap.values
-                    .flatMap { analyzePhoneme(it, ImmutablePhonemeContainer(phonemes.toList())) }
-            }
+            speechPartChangeParadigm.applicators
+                .map { (_, applicators) -> applicators }
+                .filterIsInstance<SyntheticCategoryHandler>()
+                .flatMap { applicators ->
+                    applicators.applicatorSource.originalMap.values
+                        .flatMap { analyzePhoneme(it, ImmutablePhonemeContainer(phonemes.toList())) }
+                }
         }
 
     return ImmutablePhonemeContainer(phonemes.toList())

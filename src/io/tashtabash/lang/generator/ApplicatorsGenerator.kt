@@ -30,12 +30,12 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
         words.clear()
 
         val orderedTemplates = exponenceGenerator.splitCategoriesOnClusters(categoriesAndSupply, speechPart)
-        val resultMap = orderedTemplates.map { it.cluster to MapApplicatorSource() }
+        val resultMap = orderedTemplates.map { it.cluster to SyntheticCategoryHandler(MapApplicatorSource()) }
 
         val realizations = mutableListOf<RealizationTemplate>()
 
         for (i in orderedTemplates.indices) {
-            val clusterMap = resultMap[i].second.map
+            val clusterMap = resultMap[i].second.applicatorSource.map
             val allRealizations = orderedTemplates[i].realizations
 
             for ((exponenceValue, realization) in allRealizations) {
@@ -47,10 +47,10 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 
         val i = findFirstMorphemeCluster(realizations)
         if (i != null) {
-            val (exponenceCluster, applicatorSource) = resultMap[i]
+            val (exponenceCluster, handler) = resultMap[i]
             val currentRealizations = realizations[i]
 
-            injectDerivationMorpheme(exponenceCluster, applicatorSource.map, phoneticRestrictions, currentRealizations)
+            injectDerivationMorpheme(exponenceCluster, handler.applicatorSource.map, phoneticRestrictions, currentRealizations)
         }
         return Result(words, resultMap)
     }
@@ -189,7 +189,7 @@ class ApplicatorsGenerator(private val lexisGenerator: LexisGenerator, private v
 }
 
 
-data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, ApplicatorSource>>)
+data class Result(val words: List<Word>, val solver: List<Pair<ExponenceCluster, CategoryHandler>>)
 
 fun <E : SampleSpaceObject> uniteMutualProbabilities(
     objectLists: List<Collection<E>>,
