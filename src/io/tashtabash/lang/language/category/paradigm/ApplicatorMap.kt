@@ -5,11 +5,6 @@ import io.tashtabash.lang.language.category.realization.analyticalRealizations
 
 
 class ApplicatorMap(): LinkedHashMap<ExponenceValue, CategoryApplicator>() {
-    constructor(values: List<ExponenceValue>, applicators: List<CategoryApplicator>) : this() {
-        for (i in values.indices)
-            this[values[i]] = applicators[i]
-    }
-
     constructor(map: Map<ExponenceValue, CategoryApplicator>): this() {
         for ((k, v) in map)
             this[k] = v
