@@ -223,7 +223,8 @@ class ChangeParadigmGenerator(
     ) = if (categories.first { it.outType == definitenessName }.actualValues.isNotEmpty())
         speechPartChangesMap.any { (_, u) ->
             u.sources
-                .flatMap { it.map.values }
+                .filterIsInstance<SyntheticCategoryHandler>()
+                .flatMap { it.applicatorSource.map.values }
                 .any { it is WordCategoryApplicator && it.word.semanticsCore.speechPart.type == Article }
         }
     else false
