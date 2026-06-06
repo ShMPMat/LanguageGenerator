@@ -2,20 +2,25 @@ package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.language.category.CaseValue
 import io.tashtabash.lang.language.category.MoodValue
+import io.tashtabash.lang.language.category.TenseValue
 import io.tashtabash.lang.language.category.caseName
 import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
+import io.tashtabash.lang.language.category.tenseName
 import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction.*
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
+import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.random.UnwrappableSSO
 import io.tashtabash.random.singleton.RandomSingleton
+import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import io.tashtabash.random.withProb
@@ -57,6 +62,21 @@ class SyntaxParadigmGenerator {
         if (MoodValue.Potential in wordChangeParadigm.categories.first { it.outType == moodName }.actualValues)
             return PotentialConstruction.Mood
 
+        // That's a pretty far-fetched case, idk if it exists in real life
+        val prsValue = wordChangeParadigm.categories
+            .first { it.outType == tenseName }
+            .actualValues
+            .firstOrNull { it == TenseValue.Present }
+        if (prsValue != null)
+            .05.chanceOf {
+                return PotentialConstruction.Auxiliary(
+                    Auxiliary(
+                        RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate)),
+                        listOf(prsValue)
+                    )
+                )
+            }
+
         return potentialProbabilities.randomUnwrappedElement()
     }
 }
@@ -79,8 +99,13 @@ val copulaProbabilities = listOf<UnwrappableSSO<CopulaConstruction>>(
 
 val potentialProbabilities = listOf(
     PotentialConstruction.Adverb.withProb(1.0),
-    PotentialConstruction.Auxiliary(RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate)))
-        .withProb(1.0),
-    PotentialConstruction.Auxiliary(RelationArranger(StaticOrder(SyntaxRelation.Predicate, SyntaxRelation.Auxiliary)))
-        .withProb(1.0),
+    PotentialConstruction.Auxiliary(
+        SerialAuxiliary(
+            RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate))
+        )
+    ).withProb(1.0),
+    PotentialConstruction.Auxiliary(
+        SerialAuxiliary(
+            RelationArranger(StaticOrder(SyntaxRelation.Predicate, SyntaxRelation.Auxiliary)))
+    ).withProb(1.0),
 )

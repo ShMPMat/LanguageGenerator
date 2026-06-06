@@ -10,9 +10,12 @@ import io.tashtabash.lang.language.category.MoodValue
 import io.tashtabash.lang.language.category.NounClassValue
 import io.tashtabash.lang.language.category.Person
 import io.tashtabash.lang.language.category.PersonValue.*
+import io.tashtabash.lang.language.category.Tense
+import io.tashtabash.lang.language.category.TenseValue
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.sourcedFrom
+import io.tashtabash.lang.language.category.tenseName
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.SimpleWordPointer
 import io.tashtabash.lang.language.lexis.SpeechPart.*
@@ -25,7 +28,9 @@ import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
@@ -162,10 +167,10 @@ internal class PotentialDescriptionTest {
             )
         )
         val auxConstruction = PotentialConstruction.Auxiliary(
-            RelationArranger(StaticOrder(Predicate, Auxiliary))
+            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -241,10 +246,10 @@ internal class PotentialDescriptionTest {
             )
         )
         val auxConstruction = PotentialConstruction.Auxiliary(
-            RelationArranger(StaticOrder(Predicate, Auxiliary))
+            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -343,10 +348,10 @@ internal class PotentialDescriptionTest {
             )
         )
         val auxConstruction = PotentialConstruction.Auxiliary(
-            RelationArranger(StaticOrder(Predicate, Auxiliary))
+            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         )
         val language = makeDefLang(
-            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
+            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -410,6 +415,114 @@ internal class PotentialDescriptionTest {
                         MorphemeData(3, listOf(), true),
                         MorphemeData(2, listOf(personSourcedCategory[Second]))
                     ) withMeaning "can",
+            ),
+            transSentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `PotentialDescription handles aux governing tense with trans and intrans`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val noun = createNoun("a") withMeaning "cat"
+        val verbIntrans = createIntransVerb("do") withMeaning "sleep"
+        val verbTrans = createTransVerb("da") withMeaning "see"
+        val aux = createWord("lah", Verb.toAux()) withMeaning "can"
+        // Set up tense
+        val tenseCategory = Tense(
+            listOf(TenseValue.Past, TenseValue.Present),
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
+        )
+        val tenseSourcedCategory = SourcedCategory(tenseCategory, CategorySource.Self, CompulsoryData(true))
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
+        // Set up WordChangeParadigm
+        val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val auxVerbChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toAux(),
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
+        )
+        val intransVerbChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toIntransitive(),
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
+        )
+        val transVerbChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toDefault(),
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                Noun.toDefault() to SpeechPartChangeParadigm(Noun.toDefault()),
+                Verb.toAux() to auxVerbChangeParadigm,
+                Verb.toIntransitive() to intransVerbChangeParadigm,
+                Verb.toDefault() to transVerbChangeParadigm
+            )
+        )
+        val auxConstruction = PotentialConstruction.Auxiliary(
+            Auxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)), listOf(TenseValue.Present))
+        )
+        val language = makeDefLang(
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toIntransitive() to Argument to listOf(),
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
+                ),
+                timeFormSolver = mapOf(
+                    Verb.toIntransitive() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
+                    Verb.toAux() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
+                    Verb.toDefault() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past])
+                )
+            ),
+            potentialConstruction = auxConstruction
+        )
+        // Set up descriptions
+        val cat = NominalDescription("cat", ActorComplimentValue(1))
+        val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
+        val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
+        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+
+        assertEquals(
+            listOf(
+                createNoun("a") withMeaning "cat",
+                createIntransVerb("doto")
+                    .withMorphemes(
+                        MorphemeData(2, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Present]))
+                    ) withMeaning "sleep",
+                createWord("lahda", Verb.toAux())
+                    .withMorphemes(
+                        MorphemeData(3, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
+                    ) withMeaning "can",
+            ),
+            intransSentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+
+        val transVerbDescription = VerbDescription("see", mapOf(MainObjectType.Agent to cat, MainObjectType.Patient to cat))
+        val transSentenceDescription = PotentialDescription(VerbMainClauseDescription(transVerbDescription))
+
+        assertEquals(
+            listOf(
+                createNoun("a") withMeaning "cat",
+                createNoun("a") withMeaning "cat",
+                createTransVerb("dato")
+                    .withMorphemes(
+                        MorphemeData(2, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Present]))
+                    ) withMeaning "see",
+                createWord("lahda", Verb.toAux())
+                    .withMorphemes(
+                        MorphemeData(3, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
+                    ) withMeaning "can"
             ),
             transSentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))

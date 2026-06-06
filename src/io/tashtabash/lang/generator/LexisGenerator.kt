@@ -203,7 +203,7 @@ class LexisGenerator(
 
             words += aux
             // The added word may have new tags, that's why `.last()` is added instead of `aux`
-            functionWords[syntaxParadigm.potential] = SimpleWordPointer(words.words.last())
+            functionWords[syntaxParadigm.potential.construction] = SimpleWordPointer(words.words.last())
         }
 
         if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) }) {
