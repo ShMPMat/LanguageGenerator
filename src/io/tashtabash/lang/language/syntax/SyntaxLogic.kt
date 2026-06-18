@@ -160,7 +160,7 @@ data class SyntaxLogic(
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
-                " used cases are: ",
+                " used tense is: ",
                 categories.joinToString(", ")
             )
         }
