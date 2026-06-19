@@ -39,7 +39,7 @@ abstract class PotentialConstruction : Construction {
 
     data class Auxiliary(val construction: AuxiliaryConstruction) : PotentialConstruction() {
         override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause =
-            construction.apply(sentence, language)
+            sentence.copy(predicate = construction.apply(sentence.predicate, language))
 
         override fun toString() = construction.toString()
     }

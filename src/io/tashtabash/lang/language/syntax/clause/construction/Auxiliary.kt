@@ -5,22 +5,19 @@ import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.clause.realization.AuxVerbClause
-import io.tashtabash.lang.language.syntax.clause.realization.UnfoldableClause
-import io.tashtabash.lang.language.syntax.clause.realization.VerbSentenceClause
+import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
 
 
 interface AuxiliaryConstruction: Construction {
-    fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause
+    fun apply(predicate: PredicateClause, language: Language): PredicateClause
 }
 
 
 data class SerialAuxiliary(val arranger: Arranger) : AuxiliaryConstruction {
-    override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause {
+    override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
         val aux = language.lexis.getFunctionWord(this)
 
-        return sentence.copy(
-            predicate = AuxVerbClause(aux, sentence.predicate, sentence.predicate.additionalCategories, arranger)
-        )
+        return AuxVerbClause(aux, predicate, predicate.additionalCategories, arranger)
     }
 
     override fun toString() = "Auxiliary verb used in a serial construction $arranger"
@@ -28,9 +25,9 @@ data class SerialAuxiliary(val arranger: Arranger) : AuxiliaryConstruction {
 
 //Governed categories are Self-only and override already existing values
 data class Auxiliary(val arranger: Arranger, val governedCategories: CategoryValues) : AuxiliaryConstruction {
-    override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause {
+    override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
         val aux = language.lexis.getFunctionWord(this)
-        val resultGovernedCategories = sentence.predicate.additionalCategories
+        val resultGovernedCategories = predicate.additionalCategories
             .map { c ->
                 if (c.source != CategorySource.Self)
                     return@map c
@@ -39,13 +36,11 @@ data class Auxiliary(val arranger: Arranger, val governedCategories: CategoryVal
                 newC ?: c
             }
 
-        return sentence.copy(
-            predicate = AuxVerbClause(
-                aux,
-                sentence.predicate.withCategories(resultGovernedCategories),
-                sentence.predicate.additionalCategories,
-                arranger
-            )
+        return AuxVerbClause(
+            aux,
+            predicate.withCategories(resultGovernedCategories),
+            predicate.additionalCategories,
+            arranger
         )
     }
 
