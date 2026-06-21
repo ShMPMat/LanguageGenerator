@@ -134,14 +134,15 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
 
         val verbalSpeechParts = changeParadigm.getSpeechParts(Verb)
 
-        for (speechPart in verbalSpeechParts)
-            changeParadigm.getSpeechPartParadigm(speechPart).categories
+        for (speechPart in verbalSpeechParts) {
+            val tenseCategory = changeParadigm.getSpeechPartParadigm(speechPart).categories
                 .firstOrNull { it.category.outType == tenseName }
-                ?.actualSourcedValues
-                ?.firstOrNull { it.categoryValue == TenseValue.Present }
+
+            tenseCategory?.getOrNull(TenseValue.Present)
                 ?.let {
                     verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(it)
                 }
+        }
 
         return verbFormSolver
     }
