@@ -34,7 +34,7 @@ fun copyApplicators(
         return cluster to LinkCategoryHandler(speechPartChangeParadigm, applicatorIdx)
     val newClusterValues = cluster.possibleValues.map { v ->
         v.categoryValues.map { cv ->
-            newCategoriesMap.getValue(cv.parent).actualSourcedValues.first { cv.categoryValue == it.categoryValue }
+            newCategoriesMap.getValue(cv.parent)[cv.categoryValue]
         }
     }.toSet()
     val newCluster = ExponenceCluster(newCategories.map { it.second }, newClusterValues)
