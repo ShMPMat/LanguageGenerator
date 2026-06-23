@@ -99,6 +99,7 @@ class LexisGenerator(
     }
 
     private val words = SimpleMutableLexis()
+    private val functionWords = mutableMapOf<Construction, WordPointer>()
 
     private val syllableTests = 10
 
@@ -177,43 +178,28 @@ class LexisGenerator(
     }
 
     private fun generateFunctionWords(syntaxParadigm: SyntaxParadigm, syntaxLogic: SyntaxLogic): Lexis {
-        val functionWords = mutableMapOf<Construction, WordPointer>()
-
-        if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Particle }) {
-            val particle = generateWord(
-                SemanticsCore("copula_particle", SpeechPart.Particle.toDefault())
+        if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Particle })
+            generateFunctionWord(
+                SemanticsCore("copula_particle", SpeechPart.Particle.toDefault()),
+                CopulaConstruction.Particle
             )
 
-            words += particle
-            functionWords[CopulaConstruction.Particle] = SimpleWordPointer(particle)
-        }
-
-        if (syntaxParadigm.potential == PotentialConstruction.Adverb) {
-            val adverb = generateWord(
-                SemanticsCore("is.able", SpeechPart.Adverb.toDefault())
+        if (syntaxParadigm.potential == PotentialConstruction.Adverb)
+            generateFunctionWord(
+                SemanticsCore("is.able", SpeechPart.Adverb.toDefault()),
+                PotentialConstruction.Adverb
+            )
+        if (syntaxParadigm.potential is PotentialConstruction.Auxiliary)
+            generateFunctionWord(
+                SemanticsCore("can", SpeechPart.Verb.toAux()),
+                syntaxParadigm.potential.construction
             )
 
-            words += adverb
-            functionWords[PotentialConstruction.Adverb] = SimpleWordPointer(adverb)
-        }
-        if (syntaxParadigm.potential is PotentialConstruction.Auxiliary) {
-            val aux = generateWord(
-                SemanticsCore("can", SpeechPart.Verb.toAux())
+        if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
+            generateFunctionWord(
+                SemanticsCore("question_marker", SpeechPart.Particle.toDefault()),
+                QuestionMarker
             )
-
-            words += aux
-            // The added word may have new tags, that's why `.last()` is added instead of `aux`
-            functionWords[syntaxParadigm.potential.construction] = SimpleWordPointer(words.words.last())
-        }
-
-        if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) }) {
-            val particle = generateWord(
-                SemanticsCore("question_marker", SpeechPart.Particle.toDefault())
-            )
-
-            words += particle
-            functionWords[QuestionMarker] = SimpleWordPointer(particle)
-        }
 
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Verb })
             functionWords[CopulaConstruction.Verb] = SimpleWordPointer(
@@ -222,6 +208,12 @@ class LexisGenerator(
 
         return Lexis(words.words, functionWords)
             .reifyPointers()
+    }
+
+    private fun generateFunctionWord(core: SemanticsCore, construction: Construction) {
+        words += generateWord(core)
+        // The added word may have new tags, that's why `.last()` is added instead of the generated word itself
+        functionWords[construction] = SimpleWordPointer(words.words.last())
     }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {
