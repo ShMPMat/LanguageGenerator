@@ -148,8 +148,8 @@ class Visualizer(val language: Language) {
     private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
         println("$comment:")
 
-        for (it in clauses) {
-            printSampleClause(it, context)
+        for (clause in clauses) {
+            printSampleClause(clause, context)
             println("=")
         }
 
