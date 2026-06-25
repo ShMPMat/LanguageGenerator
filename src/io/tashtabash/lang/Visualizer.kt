@@ -137,19 +137,111 @@ class Visualizer(val language: Language) {
             Negative to Explicit
         )
 
-        printSampleClause(testSentencesMain, indicativeContext, "Main")
-        printSampleClause(testSentencesMain, questionContext, "General question")
-        printSampleClause(testSentencesMain, negationContext, "Negative")
-        printSampleClause(testSentencesConstructions, indicativeContext, "Constructions")
-        printSampleClause(testSentencesConstructions, questionContext, "Construction question")
-        printSampleClause(testSentencesConstructions, negationContext, "Construction negation")
+        printSampleClause(
+            listOf(
+                "These light's new mothers saw that small time",
+                "New high fathers saw that small time",
+                "I saw that small time",
+                "I saw these at home",
+                "I heard you two",
+                "New high fathers knew me",
+                "You two felt light",
+                "I slept",
+                "It was with these hands that I built a house",
+                "It was with these that we build a house for you two",
+                "It was with these that we build a house for new high fathers"
+            ).zip(testSentencesMain),
+            indicativeContext,
+            "Main"
+        )
+        printSampleClause(
+            listOf(
+                "Will these light's new mothers see that small time?",
+                "Will new high fathers see that small time?",
+                "Will I see that small time?",
+                "Will I see these at home?",
+                "Will I hear you two?",
+                "Will new high fathers know me?",
+                "Will you two feel light?",
+                "Will I sleep?",
+                "Will I build a house with these hands?",
+                "Will we build a house with these for you two?",
+                "Will we build a house with these for new high fathers?"
+            ).zip(testSentencesMain),
+            questionContext,
+            "General question"
+        )
+        printSampleClause(
+            listOf(
+                "These light's new mothers don't see that small time",
+                "New high fathers don't see that small time",
+                "I don't see that small time",
+                "I don't see these at home",
+                "I don't hear you two",
+                "New high fathers don't know me",
+                "You two don't feel light",
+                "I don't sleep",
+                "I don't build a house with these hands",
+                "We don't build a house with these for you two",
+                "We don't build a house with these for new high fathers"
+            ).zip(testSentencesMain),
+            negationContext,
+            "Negative"
+        )
+        printSampleClause(
+            listOf(
+                "These light's new mothers were that small time",
+                "New high fathers were that small time",
+                "I was that small time",
+                "These were mine",
+                "I belonged to these light's new mothers",
+                "I could hear you two",
+                "I could see these at home",
+                "I could sleep"
+            ).zip(testSentencesConstructions),
+            indicativeContext,
+            "Constructions"
+        )
+        printSampleClause(
+            listOf(
+                "Will these light's new mothers be that small time?",
+                "Will new high fathers be that small time?",
+                "Will I be that small time?",
+                "Will these be mine?",
+                "Will I belong to these light's new mothers?",
+                "Will I be able to hear you two?",
+                "Will I be able to see these at home?",
+                "Will I be able to sleep?"
+            ).zip(testSentencesConstructions),
+            questionContext,
+            "Construction question"
+        )
+        printSampleClause(
+            listOf(
+                "These light's new mothers aren't that small time",
+                "New high fathers aren't that small time",
+                "I'm not that small time",
+                "These aren't mine",
+                "I don't belong to these light's new mothers",
+                "I can't hear you two",
+                "I can't see these at home",
+                "I can't sleep"
+            ).zip(testSentencesConstructions),
+            negationContext,
+            "Construction negation"
+        )
     }
 
-    private fun printSampleClause(clauses: List<UnfoldableClauseDescription>, context: Context, comment: String) {
+    private fun printSampleClause(
+        clauses: List<Pair<String, UnfoldableClauseDescription>>,
+        context: Context,
+        comment: String
+    ) {
         println("$comment:")
 
-        for (clause in clauses) {
+        for ((description, clause) in clauses) {
             printSampleClause(clause, context)
+            println(description)
             println("=")
         }
 
