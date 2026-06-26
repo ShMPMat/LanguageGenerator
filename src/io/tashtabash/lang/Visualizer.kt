@@ -80,7 +80,7 @@ class Visualizer(val language: Language) {
             ActorComplimentValue(2, DeixisValue.Proximal),
             listOf(PossessorDescription(i))
         )
-        val home = NominalDescription("home", ActorComplimentValue(1, null))
+        val home = NominalDescription("home", ActorComplimentValue(1))
         val firstSeeVerb = VerbDescription("see", mapOf(Experiencer to mothers, Stimulus to time))
         val secondSeeVerb = VerbDescription("see", mapOf(Experiencer to fathers, Stimulus to time))
         val thirdSeeVerb = VerbDescription("see", mapOf(Experiencer to i, Stimulus to time))
