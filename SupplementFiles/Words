@@ -99,7 +99,7 @@ ice                Noun        0.95   G|Plant:0,Fruit:0,Person:0                
                                       *ice:1.0*water:0.5*cold:0.7*sturdy:0.6*transparent:0.1*object:0.2*substance:0.8
 
 
-be                 Verb        1.0    T|trans
+be                 Verb        1.0    T|aux
                                       VNPlace@world:0.8 VNAbstract@time:0.01
                                       VNPerson@person:0.9,animal:0.9,living_thing:0.8
                                       *life:0.6*exist:0.8*abstract:0.3

@@ -9,22 +9,29 @@ import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
 
 
 interface AuxiliaryConstruction: Construction {
+    val name: String
+
     fun apply(predicate: PredicateClause, language: Language): PredicateClause
 }
 
 
-data class SerialAuxiliary(val arranger: Arranger) : AuxiliaryConstruction {
+data class SerialAuxiliary(val arranger: Arranger, override val name: String = defaultAuxName) : AuxiliaryConstruction {
     override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
         val aux = language.lexis.getFunctionWord(this)
 
         return AuxVerbClause(aux, predicate, predicate.additionalCategories, arranger)
     }
 
-    override fun toString() = "Auxiliary verb used in a serial construction $arranger"
+    override fun toString() = "Auxiliary verb ${if (name == defaultAuxName) "" else "\"$name\""} used" +
+            " in a serial construction $arranger"
 }
 
 //Governed categories are Self-only and override already existing values
-data class Auxiliary(val arranger: Arranger, val governedCategories: CategoryValues) : AuxiliaryConstruction {
+data class Auxiliary(
+    val arranger: Arranger,
+    val governedCategories: CategoryValues,
+    override val name: String = defaultAuxName
+) : AuxiliaryConstruction {
     override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
         val aux = language.lexis.getFunctionWord(this)
         val resultGovernedCategories = predicate.additionalCategories
@@ -44,5 +51,8 @@ data class Auxiliary(val arranger: Arranger, val governedCategories: CategoryVal
         )
     }
 
-    override fun toString() = "Auxiliary verb governing " + governedCategories.joinToString(", ") + ", $arranger"
+    override fun toString() = "Auxiliary verb ${if (name == defaultAuxName) "" else "\"$name\""} governing " +
+            governedCategories.joinToString(", ") + ", $arranger"
 }
+
+const val defaultAuxName = "<none>"

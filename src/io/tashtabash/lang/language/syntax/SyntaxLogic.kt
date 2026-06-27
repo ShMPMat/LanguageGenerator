@@ -3,10 +3,12 @@ package io.tashtabash.lang.language.syntax
 import io.tashtabash.lang.language.*
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
+import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.syntax.clause.construction.AuxiliaryConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
@@ -30,7 +32,8 @@ data class SyntaxLogic(
     private val nounClassCategorySolver: Map<NounClassValue, NounClassValue>? = null,
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
-    val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf()
+    val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf(),
+    val verbConstructions: Map<VerbContextInfo, AuxiliaryConstruction> = mapOf(),
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -92,11 +95,14 @@ data class SyntaxLogic(
     fun resolveSyntaxRelationToCase(syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart): CategoryValues =
         syntaxRelationSolver.getValue(syntaxRelation to speechPart)
 
-    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context) =
+    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): List<SourcedCategoryValue> =
         resolveTime(language, verbType, context) +
                 language.changeParadigm.wordChangeParadigm
                     .getSpeechPartParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
+
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: Context): AuxiliaryConstruction? =
+        verbConstructions[verbType to context.time.first]
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
         resolveTime(language, adjectiveType, context)
@@ -241,6 +247,19 @@ data class SyntaxLogic(
                 "For ${context.first}, ",
                 "${context.second} ",
                 " used cases are: " + categories.joinToString(", ")
+            )
+        }
+            .lineUpAll()
+            .joinToString("\n")
+    }
+        |
+        |Analytic constructions:
+        |${
+        verbConstructions.map { (context, construction) ->
+            listOf(
+                "For ${context.first}, ",
+                "${context.second} ",
+                " use: $construction"
             )
         }
             .lineUpAll()

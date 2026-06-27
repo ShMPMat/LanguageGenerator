@@ -24,7 +24,7 @@ class VerbMainClauseDescription(private val verb: VerbDescription) : SentenceDes
             val topic = context.topic?.let { objectType ->
                 language.changeParadigm
                     .syntaxLogic
-                    .resolveArgumentTypes(it.verb.semanticsCore.speechPart, objectType)
+                    .resolveArgumentTypes(it.head.semanticsCore.speechPart, objectType)
             }
             VerbSentenceClause(it, type, topic)
         }

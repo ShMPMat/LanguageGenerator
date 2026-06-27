@@ -26,7 +26,7 @@ import io.tashtabash.random.singleton.randomUnwrappedElement
 import io.tashtabash.random.withProb
 
 
-class SyntaxParadigmGenerator {
+class SyntaxParadigmGenerator(private val auxGenerator: AuxGenerator) {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm) = SyntaxParadigm(
         generateCopula(),
         generatePossession(wordChangeParadigm),
@@ -70,10 +70,7 @@ class SyntaxParadigmGenerator {
         if (prsValue != null)
             .05.chanceOf {
                 return PotentialConstruction.Auxiliary(
-                    Auxiliary(
-                        RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate)),
-                        listOf(prsValue)
-                    )
+                    Auxiliary(auxGenerator.order, listOf(prsValue))
                 )
             }
 

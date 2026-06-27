@@ -84,7 +84,7 @@ object TenseRandomSupplements : CategoryRandomSupplements<TenseValue> {
 enum class TensePresence(override val probability: Double, val possibilities: List<TenseValue>) : SampleSpaceObject {
     None(6.0, listOf()),//TODO too little actual values
     OnlyFuture(170.0, listOf(Present, Future)),
-    OnlyPast(8.0, listOf(Present, Past)),
+    OnlyPast(100.0, listOf(Present, Past)),
     PastFuture(180.0, listOf(Present, Past, Future)),
     TwoPast(4.0, listOf(Present, DayPast, Past)),
     TwoPastFuture(43.0, listOf(Present, Past, DayPast, Future)),

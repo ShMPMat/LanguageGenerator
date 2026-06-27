@@ -3,6 +3,7 @@ package io.tashtabash.lang.generator
 import io.tashtabash.lang.containers.*
 import io.tashtabash.lang.generator.supplement.additionalVerbTypes
 import io.tashtabash.lang.generator.util.DataConsistencyException
+import io.tashtabash.lang.generator.util.GeneratorException
 import io.tashtabash.lang.generator.util.SyllablePosition
 import io.tashtabash.lang.generator.util.SyllableRestrictions
 import io.tashtabash.lang.generator.util.readWordClusters
@@ -23,6 +24,7 @@ import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
+import io.tashtabash.lang.language.syntax.clause.construction.defaultAuxName
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.transformer.has
 import io.tashtabash.random.randomSublist
@@ -194,6 +196,20 @@ class LexisGenerator(
                 SemanticsCore("can", SpeechPart.Verb.toAux()),
                 syntaxParadigm.potential.construction
             )
+
+        for ((context, verbConstruction) in syntaxLogic.verbConstructions) {
+            if (verbConstruction.name == defaultAuxName)
+                throw GeneratorException("default names for verb constructions are not supported")
+
+            words.getWordOrNull(verbConstruction.name)
+                ?.let {
+                    functionWords[verbConstruction] = SimpleWordPointer(it)
+                } ?:
+                generateFunctionWord(
+                    SemanticsCore(verbConstruction.name, SpeechPart.Verb.toAux()),
+                    verbConstruction
+                )
+        }
 
         if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
             generateFunctionWord(

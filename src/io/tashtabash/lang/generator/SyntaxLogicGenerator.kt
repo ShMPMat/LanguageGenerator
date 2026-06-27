@@ -14,20 +14,29 @@ import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
+import io.tashtabash.lang.language.syntax.clause.construction.AuxiliaryConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.utils.values
+import io.tashtabash.random.GenericSSO
 import io.tashtabash.random.singleton.*
 import io.tashtabash.random.withProb
 
 
-class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxParadigm: SyntaxParadigm) {
+class SyntaxLogicGenerator(
+    val changeParadigm: WordChangeParadigm,
+    val syntaxParadigm: SyntaxParadigm,
+    val auxGenerator: AuxGenerator
+) {
     private val nominalParadigms = changeParadigm.getSpeechPartParadigms(Noun) +
             changeParadigm.getSpeechPartParadigms(PersonalPronoun) +
             changeParadigm.getSpeechPartParadigms(DeixisPronoun)
+
+    private val verbConstructions: MutableMap<VerbContextInfo, AuxiliaryConstruction> = mutableMapOf()
 
     fun generateSyntaxLogic(wordOrder: WordOrder) = SyntaxLogic(
         generateVerbFormSolver(),
@@ -39,6 +48,7 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault()).getCategoryOrNull(inclusivityName),
+        verbConstructions = verbConstructions
     ).let {
         it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder, syntaxParadigm).generateTransformers())
     }
@@ -133,15 +143,46 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         val verbFormSolver: MutableMap<VerbContextInfo, SourcedCategoryValues> = mutableMapOf()
 
         val verbalSpeechParts = changeParadigm.getSpeechParts(Verb)
+        val hasAuxFut = .8.testProbability()
+        val futMeaning = auxMeanings.getValue(ContextValue.TimeContext.Future)
+            .randomUnwrappedElement()
+        var futCategory: CategoryValue? = null
+        val regularMeaning = auxMeanings.getValue(ContextValue.TimeContext.Regular)
+            .randomUnwrappedElement()
 
         for (speechPart in verbalSpeechParts) {
             val tenseCategory = changeParadigm.getSpeechPartParadigm(speechPart).categories
                 .firstOrNull { it.category.outType == tenseName }
 
             tenseCategory?.getOrNull(TenseValue.Present)
-                ?.let {
-                    verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(it)
+                ?.let { prs ->
+                    .8.chanceOf {
+                        verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(prs)
+                    } otherwise {
+                        verbFormSolver[speechPart to ContextValue.TimeContext.Regular] = listOf(prs)
+                        verbConstructions[speechPart to ContextValue.TimeContext.Regular] =
+                            Auxiliary(auxGenerator.order, listOf(prs.categoryValue), regularMeaning)
+                    }
                 }
+
+            // Add analytic forms
+            if (hasAuxFut && tenseCategory != null && tenseCategory.getActualOrNull(TenseValue.Future) == null) {
+                if (futCategory == null) {
+                    futCategory = auxCategories.getValue(ContextValue.TimeContext.Future)
+                        .filter { c -> c.value in tenseCategory.actualSourcedValues.map { it.categoryValue } }
+                        .randomUnwrappedElementOrNull()
+                }
+
+                if (futCategory != null)
+                    tenseCategory.getActualOrNull(futCategory)
+                        ?.let { cat ->
+                            verbFormSolver[speechPart to ContextValue.TimeContext.Future] = listOf(cat)
+                            verbConstructions[speechPart to ContextValue.TimeContext.Future] =
+                                Auxiliary(auxGenerator.order, listOf(cat.categoryValue), futMeaning)
+                            verbConstructions[speechPart to ContextValue.TimeContext.FarFuture] =
+                                Auxiliary(auxGenerator.order, listOf(cat.categoryValue), futMeaning)
+                        }
+            }
         }
 
         return verbFormSolver
@@ -347,3 +388,13 @@ class SyntaxLogicGenerator(val changeParadigm: WordChangeParadigm, val syntaxPar
         .randomElementOrNull()
         ?.let { setOf(it) }
 }
+
+private val auxMeanings = mapOf<ContextValue.TimeContext, List<GenericSSO<String>>>(
+    ContextValue.TimeContext.Future to listOf("will".withProb(.1), "be".withProb(.1), "become".withProb(.1)),
+    ContextValue.TimeContext.Regular to listOf("be".withProb(.1)),
+)
+
+private val auxCategories = mapOf<ContextValue.TimeContext, List<GenericSSO<TenseValue>>>(
+    // Past is doubtful, but I have to test it
+    ContextValue.TimeContext.Future to listOf(TenseValue.Present.withProb(.9), TenseValue.Past.withProb(.1)),
+)

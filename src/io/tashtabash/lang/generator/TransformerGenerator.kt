@@ -72,7 +72,10 @@ class TransformerGenerator(
                     .generateSimpleSovOrder(mainOrder.name + " None Two") // I don't want them showing up
             }
 
-        return exceptions.map { (type, order) -> of(Verb) + type then { ChangeOrderTransformer(order) } }
+        return exceptions.flatMap { (type, order) -> listOf(// Only those 2 types in order to not include Aux
+            of(Verb.toDefault()) + type then { ChangeOrderTransformer(order) },
+            of(Verb.toIntransitive()) + type then { ChangeOrderTransformer(order) },
+        ) }
     }
 
     private fun generateTopicMovement() = listOfNotNull(

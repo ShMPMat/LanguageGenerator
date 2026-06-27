@@ -43,6 +43,8 @@ private fun SemanticsCoreTemplate.typeSpeechPart(tags: Set<SemanticsTag>): Typed
             speechPart.toIntransitive()
         else if (tags.any { it.name == "trans" })
             speechPart.toDefault()
+        else if (tags.any { it.name == "aux" })
+            speechPart.toAux()
         else
             throw GeneratorException("Verb template has no transitivity tag, can't instantiate")
 

@@ -134,6 +134,12 @@ data class SourcedCategory(val category: Category<*>, val source: CategorySource
     fun getOrNull(categoryValue: CategoryValue): SourcedCategoryValue? =
         allPossibleSourcedValues.firstOrNull { it.categoryValue == categoryValue }
 
+    fun getActual(categoryValue: CategoryValue): SourcedCategoryValue =
+        actualSourcedValues.first { it.categoryValue == categoryValue }
+
+    fun getActualOrNull(categoryValue: CategoryValue): SourcedCategoryValue? =
+        actualSourcedValues.firstOrNull { it.categoryValue == categoryValue }
+
     override fun toString(): String {
         val categoriesString = category.toString() + getSourceString(source)
         val compulsoryString = if (compulsoryData.isCompulsory)
