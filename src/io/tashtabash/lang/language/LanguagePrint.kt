@@ -245,7 +245,7 @@ private fun isMorphemeMergeable(morpheme: MorphemeData): Boolean =
 
 private fun getSemanticsPrinted(word: Word, printedMorphemeData: String) =
         if (word.semanticsCore.speechPart.type !in nonSemanticSpeechParts || printedMorphemeData.isEmpty())
-            word.semanticsCore.toString()
+            word.semanticsCore.toString().replace(' ', '_') // There can be no spaces inside a gloss
         else ""
 
 fun SourcedCategoryValue.smartPrint(allValues: List<SourcedCategoryValue>): String {
