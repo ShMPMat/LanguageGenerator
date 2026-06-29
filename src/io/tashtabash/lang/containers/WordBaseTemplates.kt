@@ -46,7 +46,7 @@ private fun SemanticsCoreTemplate.typeSpeechPart(tags: Set<SemanticsTag>): Typed
         else if (tags.any { it.name == "aux" })
             speechPart.toAux()
         else
-            throw GeneratorException("Verb template has no transitivity tag, can't instantiate")
+            throw GeneratorException("Verb template '$word' has no transitivity tag, can't instantiate")
 
     return speechPart.toDefault()
 }
