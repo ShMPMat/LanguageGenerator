@@ -108,9 +108,9 @@ class DerivationGenerator(
         )
 
         val probability = (toDerivationConnotationsStrength * wordConnotationsStrength *
-                max(0.0, 1 - fromDerivationConnotationStrength)).pow(0.5)
+                max(.0, 1 - fromDerivationConnotationStrength)).pow(.5)
 
-        if (probability == 0.0)
+        if (probability == .0)
             return null
 
         val present = from.derivationClusterTemplate.typeToCore[derivationType]
@@ -151,7 +151,7 @@ class DerivationGenerator(
         val clearCloseness = target.connotations.values.toList() closeness
                 connotationsSum.values.filter { !it.isGlobal }
 
-        if (clearCloseness == 0.0 || leftCloseness == 0.0 || rightCloseness == 0.0)
+        if (clearCloseness == .0 || leftCloseness == .0 || rightCloseness == .0)
             return null
 
         val present = target.derivationClusterTemplate.possibleCompounds.firstOrNull {
@@ -183,7 +183,7 @@ class DerivationGenerator(
         return hits.reduceOrNull(Double::plus)
             ?.div(hits.size)
             ?.pow(1.0 / hits.size.toDouble().pow(2.0))
-            ?: 0.0
+            ?: .0
     }
 
     internal fun generateDerivationParadigm(
@@ -266,7 +266,7 @@ class DerivationGenerator(
                 compounds += compound
             }
 
-            0.5.chanceOf {
+            .5.chanceOf {
                 compounds += constructPassingCompound(speechPart)
             }
         }
@@ -280,7 +280,7 @@ class DerivationGenerator(
     }
 
     private fun generateCompoundProsodyRule() =
-        if (testProbability(0.2, random))
+        if (testProbability(.2, random))
             PassingProsodyRule
         else
             StressOnWordRule(random.nextInt(2))
