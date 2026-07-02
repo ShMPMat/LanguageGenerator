@@ -74,7 +74,9 @@ class TransformerGenerator(
 
         return exceptions.flatMap { (type, order) -> listOf(// Only those 2 types in order to not include Aux
             of(Verb.toDefault()) + type then { ChangeOrderTransformer(order) },
-            of(Verb.toIntransitive()) + type then { ChangeOrderTransformer(order) },
+            of(Verb.toIntransitive()) + type then {
+                ChangeOrderTransformer(order) + RemapOrderTransformer(mapOf(Agent to Argument))
+            },
         ) }
     }
 
