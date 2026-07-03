@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.derivation.DerivationClass
 
 data class MorphemeData(
     val size: Int,
-    val categoryValues: List<SourcedCategoryValue>,
+    val categoryValues: List<SourcedCategoryValue> = listOf(),
     val isRoot: Boolean = false,
     val derivationValues: List<DerivationClass> = listOf()
 ) {
