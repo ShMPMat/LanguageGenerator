@@ -13,11 +13,13 @@ import io.tashtabash.lang.language.morphem.Suffix
 import io.tashtabash.lang.language.morphem.change.Position
 import io.tashtabash.lang.language.phonology.PhonemeSequence
 import io.tashtabash.lang.language.phonology.RestrictionsParadigm
+import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.random.randomElement
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.RandomSingleton
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
+import io.tashtabash.random.singleton.testProbability
 import io.tashtabash.random.testProbability
 import java.util.*
 import kotlin.math.max
@@ -62,7 +64,7 @@ class DerivationGenerator(
         return newWords + internalInjectDerivationOptions(newWords, injectors)
     }
 
-    private fun injectionByConnotations(words: List<SemanticsCoreTemplate>, injectCompounds: Boolean = true) {
+    private fun injectionByConnotations(words: List<SemanticsCoreTemplate>, injectCompounds: Boolean = false) {
         injectDerivations(words)
 
         if (injectCompounds)
@@ -90,6 +92,8 @@ class DerivationGenerator(
         to: SemanticsCoreTemplate
     ): DerivationLink? {
         if (from == to)
+            return null
+        if (to.word.any { it.isUpperCase() }) // No connotation derivation for INF etc.
             return null
 
         val fromDerivationConnotationStrength = calculateConnotationsStrength(
@@ -188,31 +192,50 @@ class DerivationGenerator(
 
     internal fun generateDerivationParadigm(
         changeGenerator: ChangeGenerator,
-        categoryPool: CategoryPool
+        categoryPool: CategoryPool,
+        changeParadigm: ChangeParadigm
     ): DerivationParadigm {
         derivationParadigm = DerivationParadigm(
-            generateDerivations(changeGenerator, categoryPool),
+            generateDerivations(changeGenerator, categoryPool, changeParadigm),
             generateCompounds(changeGenerator, categoryPool)
         )
 
         return derivationParadigm
     }
 
-    private fun generateDerivations(changeGenerator: ChangeGenerator, categoryPool: CategoryPool) =
+    private fun generateDerivations(
+        changeGenerator: ChangeGenerator,
+        categoryPool: CategoryPool,
+        changeParadigm: ChangeParadigm
+    ): List<Derivation> =
         randomSublist(generatedDerivationClasses, random, 2, generatedDerivationClasses.size + 1)
-            .flatMap { derivationClass ->
-                val affectedSpeechParts = restrictionsParadigm.getSpeechParts(derivationClass.toSpeechPart)
+            .map { derivationClass ->
+                generateDerivation(derivationClass, derivationClass.toSpeechPart, changeGenerator, categoryPool)
+            } + generateInfDerivation(changeParadigm, changeGenerator, categoryPool)
 
-                affectedSpeechParts.map { generateDerivation(derivationClass, it, changeGenerator, categoryPool) }
-            }
+    private fun generateInfDerivation(
+        changeParadigm: ChangeParadigm,
+        changeGenerator: ChangeGenerator,
+        categoryPool: CategoryPool
+    ): List<Derivation> {
+        if (SpeechPart.Verb.toInf() !in changeParadigm.wordChangeParadigm.speechParts)
+            return listOf()
+
+        return listOf(
+            generateDerivation(DerivationClass.InfinitiveVerb, SpeechPart.Verb.toInf(), changeGenerator, categoryPool, Double.MAX_VALUE)
+        )
+    }
 
     private fun generateDerivation(
         derivationClass: DerivationClass,
         speechPart: TypedSpeechPart,
         changeGenerator: ChangeGenerator,
-        categoryPool: CategoryPool
+        categoryPool: CategoryPool,
+        strength: Double = .5.chanceOf<Double> {
+            RandomSingleton.random.nextDouble(.1, 1.0)
+        } ?: RandomSingleton.random.nextDouble(1.0, 10.0),
     ): Derivation {
-        val affix = if (random.nextBoolean()) Prefix(
+        val affix = if (.5.testProbability()) Prefix(
             changeGenerator.generateChanges(
                 Position.Beginning,
                 restrictionsParadigm.restrictionsMapper.getValue(speechPart)
@@ -223,16 +246,9 @@ class DerivationGenerator(
                 restrictionsParadigm.restrictionsMapper.getValue(speechPart)
             )
         )
+        val categoryMaker = generateCategoryMaker(categoryPool, derivationClass, speechPart)
 
-        return Derivation(
-            affix,
-            derivationClass,
-            speechPart,
-            0.5.chanceOf<Double> {
-                RandomSingleton.random.nextDouble(0.1, 1.0)
-            } ?: RandomSingleton.random.nextDouble(1.0, 10.0),
-            generateCategoryMaker(categoryPool, derivationClass, speechPart)
-        )
+        return Derivation(affix, derivationClass, speechPart, strength, categoryMaker)
     }
 
     private fun generateCompounds(changeGenerator: ChangeGenerator, categoryPool: CategoryPool): List<Compound> {
@@ -291,13 +307,13 @@ class DerivationGenerator(
         speechPart: TypedSpeechPart
     ): CategoryChanger {
         val possibleCategoryMakers = mutableListOf<CategoryChanger>(ConstantCategoryChanger(
-            categoryPool.getStatic(derivationClass.toSpeechPart)
+            categoryPool.getStatic(derivationClass.toSpeechPart.type)
                 .map { it.actualValues.randomElement() }
                 .toSet(),
             speechPart
         ))
 
-        if (derivationClass.fromSpeechPart == derivationClass.toSpeechPart)
+        if (derivationClass.fromSpeechPart == derivationClass.toSpeechPart.type)
             possibleCategoryMakers += PassingCategoryChanger(0)
 
         return randomElement(possibleCategoryMakers, random)

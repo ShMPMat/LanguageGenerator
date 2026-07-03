@@ -31,11 +31,13 @@ fun SpeechPart.toDefault() = TypedSpeechPart(this, defaultSubtype)
 fun SpeechPart.toAdnominal() = TypedSpeechPart(this, adnominalSubtype)
 fun SpeechPart.toIntransitive() = TypedSpeechPart(this, intransitiveSubtype)
 fun SpeechPart.toAux() = TypedSpeechPart(this, auxSubtype)
+fun SpeechPart.toInf() = TypedSpeechPart(this, infSubtype)
 
 const val defaultSubtype = "Unspecified"
 const val adnominalSubtype = "Adnominal"
 const val intransitiveSubtype = "Intransitive"
 const val auxSubtype = "Auxiliary"
+const val infSubtype = "Infinitive"
 
 
 val sameParadigmList = listOf(

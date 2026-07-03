@@ -125,7 +125,7 @@ class TransformerGenerator(
         changeParadigm.speechParts
             .filter(::isNominal)
             .filter {
-                changeParadigm.getSpeechPartParadigm(it)
+                changeParadigm.getParadigm(it)
                     .getCategoryOrNull(deixisName)
                     ?.compulsoryData
                     ?.isCompulsory == false
@@ -141,7 +141,7 @@ class TransformerGenerator(
         changeParadigm.speechParts
             .filter(::isNominal)
             .filter {
-                changeParadigm.getSpeechPartParadigm(it)
+                changeParadigm.getParadigm(it)
                     .getCategoryOrNull(definitenessName)
                     ?.compulsoryData
                     ?.isCompulsory == false
@@ -155,10 +155,10 @@ class TransformerGenerator(
 
     private fun generateDrop(): List<Pair<SyntaxNodeMatcher, Transformer>> {
         val transformers = mutableListOf<Pair<SyntaxNodeMatcher, Transformer>>()
-        val pronounCategories = changeParadigm.getSpeechPartParadigm(PersonalPronoun.toDefault())
+        val pronounCategories = changeParadigm.getParadigm(PersonalPronoun.toDefault())
             .categories
 
-        for (verbParadigm in changeParadigm.getSpeechPartParadigms(Verb)) {
+        for (verbParadigm in changeParadigm.getParadigms(Verb)) {
             val verbalCategories = verbParadigm.categories
 
             for (relation in resolvePossibleArguments(verbParadigm.speechPart)) {

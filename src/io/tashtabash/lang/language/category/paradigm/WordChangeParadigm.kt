@@ -14,8 +14,10 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.sequence.*
 import io.tashtabash.lang.utils.cartesianProduct
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
 
@@ -115,11 +117,11 @@ data class WordChangeParadigm(
                 parentCategory[it]
             }
 
-    fun getSpeechPartParadigm(speechPart: TypedSpeechPart) =
+    fun getParadigm(speechPart: TypedSpeechPart) =
         speechPartChangeParadigms[speechPart]
             ?: throw ChangeException("The change paradigm for '$speechPart' doesn't exist")
 
-    fun getSpeechPartParadigms(speechPart: SpeechPart) = speechPartChangeParadigms
+    fun getParadigms(speechPart: SpeechPart) = speechPartChangeParadigms
         .entries.filter { it.key.type == speechPart }
         .map { it.value }
 
@@ -130,7 +132,7 @@ data class WordChangeParadigm(
         speechPart: TypedSpeechPart,
         includeOptionalCategories: Boolean,
     ): List<SourcedCategoryValues> {
-        val compulsoryCategoryProduct = getSpeechPartParadigm(speechPart)
+        val compulsoryCategoryProduct = getParadigm(speechPart)
             .categories
             .filter { it.compulsoryData.isCompulsory }
             .filter { speechPart.type !in it.category.staticSpeechParts }
@@ -141,7 +143,7 @@ data class WordChangeParadigm(
             return compulsoryCategoryProduct
 
         val optionalCategoryProduct = compulsoryCategoryProduct.toMutableList()
-        val optionalCategories = getSpeechPartParadigm(speechPart)
+        val optionalCategories = getParadigm(speechPart)
             .categories
             .filter { !it.compulsoryData.isCompulsory }
             .filter { speechPart.type !in it.category.staticSpeechParts }
@@ -154,7 +156,7 @@ data class WordChangeParadigm(
 
     // Includes compulsory analytically expressed categories, but minimizes them
     private fun getAllSyntheticCategoryValueCombinations(word: Word): List<SourcedCategoryValues> =
-        getSpeechPartParadigm(word.semanticsCore.speechPart)
+        getParadigm(word.semanticsCore.speechPart)
             .applicators.mapNotNull { (cluster, source) ->
                 val target =
                     if (source is LinkCategoryHandler)
@@ -226,7 +228,7 @@ data class WordChangeParadigm(
             .flatten()
     }
 
-    fun getUniqueWordForms(word: Word): List<Deferred<List<Word>>> = runBlocking {
+    suspend fun getUniqueWordForms(word: Word): List<Deferred<List<Word>>> = coroutineScope {
         getAllSyntheticCategoryValueCombinations(word)
             .map {
                 async {
@@ -239,11 +241,11 @@ data class WordChangeParadigm(
     }
 
     // May contain duplicates
-    fun getUniqueWordForms(lexis: Lexis): List<List<Word>> = runBlocking {
-        val contentWords = lexis.words
-            .map {
+    fun getUniqueWordForms(lexis: Lexis): List<List<Word>> = runBlocking(Dispatchers.Default) {
+        val contentWords: List<Deferred<List<Deferred<List<Word>>>>> = lexis.words
+            .map { word: Word ->
                 async {
-                    getUniqueWordForms(it)
+                    getUniqueWordForms(word)
                 }
             }
         val functionWords = speechPartChangeParadigms.values

@@ -39,7 +39,9 @@ fun SemanticsCoreTemplate.toSemanticsCore(staticCategories: Set<CategoryValue>):
 
 private fun SemanticsCoreTemplate.typeSpeechPart(tags: Set<SemanticsTag>): TypedSpeechPart {
     if (speechPart == SpeechPart.Verb)
-        return if (tags.any { it.name == "intrans" })
+        return if (tags.any { it.name == "Inf" })
+            speechPart.toInf()
+        else if (tags.any { it.name == "intrans" })
             speechPart.toIntransitive()
         else if (tags.any { it.name == "trans" })
             speechPart.toDefault()

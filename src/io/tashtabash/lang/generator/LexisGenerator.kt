@@ -201,14 +201,10 @@ class LexisGenerator(
             if (verbConstruction.name == defaultAuxName)
                 throw GeneratorException("default names for verb constructions are not supported")
 
-            words.getWordOrNull(verbConstruction.name)
-                ?.let {
-                    functionWords[verbConstruction] = SimpleWordPointer(it)
-                } ?:
-                generateFunctionWord(
-                    SemanticsCore(verbConstruction.name, SpeechPart.Verb.toAux()),
-                    verbConstruction
-                )
+            generateFunctionWord(
+                SemanticsCore(verbConstruction.name, SpeechPart.Verb.toAux()),
+                verbConstruction
+            )
         }
 
         if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
@@ -227,10 +223,17 @@ class LexisGenerator(
     }
 
     private fun generateFunctionWord(core: SemanticsCore, construction: Construction) {
+        words.getWordOrNull(core.meaningCluster.meanings[0])
+            ?.let {
+                functionWords[construction] = SimpleWordPointer(it)
+                return
+            }
+
         words += generateWord(core)
         // The added word may have new tags, that's why `.last()` is added instead of the generated word itself
         functionWords[construction] = SimpleWordPointer(words.words.last())
-    }
+        derivationGenerator.makeDerivations(words.words.last(), words, wordBase)
+            }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {
         var resultCore = core

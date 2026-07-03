@@ -23,6 +23,7 @@ interface PredicateClause: SyntaxClause {
     val additionalCategories: SourcedCategoryValues
 
     fun withCategories(additionalCategories: SourcedCategoryValues): PredicateClause
+    fun withWord(word: Word): PredicateClause
     fun addAdjunct(adjunct: AdjunctClause): PredicateClause
 }
 
@@ -70,6 +71,9 @@ data class VerbClause(
     override fun withCategories(additionalCategories: SourcedCategoryValues): VerbClause =
         copy(additionalCategories = additionalCategories)
 
+    override fun withWord(word: Word): VerbClause =
+        copy(verb = word)
+
     override fun addAdjunct(adjunct: AdjunctClause): VerbClause =
         copy(adjuncts = adjuncts + adjunct)
 }
@@ -97,6 +101,9 @@ data class AuxVerbClause(
 
     override fun withCategories(additionalCategories: SourcedCategoryValues): AuxVerbClause =
         copy(additionalCategories = additionalCategories)
+
+    override fun withWord(word: Word): AuxVerbClause =
+        copy(aux = word)
 
     override fun addAdjunct(adjunct: AdjunctClause): AuxVerbClause =
         copy(governedClause = governedClause.addAdjunct(adjunct))

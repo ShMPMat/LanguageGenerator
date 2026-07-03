@@ -5,30 +5,37 @@ import io.tashtabash.lang.language.derivation.DerivationType.*
 import io.tashtabash.lang.language.lexis.Connotation
 import io.tashtabash.lang.language.lexis.Connotations
 import io.tashtabash.lang.language.lexis.SpeechPart.*
-import io.tashtabash.random.UnwrappableSSO
+import io.tashtabash.lang.language.lexis.TypedSpeechPart
+import io.tashtabash.lang.language.lexis.toDefault
+import io.tashtabash.lang.language.lexis.toInf
+import io.tashtabash.lang.language.lexis.toIntransitive
+import io.tashtabash.random.GenericSSO
+import io.tashtabash.random.withProb
 
 
 enum class DerivationClass(
-    val possibilities: List<Box>,
+    val possibilities: List<GenericSSO<DerivationType>>,
     val fromSpeechPart: SpeechPart,
-    val toSpeechPart: SpeechPart,
+    val toSpeechPart: TypedSpeechPart,
     val shortName: String
 ) {
-    Diminutive(listOf(Box(Smallness, 1.0), Box(Young, 1.0)), Noun, Noun, "Dim"),
-    Augmentative(listOf(Box(Big, 3.0), Box(Old, 1.0)), Noun, Noun, "Aug"),
+    Diminutive(listOf(Smallness.withProb(1.0), Young.withProb(1.0)), Noun, Noun.toDefault(), "Dim"),
+    Augmentative(listOf(Big.withProb(3.0), Old.withProb(1.0)), Noun, Noun.toDefault(), "Aug"),
 
-    PlaceFromNoun(listOf(Box(NNPlace, 1.0)), Noun, Noun, "Plc"),
-    PersonFromNoun(listOf(Box(NNPerson, 1.0)), Noun, Noun, "Prs"),
-    AbstractNounFromNoun(listOf(Box(NNAbstract, 1.0)), Noun, Noun, "Nom"),
+    PlaceFromNoun(listOf(NNPlace.withProb(1.0)), Noun, Noun.toDefault(), "Plc"),
+    PersonFromNoun(listOf(NNPerson.withProb(1.0)), Noun, Noun.toDefault(), "Prs"),
+    AbstractNounFromNoun(listOf(NNAbstract.withProb(1.0)), Noun, Noun.toDefault(), "Nmlz"),
 
-    AbstractNounFromAdjective(listOf(Box(ANAbstract, 1.0)), Adjective, Noun, "Nom"),
-    PlaceFromAdjective(listOf(Box(ANPlace, 1.0)), Adjective, Noun, "Plc"),
+    AbstractNounFromAdjective(listOf(ANAbstract.withProb(1.0)), Adjective, Noun.toDefault(), "Nmlz"),
+    PlaceFromAdjective(listOf(ANPlace.withProb(1.0)), Adjective, Noun.toDefault(), "Plc"),
 
-    BeingStateFromAdjective(listOf(Box(AVBeingState, 1.0)), Adjective, Verb, "Pred"),
+    BeingStateFromAdjective(listOf(AVBeingState.withProb(1.0)), Adjective, Verb.toIntransitive(), "Pred"),
 
-    PlaceFromVerb(listOf(Box(VNPlace, 1.0)), Verb, Noun, "Pls"),
-    PersonFromVerb(listOf(Box(VNPerson, 1.0)), Verb, Noun, "Prs"),
-    AbstractNounFromVerb(listOf(Box(VNAbstract, 1.0)), Verb, Noun, "Nom")
+    PlaceFromVerb(listOf(VNPlace.withProb(1.0)), Verb, Noun.toDefault(), "Pls"),
+    PersonFromVerb(listOf(VNPerson.withProb(1.0)), Verb, Noun.toDefault(), "Prs"),
+    AbstractNounFromVerb(listOf(VNAbstract.withProb(1.0)), Verb, Noun.toDefault(), "Nmlz"),
+
+    InfinitiveVerb(listOf(Inf.withProb(1.0)), Verb, Verb.toInf(), "Inf")
 }
 
 enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: SpeechPart, val connotations: Connotations) {
@@ -49,9 +56,9 @@ enum class DerivationType(val fromSpeechPart: SpeechPart, val toSpeechPart: Spee
 
     VNPlace(Verb, Noun, Connotations(setOf(Connotation("place", 1.0, true)))),
     VNPerson(Verb, Noun, Connotations(setOf(Connotation("person", 1.0, true)))),
-    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0, true))))
+    VNAbstract(Verb, Noun, Connotations(setOf(Connotation("abstract", 1.0, true)))),
+
+    Inf(Verb, Verb, Connotations()),
 }
 
-data class Box(val type: DerivationType?, override val probability: Double): UnwrappableSSO<DerivationType?>(type)
-
-fun makeNoType(probability: Double) = listOf(Box(null, probability))
+fun makeNoType(probability: Double): GenericSSO<DerivationType?> = null.withProb(probability)

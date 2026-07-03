@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.lexis.Word
 import io.tashtabash.lang.language.morphem.change.ChangeException
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.lang.language.syntax.ChangeParadigm
+import kotlinx.coroutines.runBlocking
 
 
 fun fixSyllableStructure(
@@ -67,8 +68,10 @@ fun fixSyllableStructure(
             val fixedWord = template.applyOrNull(word)
                 ?: continue
             currentChangeParadigm = mergeSyllableTemplate(changeParadigm, template)
-            currentChangeParadigm.wordChangeParadigm
-                .getUniqueWordForms(fixedWord)
+            runBlocking {
+                currentChangeParadigm.wordChangeParadigm
+                    .getUniqueWordForms(fixedWord)
+            }
 
             return Result.success(fixedWord to currentChangeParadigm)
         } catch (e: ChangeException) {

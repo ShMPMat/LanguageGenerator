@@ -31,7 +31,7 @@ class SyntaxNodeTranslator(private val paradigm: ChangeParadigm) {
 
     private fun computeValues(syntaxNode: SyntaxNode): List<SourcedCategoryValue> {
         val speechPart = syntaxNode.word.semanticsCore.speechPart
-        val references = paradigm.wordChangeParadigm.getSpeechPartParadigm(speechPart).categories
+        val references = paradigm.wordChangeParadigm.getParadigm(speechPart).categories
 
         return syntaxNode.extractValues(references)
     }

@@ -19,12 +19,12 @@ abstract class AbstractCategoryChanger : CategoryChanger {
 class PassingCategoryChanger(private val index: Int) : AbstractCategoryChanger() {
     override fun makeStaticCategories(semanticsCores: List<SemanticsCore>, speechPart: TypedSpeechPart) =
         semanticsCores.getOrNull(index)?.let {
-            if (it.speechPart == speechPart)
+            if (it.speechPart.type == speechPart.type)
                 it.staticCategories
             else null
         }
 
-    override val defaultToString = "Same categories which a parent have"
+    override val defaultToString = "Same categories which the parent have"
 }
 
 class ConstantCategoryChanger(

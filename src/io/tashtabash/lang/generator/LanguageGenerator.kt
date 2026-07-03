@@ -51,7 +51,8 @@ class LanguageGenerator(private val supplementPath: String) {
         var changeParadigm = changeParadigmGenerator.generateChangeParadigm(categoriesWithMappers)
         val derivationParadigm = lexisGenerator.derivationGenerator.generateDerivationParadigm(
             changeGenerator,
-            categories
+            categories,
+            changeParadigm
         )
         val lexis = lexisGenerator.generateLexis(
             wordAmount + changeParadigmGenerator.numeralParadigmGenerator.numeralTemplates.size,
@@ -72,7 +73,7 @@ class LanguageGenerator(private val supplementPath: String) {
         )
     }
 
-    private fun generateRestrictionParadigm(speechParts: List<TypedSpeechPart>): RestrictionsParadigm {//TODO make smth meaningful
+    private fun generateRestrictionParadigm(speechParts: List<TypedSpeechPart>): RestrictionsParadigm {
         val generalAvgWordLength = 5
         val syllable = syllableGenerator.template
 

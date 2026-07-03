@@ -16,7 +16,7 @@ abstract class PotentialConstruction : Construction {
     object Mood : PotentialConstruction() {
         override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause {
             val potentialValue = language.changeParadigm.wordChangeParadigm
-                .getSpeechPartParadigm(sentence.predicate.head.semanticsCore.speechPart)
+                .getParadigm(sentence.predicate.head.semanticsCore.speechPart)
                 .getCategory(moodName)[MoodValue.Potential]
             val categories = sentence.predicate.additionalCategories.filter { it.categoryValue !is MoodValue } +
                     potentialValue

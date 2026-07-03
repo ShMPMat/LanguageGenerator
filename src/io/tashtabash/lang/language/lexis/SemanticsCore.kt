@@ -31,7 +31,7 @@ data class SemanticsCore(
             speechPart == SpeechPart.Verb.toDefault() && SemanticsTag("trans") !in tags
             || speechPart == SpeechPart.Verb.toIntransitive() && SemanticsTag("intrans") !in tags
             )
-            throw LanguageException("Verb $meaningCluster doesn't have transitivity")
+            throw LanguageException("Verb '$meaningCluster' has incorrect transitivity")
 
         derivationCluster.typeToCore.entries
             .firstOrNull { it.key.fromSpeechPart != speechPart.type }
@@ -60,8 +60,6 @@ data class DerivationLink(
     val template: Meaning?,
     override val probability: Double
 ) : UnwrappableSSO<Meaning?>(template)
-
-val noDerivationLink = listOf(DerivationLink(null, 1.0))
 
 
 data class CompoundLink(

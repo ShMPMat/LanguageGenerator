@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.category.CategorySource.Agreement
 import io.tashtabash.lang.language.category.paradigm.CompulsoryData
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
+import io.tashtabash.lang.language.category.paradigm.SyntheticCategoryHandler
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
 import io.tashtabash.lang.language.category.realization.WordCategoryApplicator
 import io.tashtabash.lang.language.lexis.*
@@ -21,6 +22,7 @@ import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
+import io.tashtabash.random.singleton.testProbability
 import kotlin.math.max
 
 
@@ -104,8 +106,27 @@ class ChangeParadigmGenerator(
         val verbRestrictions = restrictionsParadigm.restrictionsMapper.getValue(Verb.toDefault())
 
         changesMap[Verb.toAux()] = transVerbParadigm
-            .copyForNewSpeechPart(Verb.toAux(), mapOf(Agent to listOf(Argument, Agent)))
+            .copyForNewSpeechPart(Verb.toAux(), mapOf(Agent to listOf(Argument, Agent))) { cluster ->
+                // Take clusters only if they don't compulsory agree w/ Patients, otherwise agreement with Intrans fails
+                cluster.categories.none { category ->
+                    category.compulsoryData.isCompulsory && category.source.let {
+                        it is Agreement && Patient in it.relation
+                    }
+                }
+            }
         restrictionsParadigm.restrictionsMapper[Verb.toAux()] = verbRestrictions
+
+        // The assumption is that all verb types have pretty much the same paradigm, which they are for now
+        .7.chanceOf {
+            val allowedInfCategories = listOf(numberName, personName, inclusivityName)
+            changesMap[Verb.toInf()] = transVerbParadigm
+                .copyForNewSpeechPart(Verb.toInf(), mapOf(Agent to listOf(Argument, Agent))) { exponenceCluster ->
+                    if (exponenceCluster.categories.all { it.category.outType in allowedInfCategories })
+                        .05.testProbability() // Keep some categories
+                    else false
+                }
+            restrictionsParadigm.restrictionsMapper[Verb.toInf()] = verbRestrictions
+        }
 
         // Intransitive verbs
         val intransVerbParadigm = generateIntransitiveVerbs(transVerbParadigm)

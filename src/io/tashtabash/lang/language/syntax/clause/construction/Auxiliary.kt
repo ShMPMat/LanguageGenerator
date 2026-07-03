@@ -1,11 +1,14 @@
 package io.tashtabash.lang.language.syntax.clause.construction
 
 import io.tashtabash.lang.language.Language
+import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.category.CategorySource
 import io.tashtabash.lang.language.category.value.CategoryValues
+import io.tashtabash.lang.language.derivation.DerivationType
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.clause.realization.AuxVerbClause
 import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
+import io.tashtabash.random.singleton.randomElement
 
 
 interface AuxiliaryConstruction: Construction {
@@ -30,6 +33,7 @@ data class SerialAuxiliary(val arranger: Arranger, override val name: String = d
 data class Auxiliary(
     val arranger: Arranger,
     val governedCategories: CategoryValues,
+    val governedDerivation: DerivationType? = null,
     override val name: String = defaultAuxName
 ) : AuxiliaryConstruction {
     override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
@@ -42,17 +46,34 @@ data class Auxiliary(
 
                 newC ?: c
             }
+        val governedWord =
+            if (governedDerivation != null)
+                predicate.head.semanticsCore.derivationCluster.typeToCore
+                    .getValue(governedDerivation)
+                    .randomElement()
+                    .value
+                    ?.let { language.lexis.getWordOrNull(it) }
+                    ?: throw LanguageException("'${predicate.head}' must have the derivation $governedDerivation")
+            else
+                predicate.head
 
         return AuxVerbClause(
             aux,
-            predicate.withCategories(resultGovernedCategories),
+            predicate.withWord(governedWord)
+                .withCategories(resultGovernedCategories),
             predicate.additionalCategories,
             arranger
         )
     }
 
+    private val governmentString: String
+        get() = governedCategories.joinToString(", ") +
+                if (governedDerivation != null )
+                    " and $governedDerivation"
+                else ""
+
     override fun toString() = "Auxiliary verb ${if (name == defaultAuxName) "" else "\"$name\""} governing " +
-            governedCategories.joinToString(", ") + ", $arranger"
+            "$governmentString, $arranger"
 }
 
 const val defaultAuxName = "<none>"

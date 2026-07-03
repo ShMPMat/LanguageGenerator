@@ -98,7 +98,7 @@ data class SyntaxLogic(
     fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): List<SourcedCategoryValue> =
         resolveTime(language, verbType, context) +
                 language.changeParadigm.wordChangeParadigm
-                    .getSpeechPartParadigm(verbType)
+                    .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
     fun resolveVerbConstruction(verbType: TypedSpeechPart, context: Context): AuxiliaryConstruction? =
@@ -144,7 +144,7 @@ data class SyntaxLogic(
         val timeValueNumber = timeContext.toNumber()
 
         val tense = language.changeParadigm.wordChangeParadigm
-            .getSpeechPartParadigm(verbType)
+            .getParadigm(verbType)
             .categories
             .firstOrNull { it.category is Tense }
             ?.actualSourcedValues

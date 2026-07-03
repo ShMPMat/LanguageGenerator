@@ -95,6 +95,14 @@ val defaultMainInjectors = listOf(
 
             ts + setOf(transTag)
         }
+    ),
+    DerivationInjector(
+        Inf,
+        SpeechPart.Verb,
+        { "$it(INF)" },
+        additionalTest = { "(INF)" !in it.word },
+        tagCreator = { it },
+        coreRealizationProbability = .0
     )
 )
 
