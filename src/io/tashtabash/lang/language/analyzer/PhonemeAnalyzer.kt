@@ -9,6 +9,7 @@ import io.tashtabash.lang.language.category.realization.*
 import io.tashtabash.lang.language.derivation.DerivationParadigm
 import io.tashtabash.lang.language.diachronicity.PhonologicalRule
 import io.tashtabash.lang.language.lexis.Lexis
+import io.tashtabash.lang.language.morphem.Affix
 import io.tashtabash.lang.language.morphem.change.TemplateChange
 import io.tashtabash.lang.language.morphem.change.TemplateSequenceChange
 import io.tashtabash.lang.language.morphem.change.TemplateSingleChange
@@ -33,7 +34,9 @@ fun analyzePhonemes(
     phonemes += derivationParadigm.compounds
         .flatMap { it.infix.phonemes }
     phonemes += derivationParadigm.derivations
-        .flatMap { analyzePhonemes(it.affix.templateChange, ImmutablePhonemeContainer(phonemes.toList())) }
+        .map { it.change }
+        .filterIsInstance<Affix>()
+        .flatMap { analyzePhonemes(it.templateChange, ImmutablePhonemeContainer(phonemes.toList())) }
     phonemes += changeParadigm.wordChangeParadigm
         .speechPartChangeParadigms
         .values

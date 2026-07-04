@@ -130,9 +130,11 @@ class PhonologicalRuleApplicator(private val forcedApplication: Boolean = false)
         derivationCache[derivation]?.let {
             return it
         }
+        if (derivation.change !is Affix)
+            return derivation.copy()
 
-        val shiftedAffix = applyPhonologicalRule(derivation.affix, rule)
-        val shiftedDerivation = derivation.copy(affix = shiftedAffix)
+        val shiftedAffix = applyPhonologicalRule(derivation.change, rule)
+        val shiftedDerivation = derivation.copy(change = shiftedAffix)
 
         derivationCache[derivation] = shiftedDerivation
 

@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.derivation.*
 import io.tashtabash.lang.language.category.CategoryPool
 import io.tashtabash.lang.language.derivation.DerivationType.*
 import io.tashtabash.lang.language.lexis.*
+import io.tashtabash.lang.language.morphem.PassingWordChange
 import io.tashtabash.lang.language.morphem.Prefix
 import io.tashtabash.lang.language.morphem.Suffix
 import io.tashtabash.lang.language.morphem.change.Position
@@ -235,7 +236,9 @@ class DerivationGenerator(
             RandomSingleton.random.nextDouble(.1, 1.0)
         } ?: RandomSingleton.random.nextDouble(1.0, 10.0),
     ): Derivation {
-        val affix = if (.5.testProbability()) Prefix(
+        val affix = if (derivationClass in zeroMarkingClasses && .5.testProbability())
+            PassingWordChange
+        else if (.5.testProbability()) Prefix(
             changeGenerator.generateChanges(
                 Position.Beginning,
                 restrictionsParadigm.restrictionsMapper.getValue(speechPart)
@@ -356,6 +359,16 @@ val generatedDerivationClasses = listOf(
     DerivationClass.PlaceFromNoun,
     DerivationClass.PersonFromNoun,
     DerivationClass.AbstractNounFromNoun,
+    DerivationClass.AbstractNounFromAdjective,
+    DerivationClass.PlaceFromAdjective,
+    DerivationClass.BeingStateFromAdjective,
+    DerivationClass.PlaceFromVerb,
+    DerivationClass.PersonFromVerb,
+    DerivationClass.AbstractNounFromVerb,
+)
+
+val zeroMarkingClasses = listOf( // In general, I think derivations which change the SpeechPart can be zero-marking
+    DerivationClass.InfinitiveVerb,
     DerivationClass.AbstractNounFromAdjective,
     DerivationClass.PlaceFromAdjective,
     DerivationClass.BeingStateFromAdjective,

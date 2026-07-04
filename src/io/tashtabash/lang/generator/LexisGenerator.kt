@@ -233,7 +233,7 @@ class LexisGenerator(
         // The added word may have new tags, that's why `.last()` is added instead of the generated word itself
         functionWords[construction] = SimpleWordPointer(words.words.last())
         derivationGenerator.makeDerivations(words.words.last(), words, wordBase)
-            }
+    }
 
     private fun extendCore(core: SemanticsCore): SemanticsCore {
         var resultCore = core

@@ -1,5 +1,6 @@
 package io.tashtabash.lang.language.morpheme
 
+import io.tashtabash.lang.language.derivation.DerivationClass
 import io.tashtabash.lang.language.util.createNoun
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -148,6 +149,23 @@ internal class WordTemplateSingleChangeTest {
         assertEquals(
             createNoun("ca"),
             changeTemplate.change(secondWord, listOf(), listOf())
+        )
+    }
+
+    @Test
+    fun `TemplateChange does nothing on empty changes`() {
+        val changeTemplate = createTemplateChange("-")
+        val firstWord = createNoun("ba")
+        val secondWord = createNoun("ca")
+
+        // Right now the CategoryValues and DerivationClasses are lost
+        assertEquals(
+            createNoun("ba").withMorphemes(0, 2),
+            changeTemplate.change(firstWord, listOf(), listOf(DerivationClass.AbstractNounFromNoun))
+        )
+        assertEquals(
+            createNoun("ca").withMorphemes(0, 2),
+            changeTemplate.change(secondWord, listOf(), listOf(DerivationClass.AbstractNounFromNoun))
         )
     }
 }

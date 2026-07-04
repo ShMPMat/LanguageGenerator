@@ -4,13 +4,13 @@ import io.tashtabash.lang.containers.SemanticsCoreTemplate
 import io.tashtabash.lang.containers.toSemanticsCore
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.lexis.*
-import io.tashtabash.lang.language.morphem.Affix
+import io.tashtabash.lang.language.morphem.change.WordChange
 import io.tashtabash.random.randomUnwrappedElement
 import kotlin.random.Random
 
 
 data class Derivation(
-    val affix: Affix,
+    val change: WordChange,
     val derivationClass: DerivationClass,
     val resultSpeechPart: TypedSpeechPart,
     val strength: Double,
@@ -35,7 +35,7 @@ data class Derivation(
     }
 
     private fun derive(originalWord: Word, derivedCore: SemanticsCoreTemplate): Word? {
-        val derivedWord = affix.change(originalWord, listOf(), listOf(derivationClass))
+        val derivedWord = change.change(originalWord, listOf(), listOf(derivationClass))
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(originalWord.semanticsCore),
             resultSpeechPart
@@ -62,7 +62,7 @@ data class Derivation(
 
         other as Derivation
 
-        if (affix.toString() != other.affix.toString())
+        if (change.toString() != other.change.toString())
             return false
         if (derivationClass != other.derivationClass)
             return false
@@ -71,10 +71,10 @@ data class Derivation(
     }
 
     override fun hashCode(): Int {
-        var result = affix.toString().hashCode()
+        var result = change.toString().hashCode()
         result = 31 * result + derivationClass.hashCode()
         return result
     }
 
-    override fun toString() = "Class - $derivationClass; $affix; $categoriesChanger; strength = %.2f".format(strength)
+    override fun toString() = "Class - $derivationClass; $change; $categoriesChanger; strength = %.2f".format(strength)
 }
