@@ -16,13 +16,12 @@ data class Derivation(
     val strength: Double,
     private val categoriesChanger: CategoryChanger
 ) {
-    fun deriveRandom(word: Word, random: Random, resolver: (Meaning) -> SemanticsCoreTemplate): Word? {
-        if (word.semanticsCore.appliedDerivations.contains(this))
+    fun derive(word: Word, lexis: AbstractLexis, random: Random, find: (Meaning) -> SemanticsCoreTemplate): Word? {
+        if (word.semanticsCore.changeHistory?.computeAppliedDerivations(lexis)?.contains(this) == true)
             return null
 
         val applicableTypes = derivationClass.possibilities
             .filter { word.semanticsCore.derivationCluster.typeToCore.containsKey(it.value) }
-
         val chosenType = randomUnwrappedElement(applicableTypes + makeNoType(1.0 / strength), random)
             ?: return null
 
@@ -30,14 +29,13 @@ data class Derivation(
             word.semanticsCore.derivationCluster.typeToCore.getValue(chosenType) + DerivationLink(null, 1.0 / strength),
             random
         ) ?: return null
-        val core = resolver(chosenMeaning)
+        val core = find(chosenMeaning)
 
         return derive(word, core)
     }
 
     private fun derive(originalWord: Word, derivedCore: SemanticsCoreTemplate): Word? {
         val derivedWord = affix.change(originalWord, listOf(), listOf(derivationClass))
-        val newDerivations = originalWord.semanticsCore.appliedDerivations + this
         val newStaticCategories = categoriesChanger.makeStaticCategories(
             listOf(originalWord.semanticsCore),
             resultSpeechPart
@@ -47,7 +45,6 @@ data class Derivation(
                 it.copy(
                     speechPart = resultSpeechPart,
                     tags = it.tags + SemanticsTag(derivationClass.name),
-                    appliedDerivations = newDerivations,
                     changeHistory = DerivationHistory(this, SimpleWordPointer(originalWord))
                 )
             }

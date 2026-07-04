@@ -1,8 +1,8 @@
 package io.tashtabash.lang.language.lexis
 
 
-open class SimpleMutableLexis: AbstractLexis() {
-    private val _words = mutableListOf<Word>()
+open class SimpleMutableLexis(vararg words: Word): AbstractLexis() {
+    private val _words = words.toMutableList()
 
     override val words: List<Word> = _words
 

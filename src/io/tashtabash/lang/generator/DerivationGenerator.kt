@@ -325,7 +325,7 @@ class DerivationGenerator(
         while (queue.isNotEmpty()) {
             val curWord = queue.poll()
             for (derivation in derivationParadigm.derivations) {
-                val derivedWord = derivation.deriveRandom(curWord, random) { m ->
+                val derivedWord = derivation.derive(curWord, words, random) { m ->
                     wordBase.allWords.first { it.word == m }
                 }
                     ?: continue

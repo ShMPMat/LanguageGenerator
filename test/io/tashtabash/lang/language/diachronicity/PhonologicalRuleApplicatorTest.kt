@@ -1413,8 +1413,9 @@ internal class PhonologicalRuleApplicatorTest {
                 )
             )
         }
+        val lexis = SimpleMutableLexis(stemWord)
         val derivedWord = derivation
-            .deriveRandom(stemWord, Random(0)) { SemanticsCoreTemplate(it, SpeechPart.Noun) }!!
+            .derive(stemWord, lexis, Random(0)) { SemanticsCoreTemplate(it, SpeechPart.Noun) }!!
         val words = listOf(stemWord, derivedWord)
         val derivations = listOf(derivation)
         val nounChangeParadigm = makeDefNounChangeParadigm(

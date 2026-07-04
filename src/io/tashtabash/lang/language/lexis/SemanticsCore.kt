@@ -3,7 +3,6 @@ package io.tashtabash.lang.language.lexis
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.LanguageException
 import io.tashtabash.lang.language.derivation.ChangeHistory
-import io.tashtabash.lang.language.derivation.Derivation
 import io.tashtabash.lang.language.derivation.DerivationType
 import io.tashtabash.random.UnwrappableSSO
 
@@ -16,7 +15,6 @@ data class SemanticsCore(
     val tags: Set<SemanticsTag> = setOf(),
     val derivationCluster: DerivationCluster = DerivationCluster(mapOf()),
     val staticCategories: Set<CategoryValue> = setOf(),
-    val appliedDerivations: List<Derivation> = listOf(),
     val changeHistory: ChangeHistory? = null
 ) {
     constructor(meaning: Meaning, speechPart: TypedSpeechPart, vararg tags: String): this(

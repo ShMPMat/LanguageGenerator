@@ -11,6 +11,8 @@ interface ChangeHistory {
     fun printHistory(parent: Word, lexis: AbstractLexis): String
 
     fun computeChangeDepth(lexis: AbstractLexis): Int
+
+    fun computeAppliedDerivations(lexis: AbstractLexis): List<Derivation>
 }
 
 
@@ -26,6 +28,16 @@ data class DerivationHistory(val derivation: Derivation, val previous: WordPoint
             ?: 0
 
         return 1 + previousDepth
+    }
+
+    override fun computeAppliedDerivations(lexis: AbstractLexis): List<Derivation> {
+        val previousDerivations = previous.resolve(lexis)
+            .semanticsCore
+            .changeHistory
+            ?.computeAppliedDerivations(lexis)
+            ?: listOf()
+
+        return previousDerivations + derivation
     }
 }
 
@@ -45,6 +57,14 @@ data class CompoundHistory(val compound: Compound, val previous: List<WordPointe
 
         return 1 + previousDepth
     }
+
+    override fun computeAppliedDerivations(lexis: AbstractLexis): List<Derivation> =
+        previous.mapNotNull {
+            it.resolve(lexis)
+                .semanticsCore
+                .changeHistory
+                ?.computeAppliedDerivations(lexis)
+        }.flatten()
 }
 
 
