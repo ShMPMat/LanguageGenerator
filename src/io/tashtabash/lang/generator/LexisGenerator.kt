@@ -144,15 +144,15 @@ class LexisGenerator(
         resolveVerbTypeTags()
 
         for ((speechPart, tag) in additionalVerbTypes) {
-            val perceptionVerbs = wordBase.allWords
+            val existingVerbs = wordBase.allWords
                 .filter { w ->
                     w.tagClusters.any { c -> c.type == "verbType" && c.hasTag(tag.name) }
                 }
-            val perceptionVerbClassPresent = changeParadigm.wordChangeParadigm
+            val isVerbTypePresent = changeParadigm.wordChangeParadigm
                 .speechPartChangeParadigms
                 .containsKey(speechPart)
-            val tagName = if (perceptionVerbClassPresent) "intrans" else "trans" // Assume the paradigm is intransitive
-            for (template in perceptionVerbs)
+            val tagName = if (isVerbTypePresent) "intrans" else "trans" // Assume the paradigm is intransitive
+            for (template in existingVerbs)
                 tagTemplate(template, tagName, "transitivity")
         }
     }
@@ -170,10 +170,10 @@ class LexisGenerator(
                 ?: run { coreTemplate.tagClusters.removeIf { it.type == "verbType" } } // No type generated, remove
     }
 
-    private fun tagTemplate(template: SemanticsCoreTemplate, tagName: String, type: String) {
+    private fun tagTemplate(template: SemanticsCoreTemplate, name: String, type: String) {
         template.tagClusters.removeIf { it.type == type }
         template.tagClusters += SemanticsTagCluster(
-            listOf(SemanticsTagTemplate(tagName)),
+            listOf(SemanticsTagTemplate(name)),
             type,
             true
         )
@@ -253,8 +253,7 @@ class LexisGenerator(
 
     private fun isWordNeeded(core: SemanticsCoreTemplate): Boolean {
         val doubles = words.words
-            .map { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
-            .foldRight(0.0, Double::plus)
+            .sumOf { getMeaningDistance(it.semanticsCore.meaningCluster, core.word) }
         val successProbability = core.probability * wordDoubleProbability.pow(doubles)
         return successProbability.testProbability()
     }
