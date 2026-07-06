@@ -225,6 +225,14 @@ class LexisGenerator(
     private fun generateFunctionWord(core: SemanticsCore, construction: Construction) {
         words.getWordOrNull(core.meaningCluster.meanings[0])
             ?.let {
+                if (core.speechPart.subtype == auxSubtype && it.semanticsCore.speechPart.subtype != auxSubtype) {
+                    // Otherwise the verb won't be able to agree with both Agents and Arguments
+                    // I'm not the biggest fan of changing the word's subtype, but well oh well.
+                    val fixedWord = it.copy(semanticsCore = it.semanticsCore.copy(speechPart = core.speechPart))
+                    words.swap(core.meaningCluster.meanings[0], fixedWord)
+                    functionWords[construction] = SimpleWordPointer(fixedWord)
+                    return
+                }
                 functionWords[construction] = SimpleWordPointer(it)
                 return
             }

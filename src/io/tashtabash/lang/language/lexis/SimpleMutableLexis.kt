@@ -14,6 +14,14 @@ open class SimpleMutableLexis(vararg words: Word): AbstractLexis() {
         _words += newWords.map { injectTags(it) }
     }
 
+    fun swap(meaning: Meaning, word: Word) {
+        val i = words.indexOfFirst { meaning in it.semanticsCore.meaningCluster }
+        if (i == -1)
+            return
+
+        _words[i] = word
+    }
+
     private fun injectTags(word: Word): Word {
         return injectVerbObjectTags(word)
     }

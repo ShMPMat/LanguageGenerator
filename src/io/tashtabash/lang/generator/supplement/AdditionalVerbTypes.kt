@@ -9,5 +9,6 @@ data class AdditionalVerbType(val speechPart: TypedSpeechPart, val tag: Semantic
 val additionalVerbTypes = listOf(// For now all of them are intransitive, Arg = Stimulus, Obl = Experiencer
     AdditionalVerbType(TypedSpeechPart(Verb, "Perception"), SemanticsTag("perception"), .05),
     AdditionalVerbType(TypedSpeechPart(Verb, "Mental Activity"), SemanticsTag("mentalActivity"), .05),
-    AdditionalVerbType(TypedSpeechPart(Verb, "Feeling"), SemanticsTag("feeling"), .05)
+    AdditionalVerbType(TypedSpeechPart(Verb, "Feeling"), SemanticsTag("feeling"), .05),
+    AdditionalVerbType(TypedSpeechPart(Verb, "Movement"), SemanticsTag("movement"), .0), // Always Trans
 )
