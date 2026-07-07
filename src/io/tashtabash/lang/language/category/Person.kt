@@ -54,7 +54,7 @@ object PersonRandomSupplements : CategoryRandomSupplements<PersonValue> {
             SourceTemplate(Agreement(Agent, nominals), 20.0),
             SourceTemplate(Agreement(Patient, nominals), 1.0)
         )// I wasn't able to find the data on the distribution
-        Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 20.0))//TODO not an actual data
+        Adjective -> listOf(SourceTemplate(Agreement(Nominal, nominals), 20.0))// Not actual data
         Adverb -> listOf()
         Numeral -> listOf()
         Article -> listOf()
