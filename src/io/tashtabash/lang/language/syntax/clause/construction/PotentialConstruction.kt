@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.syntax.clause.construction
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.MoodValue
-import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.syntax.clause.realization.AdverbClause
 import io.tashtabash.lang.language.syntax.clause.realization.UnfoldableClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbSentenceClause
@@ -14,17 +13,10 @@ abstract class PotentialConstruction : Construction {
     override fun toString(): String = this.javaClass.simpleName + " potential construction"
 
     object Mood : PotentialConstruction() {
-        override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause {
-            val potentialValue = language.changeParadigm.wordChangeParadigm
-                .getParadigm(sentence.predicate.head.semanticsCore.speechPart)
-                .getCategory(moodName)[MoodValue.Potential]
-            val categories = sentence.predicate.additionalCategories.filter { it.categoryValue !is MoodValue } +
-                    potentialValue
-
-            return sentence.copy(
-                predicate = sentence.predicate.withCategories(categories)
+        override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause =
+            sentence.copy(
+                predicate = ApplyMood(MoodValue.Potential).apply(sentence.predicate, language)
             )
-        }
     }
 
     object Adverb : PotentialConstruction() {

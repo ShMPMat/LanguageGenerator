@@ -34,6 +34,9 @@ data class WordChangeParadigm(
         speechPartChangeParadigms.values
             .any { it.hasSuffixes() }
 
+    operator fun get(categoryName: String): Category<*> =
+        categories.first { it.outType == categoryName }
+
     fun apply(
         word: Word,
         categoryValues: List<SourcedCategoryValue> = getDefaultState(word),

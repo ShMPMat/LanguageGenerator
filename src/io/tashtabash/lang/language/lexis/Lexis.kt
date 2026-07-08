@@ -8,7 +8,7 @@ import io.tashtabash.lang.language.syntax.clause.construction.Construction
 
 data class Lexis(
     override val words: List<Word>,
-    val functionWords: WordMap<Construction>
+    val functionWords: WordMap<Construction> = mapOf()
 ): AbstractLexis() {
     val size: Int
         get() = words.size

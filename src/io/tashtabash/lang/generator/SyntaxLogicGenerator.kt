@@ -16,8 +16,8 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
-import io.tashtabash.lang.language.syntax.clause.construction.AuxiliaryConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
@@ -39,7 +39,7 @@ class SyntaxLogicGenerator(
             changeParadigm.getParadigms(DeixisPronoun)
 
     private val verbFormSolver: MutableMap<VerbContextInfo, SourcedCategoryValues> = mutableMapOf()
-    private val verbConstructions: MutableMap<VerbContextInfo, AuxiliaryConstruction> = mutableMapOf()
+    private val verbConstructions: MutableMap<VerbContextInfo, VerbConstruction> = mutableMapOf()
 
     fun generateSyntaxLogic(wordOrder: WordOrder) = SyntaxLogic(
         generateVerbFormSolver(),
@@ -143,6 +143,7 @@ class SyntaxLogicGenerator(
     }
 
     private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {
+        // Add handling for General vs Present
         for (speechPart in changeParadigm.getSpeechParts(Verb)) {
             val tenseCategory = changeParadigm.getParadigm(speechPart)
                 .getCategoryOrNull(tenseName)
@@ -155,11 +156,11 @@ class SyntaxLogicGenerator(
                     }
                 }
         }
-
-        // Add analytical verb constructions
         addVerbConstruction(ContextValue.TimeContext.Regular) { speechPart ->
             verbFormSolver[speechPart to ContextValue.TimeContext.Regular] == null
         }
+
+        // Add analytical Fut
         .8.chanceOf {
             addVerbConstruction(ContextValue.TimeContext.Future) { speechPart ->
                 changeParadigm.getParadigm(speechPart)
@@ -173,6 +174,17 @@ class SyntaxLogicGenerator(
                     verbConstructions[speechPart to ContextValue.TimeContext.FarFuture] =
                         verbConstructions.getValue(speechPart to ContextValue.TimeContext.Future)
                 }
+        } otherwise { // Try to use Potential for Fut if available
+            for (speechPart in changeParadigm.getSpeechParts(Verb)) {
+                val potentialValue = changeParadigm.getParadigm(speechPart)
+                    .getCategoryOrNull(moodName)
+                    ?.getActualOrNull(MoodValue.Potential)
+                    ?: continue
+                verbFormSolver[speechPart to ContextValue.TimeContext.Future] = listOf(potentialValue) +
+                        chooseClosestTense(changeParadigm.getParadigm(speechPart), ContextValue.TimeContext.Future)
+                verbFormSolver[speechPart to ContextValue.TimeContext.FarFuture] = listOf(potentialValue) +
+                        chooseClosestTense(changeParadigm.getParadigm(speechPart), ContextValue.TimeContext.FarFuture)
+            }
         }
 
         return verbFormSolver
@@ -218,7 +230,7 @@ class SyntaxLogicGenerator(
         val result: MutableMap<Pair<TypedSpeechPart, SyntaxRelation>, CategoryValues> = mutableMapOf()
         //TODO handle split
         val verbParadigms = changeParadigm.getParadigms(Verb)
-        val cases = changeParadigm.categories.first { it.outType == caseName }.actualValues
+        val cases = changeParadigm[caseName].actualValues
 
         for (verbTypeParadigm in verbParadigms) {
             val verbType = verbTypeParadigm.speechPart
@@ -424,8 +436,10 @@ class SyntaxLogicGenerator(
 }
 
 private val auxMeanings = mapOf<ContextValue.TimeContext, List<GenericSSO<String>>>(
-    ContextValue.TimeContext.Future to listOf("will".withProb(.1), "be".withProb(.1), "become".withProb(.1)),
-    ContextValue.TimeContext.Regular to listOf("be".withProb(.1)),
+    ContextValue.TimeContext.Future to
+            listOf("will".withProb(.1), "be".withProb(.1), "become".withProb(.1), "go".withProb(.1)),
+    ContextValue.TimeContext.Regular to
+            listOf("be".withProb(.5), "do".withProb(.1)),
 )
 
 private val auxCategories = mapOf<ContextValue.TimeContext, List<GenericSSO<TenseValue>>>(

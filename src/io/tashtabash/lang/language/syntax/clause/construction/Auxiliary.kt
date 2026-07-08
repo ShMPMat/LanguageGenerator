@@ -11,12 +11,7 @@ import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
 import io.tashtabash.random.singleton.randomElement
 
 
-interface AuxiliaryConstruction: Construction {
-    val name: String
-
-    fun apply(predicate: PredicateClause, language: Language): PredicateClause
-}
-
+interface AuxiliaryConstruction: VerbConstruction
 
 data class SerialAuxiliary(val arranger: Arranger, override val name: String = defaultAuxName) : AuxiliaryConstruction {
     override fun apply(predicate: PredicateClause, language: Language): PredicateClause {

@@ -7,20 +7,14 @@ import io.tashtabash.lang.language.category.PersonValue.Second
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.realization.WordReduplicationCategoryApplicator
-import io.tashtabash.lang.language.lexis.Lexis
-import io.tashtabash.lang.language.lexis.SemanticsTag
-import io.tashtabash.lang.language.lexis.SimpleWordPointer
+import io.tashtabash.lang.language.derivation.DerivationType
+import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
-import io.tashtabash.lang.language.lexis.toDefault
-import io.tashtabash.lang.language.lexis.toIntransitive
 import io.tashtabash.lang.language.morphem.MorphemeData
-import io.tashtabash.lang.language.syntax.NumberCategorySolver
-import io.tashtabash.lang.language.syntax.RandomOrder
-import io.tashtabash.lang.language.syntax.SyntaxLogic
-import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.SyntaxRelation.Auxiliary
-import io.tashtabash.lang.language.syntax.SyntaxRelation.Predicate
-import io.tashtabash.lang.language.syntax.SyntaxRelation.QuestionMarker
+import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.SyntaxRelation.*
+import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.context.Context
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
@@ -28,9 +22,8 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Negative
+import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.FarFuture
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.lang.language.syntax.context.PrioritizedValue
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
@@ -81,7 +74,7 @@ internal class SentenceDescriptionTest {
             syntaxLogic = SyntaxLogic(
                 mapOf(Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 ),
             )
         )
@@ -147,8 +140,8 @@ internal class SentenceDescriptionTest {
             syntaxLogic = SyntaxLogic(
                 mapOf(Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
             )
         )
@@ -216,12 +209,12 @@ internal class SentenceDescriptionTest {
             listOf(dog, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                verbCasesSolver = mapOf(Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)),
+                verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf(CaseValue.Absolutive)),
                 verbArgumentSolver = mapOf(// Check if this mapping is used
-                    Verb.toIntransitive() to MainObjectType.Agent to SyntaxRelation.Argument,
-                    Verb.toIntransitive() to MainObjectType.Patient to SyntaxRelation.Benefactor
+                    Verb.toIntransitive() to MainObjectType.Agent to Argument,
+                    Verb.toIntransitive() to MainObjectType.Patient to Benefactor
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive))
+                syntaxRelationSolver = mapOf(Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive))
             )
         )
         // Set up descriptions
@@ -295,7 +288,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 )
             )
         )
@@ -366,7 +359,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 ),
                 nounClassCategorySolver = mapOf(NounClassValue.Female to NounClassValue.Female)
             )
@@ -433,9 +426,9 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                    Verb.toIntransitive() to Argument to listOf(CaseValue.Absolutive)
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive))
+                syntaxRelationSolver = mapOf(Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive))
             )
         )
         // Set up descriptions
@@ -507,7 +500,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 ),
                 numberCategorySolver = NumberCategorySolver(
                     mapOf(NumberValue.Singular to 1..1, NumberValue.Plural to 2..Int.MAX_VALUE),
@@ -597,9 +590,9 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive)
+                    Verb.toIntransitive() to Argument to listOf(CaseValue.Absolutive)
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive)),
+                syntaxRelationSolver = mapOf(Benefactor to Noun.toDefault() to listOf(CaseValue.Benefactive)),
                 numberCategorySolver = NumberCategorySolver(
                     mapOf(NumberValue.Singular to 1..1, NumberValue.Plural to 2..Int.MAX_VALUE),
                     NumberValue.Plural
@@ -668,9 +661,9 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 ),
-                transformers = listOf(of(Verb) to RelationTransformer(SyntaxRelation.Argument, DropTransformer))
+                transformers = listOf(of(Verb) to RelationTransformer(Argument, DropTransformer))
             )
         )
         // Set up descriptions
@@ -711,10 +704,10 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
-                transformers = listOf(of(Verb) to RelationTransformer(SyntaxRelation.Agent, DropTransformer))
+                transformers = listOf(of(Verb) to RelationTransformer(Agent, DropTransformer))
             )
         )
         // Set up descriptions
@@ -761,12 +754,12 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
                 transformers = listOf(
-                    has(SemanticsTag("trans")) + SyntaxRelation.Agent.matches(of(Noun)) + SyntaxRelation.Patient.matches(of(PersonalPronoun))
-                            to RemapOrderTransformer(mapOf(SyntaxRelation.Agent to SyntaxRelation.Patient, SyntaxRelation.Patient to SyntaxRelation.Agent))
+                    has(SemanticsTag("trans")) + Agent.matches(of(Noun)) + Patient.matches(of(PersonalPronoun))
+                            to RemapOrderTransformer(mapOf(Agent to Patient, Patient to Agent))
                 )
             )
         )
@@ -816,11 +809,11 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
                 transformers = listOf(
-                    has(SyntaxNodeTag.Topic) to PutFirstTransformer(SyntaxRelation.Predicate)
+                    has(SyntaxNodeTag.Topic) to PutFirstTransformer(Predicate)
                 )
             )
         )
@@ -863,14 +856,14 @@ internal class SentenceDescriptionTest {
                 Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault()),
             )
         )
-        val questionOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
+        val questionOrder = listOf(Predicate, Agent, Patient).withProb(1.0)
         val language = makeDefLang(
             listOf(pronoun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
                 transformers = listOf(
                     of(Verb) + has(SyntaxNodeTag.Question) then { ChangeOrderTransformer(RandomOrder(listOf(questionOrder))) }
@@ -928,14 +921,14 @@ internal class SentenceDescriptionTest {
                 Verb.toDefault() to verbChangeParadigm,
             )
         )
-        val negationOrder = listOf(SyntaxRelation.Predicate, SyntaxRelation.Agent, SyntaxRelation.Patient).withProb(1.0)
+        val negationOrder = listOf(Predicate, Agent, Patient).withProb(1.0)
         val language = makeDefLang(
             listOf(pronoun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to Agent to listOf(),
+                    Verb.toDefault() to Patient to listOf()
                 ),
                 transformers = listOf(
                     of(Verb) + has(negationName) then { ChangeOrderTransformer(RandomOrder(listOf(negationOrder))) }
@@ -969,7 +962,6 @@ internal class SentenceDescriptionTest {
         )
     }
 
-
     @Test
     fun `Question markers are used`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
@@ -994,7 +986,7 @@ internal class SentenceDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
-                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf()
+                    Verb.toIntransitive() to Argument to listOf()
                 ),
                 transformers = listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
                     PutFirstTransformer(Predicate) + PutFirstTransformer(Auxiliary)
@@ -1017,6 +1009,136 @@ internal class SentenceDescriptionTest {
                 createIntransVerb("do") withMeaning "sleep"
             ),
             sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `verbCasesSolver correctly adds a mix of Tense + Mood`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val noun = createNoun("a") withMeaning "cat"
+        val verbIntrans = createIntransVerb("do") withMeaning "sleep"
+        // Set up tense + mood
+        val tenseCategory = Tense(
+            listOf(TenseValue.Past, TenseValue.Present),
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
+        )
+        val tenseSourcedCategory = SourcedCategory(tenseCategory, CategorySource.Self, CompulsoryData(true))
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
+        val moodCategory = Mood(
+            listOf(MoodValue.Indicative, MoodValue.Potential),
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
+        )
+        val moodSourcedCategory = SourcedCategory(moodCategory, CategorySource.Self, CompulsoryData(true))
+        val moodExponenceCluster = ExponenceCluster(moodSourcedCategory)
+        // Set up WordChangeParadigm
+        val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val moodApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val intransVerbChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toIntransitive(),
+            listOf(
+                tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators),
+                moodExponenceCluster to toHandler(moodExponenceCluster.possibleValues, moodApplicators),
+            )
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                Noun.toDefault() to SpeechPartChangeParadigm(Noun.toDefault()),
+                Verb.toIntransitive() to intransVerbChangeParadigm,
+            )
+        )
+        val language = makeDefLang(
+            Lexis(listOf(noun, verbIntrans)),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toIntransitive() to Argument to listOf(),
+                ),
+                timeFormSolver = mapOf(
+                    Verb.toIntransitive() to FarFuture to listOf(
+                        intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past],
+                        intransVerbChangeParadigm.getCategory(moodName)[MoodValue.Potential],
+                    ),
+                )
+            ),
+        )
+        // Set up descriptions
+        val cat = NominalDescription("cat", ActorComplimentValue(1))
+        val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = Context(FarFuture to Implicit, Indicative to Explicit)
+
+        assertEquals(
+            listOf(
+                createNoun("a") withMeaning "cat",
+                createIntransVerb("dodato")
+                    .withMorphemes(
+                        MorphemeData(2, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past])),
+                        MorphemeData(2, listOf(moodSourcedCategory[MoodValue.Potential])),
+                    ) withMeaning "sleep"
+            ),
+            intransSentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `Aux Fut constructions can govern Inf`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val noun = createNoun("a") withMeaning "cat"
+        val verbIntrans = createIntransVerb("do").let { w ->
+            w.copy(
+                semanticsCore = w.semanticsCore.copy(
+                    derivationCluster = DerivationCluster(mapOf(DerivationType.Inf to listOf(DerivationLink("sleep(INF)", 1.0))))
+                )
+            )
+        } withMeaning "sleep"
+        val verbInf = createWord("dodo", Verb.toInf()) withMeaning "sleep(INF)"
+        val aux = createWord("lah", Verb.toAux()) withMeaning "will"
+        // Set up WordChangeParadigm
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(),
+            mapOf(
+                Noun.toDefault() to SpeechPartChangeParadigm(Noun.toDefault()),
+                Verb.toAux() to SpeechPartChangeParadigm(Verb.toAux()),
+                Verb.toInf() to SpeechPartChangeParadigm(Verb.toInf()),
+                Verb.toIntransitive() to SpeechPartChangeParadigm(Verb.toIntransitive()),
+            )
+        )
+        val auxConstruction = Auxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)), listOf(), DerivationType.Inf)
+        val language = makeDefLang(
+            Lexis(listOf(noun, verbIntrans, verbInf, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                verbCasesSolver = mapOf(
+                    Verb.toInf() to Argument to listOf(),
+                ),
+                verbConstructions = mapOf(
+                    Verb.toIntransitive() to FarFuture to auxConstruction
+                )
+            )
+        )
+        // Set up descriptions
+        val cat = NominalDescription("cat", ActorComplimentValue(1))
+        val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = Context(FarFuture to Implicit, Indicative to Explicit)
+
+        assertEquals(
+            listOf(
+                createNoun("a") withMeaning "cat",
+                createWord("dodo", Verb.toInf()) withMeaning "sleep(INF)",
+                createWord("lah", Verb.toAux()) withMeaning "will",
+            ),
+            intransSentenceDescription.toClause(language, context, Random(Random.nextInt()))
                 .unfold(language, Random(Random.nextInt()))
                 .words
         )

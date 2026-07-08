@@ -50,7 +50,7 @@ class SyntaxParadigmGenerator(private val auxGenerator: AuxGenerator) {
 
     private fun generatePossession(wordChangeParadigm: WordChangeParadigm): PredicatePossessionPresence {
         val possiblePossessionType = predicatePossessionProbabilities.toMutableList()
-        if (!wordChangeParadigm.categories.first { it.outType == caseName }.actualValues.contains(CaseValue.Topic))
+        if (CaseValue.Topic !in wordChangeParadigm[caseName].actualValues)
             possiblePossessionType.removeIf { it.value == Topic }
         val possessionConstructionPresence = PredicatePossessionPresence(
             listOf(possiblePossessionType.randomUnwrappedElement().withProb(1.0))
@@ -59,7 +59,7 @@ class SyntaxParadigmGenerator(private val auxGenerator: AuxGenerator) {
     }
 
     private fun generatePotential(wordChangeParadigm: WordChangeParadigm): PotentialConstruction {
-        if (MoodValue.Potential in wordChangeParadigm.categories.first { it.outType == moodName }.actualValues)
+        if (MoodValue.Potential in wordChangeParadigm[moodName].actualValues)
             return PotentialConstruction.Mood
 
         // That's a pretty far-fetched case, idk if it exists in real life

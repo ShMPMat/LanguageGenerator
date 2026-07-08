@@ -5,11 +5,12 @@ import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.SourcedCategory
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValue
 import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
+import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
-import io.tashtabash.lang.language.syntax.clause.construction.AuxiliaryConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
+import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.context.Context
@@ -33,7 +34,7 @@ data class SyntaxLogic(
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
     val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf(),
-    val verbConstructions: Map<VerbContextInfo, AuxiliaryConstruction> = mapOf(),
+    val verbConstructions: Map<VerbContextInfo, VerbConstruction> = mapOf(),
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -101,7 +102,7 @@ data class SyntaxLogic(
                     .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
-    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: Context): AuxiliaryConstruction? =
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: Context): VerbConstruction? =
         verbConstructions[verbType to context.time.first]
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
@@ -126,7 +127,7 @@ data class SyntaxLogic(
         if (priority == Priority.Explicit) {
             TODO()
         } else
-            return chooseClosestTense(language, speechPart, timeValue)
+            return chooseClosestTense(language.changeParadigm.wordChangeParadigm.getParadigm(speechPart), timeValue)
     }
 
     fun resolveArgumentTypes(speechPart: TypedSpeechPart, objectType: ObjectType): SyntaxRelation =
@@ -135,28 +136,6 @@ data class SyntaxLogic(
     fun resolvePossibleArguments(speechPart: TypedSpeechPart): List<SyntaxRelation> =
         verbArgumentSolver.filter { (k) -> k.first == speechPart }
             .map { it.value }
-
-    private fun chooseClosestTense(
-        language: Language,
-        verbType: TypedSpeechPart,
-        timeContext: TimeContext
-    ): SourcedCategoryValues {
-        val timeValueNumber = timeContext.toNumber()
-
-        val tense = language.changeParadigm.wordChangeParadigm
-            .getParadigm(verbType)
-            .categories
-            .firstOrNull { it.category is Tense }
-            ?.actualSourcedValues
-            ?.minByOrNull {
-                val tenseNumber = (it.categoryValue as TenseValue).toNumber()
-
-                abs(tenseNumber - timeValueNumber)
-            }
-            ?: return emptyList()
-
-        return listOf(tense)
-    }
 
     override fun toString() = """
         |Syntax:
@@ -275,6 +254,22 @@ data class SyntaxLogic(
     """.trimMargin()
 }
 
+
+fun chooseClosestTense(changeParadigm: SpeechPartChangeParadigm, timeContext: TimeContext): SourcedCategoryValues {
+    val timeValueNumber = timeContext.toNumber()
+
+    val tense = changeParadigm.categories
+        .firstOrNull { it.category is Tense }
+        ?.actualSourcedValues
+        ?.minByOrNull {
+            val tenseNumber = (it.categoryValue as TenseValue).toNumber()
+
+            abs(tenseNumber - timeValueNumber)
+        }
+        ?: return emptyList()
+
+    return listOf(tense)
+}
 
 private fun TenseValue.toNumber() = when (this) {
     TenseValue.Present -> 0
