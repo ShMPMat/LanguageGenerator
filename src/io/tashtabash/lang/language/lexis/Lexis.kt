@@ -46,7 +46,10 @@ data class Lexis(
     private fun reifyPointer(pointer: WordPointer): IndexWordPointer = when (pointer) {
         is IndexWordPointer -> pointer
         is SimpleWordPointer -> {
-            val i = words.indexOf(pointer.word)
+            val matches = words.filter { it.softEq(pointer.word) }
+            if (matches.size != 1)
+                throw LanguageException("Cannot reify IndexWordPointer for $pointer: unexpected length ${matches.size}")
+            val i = words.indexOfFirst { it.softEq(pointer.word) }
             if (i == -1)
                 throw LanguageException("Cannot reify WordPointer $pointer: no word '${pointer.word}' found")
 

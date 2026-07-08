@@ -52,6 +52,12 @@ data class Word(
     fun getPhoneticRepresentation(): String =
         syllables.joinToString("")
 
+    // This function checks if the words are "practically" the same. The intuition
+    // is that if it's `true`, then these words couldn't be distinguished by the natives.
+    fun softEq(other: Word): Boolean =
+        semanticsCore.meaningCluster == other.semanticsCore.meaningCluster &&
+                syllables == other.syllables
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

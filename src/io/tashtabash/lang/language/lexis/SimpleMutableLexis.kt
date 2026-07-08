@@ -7,11 +7,12 @@ open class SimpleMutableLexis(vararg words: Word): AbstractLexis() {
     override val words: List<Word> = _words
 
     operator fun plusAssign(word: Word) {
-        _words += injectTags(word)
+        if (words.none { it.softEq(word) }) // Add only if the word is meaningfully different
+            _words += injectTags(word)
     }
 
     operator fun plusAssign(newWords: Collection<Word>) {
-        _words += newWords.map { injectTags(it) }
+        newWords.forEach { this += it }
     }
 
     fun swap(meaning: Meaning, word: Word) {
