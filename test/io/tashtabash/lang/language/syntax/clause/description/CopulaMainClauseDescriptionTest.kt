@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
@@ -59,7 +59,7 @@ internal class CopulaDescriptionTest {
                 NominalDescription("cat", ContextValue.ActorComplimentValue(1))
             )
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )

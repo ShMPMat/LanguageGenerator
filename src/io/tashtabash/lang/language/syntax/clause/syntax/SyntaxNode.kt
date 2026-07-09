@@ -90,7 +90,6 @@ interface SentenceType
 
 enum class VerbSentenceType : SentenceType {
     MainVerbClause,
-    SubordinateVerbClause,
     QuestionVerbClause,
     NegatedVerbClause
 }

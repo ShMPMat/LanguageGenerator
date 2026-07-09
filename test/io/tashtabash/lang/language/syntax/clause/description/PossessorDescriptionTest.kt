@@ -56,7 +56,7 @@ internal class PossessorDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1), listOf(PossessorDescription(we)))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -119,7 +119,7 @@ internal class PossessorDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1), listOf(PossessorDescription(we)))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(

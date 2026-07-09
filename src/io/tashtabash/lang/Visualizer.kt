@@ -15,7 +15,7 @@ import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.syntax.clause.description.*
 import io.tashtabash.lang.language.syntax.clause.description.AdjunctType.*
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType.*
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.*
@@ -123,16 +123,16 @@ class Visualizer(val language: Language) {
             PotentialDescription(VerbMainClauseDescription(sleepVerb))
         )
 
-        val indicativeContext = Context(
+        val indicativeContext = DescriptionContext(
             LongGonePast to Implicit,
             Indicative to Explicit,
             Instrument // Topicalize the Instrument if present
         )
-        val questionContext = Context(
+        val questionContext = DescriptionContext(
             FarFuture to Implicit,
             GeneralQuestion to Explicit
         )
-        val negationContext = Context(
+        val negationContext = DescriptionContext(
             Regular to Implicit,
             Negative to Explicit
         )
@@ -244,14 +244,14 @@ class Visualizer(val language: Language) {
                 "We are building a house for you two with these hands",
                 "We are building a house for new high fathers with these hands"
             ).zip(testSentencesMain),
-            Context(Present to Implicit, Indicative to Explicit),
+            DescriptionContext(Present to Implicit, Indicative to Explicit),
             "Present"
         )
     }
 
     private fun printSampleClause(
         clauses: List<Pair<String, UnfoldableClauseDescription>>,
-        context: Context,
+        context: DescriptionContext,
         comment: String
     ) {
         println("$comment:")
@@ -266,7 +266,7 @@ class Visualizer(val language: Language) {
         println()
     }
 
-    private fun printSampleClause(clause: UnfoldableClauseDescription, context: Context) {
+    private fun printSampleClause(clause: UnfoldableClauseDescription, context: DescriptionContext) {
         val wordSequence = clause.toClause(language, context, Random(10))
             .unfold(language, Random(10))
 

@@ -3,7 +3,7 @@ package io.tashtabash.lang.language.syntax.clause.description
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.lexis.Meaning
 import io.tashtabash.lang.language.syntax.clause.realization.NominalClause
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import kotlin.random.Random
 
@@ -13,7 +13,7 @@ open class NominalDescription(
     val actorCompliment: ActorComplimentValue,
     val definitions: List<NounDefinerDescription> = listOf()
 ) : ClauseDescription {
-    override fun toClause(language: Language, context: Context, random: Random): NominalClause =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random): NominalClause =
         language.lexis.getWord(noun).let { word ->
             NominalClause(
                 word,
@@ -37,7 +37,7 @@ class PronounDescription(
     private val actor: ActorValue,
     definitions: List<NounDefinerDescription> = listOf()
 ): NominalDescription(type, ActorComplimentValue(actor.number, actor.deixis), definitions) {
-    override fun toClause(language: Language, context: Context, random: Random): NominalClause {
+    override fun toClause(language: Language, context: DescriptionContext, random: Random): NominalClause {
         val clause = super.toClause(language, context, random)
 
         // additionalCategories from clause are skipped because resolvePronounCategories resolves them anew

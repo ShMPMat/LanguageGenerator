@@ -31,7 +31,7 @@ import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
@@ -90,7 +90,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -134,7 +134,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -185,7 +185,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -267,7 +267,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -377,7 +377,7 @@ internal class PotentialDescriptionTest {
 
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to i))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(
@@ -473,7 +473,7 @@ internal class PotentialDescriptionTest {
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
                 ),
-                timeFormSolver = mapOf(
+                verbFormSolver = mapOf(
                     Verb.toIntransitive() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
                     Verb.toAux() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
                     Verb.toDefault() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past])
@@ -485,7 +485,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = Context(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
 
         assertEquals(
             listOf(

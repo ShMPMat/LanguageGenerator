@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePossessionClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
@@ -16,7 +16,7 @@ class PredicatePossessionDescription(
     val owner: NominalDescription,
     val owned: NominalDescription
 ) : SentenceDescription() {
-    override fun toClause(language: Language, context: Context, random: Random) =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         language.changeParadigm.syntaxParadigm.predicatePossession.predicatePossession
             .randomUnwrappedElement()
             .apply(owner, owned)
@@ -28,7 +28,7 @@ class ObliquePredicatePossessionDescription(
     val owned: NominalDescription,
     val possessorSyntaxRelation: SyntaxRelation
 ) : SentenceDescription() {
-    override fun toClause(language: Language, context: Context, random: Random) =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         ObliquePredicatePossessionClause(
             language.lexis.getWord("exist").let { word ->
                 VerbClause(

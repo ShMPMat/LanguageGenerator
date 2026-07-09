@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.syntax.clause.realization.NominalClause
 import io.tashtabash.lang.language.syntax.clause.realization.NullCopulaClause
 import io.tashtabash.lang.language.syntax.clause.realization.ParticleCopulaClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbalCopulaClause
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 
 
 abstract class CopulaConstruction : Construction {
@@ -14,7 +14,7 @@ abstract class CopulaConstruction : Construction {
         subject: NominalClause,
         complement: NominalClause,
         language: Language,
-        context: Context
+        context: DescriptionContext
     ): CopulaClause
 
     override fun toString(): String = this.javaClass.simpleName + " copula"
@@ -24,7 +24,7 @@ abstract class CopulaConstruction : Construction {
             subject: NominalClause,
             complement: NominalClause,
             language: Language,
-            context: Context
+            context: DescriptionContext
         ): VerbalCopulaClause {
             val verb = language.lexis.getFunctionWord(this)
 
@@ -46,7 +46,7 @@ abstract class CopulaConstruction : Construction {
             subject: NominalClause,
             complement: NominalClause,
             language: Language,
-            context: Context
+            context: DescriptionContext
         ) = ParticleCopulaClause(
             language.lexis.getFunctionWord(this),
             subject,
@@ -59,7 +59,7 @@ abstract class CopulaConstruction : Construction {
             subject: NominalClause,
             complement: NominalClause,
             language: Language,
-            context: Context
+            context: DescriptionContext
         ) = NullCopulaClause(subject, complement)
     }
 }

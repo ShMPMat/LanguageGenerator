@@ -13,7 +13,7 @@ import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
 import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.Priority
 import io.tashtabash.lang.language.syntax.transformer.SyntaxNodeMatcher
@@ -22,7 +22,8 @@ import kotlin.math.abs
 
 
 data class SyntaxLogic(
-    private val timeFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
+    // Will be applied to Aux if it's present
+    private val verbFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
     // Maps Description-level semantic roles to Clause-level syntactic relations
     private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
     // Maps Clause-level syntactic relations to specific category values (cases/adpositions)
@@ -96,16 +97,16 @@ data class SyntaxLogic(
     fun resolveSyntaxRelationToCase(syntaxRelation: SyntaxRelation, speechPart: TypedSpeechPart): CategoryValues =
         syntaxRelationSolver.getValue(syntaxRelation to speechPart)
 
-    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: Context): List<SourcedCategoryValue> =
+    fun resolveVerbForm(language: Language, verbType: TypedSpeechPart, context: DescriptionContext): List<SourcedCategoryValue> =
         resolveTime(language, verbType, context) +
                 language.changeParadigm.wordChangeParadigm
                     .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
-    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: Context): VerbConstruction? =
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? =
         verbConstructions[verbType to context.time.first]
 
-    fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: Context) =
+    fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: DescriptionContext) =
         resolveTime(language, adjectiveType, context)
 
     fun applyTransformers(node: SyntaxNode) {
@@ -117,10 +118,10 @@ data class SyntaxLogic(
             applyTransformers(child)
     }
 
-    private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: Context): SourcedCategoryValues {
+    private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: DescriptionContext): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
-        timeFormSolver[speechPart to timeValue]?.let { categories ->
+        verbFormSolver[speechPart to timeValue]?.let { categories ->
             return categories.map { it }
         }
 
@@ -141,7 +142,7 @@ data class SyntaxLogic(
         |Syntax:
         |
         |${
-        timeFormSolver.map { (context, categories) ->
+        verbFormSolver.map { (context, categories) ->
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",

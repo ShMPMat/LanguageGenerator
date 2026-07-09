@@ -2,7 +2,7 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.clause.realization.*
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
@@ -11,7 +11,7 @@ import kotlin.random.Random
  */
 
 class CopulaDescription(val subject: NominalDescription, val complement: NominalDescription) : ClauseDescription {
-    override fun toClause(language: Language, context: Context, random: Random): CopulaClause {
+    override fun toClause(language: Language, context: DescriptionContext, random: Random): CopulaClause {
         val subjectClause = subject.toClause(language, context, random)
         val complementClause = complement.toClause(language, context, random)
 
@@ -22,7 +22,7 @@ class CopulaDescription(val subject: NominalDescription, val complement: Nominal
 }
 
 class PotentialDescription(val sentenceDescription: VerbMainClauseDescription) : SentenceDescription() {
-    override fun toClause(language: Language, context: Context, random: Random): UnfoldableClause {
+    override fun toClause(language: Language, context: DescriptionContext, random: Random): UnfoldableClause {
         val sentenceClause = sentenceDescription.toClause(language, context, random)
 
         return language.changeParadigm.syntaxParadigm.potential

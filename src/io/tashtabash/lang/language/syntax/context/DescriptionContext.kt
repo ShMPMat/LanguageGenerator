@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 
 
-data class Context(
+data class DescriptionContext(
     val time: PrioritizedValue<TimeContext>,
     val type: PrioritizedValue<TypeContext>,
     val topic: ObjectType? = null

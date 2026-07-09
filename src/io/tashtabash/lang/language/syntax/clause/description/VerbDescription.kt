@@ -6,12 +6,12 @@ import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
 import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import kotlin.random.Random
 
 
 class VerbDescription(val verb: Meaning, val args: Map<ObjectType, NominalDescription>): ClauseDescription {
-    override fun toClause(language: Language, context: Context, random: Random): PredicateClause =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random): PredicateClause =
         language.lexis.getWord(verb).let { verb ->
             val resolvedArgs = args.mapKeys {
                 language.changeParadigm
@@ -40,7 +40,7 @@ class VerbDescription(val verb: Meaning, val args: Map<ObjectType, NominalDescri
     private fun constructCaseAdjunctClauses(
         arguments: Map<SyntaxRelation, NominalDescription>,
         language: Language,
-        context: Context,
+        context: DescriptionContext,
         random: Random
     ) = arguments.filterNot { (objectType) -> objectType in MainObjectType.syntaxRelations }
         .map { (syntaxRelation, description) ->

@@ -9,7 +9,7 @@ import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
@@ -73,7 +73,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )
@@ -160,7 +160,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )
@@ -253,7 +253,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )
@@ -346,7 +346,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )
@@ -439,7 +439,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = Context(
+        val context = DescriptionContext(
             PrioritizedValue(Past, Implicit),
             PrioritizedValue(Indicative, Explicit)
         )

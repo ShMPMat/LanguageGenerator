@@ -4,7 +4,7 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.syntax.clause.realization.*
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
-import io.tashtabash.lang.language.syntax.context.Context
+import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import kotlin.random.Random
 
@@ -13,7 +13,7 @@ abstract class SentenceDescription : UnfoldableClauseDescription
 
 
 class VerbMainClauseDescription(private val verb: VerbDescription) : SentenceDescription() {
-    override fun toClause(language: Language, context: Context, random: Random) =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         verb.toClause(language, context, random).let {
             val type = when (context.type.first) {
                 Indicative -> VerbSentenceType.MainVerbClause
@@ -32,7 +32,7 @@ class VerbMainClauseDescription(private val verb: VerbDescription) : SentenceDes
 
 
 class CopulaMainClauseDescription(private val copulaClause: CopulaDescription) : SentenceDescription() {
-    override fun toClause(language: Language, context: Context, random: Random) =
+    override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         CopulaSentenceClause(
             copulaClause.toClause(language, context, random),
             when (context.type.first) {
