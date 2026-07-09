@@ -2,7 +2,6 @@ package io.tashtabash.lang.language.syntax.clause.construction
 
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.MoodValue
-import io.tashtabash.lang.language.syntax.clause.realization.AdverbClause
 import io.tashtabash.lang.language.syntax.clause.realization.UnfoldableClause
 import io.tashtabash.lang.language.syntax.clause.realization.VerbSentenceClause
 
@@ -20,13 +19,12 @@ abstract class PotentialConstruction : Construction {
     }
 
     object Adverb : PotentialConstruction() {
-        override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause {
-            val adverb = language.lexis.getFunctionWord(this)
+        val construction = AddAdverb("potential adverb")
 
-            return sentence.copy(
-                predicate = sentence.predicate.addAdjunct(AdverbClause(adverb))
+        override fun apply(sentence: VerbSentenceClause, language: Language): UnfoldableClause =
+            sentence.copy(
+                predicate = construction.apply(sentence.predicate, language)
             )
-        }
     }
 
     data class Auxiliary(val construction: AuxiliaryConstruction) : PotentialConstruction() {

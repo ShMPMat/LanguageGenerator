@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.syntax.clause.construction
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.MoodValue
 import io.tashtabash.lang.language.category.moodName
+import io.tashtabash.lang.language.syntax.clause.realization.AdverbClause
 import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
 
 
@@ -23,5 +24,13 @@ data class ApplyMood(val value: MoodValue): VerbConstruction {
                 potentialValue
 
         return predicate.withCategories(categories)
+    }
+}
+
+data class AddAdverb(override val name: String): VerbConstruction {
+    override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
+        val adverb = language.lexis.getFunctionWord(this)
+
+        return predicate.addAdjunct(AdverbClause(adverb))
     }
 }

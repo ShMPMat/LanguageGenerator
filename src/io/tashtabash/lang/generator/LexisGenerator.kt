@@ -186,10 +186,10 @@ class LexisGenerator(
                 CopulaConstruction.Particle
             )
 
-        if (syntaxParadigm.potential == PotentialConstruction.Adverb)
+        if (syntaxParadigm.potential is PotentialConstruction.Adverb)
             generateFunctionWord(
                 SemanticsCore("is.able", SpeechPart.Adverb.toDefault()),
-                PotentialConstruction.Adverb
+                syntaxParadigm.potential.construction
             )
         if (syntaxParadigm.potential is PotentialConstruction.Auxiliary)
             generateFunctionWord(

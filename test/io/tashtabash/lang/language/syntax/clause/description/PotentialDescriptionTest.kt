@@ -123,7 +123,7 @@ internal class PotentialDescriptionTest {
             )
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verb, adverb), mapOf(PotentialConstruction.Adverb to SimpleWordPointer(adverb))),
+            Lexis(listOf(noun, verb, adverb), mapOf(PotentialConstruction.Adverb.construction to SimpleWordPointer(adverb))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
