@@ -159,6 +159,11 @@ class SyntaxLogicGenerator(
         addVerbConstruction(ContextValue.TimeContext.Regular) { speechPart ->
             verbFormSolver[speechPart to ContextValue.TimeContext.Regular] == null
         }
+        0.1.chanceOf {
+            addVerbConstruction(ContextValue.TimeContext.Present) {
+                .9.testProbability()
+            }
+        }
 
         // Add analytical Fut
         .8.chanceOf {
@@ -440,10 +445,13 @@ private val auxMeanings = mapOf<ContextValue.TimeContext, List<GenericSSO<String
             listOf("will".withProb(.1), "be".withProb(.1), "become".withProb(.1), "go".withProb(.1)),
     ContextValue.TimeContext.Regular to
             listOf("be".withProb(.5), "do".withProb(.1)),
+    ContextValue.TimeContext.Present to // The same as for Regular
+            listOf("be".withProb(.5), "do".withProb(.1)),
 )
 
 private val auxCategories = mapOf<ContextValue.TimeContext, List<GenericSSO<TenseValue>>>(
     // Past is doubtful, but I have to test it
     ContextValue.TimeContext.Future to listOf(TenseValue.Present.withProb(.9), TenseValue.Past.withProb(.1)),
     ContextValue.TimeContext.Regular to listOf(TenseValue.Present.withProb(.9)),
+    ContextValue.TimeContext.Present to listOf(TenseValue.Present.withProb(.9)), // The same as for Regular
 )

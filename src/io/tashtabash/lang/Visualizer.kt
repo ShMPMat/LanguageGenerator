@@ -148,11 +148,11 @@ class Visualizer(val language: Language) {
                 "You two felt light",
                 "I slept",
                 "It was with these hands that I built a house",
-                "It was with these that we build a house for you two",
-                "It was with these that we build a house for new high fathers"
+                "It was with these that we built a house for you two",
+                "It was with these that we built a house for new high fathers"
             ).zip(testSentencesMain),
             indicativeContext,
-            "Main"
+            "Long Gone Past"
         )
         printSampleClause(
             listOf(
@@ -229,6 +229,23 @@ class Visualizer(val language: Language) {
             ).zip(testSentencesConstructions),
             negationContext,
             "Construction negation"
+        )
+        printSampleClause(
+            listOf(
+                "These light's new mothers see that small time",
+                "New high fathers see that small time",
+                "I see that small time",
+                "I see these at home",
+                "I hear you two",
+                "New high fathers know me",
+                "You two feel light",
+                "I'm sleeping",
+                "I'm building a house with these hands",
+                "We are building a house for you two with these hands",
+                "We are building a house for new high fathers with these hands"
+            ).zip(testSentencesMain),
+            Context(Present to Implicit, Indicative to Explicit),
+            "Present"
         )
     }
 
