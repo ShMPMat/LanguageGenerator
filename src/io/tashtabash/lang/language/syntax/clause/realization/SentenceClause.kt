@@ -51,30 +51,33 @@ private fun SyntaxNode.addTopic(relation: SyntaxRelation) {
 
 data class VerbSentenceClause(
     val predicate: PredicateClause,
-    val type: VerbSentenceType,
+    val type: List<VerbSentenceType>,
     val topic: SyntaxRelation? // Any of the verb's children
 ) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
         predicate.toNode(language, random).apply {
-            if (type == VerbSentenceType.QuestionVerbClause)
+            if (VerbSentenceType.QuestionVerbClause in type)
                 addQuestionMarker(language)
-            if (type == VerbSentenceType.NegatedVerbClause)
+            if (VerbSentenceType.NegatedVerbClause in type)
                 categoryValues += NegationValue.Negative
             topic?.let { addTopic(it) }
         }
 }
 
-class CopulaSentenceClause(private val copulaClause: CopulaClause, val type: CopulaSentenceType) : SentenceClause() {
+class CopulaSentenceClause(
+    private val copulaClause: CopulaClause,
+    val type: List<CopulaSentenceType>
+) : SentenceClause() {
     override fun toNode(language: Language, random: Random): SyntaxNode =
         copulaClause.toNode(language, random).apply {
             arranger = language.changeParadigm
                 .wordOrder
                 .copulaOrder
                 .getValue(copulaClause.copulaType)
-                .getValue(type)
-            if (type == CopulaSentenceType.QuestionCopulaClause)
+                .getValue(type.firstOrNull() ?: CopulaSentenceType.MainCopulaClause)
+            if (CopulaSentenceType.QuestionCopulaClause in type)
                 addQuestionMarker(language)
-            if (type == CopulaSentenceType.NegatedCopulaClause)
+            if (CopulaSentenceType.NegatedCopulaClause in type)
                 categoryValues += NegationValue.Negative
         }
 }

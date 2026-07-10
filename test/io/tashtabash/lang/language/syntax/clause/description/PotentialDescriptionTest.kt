@@ -36,8 +36,6 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentVa
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
-import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
@@ -90,7 +88,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -134,7 +132,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -185,7 +183,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -267,7 +265,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -377,7 +375,7 @@ internal class PotentialDescriptionTest {
 
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to i))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -485,7 +483,7 @@ internal class PotentialDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(

@@ -13,8 +13,6 @@ import io.tashtabash.lang.language.syntax.context.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
-import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
@@ -56,7 +54,7 @@ internal class PossessorDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1), listOf(PossessorDescription(we)))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -119,7 +117,7 @@ internal class PossessorDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1), listOf(PossessorDescription(we)))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(

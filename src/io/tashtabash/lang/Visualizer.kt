@@ -125,16 +125,19 @@ class Visualizer(val language: Language) {
 
         val indicativeContext = DescriptionContext(
             LongGonePast to Implicit,
-            Indicative to Explicit,
-            Instrument // Topicalize the Instrument if present
+            topic = Instrument // Topicalize the Instrument if present
         )
         val questionContext = DescriptionContext(
             FarFuture to Implicit,
-            GeneralQuestion to Explicit
+            listOf(GeneralQuestion to Explicit)
         )
         val negationContext = DescriptionContext(
             Regular to Implicit,
-            Negative to Explicit
+            listOf(Negative to Explicit)
+        )
+        val negationQuestionContext = DescriptionContext(
+            Present to Implicit,
+            listOf(GeneralQuestion to Explicit, Negative to Explicit)
         )
 
         printSampleClause(
@@ -190,6 +193,23 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "Don't these light's new mothers see that small time?",
+                "Don't new high fathers see that small time?",
+                "Don't I see that small time?",
+                "Don't I see these at home?",
+                "Don't I hear you two?",
+                "Don't new high fathers know me?",
+                "Don't you two feel light?",
+                "Am I not sleeping?",
+                "Am I not building a house with these hands?",
+                "Aren't we building a house with these for you two?",
+                "Aren't we building a house with these for new high fathers?"
+            ).zip(testSentencesMain),
+            negationQuestionContext,
+            "Negative question (present)"
+        )
+        printSampleClause(
+            listOf(
                 "These light's new mothers were that small time",
                 "New high fathers were that small time",
                 "I was that small time",
@@ -232,6 +252,20 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "Aren't these light's new mothers that small time?",
+                "Aren't new high fathers that small time?",
+                "Aren't I that small time?",
+                "Aren't these mine?",
+                "Don't I belong to these light's new mothers?",
+                "Am I not able to hear you two?",
+                "Am I not able to see these at home?",
+                "Am I not able to sleep?"
+            ).zip(testSentencesConstructions),
+            questionContext,
+            "Construction negative question (present)"
+        )
+        printSampleClause(
+            listOf(
                 "These light's new mothers see that small time",
                 "New high fathers see that small time",
                 "I see that small time",
@@ -244,7 +278,7 @@ class Visualizer(val language: Language) {
                 "We are building a house for you two with these hands",
                 "We are building a house for new high fathers with these hands"
             ).zip(testSentencesMain),
-            DescriptionContext(Present to Implicit, Indicative to Explicit),
+            DescriptionContext(Present to Implicit),
             "Present"
         )
     }

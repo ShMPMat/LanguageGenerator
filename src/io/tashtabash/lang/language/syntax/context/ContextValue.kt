@@ -23,7 +23,6 @@ sealed class ContextValue {
     }
 
     sealed class TypeContext : ContextValue() {
-        object Indicative: TypeContext()
         object GeneralQuestion: TypeContext()
         object Negative: TypeContext()
     }

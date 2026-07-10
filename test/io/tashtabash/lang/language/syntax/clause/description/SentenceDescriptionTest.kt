@@ -24,7 +24,6 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongG
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.FarFuture
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
-import io.tashtabash.lang.language.syntax.context.PrioritizedValue
 import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.syntax.transformer.*
@@ -86,7 +85,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = DescriptionContext(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -154,7 +153,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = DescriptionContext(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -227,7 +226,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to dogDescription, MainObjectType.Patient to dogDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf())
 
         assertEquals(
             listOf(
@@ -304,7 +303,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = DescriptionContext(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -371,7 +370,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to personalPronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf())
 
         assertEquals(
             listOf(
@@ -441,7 +440,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Argument to dogDescription, AdjunctType.Benefactor to dogDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf())
 
         assertEquals(
             listOf(
@@ -519,7 +518,7 @@ internal class SentenceDescriptionTest {
                 )
             )
         )
-        val context = DescriptionContext(PrioritizedValue(Past, Implicit), PrioritizedValue(Indicative, Explicit))
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -611,7 +610,7 @@ internal class SentenceDescriptionTest {
             )
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -673,7 +672,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to pronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -720,7 +719,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -774,7 +773,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit)
 
         assertEquals(
             listOf(
@@ -828,7 +827,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to nounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Indicative to Explicit, MainObjectType.Patient)
+        val context = DescriptionContext(LongGonePast to Implicit, topic = MainObjectType.Patient)
 
         assertEquals(
             listOf(
@@ -880,7 +879,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, GeneralQuestion to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(GeneralQuestion to Explicit))
 
         assertEquals(
             listOf(
@@ -945,7 +944,7 @@ internal class SentenceDescriptionTest {
             mapOf(MainObjectType.Agent to pronounDescription, MainObjectType.Patient to pronounDescription)
         )
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, Negative to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Negative to Explicit))
 
         assertEquals(
             listOf(
@@ -1000,7 +999,7 @@ internal class SentenceDescriptionTest {
         )
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to pronounDescription))
         val sentenceDescription = VerbMainClauseDescription(verbDescription)
-        val context = DescriptionContext(LongGonePast to Implicit, GeneralQuestion to Explicit)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(GeneralQuestion to Explicit))
 
         assertEquals(
             listOf(
@@ -1071,7 +1070,7 @@ internal class SentenceDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
-        val context = DescriptionContext(FarFuture to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(FarFuture to Implicit)
 
         assertEquals(
             listOf(
@@ -1130,7 +1129,7 @@ internal class SentenceDescriptionTest {
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
         val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
-        val context = DescriptionContext(FarFuture to Implicit, Indicative to Explicit)
+        val context = DescriptionContext(FarFuture to Implicit)
 
         assertEquals(
             listOf(

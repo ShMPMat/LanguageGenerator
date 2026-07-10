@@ -89,14 +89,12 @@ data class SyntaxNode(
 interface SentenceType
 
 enum class VerbSentenceType : SentenceType {
-    MainVerbClause,
     QuestionVerbClause,
     NegatedVerbClause
 }
 
 enum class CopulaSentenceType : SentenceType {
     MainCopulaClause,
-    SubordinateCopulaClause,
     QuestionCopulaClause,
     NegatedCopulaClause
 }
@@ -104,7 +102,6 @@ enum class CopulaSentenceType : SentenceType {
 fun differentCopulaWordOrderProbability(sentenceType: CopulaSentenceType) = when (sentenceType) {
     // I haven't found any info about the probabilities
     MainCopulaClause -> .02
-    SubordinateCopulaClause -> .02
     QuestionCopulaClause -> .02
     NegatedCopulaClause -> .01
 }

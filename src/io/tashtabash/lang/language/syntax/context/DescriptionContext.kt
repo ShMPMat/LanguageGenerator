@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.*
 
 data class DescriptionContext(
     val time: PrioritizedValue<TimeContext>,
-    val type: PrioritizedValue<TypeContext>,
+    val type: List<PrioritizedValue<TypeContext>> = listOf(), // No values means the boring indicative clause
     val topic: ObjectType? = null
 )
 

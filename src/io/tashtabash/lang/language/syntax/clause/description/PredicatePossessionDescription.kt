@@ -47,10 +47,11 @@ class ObliquePredicatePossessionDescription(
                     )
                 )
             },
-            when (context.type.first) {
-                Indicative -> VerbSentenceType.MainVerbClause
-                GeneralQuestion -> VerbSentenceType.QuestionVerbClause
-                Negative -> VerbSentenceType.NegatedVerbClause
+            context.type.map {
+                when (it.first) {
+                    GeneralQuestion -> VerbSentenceType.QuestionVerbClause
+                    Negative -> VerbSentenceType.NegatedVerbClause
+                }
             }
         )
 }

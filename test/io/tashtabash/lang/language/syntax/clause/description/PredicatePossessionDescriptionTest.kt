@@ -12,9 +12,6 @@ import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessio
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.Indicative
-import io.tashtabash.lang.language.syntax.context.PrioritizedValue
-import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
@@ -73,10 +70,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = DescriptionContext(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -160,10 +154,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = DescriptionContext(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -253,10 +244,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = DescriptionContext(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -346,10 +334,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = DescriptionContext(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
@@ -439,10 +424,7 @@ internal class PredicatePossessionDescriptionTest {
             NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
             NominalDescription("dog", ContextValue.ActorComplimentValue(3))
         )
-        val context = DescriptionContext(
-            PrioritizedValue(Past, Implicit),
-            PrioritizedValue(Indicative, Explicit)
-        )
+        val context = DescriptionContext(Past to Implicit)
 
         assertEquals(
             listOf(
