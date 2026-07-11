@@ -20,12 +20,3 @@ class CopulaDescription(val subject: NominalDescription, val complement: Nominal
             .apply(subjectClause, complementClause, language, context)
     }
 }
-
-class PotentialDescription(val sentenceDescription: VerbMainClauseDescription) : SentenceDescription() {
-    override fun toClause(language: Language, context: DescriptionContext, random: Random): UnfoldableClause {
-        val sentenceClause = sentenceDescription.toClause(language, context, random)
-
-        return language.changeParadigm.syntaxParadigm.potential
-            .apply(sentenceClause, language)
-    }
-}

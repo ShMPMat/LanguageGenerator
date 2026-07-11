@@ -7,7 +7,6 @@ import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.SpeechPart.PersonalPronoun
 import io.tashtabash.lang.language.syntax.RandomOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
-import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.WordOrder
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
@@ -23,7 +22,6 @@ class TransformerGenerator(
     val changeParadigm: WordChangeParadigm,
     val syntaxLogic: SyntaxLogic,
     val wordOrder: WordOrder,
-    val syntaxParadigm: SyntaxParadigm
 ) {
     fun generateTransformers(): List<Pair<SyntaxNodeMatcher, Transformer>> = listOfNotNull(
         // Word order
@@ -125,8 +123,7 @@ class TransformerGenerator(
         changeParadigm.speechParts
             .filter(::isNominal)
             .filter {
-                changeParadigm.getParadigm(it)
-                    .getCategoryOrNull(deixisName)
+                changeParadigm.getParadigm(it)[deixisName]
                     ?.compulsoryData
                     ?.isCompulsory == false
             }
@@ -141,8 +138,7 @@ class TransformerGenerator(
         changeParadigm.speechParts
             .filter(::isNominal)
             .filter {
-                changeParadigm.getParadigm(it)
-                    .getCategoryOrNull(definitenessName)
+                changeParadigm.getParadigm(it)[definitenessName]
                     ?.compulsoryData
                     ?.isCompulsory == false
             }

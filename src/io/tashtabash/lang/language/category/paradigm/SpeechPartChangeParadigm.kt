@@ -31,19 +31,19 @@ data class SpeechPartChangeParadigm(
         .firstOrNull { it.first == cluster }
         ?.first
 
-    fun getCategoryOrNull(name: String) = categories
+    operator fun get(name: String): SourcedCategory? = categories
         .firstOrNull { it.category.outType == name }
 
-    fun getCategory(name: String) = categories
+    fun getValue(name: String) = categories
         .first { it.category.outType == name }
 
     fun getValueOrEmpty(categoryName: String, value: CategoryValue): List<SourcedCategoryValue> =
-        getCategoryOrNull(categoryName)
+        get(categoryName)
             ?.getOrNull(value)
             ?.let { listOf(it) }
             ?: listOf()
 
-    fun getCategoryValues(name: String) = getCategoryOrNull(name)
+    fun getCategoryValues(name: String) = get(name)
         ?.category
         ?.actualValues
         ?: emptyList()

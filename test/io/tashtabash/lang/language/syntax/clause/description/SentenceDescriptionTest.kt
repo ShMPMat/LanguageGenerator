@@ -71,7 +71,7 @@ internal class SentenceDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
+                mapOf(Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to Argument to listOf()
                 ),
@@ -137,7 +137,7 @@ internal class SentenceDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])),
+                mapOf(Verb.toDefault() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])),
                 verbCasesSolver = mapOf(
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
@@ -1059,9 +1059,9 @@ internal class SentenceDescriptionTest {
                     Verb.toIntransitive() to Argument to listOf(),
                 ),
                 verbFormSolver = mapOf(
-                    Verb.toIntransitive() to FarFuture to listOf(
-                        intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past],
-                        intransVerbChangeParadigm.getCategory(moodName)[MoodValue.Potential],
+                    Verb.toIntransitive() to (FarFuture to null) to listOf(
+                        intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past],
+                        intransVerbChangeParadigm.getValue(moodName)[MoodValue.Potential],
                     ),
                 )
             ),
@@ -1121,7 +1121,7 @@ internal class SentenceDescriptionTest {
                     Verb.toInf() to Argument to listOf(),
                 ),
                 verbConstructions = mapOf(
-                    Verb.toIntransitive() to FarFuture to auxConstruction
+                    Verb.toIntransitive() to (FarFuture to null) to auxConstruction
                 )
             )
         )

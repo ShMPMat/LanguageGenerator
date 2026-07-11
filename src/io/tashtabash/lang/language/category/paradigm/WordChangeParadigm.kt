@@ -114,13 +114,13 @@ data class WordChangeParadigm(
             .staticCategories
             .mapNotNull {
                 val parentCategory = speechPartChangeParadigms[word.semanticsCore.speechPart]
-                    ?.getCategoryOrNull(it.parentClassName)
+                    ?.get(it.parentClassName)
                     ?: return@mapNotNull null
 
                 parentCategory[it]
             }
 
-    fun getParadigm(speechPart: TypedSpeechPart) =
+    fun getParadigm(speechPart: TypedSpeechPart): SpeechPartChangeParadigm =
         speechPartChangeParadigms[speechPart]
             ?: throw ChangeException("The change paradigm for '$speechPart' doesn't exist")
 

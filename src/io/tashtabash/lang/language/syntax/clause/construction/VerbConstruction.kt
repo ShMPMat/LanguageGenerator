@@ -19,7 +19,7 @@ data class ApplyMood(val value: MoodValue): VerbConstruction {
     override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
         val potentialValue = language.changeParadigm.wordChangeParadigm
             .getParadigm(predicate.head.semanticsCore.speechPart)
-            .getCategory(moodName)[value]
+            .getValue(moodName)[value]
         val categories = predicate.additionalCategories.filter { it.categoryValue !is MoodValue } +
                 potentialValue
 
@@ -33,4 +33,6 @@ data class AddAdverb(override val name: String): VerbConstruction {
 
         return predicate.addAdjunct(AdverbClause(adverb))
     }
+
+    override fun toString() = "Adverb '$name'"
 }

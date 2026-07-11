@@ -69,7 +69,7 @@ internal class WordFormAnalyzerTest {
 
         val wordForms = getIdenticalWordForms(language)
 
-        val sgCategoryValue = nounChangeParadigm.getCategory("Number")
+        val sgCategoryValue = nounChangeParadigm.getValue("Number")
             .actualSourcedValues
             .find { it.categoryValue == NumberValue.Singular }
             .let { listOf(it!!) }

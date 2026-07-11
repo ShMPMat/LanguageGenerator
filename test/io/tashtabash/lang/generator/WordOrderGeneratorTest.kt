@@ -9,7 +9,6 @@ import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.transformer.ChangeOrderTransformer
@@ -27,7 +26,6 @@ class WordOrderGeneratorTest {
         val syntaxParadigm = SyntaxParadigm(
             CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
             PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0))),
-            PotentialConstruction.Adverb
         )
 
         assertTrue {
@@ -46,8 +44,7 @@ class WordOrderGeneratorTest {
                             Verb.toDefault() to SyntaxRelation.Patient to listOf()
                         )
                     ),
-                    WordOrderGenerator().generateWordOrder(syntaxParadigm),
-                    syntaxParadigm
+                    WordOrderGenerator().generateWordOrder(syntaxParadigm)
                 ).generateTransformers()
             }.any { result -> result.any { it.second is ChangeOrderTransformer } }
         }
@@ -63,7 +60,6 @@ class WordOrderGeneratorTest {
                 CopulaConstruction.Particle.withProb(1.0)
             )),
             PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0))),
-            PotentialConstruction.Adverb
         )
 
         assertEquals(

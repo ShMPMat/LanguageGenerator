@@ -15,10 +15,11 @@ abstract class SentenceDescription : UnfoldableClauseDescription
 class VerbMainClauseDescription(private val verb: VerbDescription) : SentenceDescription() {
     override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         verb.toClause(language, context, random).let { predicateClause ->
-            val type = context.type.map {
+            val type = context.type.mapNotNull {
                 when (it.first) {
                     GeneralQuestion -> VerbSentenceType.QuestionVerbClause
                     Negative -> VerbSentenceType.NegatedVerbClause
+                    Potential -> null
                 }
             }
 
@@ -36,10 +37,11 @@ class CopulaMainClauseDescription(private val copulaClause: CopulaDescription) :
     override fun toClause(language: Language, context: DescriptionContext, random: Random) =
         CopulaSentenceClause(
             copulaClause.toClause(language, context, random),
-            context.type.map {
+            context.type.mapNotNull {
                 when (it.first) {
                     GeneralQuestion -> CopulaSentenceType.QuestionCopulaClause
                     Negative -> CopulaSentenceType.NegatedCopulaClause
+                    Potential -> null
                 }
             }
         )

@@ -57,7 +57,7 @@ internal class PredicatePossessionDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toDefault() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                    SpeechPart.Verb.toDefault() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toDefault() to SyntaxRelation.Agent to listOf(),
@@ -141,7 +141,7 @@ internal class PredicatePossessionDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
@@ -231,7 +231,7 @@ internal class PredicatePossessionDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
@@ -321,7 +321,7 @@ internal class PredicatePossessionDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
@@ -411,7 +411,7 @@ internal class PredicatePossessionDescriptionTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 mapOf(
-                    SpeechPart.Verb.toIntransitive() to Past to listOf(tenseSourcedCategory[TenseValue.Past])
+                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
                 ),
                 verbCasesSolver = mapOf(
                     SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),

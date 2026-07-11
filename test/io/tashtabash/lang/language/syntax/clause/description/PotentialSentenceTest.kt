@@ -12,6 +12,7 @@ import io.tashtabash.lang.language.category.Person
 import io.tashtabash.lang.language.category.PersonValue.*
 import io.tashtabash.lang.language.category.Tense
 import io.tashtabash.lang.language.category.TenseValue
+import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.sourcedFrom
@@ -28,15 +29,16 @@ import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.AddAdverb
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorComplimentValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.ActorValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
-import io.tashtabash.lang.language.syntax.context.Priority.Implicit
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
+import io.tashtabash.lang.language.syntax.context.Priority.*
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -44,9 +46,9 @@ import org.junit.jupiter.api.Test
 import kotlin.random.Random
 
 
-internal class PotentialDescriptionTest {
+internal class PotentialSentenceTest {
     @Test
-    fun `PotentialDescription handles potential mood`() {
+    fun `Potential sentence handles potential mood`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val noun = createNoun("a") withMeaning "cat"
@@ -80,15 +82,19 @@ internal class PotentialDescriptionTest {
             listOf(noun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
+                verbFormSolver = mapOf(
+                    Verb.toIntransitive() to (null to Potential) to listOf(
+                        verbChangeParadigm.getValue(moodName)[MoodValue.Potential],
+                    ),
+                ),
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
             ),
-            potentialConstruction = PotentialConstruction.Mood
         )
         // Set up descriptions
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
-        val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -105,7 +111,7 @@ internal class PotentialDescriptionTest {
     }
 
     @Test
-    fun `PotentialDescription handles adverbs`() {
+    fun `Potential sentence handles adverbs`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val noun = createNoun("a") withMeaning "cat"
@@ -121,18 +127,18 @@ internal class PotentialDescriptionTest {
             )
         )
         val language = makeDefLang(
-            Lexis(listOf(noun, verb, adverb), mapOf(PotentialConstruction.Adverb.construction to SimpleWordPointer(adverb))),
+            Lexis(listOf(noun, verb, adverb), mapOf(AddAdverb("be.able") to SimpleWordPointer(adverb))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
+                verbConstructions = mapOf(Verb.toIntransitive() to (null to Potential) to AddAdverb("be.able"))
             ),
-            potentialConstruction = PotentialConstruction.Adverb
         )
         // Set up descriptions
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val verbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
-        val sentenceDescription = PotentialDescription(VerbMainClauseDescription(verbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val sentenceDescription = VerbMainClauseDescription(verbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -147,7 +153,7 @@ internal class PotentialDescriptionTest {
     }
 
     @Test
-    fun `PotentialDescription handles aux with trans and intrans`() {
+    fun `Potential sentence handles aux with trans and intrans`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val noun = createNoun("a") withMeaning "cat"
@@ -164,11 +170,9 @@ internal class PotentialDescriptionTest {
                 Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault())
             )
         )
-        val auxConstruction = PotentialConstruction.Auxiliary(
-            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
-        )
+        val auxConstruction = SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -176,14 +180,17 @@ internal class PotentialDescriptionTest {
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
                 ),
+                verbConstructions = mapOf(
+                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
+                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                )
             ),
-            potentialConstruction = auxConstruction
         )
         // Set up descriptions
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
-        val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -197,7 +204,7 @@ internal class PotentialDescriptionTest {
         )
 
         val transVerbDescription = VerbDescription("see", mapOf(MainObjectType.Agent to cat, MainObjectType.Patient to cat))
-        val transSentenceDescription = PotentialDescription(VerbMainClauseDescription(transVerbDescription))
+        val transSentenceDescription = VerbMainClauseDescription(transVerbDescription)
 
         assertEquals(
             listOf(
@@ -213,7 +220,7 @@ internal class PotentialDescriptionTest {
     }
 
     @Test
-    fun `PotentialDescription correctly passes cases`() {
+    fun `Potential construction handle cases correctly`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val noun = createNoun("a") withMeaning "cat"
@@ -243,11 +250,9 @@ internal class PotentialDescriptionTest {
                 Verb.toDefault() to SpeechPartChangeParadigm(Verb.toDefault())
             )
         )
-        val auxConstruction = PotentialConstruction.Auxiliary(
-            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
-        )
+        val auxConstruction = SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -258,14 +263,17 @@ internal class PotentialDescriptionTest {
                     Verb.toAux() to Agent to listOf(CaseValue.Nominative),
                     Verb.toAux() to Patient to listOf(CaseValue.Accusative)
                 ),
+                verbConstructions = mapOf(
+                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
+                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                )
             ),
-            potentialConstruction = auxConstruction
         )
         // Set up descriptions
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
-        val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -283,7 +291,7 @@ internal class PotentialDescriptionTest {
         )
 
         val transVerbDescription = VerbDescription("see", mapOf(MainObjectType.Agent to cat, MainObjectType.Patient to cat))
-        val transSentenceDescription = PotentialDescription(VerbMainClauseDescription(transVerbDescription))
+        val transSentenceDescription = VerbMainClauseDescription(transVerbDescription)
 
         assertEquals(
             listOf(
@@ -307,7 +315,7 @@ internal class PotentialDescriptionTest {
     }
 
     @Test
-    fun `PotentialDescription agrees with subject in serial verb construction`() {
+    fun `Potential sentence agrees with subject in serial verb construction`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val pronoun = createWord("o", PersonalPronoun) withMeaning "_personal_pronoun"
@@ -345,11 +353,9 @@ internal class PotentialDescriptionTest {
                 Verb.toDefault() to transVerbChangeParadigm
             )
         )
-        val auxConstruction = PotentialConstruction.Auxiliary(
-            SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
-        )
+        val auxConstruction = SerialAuxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)))
         val language = makeDefLang(
-            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
+            Lexis(listOf(pronoun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -360,8 +366,11 @@ internal class PotentialDescriptionTest {
                     Verb.toAux() to Agent to listOf(),
                     Verb.toAux() to Patient to listOf()
                 ),
+                verbConstructions = mapOf(
+                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
+                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                )
             ),
-            potentialConstruction = auxConstruction
         )
         // Set up descriptions
         val i = PronounDescription(
@@ -374,8 +383,8 @@ internal class PotentialDescriptionTest {
         )
 
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to i))
-        val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -397,7 +406,7 @@ internal class PotentialDescriptionTest {
         )
 
         val transVerbDescription = VerbDescription("see", mapOf(MainObjectType.Agent to you, MainObjectType.Patient to i))
-        val transSentenceDescription = PotentialDescription(VerbMainClauseDescription(transVerbDescription))
+        val transSentenceDescription = VerbMainClauseDescription(transVerbDescription)
 
         assertEquals(
             listOf(
@@ -421,7 +430,7 @@ internal class PotentialDescriptionTest {
     }
 
     @Test
-    fun `PotentialDescription handles aux governing tense with trans and intrans`() {
+    fun `Potential sentence handles aux governing tense with trans and intrans`() {
         RandomSingleton.safeRandom = Random(Random.nextInt())
         // Set up words
         val noun = createNoun("a") withMeaning "cat"
@@ -459,11 +468,9 @@ internal class PotentialDescriptionTest {
                 Verb.toDefault() to transVerbChangeParadigm
             )
         )
-        val auxConstruction = PotentialConstruction.Auxiliary(
-            Auxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)), listOf(TenseValue.Present))
-        )
+        val auxConstruction = Auxiliary(RelationArranger(StaticOrder(Predicate, Auxiliary)), listOf(TenseValue.Present))
         val language = makeDefLang(
-            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction.construction to SimpleWordPointer(aux))),
+            Lexis(listOf(noun, verbIntrans, verbTrans, aux), mapOf(auxConstruction to SimpleWordPointer(aux))),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
@@ -472,18 +479,21 @@ internal class PotentialDescriptionTest {
                     Verb.toDefault() to Patient to listOf()
                 ),
                 verbFormSolver = mapOf(
-                    Verb.toIntransitive() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
-                    Verb.toAux() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past]),
-                    Verb.toDefault() to LongGonePast to listOf(intransVerbChangeParadigm.getCategory(tenseName)[TenseValue.Past])
+                    Verb.toIntransitive() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past]),
+                    Verb.toAux() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past]),
+                    Verb.toDefault() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past])
+                ),
+                verbConstructions = mapOf(
+                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
+                    Verb.toDefault() to (null to Potential) to auxConstruction,
                 )
             ),
-            potentialConstruction = auxConstruction
         )
         // Set up descriptions
         val cat = NominalDescription("cat", ActorComplimentValue(1))
         val intransVerbDescription = VerbDescription("sleep", mapOf(MainObjectType.Argument to cat))
-        val intransSentenceDescription = PotentialDescription(VerbMainClauseDescription(intransVerbDescription))
-        val context = DescriptionContext(LongGonePast to Implicit)
+        val intransSentenceDescription = VerbMainClauseDescription(intransVerbDescription)
+        val context = DescriptionContext(LongGonePast to Implicit, listOf(Potential to Explicit))
 
         assertEquals(
             listOf(
@@ -505,7 +515,7 @@ internal class PotentialDescriptionTest {
         )
 
         val transVerbDescription = VerbDescription("see", mapOf(MainObjectType.Agent to cat, MainObjectType.Patient to cat))
-        val transSentenceDescription = PotentialDescription(VerbMainClauseDescription(transVerbDescription))
+        val transSentenceDescription = VerbMainClauseDescription(transVerbDescription)
 
         assertEquals(
             listOf(

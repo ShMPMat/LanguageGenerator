@@ -32,10 +32,9 @@ class ChangeParadigmGenerator(
     changeGenerator: ChangeGenerator,
     private val restrictionsParadigm: RestrictionsParadigm
 ) {
-    private val auxGenerator = AuxGenerator()
     private val applicatorsGenerator = ApplicatorsGenerator(lexisGenerator, changeGenerator)
     private val wordOrderGenerator = WordOrderGenerator()
-    private val syntaxParadigmGenerator = SyntaxParadigmGenerator(auxGenerator)
+    private val syntaxParadigmGenerator = SyntaxParadigmGenerator()
     val numeralParadigmGenerator = NumeralParadigmGenerator()
 
     private val emptyArticleParadigm = SpeechPartChangeParadigm(Article.toDefault())
@@ -94,6 +93,7 @@ class ChangeParadigmGenerator(
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)
         val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
+        val auxGenerator = AuxGenerator(wordChangeParadigm)
         val syntaxLogic = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm, auxGenerator)
             .generateSyntaxLogic(wordOrder)
         val numeralParadigm = numeralParadigmGenerator.generateNumeralParadigm()

@@ -118,9 +118,6 @@ class Visualizer(val language: Language) {
             CopulaMainClauseDescription(CopulaDescription(i, time)),
             PredicatePossessionDescription(i, these),
             PredicatePossessionDescription(mothers, time),
-            PotentialDescription(VerbMainClauseDescription(hearVerb)),
-            PotentialDescription(VerbMainClauseDescription(fourthSeeVerb)),
-            PotentialDescription(VerbMainClauseDescription(sleepVerb))
         )
 
         val indicativeContext = DescriptionContext(
@@ -134,6 +131,10 @@ class Visualizer(val language: Language) {
         val negationContext = DescriptionContext(
             Regular to Implicit,
             listOf(Negative to Explicit)
+        )
+        val potentialContext = DescriptionContext(
+            ImmediateFuture to Implicit,
+            listOf(Potential to Explicit)
         )
         val negationQuestionContext = DescriptionContext(
             Present to Implicit,
@@ -193,6 +194,23 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "These light's new mothers will be able to see that small time",
+                "New high fathers will be able to see that small time",
+                "I will be able to see that small time",
+                "I will be able to see these at home",
+                "I will be able to hear you two",
+                "New high fathers will be able to know me",
+                "You two will be able to feel light",
+                "I will be able to sleep",
+                "I will be able to build a house with these hands",
+                "We will be able to build a house with these for you two",
+                "We will be able to build a house with these for new high fathers"
+            ).zip(testSentencesMain),
+            potentialContext,
+            "Potential"
+        )
+        printSampleClause(
+            listOf(
                 "Don't these light's new mothers see that small time?",
                 "Don't new high fathers see that small time?",
                 "Don't I see that small time?",
@@ -229,9 +247,6 @@ class Visualizer(val language: Language) {
                 "Will I be that small time?",
                 "Will these be mine?",
                 "Will I belong to these light's new mothers?",
-                "Will I be able to hear you two?",
-                "Will I be able to see these at home?",
-                "Will I be able to sleep?"
             ).zip(testSentencesConstructions),
             questionContext,
             "Construction question"
@@ -243,9 +258,6 @@ class Visualizer(val language: Language) {
                 "I'm not that small time",
                 "These aren't mine",
                 "I don't belong to these light's new mothers",
-                "I can't hear you two",
-                "I can't see these at home",
-                "I can't sleep"
             ).zip(testSentencesConstructions),
             negationContext,
             "Construction negation"
@@ -257,9 +269,6 @@ class Visualizer(val language: Language) {
                 "Aren't I that small time?",
                 "Aren't these mine?",
                 "Don't I belong to these light's new mothers?",
-                "Am I not able to hear you two?",
-                "Am I not able to see these at home?",
-                "Am I not able to sleep?"
             ).zip(testSentencesConstructions),
             questionContext,
             "Construction negative question (present)"

@@ -1,48 +1,37 @@
 package io.tashtabash.lang.generator
 
 import io.tashtabash.lang.language.category.CaseValue
-import io.tashtabash.lang.language.category.MoodValue
-import io.tashtabash.lang.language.category.TenseValue
 import io.tashtabash.lang.language.category.caseName
-import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.WordChangeParadigm
-import io.tashtabash.lang.language.category.tenseName
-import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
-import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.arranger.RelationArranger
-import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction.*
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
-import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
-import io.tashtabash.lang.language.syntax.features.*
+import io.tashtabash.lang.language.syntax.features.CopulaPresence
+import io.tashtabash.lang.language.syntax.features.PredicatePossessionPresence
 import io.tashtabash.random.UnwrappableSSO
 import io.tashtabash.random.singleton.RandomSingleton
-import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import io.tashtabash.random.withProb
 
 
-class SyntaxParadigmGenerator(private val auxGenerator: AuxGenerator) {
+class SyntaxParadigmGenerator {
     internal fun generateSyntaxParadigm(wordChangeParadigm: WordChangeParadigm) = SyntaxParadigm(
         generateCopula(),
         generatePossession(wordChangeParadigm),
-        generatePotential(wordChangeParadigm)
     )
 
     private fun generateCopula(): CopulaPresence {
         val mainCopulaType = copulaProbabilities.randomElement()
         val noneProbability = RandomSingleton.random.nextDouble(mainCopulaType.probability)
             .let {
-                if (it <= mainCopulaType.probability / 5) 0.0
+                if (it <= mainCopulaType.probability / 5) .0
                 else it
             }
         return CopulaPresence(
             listOf(mainCopulaType) +
-                    if (noneProbability != 0.0)
+                    if (noneProbability != .0)
                         listOf(None.withProb(noneProbability))
                     else listOf()
         )
@@ -56,25 +45,6 @@ class SyntaxParadigmGenerator(private val auxGenerator: AuxGenerator) {
             listOf(possiblePossessionType.randomUnwrappedElement().withProb(1.0))
         )
         return possessionConstructionPresence
-    }
-
-    private fun generatePotential(wordChangeParadigm: WordChangeParadigm): PotentialConstruction {
-        if (MoodValue.Potential in wordChangeParadigm[moodName].actualValues)
-            return PotentialConstruction.Mood
-
-        // That's a pretty far-fetched case, idk if it exists in real life
-        val prsValue = wordChangeParadigm.categories
-            .first { it.outType == tenseName }
-            .actualValues
-            .firstOrNull { it == TenseValue.Present }
-        if (prsValue != null)
-            .05.chanceOf {
-                return PotentialConstruction.Auxiliary(
-                    Auxiliary(auxGenerator.order, listOf(prsValue))
-                )
-            }
-
-        return potentialProbabilities.randomUnwrappedElement()
     }
 }
 
@@ -90,19 +60,6 @@ val predicatePossessionProbabilities = listOf(
 
 val copulaProbabilities = listOf<UnwrappableSSO<CopulaConstruction>>(
     Verb.withProb(1.0),
-    Particle.withProb(0.25),
-    None.withProb(0.1)
-)
-
-val potentialProbabilities = listOf(
-    PotentialConstruction.Adverb.withProb(1.0),
-    PotentialConstruction.Auxiliary(
-        SerialAuxiliary(
-            RelationArranger(StaticOrder(SyntaxRelation.Auxiliary, SyntaxRelation.Predicate))
-        )
-    ).withProb(1.0),
-    PotentialConstruction.Auxiliary(
-        SerialAuxiliary(
-            RelationArranger(StaticOrder(SyntaxRelation.Predicate, SyntaxRelation.Auxiliary)))
-    ).withProb(1.0),
+    Particle.withProb(.25),
+    None.withProb(.1)
 )

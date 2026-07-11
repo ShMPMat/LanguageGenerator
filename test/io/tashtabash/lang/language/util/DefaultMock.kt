@@ -19,7 +19,6 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.arranger.Arranger
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction
 import io.tashtabash.lang.language.syntax.clause.syntax.CopulaSentenceType
 import io.tashtabash.lang.language.syntax.features.*
@@ -110,7 +109,6 @@ fun makeDefLang(
     derivations: List<Derivation> = listOf(),
     syntaxLogic: SyntaxLogic = SyntaxLogic(),
     predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
-    potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
     copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf()
 ) = makeDefLang(
     Lexis(words, mapOf()),
@@ -118,7 +116,6 @@ fun makeDefLang(
     derivations,
     syntaxLogic,
     predicatePossessionConstruction,
-    potentialConstruction,
     copulaOrder
 )
 
@@ -128,7 +125,6 @@ fun makeDefLang(
     derivations: List<Derivation> = listOf(),
     syntaxLogic: SyntaxLogic = SyntaxLogic(),
     predicatePossessionConstruction: PredicatePossessionConstruction = PredicatePossessionConstruction.HaveVerb,
-    potentialConstruction: PotentialConstruction = PotentialConstruction.Adverb,
     copulaOrder: Map<CopulaConstruction, MapWithDefault<CopulaSentenceType, Arranger>> = mapOf(),
 ) = Language(
     lexis.reifyPointers(),
@@ -142,7 +138,6 @@ fun makeDefLang(
         SyntaxParadigm(
             CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
             PredicatePossessionPresence(listOf(predicatePossessionConstruction.withProb(1.0))),
-            potentialConstruction
         ),
         NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
         syntaxLogic

@@ -103,8 +103,21 @@ data class SyntaxLogic(
                     .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
-    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? =
-        verbConstructions[verbType to context.time.first]
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? {
+        val timeValue = context.time.first
+        for ((typeValue) in context.type) {
+            verbConstructions[verbType to (timeValue to typeValue)]?.let {
+                return it
+            }
+        }
+        // Return the partial matches
+        for ((typeValue) in context.type) {
+            verbConstructions[verbType to (null to typeValue)]?.let {
+                return it
+            }
+        }
+        return verbConstructions[verbType to (timeValue to null)]
+    }
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: DescriptionContext) =
         resolveTime(language, adjectiveType, context)
@@ -121,7 +134,19 @@ data class SyntaxLogic(
     private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: DescriptionContext): SourcedCategoryValues {
         val (timeValue, priority) = context.time
 
-        verbFormSolver[speechPart to timeValue]?.let { categories ->
+        for ((typeValue) in context.type) {
+            verbFormSolver[speechPart to (timeValue to typeValue)]?.let { categories ->
+                return categories.map { it }
+            }
+        }
+        // Return the partial matches
+        for ((typeValue) in context.type) {
+            verbFormSolver[speechPart to (null to typeValue)]?.let { categories ->
+                return categories.map { it } +
+                        chooseClosestTense(language.changeParadigm.wordChangeParadigm.getParadigm(speechPart), timeValue)
+            }
+        }
+        verbFormSolver[speechPart to (timeValue to null)]?.let { categories ->
             return categories.map { it }
         }
 
@@ -146,7 +171,7 @@ data class SyntaxLogic(
             listOf(
                 "For ${context.first}, ",
                 "${context.second} ",
-                " used tense is: ",
+                " used categories are: ",
                 categories.joinToString(", ")
             )
         }
@@ -299,4 +324,4 @@ private fun TimeContext.toNumber() = when (this) {
 
 data class NumberCategorySolver(val amountMap: Map<NumberValue, IntRange>, val allForm: NumberValue)
 
-typealias VerbContextInfo = Pair<TypedSpeechPart, TimeContext>
+typealias VerbContextInfo = Pair<TypedSpeechPart, Pair<TimeContext?, TypeContext?>>

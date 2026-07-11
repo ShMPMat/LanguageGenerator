@@ -25,6 +25,7 @@ sealed class ContextValue {
     sealed class TypeContext : ContextValue() {
         object GeneralQuestion: TypeContext()
         object Negative: TypeContext()
+        object Potential: TypeContext()
     }
 
     data class ActorComplimentValue(val number: Amount, val deixis: DeixisValue? = null) {

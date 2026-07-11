@@ -20,10 +20,11 @@ import io.tashtabash.lang.language.phonology.prosody.generateStress
 import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
+import io.tashtabash.lang.language.syntax.clause.construction.AddAdverb
 import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
+import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.defaultAuxName
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.transformer.has
@@ -186,23 +187,12 @@ class LexisGenerator(
                 CopulaConstruction.Particle
             )
 
-        if (syntaxParadigm.potential is PotentialConstruction.Adverb)
-            generateFunctionWord(
-                SemanticsCore("is.able", SpeechPart.Adverb.toDefault()),
-                syntaxParadigm.potential.construction
-            )
-        if (syntaxParadigm.potential is PotentialConstruction.Auxiliary)
-            generateFunctionWord(
-                SemanticsCore("can", SpeechPart.Verb.toAux()),
-                syntaxParadigm.potential.construction
-            )
-
         for ((context, verbConstruction) in syntaxLogic.verbConstructions) {
             if (verbConstruction.name == defaultAuxName)
                 throw GeneratorException("default names for verb constructions are not supported")
 
             generateFunctionWord(
-                SemanticsCore(verbConstruction.name, SpeechPart.Verb.toAux()),
+                SemanticsCore(verbConstruction.name, determineFunctionWordType(verbConstruction)),
                 verbConstruction
             )
         }
@@ -221,6 +211,12 @@ class LexisGenerator(
         return Lexis(words.words, functionWords)
             .reifyPointers()
     }
+
+    private fun determineFunctionWordType(verbConstruction: VerbConstruction) =
+        if (verbConstruction is AddAdverb)
+            SpeechPart.Adverb.toDefault()
+        else
+            SpeechPart.Verb.toAux()
 
     private fun generateFunctionWord(core: SemanticsCore, construction: Construction) {
         words.getWordOrNull(core.meaningCluster.meanings[0])

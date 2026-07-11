@@ -23,7 +23,6 @@ import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.clause.construction.PotentialConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.HaveVerb
 import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.features.*
@@ -1536,7 +1535,6 @@ internal class PhonologicalRuleApplicatorTest {
                 SyntaxParadigm(
                     CopulaPresence(listOf(CopulaConstruction.None.withProb(1.0))),
                     PredicatePossessionPresence(listOf(HaveVerb.withProb(1.0))),
-                    PotentialConstruction.Adverb
                 ),
                 NumeralParadigm(NumeralSystemBase.Restricted3, listOf()),
                 SyntaxLogic()
