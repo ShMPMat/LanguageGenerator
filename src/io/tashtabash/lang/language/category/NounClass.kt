@@ -144,7 +144,7 @@ sealed class NounClassValue(meaning: Meaning, alias: String) : AbstractCategoryV
     object Male : NounClassValue("(male class ind)", "M")
     object Neutral : NounClassValue("(neutral class ind)", "N")
     object Common : NounClassValue("(common class ind)", "COMM")
-    object Person : NounClassValue("(person class ind)", "PERS")
+    object Person : NounClassValue("(person class ind)", "H")
     object Plant : NounClassValue("(plant class ind)", "PLANT")
     object Fruit : NounClassValue("(fruit class ind)", "FRUIT")
     object LongObject : NounClassValue("(long object class ind)", "LONG.OBJ")
