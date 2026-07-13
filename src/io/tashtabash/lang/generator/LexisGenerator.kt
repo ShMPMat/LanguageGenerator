@@ -187,7 +187,7 @@ class LexisGenerator(
                 CopulaConstruction.Particle
             )
 
-        for ((context, verbConstruction) in syntaxLogic.verbConstructions) {
+        for ((_, verbConstruction) in syntaxLogic.verbConstructions.rules) {
             if (verbConstruction.name == defaultAuxName)
                 throw GeneratorException("default names for verb constructions are not supported")
 

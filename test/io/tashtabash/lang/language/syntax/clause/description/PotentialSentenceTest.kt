@@ -12,11 +12,9 @@ import io.tashtabash.lang.language.category.Person
 import io.tashtabash.lang.language.category.PersonValue.*
 import io.tashtabash.lang.language.category.Tense
 import io.tashtabash.lang.language.category.TenseValue
-import io.tashtabash.lang.language.category.moodName
 import io.tashtabash.lang.language.category.paradigm.*
 import io.tashtabash.lang.language.category.realization.PassingCategoryApplicator
 import io.tashtabash.lang.language.category.sourcedFrom
-import io.tashtabash.lang.language.category.tenseName
 import io.tashtabash.lang.language.lexis.Lexis
 import io.tashtabash.lang.language.lexis.SimpleWordPointer
 import io.tashtabash.lang.language.lexis.SpeechPart.*
@@ -28,6 +26,7 @@ import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.StaticOrder
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
+import io.tashtabash.lang.language.syntax.VerbFormResolver
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
 import io.tashtabash.lang.language.syntax.clause.construction.AddAdverb
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
@@ -39,6 +38,7 @@ import io.tashtabash.lang.language.syntax.context.ContextValue.Amount.AmountValu
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.LongGonePast
 import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.lang.language.syntax.context.Priority.*
+import io.tashtabash.lang.language.syntax.rule
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -82,10 +82,8 @@ internal class PotentialSentenceTest {
             listOf(noun, verb),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                verbFormSolver = mapOf(
-                    Verb.toIntransitive() to (null to Potential) to listOf(
-                        verbChangeParadigm.getValue(moodName)[MoodValue.Potential],
-                    ),
+                verbFormSolver = VerbFormResolver(
+                    rule { Verb + Potential be listOf(moodSourcedCategory[MoodValue.Potential]) }
                 ),
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
             ),
@@ -131,7 +129,7 @@ internal class PotentialSentenceTest {
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(Verb.toIntransitive() to Argument to listOf()),
-                verbConstructions = mapOf(Verb.toIntransitive() to (null to Potential) to AddAdverb("be.able"))
+                verbConstructions = VerbFormResolver(rule { Verb + Potential be AddAdverb("be.able") })
             ),
         )
         // Set up descriptions
@@ -180,9 +178,8 @@ internal class PotentialSentenceTest {
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
                 ),
-                verbConstructions = mapOf(
-                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
-                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + Potential be auxConstruction }
                 )
             ),
         )
@@ -263,9 +260,8 @@ internal class PotentialSentenceTest {
                     Verb.toAux() to Agent to listOf(CaseValue.Nominative),
                     Verb.toAux() to Patient to listOf(CaseValue.Accusative)
                 ),
-                verbConstructions = mapOf(
-                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
-                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + Potential be auxConstruction }
                 )
             ),
         )
@@ -366,9 +362,8 @@ internal class PotentialSentenceTest {
                     Verb.toAux() to Agent to listOf(),
                     Verb.toAux() to Patient to listOf()
                 ),
-                verbConstructions = mapOf(
-                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
-                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + Potential be auxConstruction }
                 )
             ),
         )
@@ -478,14 +473,11 @@ internal class PotentialSentenceTest {
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
                 ),
-                verbFormSolver = mapOf(
-                    Verb.toIntransitive() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past]),
-                    Verb.toAux() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past]),
-                    Verb.toDefault() to (LongGonePast to null) to listOf(intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past])
+                verbFormSolver = VerbFormResolver(
+                    rule { Verb + LongGonePast be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
-                verbConstructions = mapOf(
-                    Verb.toIntransitive() to (null to Potential) to auxConstruction,
-                    Verb.toDefault() to (null to Potential) to auxConstruction,
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + Potential be auxConstruction }
                 )
             ),
         )

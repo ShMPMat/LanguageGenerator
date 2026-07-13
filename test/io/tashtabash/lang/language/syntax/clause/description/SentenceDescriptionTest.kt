@@ -71,7 +71,9 @@ internal class SentenceDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])),
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
+                ),
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to Argument to listOf()
                 ),
@@ -137,7 +139,9 @@ internal class SentenceDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(Verb.toDefault() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])),
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
+                ),
                 verbCasesSolver = mapOf(
                     Verb.toDefault() to Agent to listOf(),
                     Verb.toDefault() to Patient to listOf()
@@ -1058,12 +1062,9 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to Argument to listOf(),
                 ),
-                verbFormSolver = mapOf(
-                    Verb.toIntransitive() to (FarFuture to null) to listOf(
-                        intransVerbChangeParadigm.getValue(tenseName)[TenseValue.Past],
-                        intransVerbChangeParadigm.getValue(moodName)[MoodValue.Potential],
-                    ),
-                )
+                verbFormSolver = VerbFormResolver(
+                    rule { Verb + FarFuture be listOf(tenseSourcedCategory[TenseValue.Past], moodSourcedCategory[MoodValue.Potential]) }
+                ),
             ),
         )
         // Set up descriptions
@@ -1120,9 +1121,7 @@ internal class SentenceDescriptionTest {
                 verbCasesSolver = mapOf(
                     Verb.toInf() to Argument to listOf(),
                 ),
-                verbConstructions = mapOf(
-                    Verb.toIntransitive() to (FarFuture to null) to auxConstruction
-                )
+                verbConstructions = VerbFormResolver(rule { Verb + FarFuture be auxConstruction })
             )
         )
         // Set up descriptions

@@ -8,6 +8,7 @@ import io.tashtabash.lang.language.category.paradigm.SourcedCategoryValues
 import io.tashtabash.lang.language.category.paradigm.SpeechPartChangeParadigm
 import io.tashtabash.lang.language.category.value.CategoryValue
 import io.tashtabash.lang.language.category.value.CategoryValues
+import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
@@ -15,7 +16,6 @@ import io.tashtabash.lang.language.syntax.clause.description.ObjectType
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNode
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue.*
-import io.tashtabash.lang.language.syntax.context.Priority
 import io.tashtabash.lang.language.syntax.transformer.SyntaxNodeMatcher
 import io.tashtabash.lang.language.syntax.transformer.Transformer
 import kotlin.math.abs
@@ -23,7 +23,7 @@ import kotlin.math.abs
 
 data class SyntaxLogic(
     // Will be applied to Aux if it's present
-    private val verbFormSolver: Map<VerbContextInfo, SourcedCategoryValues> = mapOf(),
+    private val verbFormSolver: VerbFormResolver<SourcedCategoryValues> = VerbFormResolver(),
     // Maps Description-level semantic roles to Clause-level syntactic relations
     private val verbArgumentSolver: Map<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation> = mapOf(),
     // Maps Clause-level syntactic relations to specific category values (cases/adpositions)
@@ -35,7 +35,7 @@ data class SyntaxLogic(
     private val deixisDefinitenessCategorySolver: Map<Pair<DeixisValue?, TypedSpeechPart>, CategoryValues> = mapOf(),
     private val personalPronounInclusivity: SourcedCategory? = null, // WALS only knows about separate inclusive
     val transformers: List<Pair<SyntaxNodeMatcher, Transformer>> = listOf(),
-    val verbConstructions: Map<VerbContextInfo, VerbConstruction> = mapOf(),
+    val verbConstructions: VerbFormResolver<VerbConstruction> = VerbFormResolver(),
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
@@ -103,21 +103,8 @@ data class SyntaxLogic(
                     .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
-    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? {
-        val timeValue = context.time.first
-        for ((typeValue) in context.type) {
-            verbConstructions[verbType to (timeValue to typeValue)]?.let {
-                return it
-            }
-        }
-        // Return the partial matches
-        for ((typeValue) in context.type) {
-            verbConstructions[verbType to (null to typeValue)]?.let {
-                return it
-            }
-        }
-        return verbConstructions[verbType to (timeValue to null)]
-    }
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? =
+        verbConstructions.resolve(verbType to (context.time.first to context.type.map { it.first }))
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: DescriptionContext) =
         resolveTime(language, adjectiveType, context)
@@ -132,28 +119,15 @@ data class SyntaxLogic(
     }
 
     private fun resolveTime(language: Language, speechPart: TypedSpeechPart, context: DescriptionContext): SourcedCategoryValues {
-        val (timeValue, priority) = context.time
+        val (timeValue) = context.time
 
-        for ((typeValue) in context.type) {
-            verbFormSolver[speechPart to (timeValue to typeValue)]?.let { categories ->
-                return categories.map { it }
-            }
-        }
-        // Return the partial matches
-        for ((typeValue) in context.type) {
-            verbFormSolver[speechPart to (null to typeValue)]?.let { categories ->
-                return categories.map { it } +
-                        chooseClosestTense(language.changeParadigm.wordChangeParadigm.getParadigm(speechPart), timeValue)
-            }
-        }
-        verbFormSolver[speechPart to (timeValue to null)]?.let { categories ->
-            return categories.map { it }
-        }
+        val result = verbFormSolver.resolve(speechPart to (context.time.first to context.type.map { it.first }))
+            ?: listOf()
 
-        if (priority == Priority.Explicit) {
-            TODO()
-        } else
-            return chooseClosestTense(language.changeParadigm.wordChangeParadigm.getParadigm(speechPart), timeValue)
+        return result +
+                if (result.none { it.categoryValue is TenseValue})
+                    chooseClosestTense(language.changeParadigm.wordChangeParadigm.getParadigm(speechPart), timeValue)
+                else listOf()
     }
 
     fun resolveArgumentTypes(speechPart: TypedSpeechPart, objectType: ObjectType): SyntaxRelation =
@@ -167,16 +141,15 @@ data class SyntaxLogic(
         |Syntax:
         |
         |${
-        verbFormSolver.map { (context, categories) ->
-            listOf(
-                "For ${context.first}, ",
-                "${context.second} ",
-                " used categories are: ",
-                categories.joinToString(", ")
-            )
-        }
-            .lineUpAll()
-            .joinToString("\n")
+            verbFormSolver.rules.map { (context, categories) ->
+                listOf(
+                    "For ${context}, ",
+                    " used categories are: ",
+                    categories.joinToString(", "),
+                )
+            }
+                .lineUpAll()
+                .joinToString("\n")
     }
         |
         |${
@@ -260,15 +233,14 @@ data class SyntaxLogic(
         |
         |Analytic constructions:
         |${
-        verbConstructions.map { (context, construction) ->
-            listOf(
-                "For ${context.first}, ",
-                "${context.second} ",
-                " use: $construction"
-            )
-        }
-            .lineUpAll()
-            .joinToString("\n")
+        verbConstructions.rules.map { (context, construction) ->
+                listOf(
+                    "For ${context}, ",
+                    "use: $construction",
+                )
+            }
+                .lineUpAll()
+                .joinToString("\n")
     }
         |
         |Additional rules:
@@ -324,4 +296,91 @@ private fun TimeContext.toNumber() = when (this) {
 
 data class NumberCategorySolver(val amountMap: Map<NumberValue, IntRange>, val allForm: NumberValue)
 
-typealias VerbContextInfo = Pair<TypedSpeechPart, Pair<TimeContext?, TypeContext?>>
+typealias VerbContextInfo = Pair<TypedSpeechPart, Pair<TimeContext, List<TypeContext>>>
+
+class VerbFormResolver<V>(val rules: List<Pair<ContextMatcher, V>> = listOf()) {
+    constructor(vararg rules: Pair<ContextMatcher, V>) : this(rules.toList())
+
+    fun resolve(context: VerbContextInfo): V? {
+        for ((matcher, value) in rules)
+            if (matcher.match(context))
+                return value
+
+        return null
+    }
+}
+
+sealed class ContextMatcher {
+    abstract fun match(context: VerbContextInfo): Boolean
+
+    data class TimeContextMatcher(val timeContext: TimeContext) : ContextMatcher() {
+        override fun match(context: VerbContextInfo) =
+            context.second.first == timeContext
+
+        override fun toString() = timeContext.toString()
+    }
+
+    data class TypeContextMatcher(val typeContext: TypeContext) : ContextMatcher() {
+        override fun match(context: VerbContextInfo) =
+            typeContext in context.second.second
+
+        override fun toString() = typeContext.toString()
+    }
+
+    data class TypedSpeechPartContextMatcher(val speechPart: TypedSpeechPart) : ContextMatcher() {
+        override fun match(context: VerbContextInfo) =
+            context.first == speechPart
+
+        override fun toString() = speechPart.toString()
+    }
+
+    data class SpeechPartContextMatcher(val speechPart: SpeechPart) : ContextMatcher() {
+        override fun match(context: VerbContextInfo) =
+            context.first.type == speechPart
+
+        override fun toString() = speechPart.toString()
+    }
+
+    data class SumContextMatcher(val matchers: List<ContextMatcher>) : ContextMatcher() {
+        override fun match(context: VerbContextInfo) =
+            matchers.all { it.match(context) }
+
+        override fun toString() = matchers.joinToString(", ")
+    }
+}
+fun TypedSpeechPart.toMatcher() = ContextMatcher.TypedSpeechPartContextMatcher(this)
+fun TimeContext.toMatcher() = ContextMatcher.TimeContextMatcher(this)
+fun TypeContext.toMatcher() = ContextMatcher.TypeContextMatcher(this)
+fun SpeechPart.toMatcher() = ContextMatcher.SpeechPartContextMatcher(this)
+
+operator fun ContextMatcher.plus(other: ContextMatcher): ContextMatcher {
+    val matchers = mutableListOf<ContextMatcher>()
+    if (this is ContextMatcher.SumContextMatcher)
+        matchers += this.matchers
+    else
+        matchers += this
+    if (other is ContextMatcher.SumContextMatcher)
+        matchers += other.matchers
+    else
+        matchers += other
+    return ContextMatcher.SumContextMatcher(matchers)
+}
+
+class ContextResolverScope<E> {
+    infix fun <E> ContextMatcher.be(value: E): Pair<ContextMatcher, E> = this to value
+
+    private val TypedSpeechPart.matcher get() = ContextMatcher.TypedSpeechPartContextMatcher(this)
+    private val SpeechPart.matcher get() = ContextMatcher.SpeechPartContextMatcher(this)
+    private val TimeContext.matcher get() = ContextMatcher.TimeContextMatcher(this)
+    private val TypeContext.matcher get() = ContextMatcher.TypeContextMatcher(this)
+
+    // Convenience extensions
+    operator fun TypedSpeechPart.plus(other: TimeContext) = this.matcher + other.matcher
+    operator fun TypedSpeechPart.plus(other: TypeContext) = this.matcher + other.matcher
+    operator fun SpeechPart.plus(other: TimeContext) = this.matcher + other.matcher
+    operator fun SpeechPart.plus(other: TypeContext) = this.matcher + other.matcher
+}
+
+fun <E> rule(block: ContextResolverScope<E>.() -> Pair<ContextMatcher, E>): Pair<ContextMatcher, E> {
+    return ContextResolverScope<E>().block()
+}

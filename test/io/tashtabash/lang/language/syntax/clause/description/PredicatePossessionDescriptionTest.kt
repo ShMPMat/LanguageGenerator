@@ -2,17 +2,19 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.*
-import io.tashtabash.lang.language.lexis.SpeechPart
+import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.lexis.toIntransitive
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.VerbFormResolver
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
+import io.tashtabash.lang.language.syntax.rule
 import io.tashtabash.lang.language.util.*
 import io.tashtabash.random.singleton.RandomSingleton
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,8 +29,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Verb)
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
@@ -39,14 +41,14 @@ internal class PredicatePossessionDescriptionTest {
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toDefault(),
+            Verb.toDefault(),
             listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                SpeechPart.Verb.toDefault() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to SpeechPartChangeParadigm(SpeechPart.Noun.toDefault()),
+                Verb.toDefault() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to SpeechPartChangeParadigm(Noun.toDefault()),
             )
         )
         val language = makeDefLang(
@@ -56,12 +58,12 @@ internal class PredicatePossessionDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(
-                    SpeechPart.Verb.toDefault() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toDefault() to SyntaxRelation.Agent to listOf(),
-                    SpeechPart.Verb.toDefault() to SyntaxRelation.Patient to listOf()
+                    Verb.toDefault() to SyntaxRelation.Agent to listOf(),
+                    Verb.toDefault() to SyntaxRelation.Patient to listOf()
                 ),
             ),
             predicatePossessionConstruction = HaveVerb
@@ -94,8 +96,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Verb)
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
@@ -106,8 +108,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up noun class
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Locative),
-            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Noun)
+            setOf(Noun sourcedFrom CategorySource.Self),
+            setOf(Noun)
         )
         val caseSourcedCategory = SourcedCategory(
             caseCategory,
@@ -118,19 +120,19 @@ internal class PredicatePossessionDescriptionTest {
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
+            Verb.toIntransitive(),
             listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Noun.toDefault(),
+            Noun.toDefault(),
             listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                SpeechPart.Verb.toIntransitive() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to nounChangeParadigm,
+                Verb.toIntransitive() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to nounChangeParadigm,
             )
         )
         val language = makeDefLang(
@@ -140,13 +142,13 @@ internal class PredicatePossessionDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(
-                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Location to SpeechPart.Noun.toDefault() to listOf(CaseValue.Locative))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Location to Noun.toDefault() to listOf(CaseValue.Locative))
             ),
             predicatePossessionConstruction = LocativeOblique
         )
@@ -184,8 +186,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Verb)
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
@@ -196,8 +198,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up noun class
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Dative),
-            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Noun)
+            setOf(Noun sourcedFrom CategorySource.Self),
+            setOf(Noun)
         )
         val caseSourcedCategory = SourcedCategory(
             caseCategory,
@@ -208,19 +210,19 @@ internal class PredicatePossessionDescriptionTest {
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
+            Verb.toIntransitive(),
             listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Noun.toDefault(),
+            Noun.toDefault(),
             listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                SpeechPart.Verb.toIntransitive() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to nounChangeParadigm,
+                Verb.toIntransitive() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to nounChangeParadigm,
             )
         )
         val language = makeDefLang(
@@ -230,13 +232,13 @@ internal class PredicatePossessionDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(
-                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to SpeechPart.Noun.toDefault() to listOf(CaseValue.Dative))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to Noun.toDefault() to listOf(CaseValue.Dative))
             ),
             predicatePossessionConstruction = DativeOblique
         )
@@ -274,8 +276,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Verb)
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
@@ -286,8 +288,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up noun class
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Genitive),
-            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Noun)
+            setOf(Noun sourcedFrom CategorySource.Self),
+            setOf(Noun)
         )
         val caseSourcedCategory = SourcedCategory(
             caseCategory,
@@ -298,19 +300,19 @@ internal class PredicatePossessionDescriptionTest {
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
+            Verb.toIntransitive(),
             listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Noun.toDefault(),
+            Noun.toDefault(),
             listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                SpeechPart.Verb.toIntransitive() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to nounChangeParadigm,
+                Verb.toIntransitive() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to nounChangeParadigm,
             )
         )
         val language = makeDefLang(
@@ -320,13 +322,13 @@ internal class PredicatePossessionDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(
-                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to SpeechPart.Noun.toDefault() to listOf(CaseValue.Genitive))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Possessor to Noun.toDefault() to listOf(CaseValue.Genitive))
             ),
             predicatePossessionConstruction = GenitiveOblique
         )
@@ -364,8 +366,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up tense
         val tenseCategory = Tense(
             listOf(TenseValue.Present, TenseValue.Past),
-            setOf(SpeechPart.Verb sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Verb)
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
         )
         val tenseSourcedCategory = SourcedCategory(
             tenseCategory,
@@ -376,8 +378,8 @@ internal class PredicatePossessionDescriptionTest {
         // Set up noun class
         val caseCategory = Case(
             listOf(CaseValue.Absolutive, CaseValue.Topic),
-            setOf(SpeechPart.Noun sourcedFrom CategorySource.Self),
-            setOf(SpeechPart.Noun)
+            setOf(Noun sourcedFrom CategorySource.Self),
+            setOf(Noun)
         )
         val caseSourcedCategory = SourcedCategory(
             caseCategory,
@@ -388,19 +390,19 @@ internal class PredicatePossessionDescriptionTest {
         // Set up WordChangeParadigm
         val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Verb.toIntransitive(),
+            Verb.toIntransitive(),
             listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
         )
         val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
         val nounChangeParadigm = SpeechPartChangeParadigm(
-            SpeechPart.Noun.toDefault(),
+            Noun.toDefault(),
             listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
         )
         val wordChangeParadigm = WordChangeParadigm(
             listOf(tenseCategory),
             mapOf(
-                SpeechPart.Verb.toIntransitive() to verbSpeechPartChangeParadigm,
-                SpeechPart.Noun.toDefault() to nounChangeParadigm,
+                Verb.toIntransitive() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to nounChangeParadigm,
             )
         )
         val language = makeDefLang(
@@ -410,13 +412,13 @@ internal class PredicatePossessionDescriptionTest {
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
-                mapOf(
-                    SpeechPart.Verb.toIntransitive() to (Past to null) to listOf(tenseSourcedCategory[TenseValue.Past])
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
                 ),
                 verbCasesSolver = mapOf(
-                    SpeechPart.Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
                 ),
-                syntaxRelationSolver = mapOf(SyntaxRelation.Topic to SpeechPart.Noun.toDefault() to listOf(CaseValue.Topic))
+                syntaxRelationSolver = mapOf(SyntaxRelation.Topic to Noun.toDefault() to listOf(CaseValue.Topic))
             ),
             predicatePossessionConstruction = Topic
         )

@@ -40,8 +40,11 @@ class SyntaxLogicGenerator(
             changeParadigm.getParadigms(PersonalPronoun) +
             changeParadigm.getParadigms(DeixisPronoun)
 
-    private val verbFormSolver: MutableMap<VerbContextInfo, SourcedCategoryValues> = mutableMapOf()
-    private val verbConstructions: MutableMap<VerbContextInfo, VerbConstruction> = mutableMapOf()
+    // This division into 2 distinct and always present Mood and Tense layers is pretty arbitrary, but it captured
+    // the breadth of possible generated outcomes at the point of me writing this.
+    private val moodVerbFormLayer: MutableList<Pair<ContextMatcher, SourcedCategoryValues>> = mutableListOf()
+    private val tenseVerbFormLayer: MutableList<Pair<ContextMatcher, SourcedCategoryValues>> = mutableListOf()
+    private val verbConstructionsLayer: MutableList<Pair<ContextMatcher, VerbConstruction>> = mutableListOf()
 
     fun generateSyntaxLogic(wordOrder: WordOrder) = SyntaxLogic(
         generateVerbFormSolver(),
@@ -53,7 +56,7 @@ class SyntaxLogicGenerator(
         generateGenderCategorySolver(),
         generateDeixisCategorySolver(),
         changeParadigm.getParadigm(PersonalPronoun.toDefault())[inclusivityName],
-        verbConstructions = verbConstructions
+        verbConstructions = VerbFormResolver(verbConstructionsLayer)
     ).let {
         it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder).generateTransformers())
     }
@@ -144,12 +147,12 @@ class SyntaxLogicGenerator(
             ?: emptyList()
     }
 
-    private fun generateVerbFormSolver(): Map<VerbContextInfo, SourcedCategoryValues> {
+    private fun generateVerbFormSolver(): VerbFormResolver<SourcedCategoryValues> {
         generateHabPrs()
         generateAnalyticalFut()
         generatePot()
 
-        return verbFormSolver
+        return VerbFormResolver(moodVerbFormLayer + tenseVerbFormLayer)
     }
 
     private fun generateHabPrs() {
@@ -160,12 +163,12 @@ class SyntaxLogicGenerator(
             tenseCategory.getOrNull(TenseValue.Present)
                 ?.let { cat ->
                     .8.chanceOf {
-                        verbFormSolver[speechPart to (TimeContext.Regular to null)] = listOf(cat)
+                        tenseVerbFormLayer += rule { speechPart + TimeContext.Regular be listOf(cat) }
                     }
                 }
         }
         addAuxVerbConstruction(TimeContext.Regular) { speechPart ->
-            verbFormSolver[speechPart to (TimeContext.Regular to null)] == null
+            tenseVerbFormLayer.none { it.first == speechPart.toMatcher() + TimeContext.Regular.toMatcher() }
         }
         0.1.chanceOf {
             addAuxVerbConstruction(TimeContext.Present) {
@@ -180,22 +183,22 @@ class SyntaxLogicGenerator(
                 changeParadigm.getParadigm(speechPart)[tenseName]
                     ?.getActualOrNull(TenseValue.Future) == null
             }
-            for (speechPart in changeParadigm.getSpeechParts(Verb)) // Copy for FarFuture
-                if (verbConstructions[speechPart to (TimeContext.Future to null)] != null) {
-                    verbFormSolver[speechPart to (TimeContext.FarFuture to null)] =
-                        verbFormSolver.getValue(speechPart to (TimeContext.Future to null))
-                    verbConstructions[speechPart to (TimeContext.FarFuture to null)] =
-                        verbConstructions.getValue(speechPart to (TimeContext.Future to null))
-                }
+            for (speechPart in changeParadigm.getSpeechParts(Verb)) { // Copy for FarFuture
+                tenseVerbFormLayer.firstOrNull { it.first == speechPart.toMatcher() + TimeContext.Future.toMatcher() }
+                    ?.let {
+                        tenseVerbFormLayer += rule { speechPart + TimeContext.FarFuture be it.second }
+                    }
+                verbConstructionsLayer.firstOrNull { it.first == speechPart.toMatcher() + TimeContext.Future.toMatcher() }
+                    ?.let {
+                        verbConstructionsLayer += rule { speechPart + TimeContext.FarFuture be it.second }
+                    }
+            }
         } otherwise { // Try to use Potential for Fut if available
             for (speechPart in changeParadigm.getSpeechParts(Verb)) {
                 val potentialValue = changeParadigm.getParadigm(speechPart)[moodName]
                     ?.getActualOrNull(MoodValue.Potential)
                     ?: continue
-                verbFormSolver[speechPart to (TimeContext.Future to null)] = listOf(potentialValue) +
-                        chooseClosestTense(changeParadigm.getParadigm(speechPart), TimeContext.Future)
-                verbFormSolver[speechPart to (TimeContext.FarFuture to null)] = listOf(potentialValue) +
-                        chooseClosestTense(changeParadigm.getParadigm(speechPart), TimeContext.FarFuture)
+                moodVerbFormLayer += rule { speechPart + TimeContext.Future be listOf(potentialValue) }
             }
         }
 
@@ -211,13 +214,15 @@ class SyntaxLogicGenerator(
             changeParadigm.getParadigm(speechPart)[moodName]
                 ?.getActualOrNull(MoodValue.Potential)
                 ?.let {
-                    verbFormSolver[speechPart to (null to TypeContext.Potential)] = listOf(it)
+                    moodVerbFormLayer += rule { speechPart + TypeContext.Potential be listOf(it) }
                     .95.chanceOf {
                         continue // Only a small chance to add a construction on top
                     }
                 }
 
-            verbConstructions[speechPart to (null to TypeContext.Potential)] = defaultPotentialConstruction
+            verbConstructionsLayer += rule {
+                speechPart + TypeContext.Potential be defaultPotentialConstruction
+            }
         }
     }
 
@@ -244,9 +249,11 @@ class SyntaxLogicGenerator(
 
                 tenseCategory.getActualOrNull(governedTense)
                     ?.let { cat ->
-                        verbFormSolver[speechPart to (timeContext to null)] = listOf(cat)
-                        verbConstructions[speechPart to (timeContext to null)] =
-                            Auxiliary(auxGenerator.order, listOf(cat.categoryValue), governedDerivation, auxMeaning)
+                        tenseVerbFormLayer += rule { speechPart + timeContext be listOf(cat) }
+                        verbConstructionsLayer += rule {
+                            speechPart + timeContext be
+                                Auxiliary(auxGenerator.order, listOf(cat.categoryValue), governedDerivation, auxMeaning)
+                        }
                     }
             }
         }
