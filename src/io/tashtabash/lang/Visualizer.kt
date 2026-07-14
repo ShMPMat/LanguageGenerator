@@ -100,6 +100,7 @@ class Visualizer(val language: Language) {
         )
 
         val testSentencesMain = listOf(
+            VerbMainClauseDescription(sleepVerb),
             VerbMainClauseDescription(firstSeeVerb),
             VerbMainClauseDescription(secondSeeVerb),
             VerbMainClauseDescription(thirdSeeVerb),
@@ -107,7 +108,6 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(hearVerb),
             VerbMainClauseDescription(knowVerb),
             VerbMainClauseDescription(feelVerb),
-            VerbMainClauseDescription(sleepVerb),
             VerbMainClauseDescription(buildVerb),
             VerbMainClauseDescription(benBuildVerb),
             VerbMainClauseDescription(nounBenBuildVerb),
@@ -133,7 +133,7 @@ class Visualizer(val language: Language) {
             listOf(Negative to Explicit)
         )
         val potentialContext = DescriptionContext(
-            ImmediateFuture to Implicit,
+            Future to Implicit,
             listOf(Potential to Explicit)
         )
         val negationQuestionContext = DescriptionContext(
@@ -143,6 +143,7 @@ class Visualizer(val language: Language) {
 
         printSampleClause(
             listOf(
+                "I slept",
                 "These light's new mothers saw that small time",
                 "New high fathers saw that small time",
                 "I saw that small time",
@@ -150,7 +151,6 @@ class Visualizer(val language: Language) {
                 "I heard you two",
                 "New high fathers knew me",
                 "You two felt light",
-                "I slept",
                 "It was with these hands that I built a house",
                 "It was with these that we built a house for you two",
                 "It was with these that we built a house for new high fathers"
@@ -160,6 +160,7 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "Will I sleep?",
                 "Will these light's new mothers see that small time?",
                 "Will new high fathers see that small time?",
                 "Will I see that small time?",
@@ -167,7 +168,6 @@ class Visualizer(val language: Language) {
                 "Will I hear you two?",
                 "Will new high fathers know me?",
                 "Will you two feel light?",
-                "Will I sleep?",
                 "Will I build a house with these hands?",
                 "Will we build a house with these for you two?",
                 "Will we build a house with these for new high fathers?"
@@ -177,6 +177,7 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "I don't sleep",
                 "These light's new mothers don't see that small time",
                 "New high fathers don't see that small time",
                 "I don't see that small time",
@@ -184,7 +185,6 @@ class Visualizer(val language: Language) {
                 "I don't hear you two",
                 "New high fathers don't know me",
                 "You two don't feel light",
-                "I don't sleep",
                 "I don't build a house with these hands",
                 "We don't build a house with these for you two",
                 "We don't build a house with these for new high fathers"
@@ -194,6 +194,7 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "I will be able to sleep",
                 "These light's new mothers will be able to see that small time",
                 "New high fathers will be able to see that small time",
                 "I will be able to see that small time",
@@ -201,7 +202,6 @@ class Visualizer(val language: Language) {
                 "I will be able to hear you two",
                 "New high fathers will be able to know me",
                 "You two will be able to feel light",
-                "I will be able to sleep",
                 "I will be able to build a house with these hands",
                 "We will be able to build a house with these for you two",
                 "We will be able to build a house with these for new high fathers"
@@ -211,6 +211,7 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "Am I not sleeping?",
                 "Don't these light's new mothers see that small time?",
                 "Don't new high fathers see that small time?",
                 "Don't I see that small time?",
@@ -218,7 +219,6 @@ class Visualizer(val language: Language) {
                 "Don't I hear you two?",
                 "Don't new high fathers know me?",
                 "Don't you two feel light?",
-                "Am I not sleeping?",
                 "Am I not building a house with these hands?",
                 "Aren't we building a house with these for you two?",
                 "Aren't we building a house with these for new high fathers?"
@@ -233,9 +233,6 @@ class Visualizer(val language: Language) {
                 "I was that small time",
                 "These were mine",
                 "I belonged to these light's new mothers",
-                "I could hear you two",
-                "I could see these at home",
-                "I could sleep"
             ).zip(testSentencesConstructions),
             indicativeContext,
             "Constructions"
@@ -275,6 +272,7 @@ class Visualizer(val language: Language) {
         )
         printSampleClause(
             listOf(
+                "I'm sleeping",
                 "These light's new mothers see that small time",
                 "New high fathers see that small time",
                 "I see that small time",
@@ -282,7 +280,6 @@ class Visualizer(val language: Language) {
                 "I hear you two",
                 "New high fathers know me",
                 "You two feel light",
-                "I'm sleeping",
                 "I'm building a house with these hands",
                 "We are building a house for you two with these hands",
                 "We are building a house for new high fathers with these hands"
