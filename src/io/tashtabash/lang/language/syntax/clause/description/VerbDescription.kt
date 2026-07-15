@@ -33,8 +33,9 @@ class VerbDescription(val verb: Meaning, val args: Map<ObjectType, NominalDescri
                 constructCaseAdjunctClauses(resolvedArgs, language, context, random)
             )
             language.changeParadigm.syntaxLogic.resolveVerbConstruction(verb.semanticsCore.speechPart, context)
-                ?.apply(verbClause, language)
-                ?: verbClause
+                .fold(verbClause) { clause: PredicateClause, construction ->
+                    construction.apply(clause, language)
+                }
         }
 
     private fun constructCaseAdjunctClauses(

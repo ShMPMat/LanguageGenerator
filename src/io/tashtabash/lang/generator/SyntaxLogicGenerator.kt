@@ -152,7 +152,8 @@ class SyntaxLogicGenerator(
         generateAnalyticalFut()
         generatePot()
 
-        return VerbFormResolver(moodVerbFormLayer + tenseVerbFormLayer)
+        // Reverse so that the last construction's categories will match first, otherwise wrong categories will be used
+        return VerbFormResolver((moodVerbFormLayer + tenseVerbFormLayer).reversed())
     }
 
     private fun generateHabPrs() {
@@ -300,7 +301,7 @@ class SyntaxLogicGenerator(
         val solver = mutableMapOf<Pair<TypedSpeechPart, ObjectType>, SyntaxRelation>()
         val possibleObliqueExperiencer = listOf(
             SyntaxRelation.Addressee.withProb(1.0),
-            SyntaxRelation.Location.withProb(0.1)
+            SyntaxRelation.Location.withProb(.1)
         )
 
         for (verbType in changeParadigm.getSpeechParts(Verb))

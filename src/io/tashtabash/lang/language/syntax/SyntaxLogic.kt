@@ -103,8 +103,8 @@ data class SyntaxLogic(
                     .getParadigm(verbType)
                     .getValueOrEmpty(moodName, MoodValue.Indicative)
 
-    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): VerbConstruction? =
-        verbConstructions.resolve(verbType to (context.time.first to context.type.map { it.first }))
+    fun resolveVerbConstruction(verbType: TypedSpeechPart, context: DescriptionContext): List<VerbConstruction> =
+        verbConstructions.resolveAll(verbType to (context.time.first to context.type.map { it.first }))
 
     fun resolveAdjectiveForm(language: Language, adjectiveType: TypedSpeechPart, context: DescriptionContext) =
         resolveTime(language, adjectiveType, context)
@@ -307,6 +307,16 @@ class VerbFormResolver<V>(val rules: List<Pair<ContextMatcher, V>> = listOf()) {
                 return value
 
         return null
+    }
+
+    fun resolveAll(context: VerbContextInfo): List<V> {
+        val result = mutableListOf<V>()
+
+        for ((matcher, value) in rules)
+            if (matcher.match(context))
+                result += value
+
+        return result
     }
 }
 
