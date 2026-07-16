@@ -21,13 +21,11 @@ import io.tashtabash.lang.language.syntax.ChangeParadigm
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxParadigm
 import io.tashtabash.lang.language.syntax.clause.construction.AddAdverb
+import io.tashtabash.lang.language.syntax.clause.construction.AddParticle
 import io.tashtabash.lang.language.syntax.clause.construction.Construction
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
-import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.clause.construction.VerbConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.defaultAuxName
-import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
-import io.tashtabash.lang.language.syntax.transformer.has
 import io.tashtabash.random.randomSublist
 import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.singleton.randomUnwrappedElement
@@ -197,12 +195,6 @@ class LexisGenerator(
             )
         }
 
-        if (syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
-            generateFunctionWord(
-                SemanticsCore("question_marker", SpeechPart.Particle.toDefault()),
-                QuestionMarker
-            )
-
         if (syntaxParadigm.copula.copula.any { it.value == CopulaConstruction.Verb })
             functionWords[CopulaConstruction.Verb] = SimpleWordPointer(
                 words.getWord("be")
@@ -213,10 +205,11 @@ class LexisGenerator(
     }
 
     private fun determineFunctionWordType(verbConstruction: VerbConstruction) =
-        if (verbConstruction is AddAdverb)
-            SpeechPart.Adverb.toDefault()
-        else
-            SpeechPart.Verb.toAux()
+        when (verbConstruction) {
+            is AddAdverb -> SpeechPart.Adverb.toDefault()
+            is AddParticle -> SpeechPart.Particle.toDefault()
+            else -> SpeechPart.Verb.toAux()
+        }
 
     private fun generateFunctionWord(core: SemanticsCore, construction: Construction) {
         words.getWordOrNull(core.meaningCluster.meanings[0])

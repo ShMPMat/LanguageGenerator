@@ -4,10 +4,8 @@ import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.NegationValue
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.clause.syntax.*
 import io.tashtabash.lang.language.syntax.sequence.WordSequence
-import io.tashtabash.lang.language.syntax.transformer.has
 import kotlin.random.Random
 
 
@@ -26,16 +24,8 @@ abstract class SentenceClause : UnfoldableClause {
 }
 
 
-fun SyntaxNode.addQuestionMarker(language: Language) {
-    tags += SyntaxNodeTag.Question
-
-    if (language.changeParadigm.syntaxLogic.transformers.any { it.first == has(SyntaxNodeTag.Question) })
-        setRelationChild(
-            SyntaxRelation.QuestionMarker,
-            language.lexis.getFunctionWord(QuestionMarker)
-                .toNode(SyntaxRelation.QuestionMarker),
-            SyntaxRelation.Predicate
-        )
+fun SyntaxNode.addQuestionTag() {
+    tags += SyntaxNodeTag.Question // Used to allow word order shenanigans
 }
 
 // This ad-hoc propagation is rickety, but I don't know how else to push topic info from the sentence level
@@ -57,7 +47,7 @@ data class VerbSentenceClause(
     override fun toNode(language: Language, random: Random): SyntaxNode =
         predicate.toNode(language, random).apply {
             if (VerbSentenceType.QuestionVerbClause in type)
-                addQuestionMarker(language)
+                addQuestionTag()
             if (VerbSentenceType.NegatedVerbClause in type)
                 categoryValues += NegationValue.Negative
             topic?.let { addTopic(it) }
@@ -76,7 +66,7 @@ class CopulaSentenceClause(
                 .getValue(copulaClause.copulaType)
                 .getValue(type.firstOrNull() ?: CopulaSentenceType.MainCopulaClause)
             if (CopulaSentenceType.QuestionCopulaClause in type)
-                addQuestionMarker(language)
+                addQuestionTag()
             if (CopulaSentenceType.NegatedCopulaClause in type)
                 categoryValues += NegationValue.Negative
         }

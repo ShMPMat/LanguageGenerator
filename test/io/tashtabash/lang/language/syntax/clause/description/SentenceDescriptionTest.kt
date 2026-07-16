@@ -14,6 +14,7 @@ import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.SyntaxRelation.*
 import io.tashtabash.lang.language.syntax.arranger.RelationArranger
+import io.tashtabash.lang.language.syntax.clause.construction.AddParticle
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.syntax.SyntaxNodeTag
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
@@ -981,19 +982,20 @@ internal class SentenceDescriptionTest {
                 Verb.toIntransitive() to SpeechPartChangeParadigm(Verb.toIntransitive()),
             )
         )
+        val construction = AddParticle("question_marker", QuestionMarker)
         val language = makeDefLang(
             Lexis(
                 listOf(pronoun, verb, questionMarker),
-                mapOf(io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker to SimpleWordPointer(questionMarker))
+                mapOf(construction to SimpleWordPointer(questionMarker))
             ),
             wordChangeParadigm,
             syntaxLogic = SyntaxLogic(
                 verbCasesSolver = mapOf(
                     Verb.toIntransitive() to Argument to listOf()
                 ),
-                transformers = listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
-                    PutFirstTransformer(Predicate) + PutFirstTransformer(Auxiliary)
-                })
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + GeneralQuestion be construction }
+                )
             )
         )
         // Set up descriptions

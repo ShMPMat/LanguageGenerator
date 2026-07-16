@@ -1,13 +1,7 @@
 package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.Language
-import io.tashtabash.lang.language.syntax.SyntaxRelation
-import io.tashtabash.lang.language.syntax.clause.realization.CaseAdjunctClause
-import io.tashtabash.lang.language.syntax.clause.realization.ObliquePredicatePossessionClause
-import io.tashtabash.lang.language.syntax.clause.realization.VerbClause
-import io.tashtabash.lang.language.syntax.clause.syntax.VerbSentenceType
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
-import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.*
 import io.tashtabash.random.singleton.randomUnwrappedElement
 import kotlin.random.Random
 
@@ -26,33 +20,16 @@ class PredicatePossessionDescription(
 class ObliquePredicatePossessionDescription(
     val owner: NominalDescription,
     val owned: NominalDescription,
-    val possessorSyntaxRelation: SyntaxRelation
+    val adjunctType: AdjunctType
 ) : SentenceDescription() {
     override fun toClause(language: Language, context: DescriptionContext, random: Random) =
-        ObliquePredicatePossessionClause(
-            language.lexis.getWord("exist").let { word ->
-                VerbClause(
-                    word,
-                    language.changeParadigm.syntaxLogic.resolveVerbForm(
-                        language,
-                        word.semanticsCore.speechPart,
-                        context
-                    ),
-                    mapOf(SyntaxRelation.Argument to owned.toClause(language, context, random)),
-                    listOf(
-                        CaseAdjunctClause(
-                            owner.toClause(language, context, random),
-                            possessorSyntaxRelation
-                        )
-                    )
+        VerbMainClauseDescription(
+            VerbDescription(
+                "exist",
+                mapOf(
+                    MainObjectType.Argument to owned,
+                    adjunctType to owner
                 )
-            },
-            context.type.mapNotNull {
-                when (it.first) {
-                    GeneralQuestion -> VerbSentenceType.QuestionVerbClause
-                    Negative -> VerbSentenceType.NegatedVerbClause
-                    Potential -> null
-                }
-            }
-        )
+            )
+        ).toClause(language, context, random)
 }

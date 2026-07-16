@@ -134,7 +134,7 @@ class WordOrderGenerator {
         references: List<GenericSSO<SyntaxRelations>>,
     ): List<GenericSSO<SyntaxRelations>> {
         // All cases + Manner
-        val orderedObjects = (AdjunctType.entries.map { it.relation } + Manner).shuffled(RandomSingleton.random)
+        val orderedObjects = (AdjunctType.entries.map { it.relation } + Manner + QuestionMarker).shuffled(RandomSingleton.random)
 
         return insertAtRandom(references, orderedObjects)
     }

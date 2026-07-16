@@ -22,9 +22,9 @@ import io.tashtabash.lang.language.phonology.prosody.ProsodyChangeParadigm
 import io.tashtabash.lang.language.phonology.prosody.StressType
 import io.tashtabash.lang.language.printWordMorphemes
 import io.tashtabash.lang.language.syntax.*
+import io.tashtabash.lang.language.syntax.clause.construction.AddParticle
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.HaveVerb
-import io.tashtabash.lang.language.syntax.clause.construction.QuestionMarker
 import io.tashtabash.lang.language.syntax.features.*
 import io.tashtabash.lang.language.syntax.numeral.NumeralParadigm
 import io.tashtabash.lang.language.util.*
@@ -1513,11 +1513,12 @@ internal class PhonologicalRuleApplicatorTest {
             SpeechPart.Particle.toDefault(),
             prosodyChangeParadigm = ProsodyChangeParadigm(StressType.Initial)
         )
+        val construction = AddParticle("question_marker", SyntaxRelation.QuestionMarker)
         val lexis = Lexis(
             words,
             mapOf(
                 CopulaConstruction.Particle to SimpleWordPointer(copulaWord),
-                QuestionMarker to SimpleWordPointer(questionMarkerWord)
+                construction to SimpleWordPointer(questionMarkerWord)
             ),
         ).reifyPointers()
         val language = Language(
@@ -1550,7 +1551,7 @@ internal class PhonologicalRuleApplicatorTest {
         )
         assertEquals(
             createWord("po", SpeechPart.Particle),
-            shiftedLanguage.lexis.functionWords[QuestionMarker]?.resolve(shiftedLanguage.lexis)
+            shiftedLanguage.lexis.functionWords[construction]?.resolve(shiftedLanguage.lexis)
         )
     }
 

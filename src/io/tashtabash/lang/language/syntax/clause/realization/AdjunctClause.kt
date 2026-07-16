@@ -23,15 +23,14 @@ class CaseAdjunctClause(
             .also { AddCategoryTransformer(relation).apply(it, language.changeParadigm.syntaxLogic) }
 }
 
-class AdverbClause(
-    val adverb: Word,
-    override val relation: SyntaxRelation = SyntaxRelation.Manner
-) : AdjunctClause {
-    init {
-        if (adverb.semanticsCore.speechPart.type != SpeechPart.Adverb)
-            throw SyntaxException("$adverb is not an adverb")
-    }
-
+open class SimpleAdjunctClause(val word: Word, override val relation: SyntaxRelation) : AdjunctClause {
     override fun toNode(language: Language, random: Random): SyntaxNode =
-        adverb.toNode(relation)
+        word.toNode(relation)
+}
+
+class AdverbClause(word: Word, relation: SyntaxRelation = SyntaxRelation.Manner) : SimpleAdjunctClause(word, relation) {
+    init {
+        if (word.semanticsCore.speechPart.type != SpeechPart.Adverb)
+            throw SyntaxException("$word is not an adverb")
+    }
 }

@@ -3,8 +3,10 @@ package io.tashtabash.lang.language.syntax.clause.construction
 import io.tashtabash.lang.language.Language
 import io.tashtabash.lang.language.category.MoodValue
 import io.tashtabash.lang.language.category.moodName
+import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.lang.language.syntax.clause.realization.AdverbClause
 import io.tashtabash.lang.language.syntax.clause.realization.PredicateClause
+import io.tashtabash.lang.language.syntax.clause.realization.SimpleAdjunctClause
 
 
 interface VerbConstruction: Construction {
@@ -35,4 +37,14 @@ data class AddAdverb(override val name: String): VerbConstruction {
     }
 
     override fun toString() = "Adverb '$name'"
+}
+
+data class AddParticle(override val name: String, val syntaxRelation: SyntaxRelation): VerbConstruction {
+    override fun apply(predicate: PredicateClause, language: Language): PredicateClause {
+        val particle = language.lexis.getFunctionWord(this)
+
+        return predicate.addAdjunct(SimpleAdjunctClause(particle, syntaxRelation))
+    }
+
+    override fun toString() = "Particle '$name'"
 }

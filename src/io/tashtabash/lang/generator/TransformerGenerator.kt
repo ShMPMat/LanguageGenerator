@@ -36,24 +36,7 @@ class TransformerGenerator(
             generateDeixisSimplifier() +
             generateDefinitivenessSimplifier() +
             generateDrop() +
-            generateTopicMovement() +
-            generateQuestionMarker()
-
-    private fun generateQuestionMarker(): List<Pair<SyntaxNodeMatcher, Transformer>> {
-        .4.chanceOf {
-            return listOf()
-        }
-
-        return if (0.5.testProbability()) {
-             listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
-                PutFirstTransformer(Predicate) + PutFirstTransformer(Auxiliary)
-            })
-        } else {
-            listOf(has(SyntaxNodeTag.Question) to transform(QuestionMarker) {
-                PutLastTransformer(Predicate) + PutFirstTransformer(Auxiliary)
-            })
-        }
-    }
+            generateTopicMovement()
 
     private fun generateSovMovement(): List<Pair<SyntaxNodeMatcher, Transformer>> {
         val mainOrder = wordOrder.sovOrder

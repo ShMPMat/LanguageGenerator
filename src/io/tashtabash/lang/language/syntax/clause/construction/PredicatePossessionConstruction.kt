@@ -1,6 +1,6 @@
 package io.tashtabash.lang.language.syntax.clause.construction
 
-import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.clause.description.AdjunctType
 import io.tashtabash.lang.language.syntax.clause.description.MainObjectType
 import io.tashtabash.lang.language.syntax.clause.description.NominalDescription
 import io.tashtabash.lang.language.syntax.clause.description.ObliquePredicatePossessionDescription
@@ -35,16 +35,16 @@ abstract class PredicatePossessionConstruction : Construction {
 
     object LocativeOblique : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
-            ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Location)
+            ObliquePredicatePossessionDescription(owner, owned, AdjunctType.Location)
     }
 
     object DativeOblique : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
-            ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Addressee)
+            ObliquePredicatePossessionDescription(owner, owned, AdjunctType.Addressee)
     }
 
     object Topic : PredicatePossessionConstruction() {
         override fun apply(owner: NominalDescription, owned: NominalDescription) =
-            ObliquePredicatePossessionDescription(owner, owned, SyntaxRelation.Topic)
+            ObliquePredicatePossessionDescription(owner, owned, AdjunctType.Topic)
     }
 }

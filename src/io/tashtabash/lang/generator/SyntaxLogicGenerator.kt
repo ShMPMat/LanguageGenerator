@@ -15,6 +15,7 @@ import io.tashtabash.lang.language.lexis.*
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.syntax.*
 import io.tashtabash.lang.language.syntax.clause.construction.AddAdverb
+import io.tashtabash.lang.language.syntax.clause.construction.AddParticle
 import io.tashtabash.lang.language.syntax.clause.construction.Auxiliary
 import io.tashtabash.lang.language.syntax.clause.construction.CopulaConstruction
 import io.tashtabash.lang.language.syntax.clause.construction.SerialAuxiliary
@@ -151,6 +152,7 @@ class SyntaxLogicGenerator(
         generateHabPrs()
         generateAnalyticalFut()
         generatePot()
+        generateQuestion()
 
         // Reverse so that the last construction's categories will match first, otherwise wrong categories will be used
         return VerbFormResolver((moodVerbFormLayer + tenseVerbFormLayer).reversed())
@@ -224,6 +226,16 @@ class SyntaxLogicGenerator(
             verbConstructionsLayer += rule {
                 speechPart + TypeContext.Potential be defaultPotentialConstruction
             }
+        }
+    }
+
+    private fun generateQuestion() {
+        .4.chanceOf {
+            return
+        }
+
+        verbConstructionsLayer += rule {
+            Verb + TypeContext.GeneralQuestion be AddParticle("question_marker", SyntaxRelation.QuestionMarker)
         }
     }
 

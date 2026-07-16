@@ -38,6 +38,7 @@ val defOrder = RandomOrder(
     // This word order is kinda weird to be applicable to transitive and intransitive clauses
     listOf(
         listOf(
+            SyntaxRelation.QuestionMarker,
             SyntaxRelation.Topic,
             SyntaxRelation.Addressee,
             SyntaxRelation.Agent,
