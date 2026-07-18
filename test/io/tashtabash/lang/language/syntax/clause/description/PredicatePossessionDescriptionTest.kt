@@ -2,17 +2,23 @@ package io.tashtabash.lang.language.syntax.clause.description
 
 import io.tashtabash.lang.language.category.*
 import io.tashtabash.lang.language.category.paradigm.*
+import io.tashtabash.lang.language.lexis.Lexis
+import io.tashtabash.lang.language.lexis.SimpleWordPointer
 import io.tashtabash.lang.language.lexis.SpeechPart.*
 import io.tashtabash.lang.language.lexis.toDefault
 import io.tashtabash.lang.language.lexis.toIntransitive
 import io.tashtabash.lang.language.morphem.MorphemeData
 import io.tashtabash.lang.language.syntax.SyntaxLogic
 import io.tashtabash.lang.language.syntax.SyntaxRelation
+import io.tashtabash.lang.language.syntax.SyntaxRelation.QuestionMarker
 import io.tashtabash.lang.language.syntax.VerbFormResolver
+import io.tashtabash.lang.language.syntax.clause.construction.AddParticle
 import io.tashtabash.lang.language.syntax.clause.construction.PredicatePossessionConstruction.*
 import io.tashtabash.lang.language.syntax.context.DescriptionContext
 import io.tashtabash.lang.language.syntax.context.ContextValue
 import io.tashtabash.lang.language.syntax.context.ContextValue.TimeContext.Past
+import io.tashtabash.lang.language.syntax.context.ContextValue.TypeContext.GeneralQuestion
+import io.tashtabash.lang.language.syntax.context.Priority.Explicit
 import io.tashtabash.lang.language.syntax.context.Priority.Implicit
 import io.tashtabash.lang.language.syntax.rule
 import io.tashtabash.lang.language.util.*
@@ -433,6 +439,108 @@ internal class PredicatePossessionDescriptionTest {
                 createNoun("ito").withMorphemes(
                     MorphemeData(1, listOf(), true),
                     MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Topic]))
+                ) withMeaning "dog",
+                createNoun("ida").withMorphemes(
+                    MorphemeData(1, listOf(), true),
+                    MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Absolutive]))
+                ) withMeaning "dog",
+                createIntransVerb("oto")
+                    .withMorphemes(
+                        MorphemeData(1, listOf(), true),
+                        MorphemeData(2, listOf(tenseSourcedCategory[TenseValue.Past]))
+                    ) withMeaning "exist"
+            ),
+            sentenceDescription.toClause(language, context, Random(Random.nextInt()))
+                .unfold(language, Random(Random.nextInt()))
+                .words
+        )
+    }
+
+    @Test
+    fun `PredicatePossessionDescription uses question markers`() {
+        RandomSingleton.safeRandom = Random(Random.nextInt())
+        // Set up words
+        val questionMarker = createWord("i", Particle) withMeaning "_question_marker"
+        // Set up tense
+        val tenseCategory = Tense(
+            listOf(TenseValue.Present, TenseValue.Past),
+            setOf(Verb sourcedFrom CategorySource.Self),
+            setOf(Verb)
+        )
+        val tenseSourcedCategory = SourcedCategory(
+            tenseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val tenseExponenceCluster = ExponenceCluster(tenseSourcedCategory)
+        // Set up noun class
+        val caseCategory = Case(
+            listOf(CaseValue.Absolutive, CaseValue.Dative),
+            setOf(Noun sourcedFrom CategorySource.Self),
+            setOf(Noun)
+        )
+        val caseSourcedCategory = SourcedCategory(
+            caseCategory,
+            CategorySource.Self,
+            CompulsoryData(true)
+        )
+        val caseExponenceCluster = ExponenceCluster(caseSourcedCategory)
+        // Set up WordChangeParadigm
+        val tenseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val verbSpeechPartChangeParadigm = SpeechPartChangeParadigm(
+            Verb.toIntransitive(),
+            listOf(tenseExponenceCluster to toHandler(tenseExponenceCluster.possibleValues, tenseApplicators))
+        )
+        val caseApplicators = listOf(createAffixCategoryApplicator("-da"), createAffixCategoryApplicator("-to"))
+        val nounChangeParadigm = SpeechPartChangeParadigm(
+            Noun.toDefault(),
+            listOf(caseExponenceCluster to toHandler(caseExponenceCluster.possibleValues, caseApplicators))
+        )
+        val wordChangeParadigm = WordChangeParadigm(
+            listOf(tenseCategory),
+            mapOf(
+                Verb.toIntransitive() to verbSpeechPartChangeParadigm,
+                Noun.toDefault() to nounChangeParadigm,
+                Particle.toDefault() to SpeechPartChangeParadigm(Particle.toDefault())
+            )
+        )
+        val construction = AddParticle("question_marker", QuestionMarker)
+        val language = makeDefLang(
+            Lexis(
+                listOf(
+                    createNoun("i") withMeaning "dog",
+                    createIntransVerb("o") withMeaning "exist",
+                    questionMarker,
+                ),
+                mapOf(construction to SimpleWordPointer(questionMarker))
+            ),
+            wordChangeParadigm,
+            syntaxLogic = SyntaxLogic(
+                VerbFormResolver(
+                    rule { Verb + Past be listOf(tenseSourcedCategory[TenseValue.Past]) }
+                ),
+                verbCasesSolver = mapOf(
+                    Verb.toIntransitive() to SyntaxRelation.Argument to listOf(CaseValue.Absolutive),
+                ),
+                syntaxRelationSolver = mapOf(SyntaxRelation.Addressee to Noun.toDefault() to listOf(CaseValue.Dative)),
+                verbConstructions = VerbFormResolver(
+                    rule { Verb + GeneralQuestion be construction }
+                )
+            ),
+            predicatePossessionConstruction = DativeOblique
+        )
+        val sentenceDescription = PredicatePossessionDescription(
+            NominalDescription("dog", ContextValue.ActorComplimentValue(1)),
+            NominalDescription("dog", ContextValue.ActorComplimentValue(3))
+        )
+        val context = DescriptionContext(Past to Implicit, listOf(GeneralQuestion to Explicit))
+
+        assertEquals(
+            listOf(
+                createWord("i", Particle) withMeaning "_question_marker",
+                createNoun("ito").withMorphemes(
+                    MorphemeData(1, listOf(), true),
+                    MorphemeData(2, listOf(caseSourcedCategory[CaseValue.Dative]))
                 ) withMeaning "dog",
                 createNoun("ida").withMorphemes(
                     MorphemeData(1, listOf(), true),
