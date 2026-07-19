@@ -39,8 +39,7 @@ data class SyntaxLogic(
 ) {
     fun resolvePronounCategories(actorValue: ActorValue, speechPart: TypedSpeechPart): CategoryValues {
         val resultCategories = mutableListOf<CategoryValue>()
-        val (person, gender, amount, deixis, inclusivity) =
-            actorValue
+        val (person, gender, amount, deixis, inclusivity) = actorValue
 
         resultCategories += person
         resultCategories += deixisDefinitenessCategorySolver.getOrDefault(deixis to speechPart, listOf())
@@ -50,9 +49,8 @@ data class SyntaxLogic(
             resultCategories += nounClassCategorySolver.getValue(gender)
 
         inclusivity?.let { resultCategories += it } ?: run {
-            if (personalPronounInclusivity?.compulsoryData?.isApplicable(resultCategories) == true) {
+            if (personalPronounInclusivity?.compulsoryData?.isApplicable(resultCategories) == true)
                 resultCategories += InclusivityValue.Exclusive
-            }
         }
 
         return resultCategories
