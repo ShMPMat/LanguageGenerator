@@ -37,7 +37,7 @@ class Visualizer(val language: Language) {
     }
 
     private fun printTestSentences() {
-        val light = NominalDescription("light", ActorComplimentValue(1, null))
+        val light = NominalDescription("light", ActorComplimentValue(1))
         val mothers = NominalDescription(
             "mother",
             ActorComplimentValue(4, DeixisValue.Proximal),
@@ -190,7 +190,7 @@ class Visualizer(val language: Language) {
                 "We don't build a house with these for new high fathers"
             ).zip(testSentencesMain),
             negationContext,
-            "Negative"
+            "Negative (regular)"
         )
         printSampleClause(
             listOf(
@@ -257,7 +257,7 @@ class Visualizer(val language: Language) {
                 "I don't belong to these light's new mothers",
             ).zip(testSentencesConstructions),
             negationContext,
-            "Construction negation"
+            "Construction negation (regular)"
         )
         printSampleClause(
             listOf(
