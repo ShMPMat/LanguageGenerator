@@ -92,9 +92,8 @@ class ChangeParadigmGenerator(
         val wordChangeParadigm = WordChangeParadigm(categories, speechPartChangesMap)
         val syntaxParadigm = syntaxParadigmGenerator.generateSyntaxParadigm(wordChangeParadigm)
         val auxGenerator = AuxGenerator(wordChangeParadigm)
-        val wordOrder = WordOrderGenerator().generateWordOrder(syntaxParadigm)
-        val syntaxLogic = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm, auxGenerator)
-            .generateSyntaxLogic(wordOrder)
+        val (syntaxLogic, wordOrder) = SyntaxLogicGenerator(wordChangeParadigm, syntaxParadigm, auxGenerator)
+            .generateSyntaxLogic()
         val numeralParadigm = numeralParadigmGenerator.generateNumeralParadigm()
 
         return ChangeParadigm(wordOrder, wordChangeParadigm, syntaxParadigm, numeralParadigm, syntaxLogic)

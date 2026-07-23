@@ -16,7 +16,7 @@ import io.tashtabash.random.singleton.randomElement
 import io.tashtabash.random.withProb
 
 
-class WordOrderGenerator {
+class WordOrderGenerator(val additionalSyntaxRelations: List<SyntaxRelation> = listOf()) {
     internal fun generateWordOrder(syntaxParadigm: SyntaxParadigm): WordOrder {
         val sovOrder = generateSimpleSovOrder()
         val nominalGroupOrder = NominalGroupOrder.entries.randomElement()
@@ -131,10 +131,11 @@ class WordOrderGenerator {
     }
 
     private fun injectAdditionalRelations(
-        references: List<GenericSSO<SyntaxRelations>>,
+        references: List<GenericSSO<SyntaxRelations>>
     ): List<GenericSSO<SyntaxRelations>> {
         // All cases + Manner
-        val orderedObjects = (AdjunctType.entries.map { it.relation } + Manner + QuestionMarker).shuffled(RandomSingleton.random)
+        val orderedObjects = (AdjunctType.entries.map { it.relation } + additionalSyntaxRelations)
+            .shuffled(RandomSingleton.random)
 
         return insertAtRandom(references, orderedObjects)
     }

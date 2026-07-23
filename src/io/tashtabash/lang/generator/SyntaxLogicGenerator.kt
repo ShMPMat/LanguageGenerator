@@ -46,20 +46,26 @@ class SyntaxLogicGenerator(
     private val moodVerbFormLayer: MutableList<Pair<ContextMatcher, SourcedCategoryValues>> = mutableListOf()
     private val tenseVerbFormLayer: MutableList<Pair<ContextMatcher, SourcedCategoryValues>> = mutableListOf()
     private val verbConstructionsLayer: MutableList<Pair<ContextMatcher, VerbConstruction>> = mutableListOf()
+    private val additionalSyntaxRelations = mutableListOf(SyntaxRelation.Manner)
 
-    fun generateSyntaxLogic(wordOrder: WordOrder) = SyntaxLogic(
-        generateVerbFormSolver(),
-        generateVerbArgumentSolver(),
-        generateVerbCaseSolver(),
-        generateCopulaCaseSolver(),
-        generateSyntaxRelationSolver(),
-        generateNumberCategorySolver(),
-        generateGenderCategorySolver(),
-        generateDeixisCategorySolver(),
-        changeParadigm.getParadigm(PersonalPronoun.toDefault())[inclusivityName],
-        verbConstructions = VerbFormResolver(verbConstructionsLayer)
-    ).let {
-        it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder).generateTransformers())
+    fun generateSyntaxLogic(): Pair<SyntaxLogic, WordOrder> {
+        val baseSyntaxLogic = SyntaxLogic(
+            generateVerbFormSolver(),
+            generateVerbArgumentSolver(),
+            generateVerbCaseSolver(),
+            generateCopulaCaseSolver(),
+            generateSyntaxRelationSolver(),
+            generateNumberCategorySolver(),
+            generateGenderCategorySolver(),
+            generateDeixisCategorySolver(),
+            changeParadigm.getParadigm(PersonalPronoun.toDefault())[inclusivityName],
+            verbConstructions = VerbFormResolver(verbConstructionsLayer)
+        )
+        val wordOrder = WordOrderGenerator(additionalSyntaxRelations).generateWordOrder(syntaxParadigm)
+
+        return baseSyntaxLogic.let {
+            it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder).generateTransformers())
+        } to wordOrder
     }
 
     private fun generateCopulaCaseSolver(): Map<Pair<Pair<CopulaConstruction, SyntaxRelation>, TypedSpeechPart>, CategoryValues> {
@@ -234,6 +240,7 @@ class SyntaxLogicGenerator(
             return
         }
 
+        additionalSyntaxRelations += SyntaxRelation.QuestionMarker
         verbConstructionsLayer += rule {
             Verb + TypeContext.GeneralQuestion be AddParticle("question_marker", SyntaxRelation.QuestionMarker)
         }
