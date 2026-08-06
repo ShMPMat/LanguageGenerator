@@ -65,9 +65,7 @@ data class SyntaxNode(
                 ?.firstOrNull { it.parentClassName == category.outType }
                 ?: run {
                     if (compulsoryData.mustExist(categoryValues))
-                        throw SyntaxException(
-                            "$word: No value for compulsory category ${category.outType} and source $source"
-                        )
+                        throw SyntaxException("$word: No value for compulsory ${category.outType} and source $source")
                     else
                         return@mapNotNull null
                 }
