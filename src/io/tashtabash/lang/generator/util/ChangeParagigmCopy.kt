@@ -1,7 +1,9 @@
 package io.tashtabash.lang.generator.util
 
 import io.tashtabash.lang.language.category.CategorySource
+import io.tashtabash.lang.language.category.deixisName
 import io.tashtabash.lang.language.category.paradigm.*
+import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.language.lexis.TypedSpeechPart
 import io.tashtabash.lang.language.syntax.SyntaxRelation
 import io.tashtabash.random.singleton.chanceOf
@@ -81,18 +83,23 @@ fun SpeechPartChangeParadigm.copyForNewSpeechPart(
 }
 
 fun SpeechPartChangeParadigm.substituteWith(from: SpeechPartChangeParadigm) =
-    0.9.chanceOf<SpeechPartChangeParadigm> { fullSubstituteWith(from) }
+    .9.chanceOf<SpeechPartChangeParadigm> { fullSubstituteWith(from) }
         ?: partialSubstituteWith(from)
 
-
 private fun SpeechPartChangeParadigm.fullSubstituteWith(from: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
-    val copy = from.copyForNewSpeechPart { getCluster(it) != null }
+    val copy = from.copyForNewSpeechPart {
+        getCluster(it) != null
+                // Exclude DeixisPronouns from getting their Deixis overwritten
+                && !(speechPart.type == SpeechPart.DeixisPronoun
+                    && it.categories.any { c -> c.category.outType == deixisName }
+                )
+    }
 
     return combineParadigms(this, copy)
 }
 
 private fun SpeechPartChangeParadigm.partialSubstituteWith(from: SpeechPartChangeParadigm): SpeechPartChangeParadigm {
-    val copy = from.copyForNewSpeechPart { getCluster(it) != null && 0.5.testProbability() }
+    val copy = from.copyForNewSpeechPart { getCluster(it) != null && .5.testProbability() }
 
     return combineParadigms(this, copy)
 }
