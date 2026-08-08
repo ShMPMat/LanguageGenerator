@@ -32,7 +32,7 @@ class Case(
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>,
     outType: String = caseName
-) : AbstractChangeCategory<CaseValue>(
+) : AbstractCategory<CaseValue>(
     categories,
     CaseValue::class.valuesSet(),
     affected,

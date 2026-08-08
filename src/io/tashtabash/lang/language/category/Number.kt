@@ -29,7 +29,7 @@ class Number(
     categories: List<NumberValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart> = setOf()
-) : AbstractChangeCategory<NumberValue>(
+) : AbstractCategory<NumberValue>(
     categories,
     NumberValue::class.valuesSet(),
     affected,

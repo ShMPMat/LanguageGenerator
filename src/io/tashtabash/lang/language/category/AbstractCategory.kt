@@ -6,7 +6,7 @@ import io.tashtabash.lang.language.lexis.SpeechPart
 import io.tashtabash.lang.utils.notEqualsByElement
 
 
-open class AbstractChangeCategory<E : CategoryValue>(
+open class AbstractCategory<E : CategoryValue>(
     final override val actualValues: List<E>,
     final override val allPossibleValues: Set<E>,
     final override val affected: Set<PSpeechPart>,
@@ -34,7 +34,7 @@ open class AbstractChangeCategory<E : CategoryValue>(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AbstractChangeCategory<*>
+        other as AbstractCategory<*>
 
         if (outType != other.outType) return false
         if (actualValues notEqualsByElement other.actualValues) return false

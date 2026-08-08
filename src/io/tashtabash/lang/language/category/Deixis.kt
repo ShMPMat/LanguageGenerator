@@ -24,7 +24,7 @@ class Deixis(
     categories: List<DeixisValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory<DeixisValue>(
+) : AbstractCategory<DeixisValue>(
     categories,
     DeixisValue::class.valuesSet(),
     affected,

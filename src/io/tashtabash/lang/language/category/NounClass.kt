@@ -29,7 +29,7 @@ class NounClass(
     categories: List<NounClassValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory<NounClassValue>(
+) : AbstractCategory<NounClassValue>(
     categories,
     NounClassValue::class.valuesSet(),
     affected,

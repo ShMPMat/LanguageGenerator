@@ -37,7 +37,7 @@ class CategoryGenerator {
 
     private fun generateAdpositions(
         caseCategory: SupplementedCategory<CaseValue>,
-    ): Pair<AbstractChangeCategory<AbstractCategoryValue>, AdpositionRandomSupplements>? {
+    ): Pair<AbstractCategory<AbstractCategoryValue>, AdpositionRandomSupplements>? {
         val absentScenarios = caseCategory.first.allPossibleValues
             .filter { it !in caseCategory.first.actualValues && it in nonCoreCases }
         val chosenAdposition = absentScenarios.filter { shouldTakeAdposition(it) }
@@ -53,7 +53,7 @@ class CategoryGenerator {
 
         val affectedSpeechPartsAndSources = randomAffectedSpeechParts(AdpositionRandomSupplements)
 
-        val adpositionCategory = AbstractChangeCategory(
+        val adpositionCategory = AbstractCategory(
             values,
             allPossibleValues,
             affectedSpeechPartsAndSources,

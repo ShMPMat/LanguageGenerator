@@ -23,7 +23,7 @@ class Tense(
     categories: List<TenseValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory<TenseValue>(
+) : AbstractCategory<TenseValue>(
     categories,
     TenseValue::class.valuesSet(),
     affected,

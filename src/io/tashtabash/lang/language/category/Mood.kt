@@ -23,7 +23,7 @@ class Mood(
     categories: List<MoodValue>,
     affected: Set<PSpeechPart>,
     staticSpeechParts: Set<SpeechPart>
-) : AbstractChangeCategory<MoodValue>(
+) : AbstractCategory<MoodValue>(
     categories,
     MoodValue::class.valuesSet(),
     affected,
