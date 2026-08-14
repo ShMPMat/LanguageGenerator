@@ -22,6 +22,7 @@ class TransformerGenerator(
     val changeParadigm: WordChangeParadigm,
     val syntaxLogic: SyntaxLogic,
     val wordOrder: WordOrder,
+    val wordOrderGenerator: WordOrderGenerator,
 ) {
     fun generateTransformers(): List<Pair<SyntaxNodeMatcher, Transformer>> = listOfNotNull(
         // Word order
@@ -49,7 +50,7 @@ class TransformerGenerator(
 
         for (type in types)
             type.probability.chanceOf {
-                exceptions[type.value] = WordOrderGenerator()
+                exceptions[type.value] = wordOrderGenerator
                     .generateSimpleSovOrder(mainOrder.name + " None Two") // I don't want them showing up
             }
 

@@ -44,7 +44,8 @@ class WordOrderGeneratorTest {
                             Verb.toDefault() to SyntaxRelation.Patient to listOf()
                         )
                     ),
-                    WordOrderGenerator().generateWordOrder(syntaxParadigm)
+                    WordOrderGenerator().generateWordOrder(syntaxParadigm),
+                    WordOrderGenerator()
                 ).generateTransformers()
             }.any { result -> result.any { it.second is ChangeOrderTransformer } }
         }

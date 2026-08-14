@@ -61,10 +61,12 @@ class SyntaxLogicGenerator(
             changeParadigm.getParadigm(PersonalPronoun.toDefault())[inclusivityName],
             verbConstructions = VerbFormResolver(verbConstructionsLayer)
         )
-        val wordOrder = WordOrderGenerator(additionalSyntaxRelations).generateWordOrder(syntaxParadigm)
+        val wordOrderGenerator = WordOrderGenerator(additionalSyntaxRelations)
+        val wordOrder = wordOrderGenerator.generateWordOrder(syntaxParadigm)
 
         return baseSyntaxLogic.let {
-            it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder).generateTransformers())
+            it.copy(transformers = TransformerGenerator(changeParadigm, it, wordOrder, wordOrderGenerator)
+                .generateTransformers())
         } to wordOrder
     }
 
