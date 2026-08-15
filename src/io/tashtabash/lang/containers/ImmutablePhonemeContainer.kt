@@ -14,6 +14,6 @@ data class ImmutablePhonemeContainer(override val phonemes: List<Phoneme>) : Pho
                 .then(Comparator.comparing { it.articulationManner })
                 .then(Comparator.comparing { it.modifiers.size }))
 
-            "$type: $sortedPhonemes"
+            "$type (${sortedPhonemes.size}): $sortedPhonemes"
         }
 }
