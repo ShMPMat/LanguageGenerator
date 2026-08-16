@@ -74,7 +74,7 @@ object AnimosityRandomSupplements : CategoryRandomSupplements<AnimosityValue> {
                 RealizationBox(CategoryRealization.Passing, 1.0),
                 noValue(1.0)
             )
-            else -> return when(speechPart) {// I wasn't able to find the data on the distribution
+            else -> when(speechPart) {// I wasn't able to find the data on the distribution
                 PersonalPronoun -> setOf(
                     noValue(1.0),
                     RealizationBox(CategoryRealization.Suppletion, 2.0)
