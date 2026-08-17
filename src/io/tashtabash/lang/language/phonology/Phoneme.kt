@@ -10,10 +10,12 @@ data class Phoneme(
     val articulationManner: ArticulationManner,
     val modifiers: Set<PhonemeModifier> = setOf()
 ) {
-    val characteristics: Set<PhonemeCharacteristic> = modifiers + listOf(articulationPlace, articulationManner)
+    val characteristics: Set<PhonemeCharacteristic> by lazy {
+        modifiers + listOf(articulationPlace, articulationManner)
+    }
 
     fun contains(vararg characteristic: PhonemeCharacteristic): Boolean =
-        characteristics.containsAll(characteristics)
+        characteristics.containsAll(characteristic.toList())
 
     fun isEqualByProperties(that: Phoneme) =
         copy(symbol = "_") == that.copy(symbol = "_")
