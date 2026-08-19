@@ -70,13 +70,13 @@ enum class PhonemeModifier: PhonemeCharacteristic {
     Labialized,
 
     // Consonant
-    Palatilized,
+    Palatalized,
     Velarized;
 
     companion object {
         fun values(type: PhonemeType) = when (type) {
             PhonemeType.Consonant -> listOf(Nasalized, Long, Voiced, Labialized)
-            PhonemeType.Vowel -> listOf(Long, Voiced, Labialized, Palatilized, Velarized)
+            PhonemeType.Vowel -> listOf(Long, Voiced, Labialized, Palatalized, Velarized)
         }
     }
 }
