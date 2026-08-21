@@ -7,11 +7,16 @@ import java.io.File
 class PhonemePool(supplementPath: String) : PhonemeContainer {
     override val phonemes: MutableList<Phoneme> = ArrayList()
 
+    // This map will lack all phonemes added after the 1st call
+    override val phonemesByProperties: Map<Phoneme, Phoneme> by lazy {
+        phonemes.associateBy { it.copy(symbol = "_") }
+    }
+
     init {
         File("$supplementPath/Phonemes").forEachLine { line ->
-            if (line.isBlank() || line[0] == '-') {
+            if (line.isBlank() || line[0] == '-')
                 return@forEachLine
-            }
+
             val featureStrings = line.drop(1).split(" +".toRegex())
             val (sound, placeString, mannerString) = featureStrings
             val modifierStrings = featureStrings.drop(3)

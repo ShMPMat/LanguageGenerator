@@ -10,6 +10,8 @@ import io.tashtabash.lang.language.phonology.matcher.PhonemeMatcher
 interface PhonemeContainer {
     val phonemes: List<Phoneme>
 
+    val phonemesByProperties: Map<Phoneme, Phoneme>
+
     val size: Int
         get() = phonemes.size
 
@@ -41,7 +43,7 @@ interface PhonemeContainer {
             )
 
     fun getPhonemeByPropertiesOrNull(phoneme: Phoneme): Phoneme? =
-        phonemes.firstOrNull { it.isEqualByProperties(phoneme) }
+        phonemesByProperties[phoneme.copy(symbol = "_")]
 
     fun getPhonemeWithShiftedModifiers(
         phoneme: Phoneme,

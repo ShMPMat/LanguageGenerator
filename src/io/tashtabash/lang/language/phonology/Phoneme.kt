@@ -17,9 +17,6 @@ data class Phoneme(
     fun contains(vararg characteristic: PhonemeCharacteristic): Boolean =
         characteristics.containsAll(characteristic.toList())
 
-    fun isEqualByProperties(that: Phoneme) =
-        copy(symbol = "_") == that.copy(symbol = "_")
-
     override fun toString() = symbol
 }
 

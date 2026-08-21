@@ -1,18 +1,21 @@
 package io.tashtabash.lang.containers
 
-import io.tashtabash.lang.language.phonology.ArticulationPlace
 import io.tashtabash.lang.language.phonology.Phoneme
-import java.util.Comparator
 
 
 data class ImmutablePhonemeContainer(override val phonemes: List<Phoneme>) : PhonemeContainer {
+    override val phonemesByProperties: Map<Phoneme, Phoneme> by lazy {
+        phonemes.associateBy { it.copy(symbol = "_") }
+    }
+
     override fun toString() = phonemes.groupBy { it.type }
         .entries
-        .joinToString { (type, phonemes) ->
-            val sortedPhonemes = phonemes
-                .sortedWith(Comparator.comparing<Phoneme?, ArticulationPlace?> { it.articulationPlace }
-                .then(Comparator.comparing { it.articulationManner })
-                .then(Comparator.comparing { it.modifiers.size }))
+        .joinToString { (type, phonemes: List<Phoneme>) ->
+            val sortedPhonemes = phonemes.sortedWith(
+                compareBy<Phoneme> { it.articulationPlace }
+                    .thenBy { it.articulationManner }
+                    .thenBy { it.modifiers.size }
+            )
 
             "$type (${sortedPhonemes.size}): $sortedPhonemes"
         }
