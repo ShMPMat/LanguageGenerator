@@ -136,7 +136,7 @@ object RemoveRandomVowelApplicator : VowelGenerationApplicator() {
 object VowelLengthApplicator : VowelGenerationApplicator() {
     override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val longVowels = vowels.map {
-            it.copy(symbol = it.symbol + it.symbol, modifiers = it.modifiers + listOf(PhonemeModifier.Long))
+            it.copy(symbol = it.symbol + ':', modifiers = it.modifiers + listOf(PhonemeModifier.Long))
         }
 
         return vowels + longVowels
