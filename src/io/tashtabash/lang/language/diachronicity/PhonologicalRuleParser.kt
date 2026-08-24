@@ -76,14 +76,14 @@ class LanguagePhonologicalRuleCreationDsl(
 ): PhonologicalRuleCreationDsl(phonemeContainer) {
     fun escapeStress(symbol: String): String =
         if (language.stressType == StressType.None)
-            escape(symbol)
+            // The template creator will take care of escaping
+            symbol
         else if (symbol.first() == '(' && symbol.last() == ')')
             symbol.dropLast(1) + "{-Stress})"
         else if (symbol.first() == '<' && symbol.last() == '>')
-            // The template creator will take care of escaping
             "($symbol{-Stress})"
         else
-            "(${escape(symbol)}{-Stress})"
+            "($symbol{-Stress})"
 
     fun escapeStress(phoneme: Phoneme): String =
         escapeStress(phoneme.symbol)
