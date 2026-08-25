@@ -212,6 +212,41 @@ object RemoveRandomConsonantApplicator : ConsonantGenerationApplicator() {
 }
 
 
+object ConsonantLengthApplicator : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val longConsonants = consonants.map {
+            it.copy(symbol = it.symbol + ':', modifiers = it.modifiers + listOf(PhonemeModifier.Long))
+        }
+
+        return consonants + longConsonants
+    }
+}
+
+
+object ConsonantLabializationApplicator : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val labializedConsonants = consonants.map {
+            it.copy(symbol = it.symbol + '\u02B7', modifiers = it.modifiers + listOf(PhonemeModifier.Labialized))
+        }
+
+        return consonants + labializedConsonants
+    }
+}
+
+
+object ConsonantPalatalizationApplicator : ConsonantGenerationApplicator() {
+    override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
+        val palatalizedConsonants = consonants
+            .filter { it.articulationPlace != ArticulationPlace.Palatal }
+            .map {
+                it.copy(symbol = it.symbol + '\u02B2', modifiers = it.modifiers + listOf(PhonemeModifier.Palatalized))
+            }
+
+        return consonants + palatalizedConsonants
+    }
+}
+
+
 class AddPhonemeApplicator(
     private val phonemePool: PhonemePool,
     private vararg val phonemeSymbols: String

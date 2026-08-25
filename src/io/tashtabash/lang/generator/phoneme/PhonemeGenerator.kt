@@ -21,15 +21,27 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
         VowelNasalizationApplicator
     )
 
+    private val consonantDiversityApplicators = listOf(
+        ConsonantLengthApplicator,
+        ConsonantLabializationApplicator,
+        ConsonantPalatalizationApplicator
+    )
+
     val allPossiblePhonemes: PhonemeContainer by lazy {
         val additionalVowels = phonemePool.getPhonemes(PhonemeType.Vowel)
+            .toMutableList()
+        val additionalConsonants = phonemePool.getPhonemes(PhonemeType.Consonant)
             .toMutableList()
         for (applicator in vowelDiversityApplicators)
             additionalVowels += additionalVowels.flatMap {
                 applicator.changeVowels(listOf(it))
             }
+        for (applicator in consonantDiversityApplicators)
+            additionalConsonants += additionalConsonants.flatMap {
+                applicator.changeConsonants(listOf(it))
+            }
 
-        val newPhonemes = (phonemePool.phonemes.toList() + additionalVowels.toList())
+        val newPhonemes = (phonemePool.phonemes.toList() + additionalVowels + additionalConsonants)
             .distinct()
 
         ImmutablePhonemeContainer(newPhonemes)
@@ -70,6 +82,18 @@ class PhonemeGenerator(private val phonemePool: PhonemePool) {
         AddRandomConsonantPlaceRowApplicator(phonemePool)
             .withProbability { 1.0 - it.size * 2.0 / MAX_CONSONANTS }
             .repeat { true },
+        RemoveRandomConsonantApplicator
+            .withProbability { (it.size - 6.0) / (MAX_CONSONANTS - 7.0) }
+            .repeat { true },
+        ConsonantLengthApplicator
+            .withRandomFeatureFilter(0.2)
+            .withProbability { (1.0 - it.size.toDouble() / (MAX_CONSONANTS + 1)).pow(10) },
+        ConsonantLabializationApplicator
+            .withRandomFeatureFilter(0.2)
+            .withProbability { (1.0 - it.size.toDouble() / (MAX_CONSONANTS + 1)).pow(10) },
+        ConsonantPalatalizationApplicator
+            .withRandomFeatureFilter(0.2)
+            .withProbability { (1.0 - it.size.toDouble() / (MAX_CONSONANTS + 1)).pow(10) },
         RemoveRandomConsonantApplicator
             .withProbability { (it.size - 6.0) / (MAX_CONSONANTS - 7.0) }
             .repeat { true },
