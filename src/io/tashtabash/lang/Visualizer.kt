@@ -9,7 +9,7 @@ import io.tashtabash.lang.language.category.DeixisValue
 import io.tashtabash.lang.language.category.InclusivityValue
 import io.tashtabash.lang.language.category.NounClassValue.*
 import io.tashtabash.lang.language.category.PersonValue.*
-import io.tashtabash.lang.language.diachronicity.TendencyBasedPhonologicalRuleApplicator
+import io.tashtabash.lang.language.diachronicity.DiachronicChangeApplicator
 import io.tashtabash.lang.language.diachronicity.createDefaultRules
 import io.tashtabash.lang.language.getClauseAndInfoStr
 import io.tashtabash.lang.language.syntax.clause.description.*
@@ -393,10 +393,10 @@ fun main(args: Array<String>) {
     }
 
     val phonologicalRulesContainer = createDefaultRules(generator.phonemeGenerator.allPossiblePhonemes)
-    val ruleApplicator = TendencyBasedPhonologicalRuleApplicator(generator.phonemeGenerator.allPossiblePhonemes)
+    val ruleApplicator = DiachronicChangeApplicator(generator.phonemeGenerator.allPossiblePhonemes, phonologicalRulesContainer)
     var messagesSize = 0
     for (i in 0 until CHANGES_NUMBER) {
-        language = ruleApplicator.applyPhonologicalRule(language, phonologicalRulesContainer)
+        language = ruleApplicator.apply(language)
         println(ruleApplicator.messages.drop(messagesSize).joinToString("\n"))
         messagesSize = ruleApplicator.messages.size
     }
