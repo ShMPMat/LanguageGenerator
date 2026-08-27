@@ -10,15 +10,15 @@ internal class PhonologicalRuleTest {
     fun `times() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
-            createTestPhonologicalRule("aC -> |ii|_ / $ _ ") * createTestPhonologicalRule("|ii| -> u / _ ")
+            createTestPhonologicalRule("aC -> i_ / $ _ ") * createTestPhonologicalRule("i -> u / _ ")
         )
     }
 
     @Test
     fun `times() correctly handles ModifierPhonemeSubstitution`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("C[+Labialized] -> _i / $ _ ")),
-            createTestPhonologicalRule("C[+Labialized] -> _[-Labialized] / $ _ ") * createTestPhonologicalRule("V -> i / _ ")
+            listOf(createTestPhonologicalRule("C(V[+Labialized]) -> _i / $ _ ")),
+            createTestPhonologicalRule("C(V[+Labialized]) -> _[-Labialized] / $ _ ") * createTestPhonologicalRule("V -> i / _ ")
         )
     }
 
@@ -41,8 +41,8 @@ internal class PhonologicalRuleTest {
     @Test
     fun `times() returns a single rule if there's no narrowing from a PhonemeModifierMatcher`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("C([+Labialized][-Long]) -> _[+Long,-Labialized] / $ _ ")),
-            createTestPhonologicalRule("C([+Labialized][-Long]) -> _[-Labialized] / $ _ ") * createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
+            listOf(createTestPhonologicalRule("C(V[+Labialized][-Long]) -> _[+Long,-Labialized] / $ _ ")),
+            createTestPhonologicalRule("C(V[+Labialized][-Long]) -> _[-Labialized] / $ _ ") * createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
         )
     }
 
@@ -138,15 +138,15 @@ internal class PhonologicalRuleTest {
     fun `plus() changes a single vowel`() {
         assertEquals(
             listOf(createTestPhonologicalRule("aC -> u_ / $ _ ")),
-            createTestPhonologicalRule("aC -> |ii|_ / $ _ ") + createTestPhonologicalRule("|ii| -> u / _ ")
+            createTestPhonologicalRule("aC -> |i:|_ / $ _ ") + createTestPhonologicalRule("|i:| -> u / _ ")
         )
     }
 
     @Test
     fun `plus() correctly handles ModifierPhonemeSubstitution`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("C[+Labialized] -> _i / $ _ ")),
-            createTestPhonologicalRule("C[+Labialized] -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("V -> i / _ ")
+            listOf(createTestPhonologicalRule("C(V[+Labialized]) -> _i / $ _ ")),
+            createTestPhonologicalRule("C(V[+Labialized]) -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("V -> i / _ ")
         )
     }
 
@@ -161,16 +161,16 @@ internal class PhonologicalRuleTest {
     @Test
     fun `plus() returns the narrowed and the original rule if the combination of 2 PhonemeModifierMatchers results in a narrowing`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("C[+Labialized] -> _[-Labialized,+Long] / $ _ "), createTestPhonologicalRule("C[+Labialized] -> _[-Labialized] / $ _ ")),
-            createTestPhonologicalRule("C[+Labialized] -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
+            listOf(createTestPhonologicalRule("C(V[+Labialized]) -> _[-Labialized,+Long] / $ _ "), createTestPhonologicalRule("C(V[+Labialized]) -> _[-Labialized] / $ _ ")),
+            createTestPhonologicalRule("C(V[+Labialized]) -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
         )
     }
 
     @Test
     fun `plus() returns a single rule if there's no narrowing from a PhonemeModifierMatcher`() {
         assertEquals(
-            listOf(createTestPhonologicalRule("C([+Labialized][-Long]) -> _[+Long,-Labialized] / $ _ ")),
-            createTestPhonologicalRule("C([+Labialized][-Long]) -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
+            listOf(createTestPhonologicalRule("C(V[+Labialized][-Long]) -> _[+Long,-Labialized] / $ _ ")),
+            createTestPhonologicalRule("C(V[+Labialized][-Long]) -> _[-Labialized] / $ _ ") + createTestPhonologicalRule("(V[-Long]) -> [+Long] / C _ ")
         )
     }
 

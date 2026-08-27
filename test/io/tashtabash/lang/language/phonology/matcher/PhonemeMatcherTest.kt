@@ -90,17 +90,17 @@ internal class PhonemeMatcherTest {
         val matcher = CharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, ArticulationManner.Stop)
 
         assertEquals(
-            listOf("t", "tt", "d", "dd").map { testPhonemeContainer.getPhoneme(it) },
+            listOf("t", "d", "t:", "d:", "tʷ", "dʷ", "t:ʷ", "d:ʷ", "tʲ", "dʲ", "t:ʲ", "d:ʲ", "tʷʲ", "dʷʲ", "t:ʷʲ", "d:ʷʲ").map { testPhonemeContainer.getPhoneme(it) },
             testPhonemeContainer.phonemes.filter { matcher.match(it) }
         )
     }
 
     @Test
     fun `AbsentModifierPhonemeMatcher filters by multiple PhonemeCharacteristics`() {
-        val matcher = AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, Voiced)
+        val matcher = AbsentCharacteristicPhonemeMatcher(ArticulationPlace.Alveolar, Voiced, Labialized, Palatalized)
 
         assertEquals(
-            listOf("p", "pp", "c", "cc", "h", "hh").map { testPhonemeContainer.getPhoneme(it) },
+            listOf("p", "c", "h", "p:", "c:", "h:").map { testPhonemeContainer.getPhoneme(it) },
             testPhonemeContainer.phonemes.filter { matcher.match(it) }
         )
     }

@@ -3,6 +3,7 @@ package io.tashtabash.lang.language.util
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.generator.GeneratedChange
+import io.tashtabash.lang.generator.phoneme.PhonemeGenerator
 import io.tashtabash.lang.language.category.realization.AffixCategoryApplicator
 import io.tashtabash.lang.language.category.realization.CategoryRealization
 import io.tashtabash.lang.language.diachronicity.createPhonologicalRule
@@ -144,7 +145,7 @@ fun createWord(
 fun getTestPhoneme(symbol: String): Phoneme =
     testPhonemeContainer.getPhoneme(symbol)
 
-val testPhonemeContainer = ImmutablePhonemeContainer(
+val testSmallPhonemeContainer = ImmutablePhonemeContainer(
     listOf(
         Phoneme("a", PhonemeType.Vowel, Front, Open, setOf(Voiced)),
         Phoneme("i", PhonemeType.Vowel, Front, Close, setOf(Voiced)),
@@ -161,8 +162,11 @@ val testPhonemeContainer = ImmutablePhonemeContainer(
         Phoneme("c", PhonemeType.Consonant, Palatal, Stop, setOf()),
         Phoneme("l", PhonemeType.Consonant, Alveolar, LateralApproximant, setOf(Voiced)),
         Phoneme("h", PhonemeType.Consonant, Glottal, NonSibilantFricative, setOf()),
-    ).flatMap { listOf(it, it.copy(it.symbol + it.symbol, modifiers = it.modifiers + PhonemeModifier.Long)) }
+        Phoneme("ts", PhonemeType.Consonant, Alveolar, SibilantAffricate, setOf()),
+    )
 )
+
+val testPhonemeContainer = PhonemeGenerator(testSmallPhonemeContainer).allPossiblePhonemes
 
 val testPhonemeContainerExtended = ImmutablePhonemeContainer(
     (PhonemePool("SupplementFiles").phonemes + testPhonemeContainer.phonemes).distinct()

@@ -1,6 +1,5 @@
 package io.tashtabash.lang.generator.phoneme
 
-import io.tashtabash.lang.containers.PhonemePool
 import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
 import io.tashtabash.lang.language.VowelQualityAmount
@@ -11,7 +10,7 @@ import kotlin.math.log2
 import kotlin.math.pow
 
 
-class PhonemeGenerator(private val phonemePool: PhonemePool) {
+class PhonemeGenerator(private val phonemePool: PhonemeContainer) {
     private val MAX_VOWEL_QUALITIES = 20
     private val MAX_VOWELS = MAX_VOWEL_QUALITIES * 6
     private val MAX_CONSONANTS = 120

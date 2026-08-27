@@ -43,16 +43,16 @@ class LanguagePhonologicalRuleCreationDslTest {
         val language = makeDefLang(listOf())
 
         val result = testPhonemeContainer.createPhonologicalRulesFor(language) {
-            createRules("<[+Labialized]> -> [-Labialized] / _ $")
+            createRules("<(V[+Labialized][-Nasalized])> -> [-Labialized] / _ $")
         }
 
         assertEquals(
             testPhonemeContainer.createPhonologicalRules {
                 listOf(
                     createRule("o -> [-Labialized] / _ $"),
-                    createRule("|oo| -> [-Labialized] / _ $"),
                     createRule("u -> [-Labialized] / _ $"),
-                    createRule("|uu| -> [-Labialized] / _ $"),
+                    createRule("|o:| -> [-Labialized] / _ $"),
+                    createRule("|u:| -> [-Labialized] / _ $"),
                 )
             },
             result
@@ -64,14 +64,14 @@ class LanguagePhonologicalRuleCreationDslTest {
         val language = makeDefLang(listOf())
 
         val result = testPhonemeContainer.createPhonologicalRulesFor(language) {
-            createRules("<([+Labialized][+Close])> -> [-Labialized] / _ $")
+            createRules("<(V[+Labialized][+Close][-Nasalized])> -> [-Labialized] / _ $")
         }
 
         assertEquals(
             testPhonemeContainer.createPhonologicalRules {
                 listOf(
                     createRule("u -> [-Labialized] / _ $"),
-                    createRule("|uu| -> [-Labialized] / _ $"),
+                    createRule("|u:| -> [-Labialized] / _ $"),
                 )
             },
             result
@@ -83,16 +83,16 @@ class LanguagePhonologicalRuleCreationDslTest {
         val language = makeDefLang(listOf())
 
         val result = testPhonemeContainer.createPhonologicalRulesFor(language) {
-            createRules("(<[+Labialized]>{-Stress}) -> [-Labialized] / _ $")
+            createRules("(<(V[+Labialized][-Nasalized])>{-Stress}) -> [-Labialized] / _ $")
         }
 
         assertEquals(
             testPhonemeContainer.createPhonologicalRules {
                 listOf(
                     createRule("(o{-Stress}) -> [-Labialized] / _ $"),
-                    createRule("(|oo|{-Stress}) -> [-Labialized] / _ $"),
                     createRule("(u{-Stress}) -> [-Labialized] / _ $"),
-                    createRule("(|uu|{-Stress}) -> [-Labialized] / _ $"),
+                    createRule("(|o:|{-Stress}) -> [-Labialized] / _ $"),
+                    createRule("(|u:|{-Stress}) -> [-Labialized] / _ $"),
                 )
             },
             result
@@ -104,16 +104,16 @@ class LanguagePhonologicalRuleCreationDslTest {
         val language = makeDefLang(listOf())
 
         val result = testPhonemeContainer.createPhonologicalRulesFor(language) {
-            createRules("${escapeStress("<[+Labialized]>")} -> [-Labialized] / _ $")
+            createRules("${escapeStress("<(V[+Labialized][-Nasalized])>")} -> [-Labialized] / _ $")
         }
 
         assertEquals(
             testPhonemeContainer.createPhonologicalRules {
                 listOf(
                     createRule("(o{-Stress}) -> [-Labialized] / _ $"),
-                    createRule("(|oo|{-Stress}) -> [-Labialized] / _ $"),
                     createRule("(u{-Stress}) -> [-Labialized] / _ $"),
-                    createRule("(|uu|{-Stress}) -> [-Labialized] / _ $"),
+                    createRule("(|o:|{-Stress}) -> [-Labialized] / _ $"),
+                    createRule("(|u:|{-Stress}) -> [-Labialized] / _ $"),
                 )
             },
             result
@@ -125,7 +125,7 @@ class LanguagePhonologicalRuleCreationDslTest {
         val language = makeDefLang(listOf())
 
         val result = testPhonemeContainer.createPhonologicalRulesFor(language) {
-            createWeakRules("${escapeStress("<([+Labialized][+Close])>")} -> [-Labialized] / _ ")
+            createWeakRules("${escapeStress("<(V[+Labialized][+Close][-Nasalized])>")} -> [-Labialized] / _ ")
         }
 
         assertEquals(
@@ -134,9 +134,9 @@ class LanguagePhonologicalRuleCreationDslTest {
                     createRule("(u{-Stress}) -> [-Labialized] / _ "),
                     createRule("(u{-Stress}) -> [-Labialized] / $ _ "),
                     createRule("(u{-Stress}) -> [-Labialized] / _ $"),
-                    createRule("(|uu|{-Stress}) -> [-Labialized] / _ "),
-                    createRule("(|uu|{-Stress}) -> [-Labialized] / $ _ "),
-                    createRule("(|uu|{-Stress}) -> [-Labialized] / _ $"),
+                    createRule("(|u:|{-Stress}) -> [-Labialized] / _ "),
+                    createRule("(|u:|{-Stress}) -> [-Labialized] / $ _ "),
+                    createRule("(|u:|{-Stress}) -> [-Labialized] / _ $"),
                 )
             },
             result

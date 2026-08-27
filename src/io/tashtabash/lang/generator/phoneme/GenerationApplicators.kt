@@ -1,7 +1,7 @@
 package io.tashtabash.lang.generator.phoneme
 
 import io.tashtabash.lang.containers.ImmutablePhonemeContainer
-import io.tashtabash.lang.containers.PhonemePool
+import io.tashtabash.lang.containers.PhonemeContainer
 import io.tashtabash.lang.language.phonology.*
 import io.tashtabash.random.singleton.chanceOf
 import io.tashtabash.random.singleton.randomElement
@@ -113,7 +113,7 @@ class RandomFeatureFilterApplicator(
 }
 
 
-class AddRandomVowelApplicator(private val phonemePool: PhonemePool) : VowelGenerationApplicator() {
+class AddRandomVowelApplicator(private val phonemePool: PhonemeContainer) : VowelGenerationApplicator() {
     override fun changeVowels(vowels: List<Phoneme>): List<Phoneme> {
         val newPhoneme = phonemePool.getPhonemes(PhonemeType.Vowel)
             .filter { it !in vowels }
@@ -158,7 +158,7 @@ object VowelNasalizationApplicator : VowelGenerationApplicator() {
 }
 
 
-class AddRandomConsonantApplicator(private val phonemePool: PhonemePool) : ConsonantGenerationApplicator() {
+class AddRandomConsonantApplicator(private val phonemePool: PhonemeContainer) : ConsonantGenerationApplicator() {
     override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
         val newPhoneme = phonemePool.getPhonemes(PhonemeType.Consonant)
             .filter { it !in consonants }
@@ -173,7 +173,7 @@ class AddRandomConsonantApplicator(private val phonemePool: PhonemePool) : Conso
 
 
 class AddRandomConsonantMannerRowApplicator(
-    private val phonemePool: PhonemePool,
+    private val phonemePool: PhonemeContainer,
     private val gapProbability: Double = 0.2,
 ) : ConsonantGenerationApplicator() {
     override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
@@ -191,7 +191,7 @@ class AddRandomConsonantMannerRowApplicator(
 
 
 class AddRandomConsonantPlaceRowApplicator(
-    private val phonemePool: PhonemePool,
+    private val phonemePool: PhonemeContainer,
     private val gapProbability: Double = 0.2,
 ) : ConsonantGenerationApplicator() {
     override fun changeConsonants(consonants: List<Phoneme>): List<Phoneme> {
@@ -248,7 +248,7 @@ object ConsonantPalatalizationApplicator : ConsonantGenerationApplicator() {
 
 
 class AddPhonemeApplicator(
-    private val phonemePool: PhonemePool,
+    private val phonemePool: PhonemeContainer,
     private vararg val phonemeSymbols: String
 ) : GenerationApplicator {
     override fun apply(phonemeContainer: ImmutablePhonemeContainer): ImmutablePhonemeContainer {
