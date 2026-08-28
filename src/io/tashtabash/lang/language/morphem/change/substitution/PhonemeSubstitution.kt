@@ -5,6 +5,8 @@ import io.tashtabash.lang.language.phonology.Phoneme
 import io.tashtabash.lang.language.phonology.PhonemeModifier
 
 
+// There's no ArticulationPlaceSubstitution because merging it w/ ModifierPhonemeSubstitution would require
+// a PhonemeSubstitution sum class, and that's a nightmare.
 interface PhonemeSubstitution {
     fun substitute(phoneme: Phoneme?): List<Phoneme>
 
