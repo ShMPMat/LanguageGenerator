@@ -24,7 +24,7 @@ private class Nasalization : OptionListPhonologicalChangeTendency() {
 
     override fun computeDevelopmentChance(language: Language): Double {
         if (appliedRules.isNotEmpty())
-            return 0.0
+            return .0
 
         regressiveChance = regressiveChance
             ?: createPhonemeMatchers("(V[-Nasalized])(C[+Nasal])", language.phonemeContainer)
@@ -39,11 +39,11 @@ private class Nasalization : OptionListPhonologicalChangeTendency() {
     }
 
     // Discard after the first application
-    override fun computeRetentionChance(language: Language): Double = 0.0
+    override fun computeRetentionChance(language: Language): Double = .0
 
     override fun getOptions(language: Language, phonemes: PhonemeContainer): List<GenericSSO<PhonologicalRule>> =
         phonemes.createPhonologicalRulesFor(language) {
-            return (createWeakRules("(V[-Nasalized])(C[+Nasal]) -> [+Nasalized]- / _ ") allWithProb 0.1) +
-                    (createWeakRules("(C[+Nasal])(V[-Nasalized]) -> -[+Nasalized] / _ ") allWithProb 0.1)
+            return (createWeakRules("(V[-Nasalized])(C[+Nasal]) -> [+Nasalized]- / _ ") allWithProb .1) +
+                    (createWeakRules("(C[+Nasal])(V[-Nasalized]) -> -[+Nasalized] / _ ") allWithProb .1)
         }
 }
