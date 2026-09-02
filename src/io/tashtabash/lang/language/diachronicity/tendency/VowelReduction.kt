@@ -22,10 +22,10 @@ class VowelReduction : DefaultPhonologicalChangeTendency() {
         phonemes.createPhonologicalRulesFor(language) {
             return (createRules("${escapeStress("<V>")} -> ə / _") allWithProb 1.0) +
                     // Schwa reduction
-                    (createWeakRules("${escapeStress("ə")} -> - / _ ") allWithProb 0.03) +
+                    (createWeakRules("${escapeStress("ə")} -> - / _ ") allWithProb .03) +
                     // Between devoiced
-                    (createWeakRules("${escapeStress("V")} -> - / [-Voiced] _ [-Voiced]") allWithProb 0.05) +
-                    (createWeakRules("${escapeStress("V")} -> ə / [-Voiced] _ [-Voiced]") allWithProb 0.05) +
-                    (createWeakRules("${escapeStress("ə")} -> - / [-Voiced] _ [-Voiced]") allWithProb 0.1)
+                    (createWeakRules("${escapeStress("V")} -> - / [-Voiced] _ [-Voiced]") allWithProb .05) +
+                    (createWeakRules("${escapeStress("V")} -> ə / [-Voiced] _ [-Voiced]") allWithProb .05) +
+                    (createWeakRules("${escapeStress("ə")} -> - / [-Voiced] _ [-Voiced]") allWithProb .1)
         }
 }
