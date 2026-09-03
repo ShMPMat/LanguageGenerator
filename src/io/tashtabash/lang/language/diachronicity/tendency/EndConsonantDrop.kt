@@ -27,3 +27,21 @@ class EndConsonantDrop : MatcherConditionPhonologicalChangeTendency() {
                     (createRule("C -> - / _ $") withProb 3.0)
         }
 }
+
+
+class StartConsonantDrop : MatcherConditionPhonologicalChangeTendency() {
+    override fun getNewInstance() = StartConsonantDrop()
+
+    override fun createMatchers(phonemeContainer: PhonemeContainer): List<List<PhonemeMatcher>> =
+        listOf(
+            createPhonemeMatchers("\$C", phonemeContainer)
+        )
+
+    override fun getOptions(language: Language, phonemes: PhonemeContainer): List<GenericSSO<PhonologicalRule>> =
+        phonemes.createPhonologicalRulesFor(language) {
+            allowSyllableStructureChange = true
+
+            return (createRules("<C> -> - /$ _ ") allWithProb 3.0) +
+                    (createRule("C -> - /$ _ ") withProb 3.0)
+        }
+}

@@ -26,6 +26,7 @@ fun createDefaultPhonologicalChangeTendencies() = listOf(
     Labialization(), Delabialization(),
     RegressiveVoicingAssimilation(), ProgressiveVoicingAssimilation(),
     RegressiveNasalization(), ProgressiveNasalization(),
-    IntervocalicConsonantInsertion(), InterconsonanticVowelInsertion(), EndConsonantDrop(),
+    IntervocalicConsonantInsertion(), InterconsonanticVowelInsertion(), EndConsonantDrop(), StartConsonantDrop(),
+    VowelSequenceSimplification(), ConsonantSequenceSimplification(), ConsonantDegemination(),
     SyllableSimplification()
 )
