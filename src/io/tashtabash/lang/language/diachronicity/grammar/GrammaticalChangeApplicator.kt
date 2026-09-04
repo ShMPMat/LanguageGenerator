@@ -18,7 +18,7 @@ class RandomGrammaticalChangeApplicator(
     fun apply(language: Language): Language {
         val applicator = GrammaticalChangeApplicator()
 
-        return applicator.apply(language, possibleRules.randomElement())
+        return applicator.apply(language, possibleRules.randomElement { it.computeChance(language.changeParadigm) })
             .also { _messages += applicator.messages }
     }
 }
@@ -40,6 +40,8 @@ class GrammaticalChangeApplicator {
 }
 
 interface GrammaticalRule {
+    fun computeChance(changeParadigm: ChangeParadigm): Double
+
     fun apply(changeParadigm: ChangeParadigm): ChangeResult
 }
 
@@ -51,6 +53,9 @@ const val MAX_RULES = 50
 
 
 object SimplifySandhi: GrammaticalRule {
+    override fun computeChance(changeParadigm: ChangeParadigm) =
+        1.0
+
     override fun apply(changeParadigm: ChangeParadigm): ChangeResult {
         val sandhiSize = changeParadigm.wordChangeParadigm.sandhiRules.size.toDouble()
 
@@ -72,11 +77,16 @@ object SimplifySandhi: GrammaticalRule {
 }
 
 object UnifySvoOrder: GrammaticalRule {
+    override fun computeChance(changeParadigm: ChangeParadigm) =
+        changeParadigm.syntaxLogic.transformers
+            .count { it.second is ChangeOrderTransformer }
+            .toDouble()
+
     override fun apply(changeParadigm: ChangeParadigm): ChangeResult {
         val transformers = changeParadigm.syntaxLogic.transformers
         val ids = transformers.indices.filter { transformers[it].second is ChangeOrderTransformer }
         if (ids.isEmpty())
-            return null withMessage "The SOV word order is already unified"
+            return null withMessage "The SOV order is already unified"
 
         (ids.size / 30.0).chanceOf {
             val removedIdx = ids.randomElement()
@@ -88,6 +98,6 @@ object UnifySvoOrder: GrammaticalRule {
             ) withMessage "Simplified SOV order: removed ${transformers[removedIdx]}"
         }
 
-        return null withMessage "No SOV change happened"
+        return null withMessage "No SOV order change happened"
     }
 }
