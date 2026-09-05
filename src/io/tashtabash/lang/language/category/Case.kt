@@ -171,13 +171,17 @@ sealed class CaseValue(meaning: Meaning, alias: String) : AbstractCategoryValue(
     object Accusative : CaseValue("(accusative case ind)", "ACC")
     object Ergative : CaseValue("(ergative case ind)", "ERG")
     object Absolutive : CaseValue("(absolutive case ind)", "ABS")
+
     object Topic : CaseValue("(topic case ind)", "TOP")
+
     object Oblique : CaseValue("(oblique case ind)", "OBL")
     object Genitive : CaseValue("(genitive case ind)", "GEN")
     object Dative : CaseValue("(dative case ind)", "DAT")
     object Benefactive : CaseValue("(benefactive case ind)", "BEN")
     object Instrumental : CaseValue("(instrumental case ind)", "INS")
+
     object Locative : CaseValue("(locative case ind)", "LOC")
+    object Lative : CaseValue("(lative case ind)", "LAT")
 }
 
 val coreCases = listOf(Nominative, Accusative, Ergative, Absolutive)

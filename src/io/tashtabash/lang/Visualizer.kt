@@ -98,6 +98,7 @@ class Visualizer(val language: Language) {
             "build",
             mapOf(Agent to we, Patient to home, Instrument to these, Benefactor to fathers)
         )
+        val goHomeVerb = VerbDescription("go", mapOf(Argument to we, Destination to home))
 
         val testSentencesMain = listOf(
             VerbMainClauseDescription(sleepVerb),
@@ -111,6 +112,7 @@ class Visualizer(val language: Language) {
             VerbMainClauseDescription(buildVerb),
             VerbMainClauseDescription(benBuildVerb),
             VerbMainClauseDescription(nounBenBuildVerb),
+            VerbMainClauseDescription(goHomeVerb)
         )
         val testSentencesConstructions = listOf(
             CopulaMainClauseDescription(CopulaDescription(mothers, time)),
@@ -153,7 +155,8 @@ class Visualizer(val language: Language) {
                 "You two felt light",
                 "It was with these hands that I built a house",
                 "It was with these that we built a house for you two",
-                "It was with these that we built a house for new high fathers"
+                "It was with these that we built a house for new high fathers",
+                "We went home",
             ).zip(testSentencesMain),
             indicativeContext,
             "Long Gone Past"
@@ -170,7 +173,8 @@ class Visualizer(val language: Language) {
                 "Will you two feel light?",
                 "Will I build a house with these hands?",
                 "Will we build a house with these for you two?",
-                "Will we build a house with these for new high fathers?"
+                "Will we build a house with these for new high fathers?",
+                "Will we go home?",
             ).zip(testSentencesMain),
             questionContext,
             "General question"
@@ -187,7 +191,8 @@ class Visualizer(val language: Language) {
                 "You two don't feel light",
                 "I don't build a house with these hands",
                 "We don't build a house with these for you two",
-                "We don't build a house with these for new high fathers"
+                "We don't build a house with these for new high fathers",
+                "We don't go home",
             ).zip(testSentencesMain),
             negationContext,
             "Negative (regular)"
@@ -204,7 +209,8 @@ class Visualizer(val language: Language) {
                 "You two will be able to feel light",
                 "I will be able to build a house with these hands",
                 "We will be able to build a house with these for you two",
-                "We will be able to build a house with these for new high fathers"
+                "We will be able to build a house with these for new high fathers",
+                "We will be able to go home",
             ).zip(testSentencesMain),
             potentialContext,
             "Potential"
@@ -221,7 +227,8 @@ class Visualizer(val language: Language) {
                 "Don't you two feel light?",
                 "Am I not building a house with these hands?",
                 "Aren't we building a house with these for you two?",
-                "Aren't we building a house with these for new high fathers?"
+                "Aren't we building a house with these for new high fathers?",
+                "Aren't we going home?",
             ).zip(testSentencesMain),
             negationQuestionContext,
             "Negative question (present)"
@@ -282,7 +289,8 @@ class Visualizer(val language: Language) {
                 "You two feel light",
                 "I'm building a house with these hands",
                 "We are building a house for you two with these hands",
-                "We are building a house for new high fathers with these hands"
+                "We are building a house for new high fathers with these hands",
+                "We are going home",
             ).zip(testSentencesMain),
             DescriptionContext(Present to Implicit),
             "Present"

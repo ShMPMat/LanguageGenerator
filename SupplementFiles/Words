@@ -217,8 +217,8 @@ see                Verb        1.0    verbType|perception
 hear               Verb        1.0    verbType|perception
                                       VNPlace@scene:0.01    VNPerson@master:0.01,ruler:0.001
                                       *hear:1.0*understand:0.05*learn:0.05*air:0.05*action:0.8
-/// Movement verbs
-go                 Verb        0.8    verbType|movement
+/// Movement verbs; TODO "go" being 100% present is a temporary solution,
+go                 Verb        1.0    verbType|movement
                                       VNPlace@destination:0.05
                                       VNPerson@living_thing:0.1,animal:0.1  VNAbstract@life:0.05
 
